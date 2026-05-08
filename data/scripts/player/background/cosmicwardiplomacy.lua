@@ -1,0 +1,118 @@
+package.path = package.path .. ";data/scripts/lib/?.lua"
+
+include("randomext")
+include("faction")
+local CosmicWarConfig = include("cosmicwarconfig")
+
+-- namespace CosmicWarDiplomacy
+CosmicWarDiplomacy = {}
+
+function CosmicWarDiplomacy.initialize()
+    if onServer() then
+        CosmicWarDiplomacy._elapsed = CosmicWarDiplomacy._elapsed or 0
+    end
+end
+
+function CosmicWarDiplomacy.getUpdateInterval()
+    local cfg = CosmicWarConfig.get()
+    return cfg.diplomacyInterval or 300
+end
+
+local function cwlog(msg, ...)
+    local cfg = CosmicWarConfig.get()
+    if not cfg.debugLogs then return end
+    print("[Cosmic War][Diplomacy] " .. msg, ...)
+end
+
+local function getWarFactionCandidates()
+    local galaxy = Galaxy()
+    if not galaxy then return {} end
+
+    local out = {}
+    local factions = {galaxy:getFactions()}
+
+    for _, f in pairs(factions) do
+        if f and f.isAIFaction and f:getValue("cw_enabled") then
+            table.insert(out, f)
+        end
+    end
+
+    return out
+end
+
+local function maybeAdjustPair(a, b, random)
+    if not a or not b or a.index == b.index then return end
+
+    local rel = a:getRelations(b.index) or 0
+    local ap = a:getValue("cw_diplomatic_polarity") or 0
+    local bp = b:getValue("cw_diplomatic_polarity") or 0
+    local aw = a:getValue("cw_war_bias") or 0
+    local bw = b:getValue("cw_war_bias") or 0
+
+    local polarityGap = math.abs(ap - bp)
+
+    local warChance = 0.08
+        + math.max(0, (-rel - 15000) / 180000)
+        + math.max(0, (aw + bw - 1200) / 6000)
+        + math.max(0, (polarityGap - 400) / 3000)
+
+    local peaceChance = 0.05
+        + math.max(0, (rel - 25000) / 220000)
+        + math.max(0, (900 - (aw + bw)) / 8000)
+
+    local didChange = false
+
+    if random:test(math.min(0.55, warChance)) then
+        local worsen = random:getInt(1000, 4500)
+        local nr = math.max(-100000, rel - worsen)
+        a:setRelations(b.index, nr)
+        b:setRelations(a.index, nr)
+        didChange = true
+
+        local cfg = CosmicWarConfig.get()
+        if nr <= (cfg.rivalryThreshold or -45000) then
+            a:setValue("enemy_faction", b.index)
+            b:setValue("enemy_faction", a.index)
+            a:setValue("cw_target_faction", b.index)
+            b:setValue("cw_target_faction", a.index)
+        end
+    elseif random:test(math.min(0.40, peaceChance)) then
+        local improve = random:getInt(500, 2200)
+        local nr = math.min(100000, rel + improve)
+        a:setRelations(b.index, nr)
+        b:setRelations(a.index, nr)
+        didChange = true
+    end
+
+    if didChange then
+        cwlog("Adjusted relations: %s(%i) <-> %s(%i), now=%i",
+            a.name or "A", a.index or -1,
+            b.name or "B", b.index or -1,
+            a:getRelations(b.index) or rel
+        )
+    end
+end
+
+function CosmicWarDiplomacy.updateServer(timeStep)
+    local player = Player()
+    if not player then return end
+
+    local server = Server()
+    if not server then return end
+
+    local seed = server.seed + player.index * 137 + math.floor(server.unpausedRuntime / 300)
+    local random = Random(seed)
+
+    local factions = getWarFactionCandidates()
+    if #factions < 2 then return end
+
+    local cfg = CosmicWarConfig.get()
+    local steps = math.min(cfg.diplomacyPairSteps or 10, #factions)
+    for _ = 1, steps do
+        local a = factions[random:getInt(1, #factions)]
+        local b = factions[random:getInt(1, #factions)]
+        if a and b and a.index ~= b.index then
+            maybeAdjustPair(a, b, random)
+        end
+    end
+end

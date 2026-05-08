@@ -1,0 +1,66 @@
+package.path = package.path .. ";data/scripts/lib/?.lua"
+
+include("randomext")
+local CosmicWarConfig = include("cosmicwarconfig")
+
+-- namespace CosmicWarNews
+CosmicWarNews = {}
+
+function CosmicWarNews.initialize()
+end
+
+function CosmicWarNews.getUpdateInterval()
+    return 420 -- every 7 minutes
+end
+
+local function cwlog(msg, ...)
+    local cfg = CosmicWarConfig.get()
+    if not cfg.debugLogs then return end
+    print("[Cosmic War][News] " .. msg, ...)
+end
+
+local function collectHotConflicts()
+    local galaxy = Galaxy()
+    if not galaxy then return {} end
+
+    local factions = {galaxy:getFactions()}
+    local hot = {}
+
+    for _, a in pairs(factions) do
+        if a and a.isAIFaction and a:getValue("cw_enabled") then
+            local enemy = a:getValue("enemy_faction")
+            if enemy and enemy > 0 then
+                local b = Faction(enemy)
+                if b and b.isAIFaction then
+                    local rel = a:getRelations(b.index) or 0
+                    if rel <= -35000 then
+                        table.insert(hot, {a = a, b = b, rel = rel})
+                    end
+                end
+            end
+        end
+    end
+
+    return hot
+end
+
+function CosmicWarNews.update(timeStep)
+    if not onServer() then return end
+
+    local conflicts = collectHotConflicts()
+    if #conflicts == 0 then return end
+
+    local random = Random(Server().seed + math.floor(Server().unpausedRuntime / 60) * 17)
+    local pick = conflicts[random:getInt(1, #conflicts)]
+    if not pick then return end
+
+    local msg = string.format("War Bulletin: %s and %s relations deteriorated to %d.",
+        pick.a.name or ("Faction " .. tostring(pick.a.index)),
+        pick.b.name or ("Faction " .. tostring(pick.b.index)),
+        pick.rel
+    )
+
+    -- Server-wide chat style bulletin
+    Server():broadcastChatMessage("Cosmic War", ChatMessageType.Information, msg)
+    cwlog("%s", msg)
+end
