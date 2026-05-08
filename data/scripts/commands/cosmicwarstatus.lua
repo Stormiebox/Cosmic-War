@@ -11,6 +11,10 @@ function execute(sender, commandName, ...)
         return 1, "", "Galaxy unavailable"
     end
 
+    if type(galaxy.getFactions) ~= "function" then
+        return 1, "", "Galaxy API not ready"
+    end
+
     local factions = {galaxy:getFactions()}
     local enabled = 0
     local rivalries = 0

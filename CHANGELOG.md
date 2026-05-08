@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-05-09
+### Fixed
+- Hardened `/cosmicwarstatus` command against early server lifecycle timing:
+  - Added `Galaxy()` availability guard.
+  - Added callable guard for `galaxy.getFactions` to avoid nil-method runtime errors.
+  - Returns graceful status messages instead of throwing stack traces when the galaxy API is not fully ready.
+- Hardened faction fetch paths in background systems:
+  - `data/scripts/server/background/cosmicwarbounties.lua`
+  - `data/scripts/server/background/cosmicwarceasefires.lua`
+  - Both now verify `galaxy.getFactions` is callable before use.
+
+### Changed
+- Updated documentation to reflect lifecycle-safe command behavior and stability hardening in war background loops.
+- Validation pass confirms current runtime status is stable with latest logs (Cosmic War + Cosmic Overhaul).
+
 ## [0.4.0] - 2026-05-09
 ### Added
 - Mod Configuration Menu (MCM) schema: `modconfig.lua` (war pressure, diplomacy, diagnostics options).

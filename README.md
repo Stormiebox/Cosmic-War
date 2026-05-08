@@ -8,7 +8,7 @@ It is designed to complement **Cosmic Overhaul** while remaining fully standalon
 
 ---
 
-## 🚀 Current Version (0.4.0)
+## 🚀 Current Version (0.4.1)
 
 Cosmic War turns background faction diplomacy into an active, persistent conflict layer that evolves while you play.
 
@@ -58,6 +58,14 @@ Cosmic War turns background faction diplomacy into an active, persistent conflic
 * **Files:** `data/scripts/commands/cosmicwarstatus.lua`, `data/scripts/lib/cosmicwarconfig.lua`, `modconfig.lua`
 * **Mechanic:** Exposes the `/cosmicwarstatus` command and bridges the simulation to the Mod Configuration Menu (MCM).
 * **Gameplay Impact:** You can inspect, debug, and tune the war simulation behavior directly in-game without hard-editing scripts.
+
+### ✅ 0.4.1 Stability Hardening
+This update includes lifecycle safety hardening for startup/early-server execution windows:
+- `/cosmicwarstatus` now safely handles cases where `Galaxy()` exists but `getFactions` is not ready yet.
+- Added callable `getFactions` guards in:
+  - `data/scripts/server/background/cosmicwarbounties.lua`
+  - `data/scripts/server/background/cosmicwarceasefires.lua`
+- Result: reduced risk of nil-method stack traces during early initialization and improved runtime resilience on modded server stacks.
 
 ### TL;DR
 Cosmic War makes faction politics dynamic and persistent:

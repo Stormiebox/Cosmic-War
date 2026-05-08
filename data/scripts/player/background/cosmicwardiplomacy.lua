@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 include("faction")
-local CosmicWarConfig = include("cosmicwarconfig")
+include("cosmicwarconfig")
 
 -- namespace CosmicWarDiplomacy
 CosmicWarDiplomacy = {}
@@ -13,13 +13,26 @@ function CosmicWarDiplomacy.initialize()
     end
 end
 
+local function getCfg()
+    if CosmicWarConfig and CosmicWarConfig.get then
+        return CosmicWarConfig.get()
+    end
+
+    return {
+        ["diplomacyInterval"] = 300,
+        ["diplomacyPairSteps"] = 10,
+        ["rivalryThreshold"] = -45000,
+        ["debugLogs"] = false
+    }
+end
+
 function CosmicWarDiplomacy.getUpdateInterval()
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     return cfg.diplomacyInterval or 300
 end
 
 local function cwlog(msg, ...)
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][Diplomacy] " .. msg, ...)
 end
@@ -29,7 +42,12 @@ local function getWarFactionCandidates()
     if not galaxy then return {} end
 
     local out = {}
-    local factions = {galaxy:getFactions()}
+    local factions = {}
+    if galaxy.getFactions then
+        factions = {galaxy:getFactions()}
+    elseif galaxy.getPirateFactions then
+        factions = {galaxy:getPirateFactions()}
+    end
 
     for _, f in pairs(factions) do
         if f and f.isAIFaction and f:getValue("cw_enabled") then
@@ -69,7 +87,7 @@ local function maybeAdjustPair(a, b, random)
         b:setRelations(a.index, nr)
         didChange = true
 
-        local cfg = CosmicWarConfig.get()
+        local cfg = getCfg()
         if nr <= (cfg.rivalryThreshold or -45000) then
             a:setValue("enemy_faction", b.index)
             b:setValue("enemy_faction", a.index)
@@ -106,7 +124,7 @@ function CosmicWarDiplomacy.updateServer(timeStep)
     local factions = getWarFactionCandidates()
     if #factions < 2 then return end
 
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     local steps = math.min(cfg.diplomacyPairSteps or 10, #factions)
     for _ = 1, steps do
         local a = factions[random:getInt(1, #factions)]

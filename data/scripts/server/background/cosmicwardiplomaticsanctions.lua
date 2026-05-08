@@ -1,7 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
-local CosmicWarConfig = include("cosmicwarconfig")
+include("cosmicwarconfig")
 
 -- namespace CosmicWarDiplomaticSanctions
 CosmicWarDiplomaticSanctions = {}
@@ -10,8 +10,29 @@ function CosmicWarDiplomaticSanctions.getUpdateInterval()
     return 600 -- every 10 minutes
 end
 
+local function getCfg()
+    if CosmicWarConfig and CosmicWarConfig.get then
+        return CosmicWarConfig.get()
+    end
+    return {
+        ["debugLogs"] = false,
+        ["rivalryThreshold"] = -45000
+    }
+end
+
+local function getGalaxyFactions(galaxy)
+    if not galaxy then return {} end
+    if galaxy.getFactions then
+        return {galaxy:getFactions()}
+    end
+    if galaxy.getPirateFactions then
+        return {galaxy:getPirateFactions()}
+    end
+    return {}
+end
+
 local function cwlog(msg, ...)
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][Sanctions] " .. msg, ...)
 end
@@ -23,11 +44,11 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
     local server = Server()
     if not galaxy or not server then return end
 
-    local factions = {galaxy:getFactions()}
+    local factions = getGalaxyFactions(galaxy)
     if #factions < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 120))
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     local threshold = cfg.rivalryThreshold or -45000
 
     local penalized = 0

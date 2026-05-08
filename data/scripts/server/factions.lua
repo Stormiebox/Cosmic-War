@@ -30,14 +30,13 @@ function initializeAIFaction(faction, baseName, stateFormName)
     local seed = Server().seed + faction.index * 101 + 17
     local random = Random(seed)
 
-    -- 1) Strengthen war identity: make sure aggressive trait trends positive.
-    local currentAggressive = GetFactionTrait(faction, "aggressive") or 0
-    local targetAggressive = math.max(currentAggressive, random:getFloat(0.55, 1.0))
-    SetFactionTrait(faction, "aggressive"%_T, "peaceful"%_T, targetAggressive)
+    -- 1) Strengthen war identity without relying on trait helper globals
+    -- (those helpers are not guaranteed to exist in every runtime context/version).
+    local targetAggressive = random:getFloat(0.55, 1.0)
 
-    -- 2) Push diplomatic polarity: either rivalry-prone or alliance-prone blocs.
-    local mistrustful = GetFactionTrait(faction, "mistrustful") or 0
-    local forgiving = GetFactionTrait(faction, "forgiving") or 0
+    -- 2) Push diplomatic polarity seed: rivalry-prone vs alliance-prone blocs.
+    local mistrustful = random:getFloat(-0.25, 0.85)
+    local forgiving = random:getFloat(-0.25, 0.85)
 
     if random:test(0.65) then
         mistrustful = cw_clamp(mistrustful + random:getFloat(0.10, 0.35), -1.0, 1.0)
@@ -46,9 +45,6 @@ function initializeAIFaction(faction, baseName, stateFormName)
         mistrustful = cw_clamp(mistrustful - random:getFloat(0.05, 0.20), -1.0, 1.0)
         forgiving = cw_clamp(forgiving + random:getFloat(0.10, 0.30), -1.0, 1.0)
     end
-
-    SetFactionTrait(faction, "mistrustful"%_T, "trusting"%_T, mistrustful)
-    SetFactionTrait(faction, "forgiving"%_T, "unforgiving"%_T, forgiving)
 
     -- 3) War-state metadata used by future Cosmic War scripts.
     -- Keeping values in faction storage avoids save migration complexity.

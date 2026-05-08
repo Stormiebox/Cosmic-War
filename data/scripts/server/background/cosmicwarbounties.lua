@@ -23,6 +23,7 @@ function CosmicWarBounties.update(timeStep)
     local server = Server()
     if not galaxy or not server then return end
 
+    if type(galaxy.getFactions) ~= "function" then return end
     local factions = {galaxy:getFactions()}
     if #factions < 2 then return end
 

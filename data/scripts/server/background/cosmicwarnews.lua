@@ -1,7 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
-local CosmicWarConfig = include("cosmicwarconfig")
+include("cosmicwarconfig")
 
 -- namespace CosmicWarNews
 CosmicWarNews = {}
@@ -13,8 +13,26 @@ function CosmicWarNews.getUpdateInterval()
     return 420 -- every 7 minutes
 end
 
+local function getCfg()
+    if CosmicWarConfig and CosmicWarConfig.get then
+        return CosmicWarConfig.get()
+    end
+    return {["debugLogs"] = false}
+end
+
+local function getGalaxyFactions(galaxy)
+    if not galaxy then return {} end
+    if galaxy.getFactions then
+        return {galaxy:getFactions()}
+    end
+    if galaxy.getPirateFactions then
+        return {galaxy:getPirateFactions()}
+    end
+    return {}
+end
+
 local function cwlog(msg, ...)
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][News] " .. msg, ...)
 end
@@ -23,7 +41,7 @@ local function collectHotConflicts()
     local galaxy = Galaxy()
     if not galaxy then return {} end
 
-    local factions = {galaxy:getFactions()}
+    local factions = getGalaxyFactions(galaxy)
     local hot = {}
 
     for _, a in pairs(factions) do

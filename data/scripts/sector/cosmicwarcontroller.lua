@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 include("faction")
-local CosmicWarConfig = include("cosmicwarconfig")
+include("cosmicwarconfig")
 
 -- namespace CosmicWarController
 CosmicWarController = {}
@@ -14,13 +14,26 @@ function CosmicWarController.initialize()
     end
 end
 
+local function getCfg()
+    if CosmicWarConfig and CosmicWarConfig.get then
+        return CosmicWarConfig.get()
+    end
+
+    return {
+        sectorPressureInterval = 180,
+        sectorPressureChance = 0.35,
+        sectorPressureMinSpacing = 600,
+        debugLogs = false
+    }
+end
+
 function CosmicWarController.getUpdateInterval()
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     return cfg.sectorPressureInterval or 180
 end
 
 local function cwlog(msg, ...)
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][Sector] " .. msg, ...)
 end
@@ -107,7 +120,7 @@ end
 function CosmicWarController.updateServer(timeStep)
     CosmicWarController._tick = (CosmicWarController._tick or 0) + timeStep
 
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     local now = Server().unpausedRuntime
     local minSpacing = cfg.sectorPressureMinSpacing or 600
 
