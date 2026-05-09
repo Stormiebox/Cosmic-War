@@ -1,4 +1,5 @@
 return {
+    image = "data/textures/MCM_Cosmic_War.png",
     pages = {
         {
             title = "War Pressure",
