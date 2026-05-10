@@ -3,6 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include ("randomext")
 include ("galaxy")
 include ("faction")
+include ("cosmicwarconfig")
 
 -- Cosmic War extension for server faction initialization.
 -- This file is appended to/merged with vanilla data/scripts/server/factions.lua by Avorion mod loading.
@@ -17,6 +18,8 @@ local function cw_clamp(v, minV, maxV)
 end
 
 local function cw_debug(msg, ...)
+    local cfg = CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get() or {debugLogs = false}
+    if not cfg.debugLogs then return end
     print("[Cosmic War] " .. msg, ...)
 end
 

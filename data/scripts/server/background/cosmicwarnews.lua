@@ -10,7 +10,8 @@ function CosmicWarNews.initialize()
 end
 
 function CosmicWarNews.getUpdateInterval()
-    return 420 -- every 7 minutes
+    local cfg = getCfg()
+    return cfg.newsInterval or 420 -- every 7 minutes
 end
 
 local function getCfg()
@@ -72,7 +73,15 @@ function CosmicWarNews.update(timeStep)
     local pick = conflicts[random:getInt(1, #conflicts)]
     if not pick then return end
 
-    local msg = string.format("War Bulletin: %s and %s relations deteriorated to %d.",
+    local templates =
+    {
+        "War Bulletin: %s and %s relations deteriorated to %d."%_t,
+        "Conflict Watch: %s and %s are entering open hostility (%d)."%_t,
+        "Strategic Alert: tensions between %s and %s reached %d."%_t,
+    }
+
+    local template = templates[random:getInt(1, #templates)] or templates[1]
+    local msg = string.format(template,
         pick.a.name or ("Faction " .. tostring(pick.a.index)),
         pick.b.name or ("Faction " .. tostring(pick.b.index)),
         pick.rel

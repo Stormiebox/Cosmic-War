@@ -7,7 +7,8 @@ local CosmicWarConfig = include("cosmicwarconfig")
 CosmicWarBounties = {}
 
 function CosmicWarBounties.getUpdateInterval()
-    return 600 -- every 10 minutes
+    local cfg = CosmicWarConfig.get()
+    return cfg.bountyInterval or 600 -- every 10 minutes
 end
 
 local function cwlog(msg, ...)
@@ -32,6 +33,7 @@ function CosmicWarBounties.update(timeStep)
     local rivalryThreshold = cfg.rivalryThreshold or -45000
 
     local spawned = 0
+    local processedPairs = {}
 
     for _, f in pairs(factions) do
         if f and f.isAIFaction and f:getValue("cw_enabled") then
@@ -39,13 +41,21 @@ function CosmicWarBounties.update(timeStep)
             if enemyIndex and enemyIndex > 0 then
                 local e = Faction(enemyIndex)
                 if e and e.isAIFaction then
-                    local rel = f:getRelations(e.index) or 0
-                    if rel <= rivalryThreshold and random:test(0.30) then
-                        local bounty = random:getInt(15000, 65000)
-                        f:setValue("cw_bounty_enemy", e.index)
-                        f:setValue("cw_bounty_reward", bounty)
-                        f:setValue("cw_bounty_expires", server.unpausedRuntime + random:getInt(1800, 5400))
-                        spawned = spawned + 1
+                    local left = math.min(f.index, e.index)
+                    local right = math.max(f.index, e.index)
+                    local pairKey = tostring(left) .. ":" .. tostring(right)
+
+                    if not processedPairs[pairKey] then
+                        processedPairs[pairKey] = true
+
+                        local rel = f:getRelations(e.index) or 0
+                        if rel <= rivalryThreshold and random:test(0.30) then
+                            local bounty = random:getInt(15000, 65000)
+                            f:setValue("cw_bounty_enemy", e.index)
+                            f:setValue("cw_bounty_reward", bounty)
+                            f:setValue("cw_bounty_expires", server.unpausedRuntime + random:getInt(1800, 5400))
+                            spawned = spawned + 1
+                        end
                     end
                 end
             end

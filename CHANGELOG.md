@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-05-10
+### Added
+- Cosmic Overhaul synergy bridge modules for prediction-aware overlays:
+  - `data/scripts/lib/cosmicwareconomybridge.lua`
+  - `data/scripts/lib/cosmicwarcaptainbridge.lua`
+- Simulation command overlay wrappers for cross-mod prediction integration:
+  - `data/scripts/player/background/simulation/tradecommand.lua`
+  - `data/scripts/player/background/simulation/scoutcommand.lua`
+  - `data/scripts/player/background/simulation/travelcommand.lua`
+  - `data/scripts/player/background/simulation/refinecommand.lua`
+  - `data/scripts/player/background/simulation/minecommand.lua`
+  - `data/scripts/player/background/simulation/salvagecommand.lua`
+- New MCM integration page in `modconfig.lua`:
+  - **Bridge Integration**
+    - `enableEconomyBridge` (default: true)
+    - `enableCaptainBridge` (default: true)
+
+### Changed
+- `data/scripts/lib/cosmicwarconfig.lua` now exposes and validates bridge toggles:
+  - `enableEconomyBridge`
+  - `enableCaptainBridge`
+- Bridge behavior is now admin-gated at runtime:
+  - Economy bridge returns neutral multipliers when disabled.
+  - Captain bridge returns unmodified predictions when disabled.
+- Added maintainability comments in simulation wrappers to document non-invasive composition intent with Cosmic Overhaul command logic.
+
+### Compatibility
+- Integration follows post-original-call wrapper composition and avoids direct edits to Cosmic Overhaul command internals.
+- Prediction metadata remains namespaced under `prediction.mcm.cosmicWar` to reduce collision risk in mixed mod stacks.
+
+### QA Notes
+- Static QA completed: file integrity, wrapper consistency, config plumbing, and diff-level validation.
+- Runtime/in-game verification matrix was intentionally deferred by user request and should be executed before production/stable release builds.
+
 ## [0.4.1] - 2026-05-09
 ### Fixed
 - Hardened `/cosmicwarstatus` command against early server lifecycle timing:

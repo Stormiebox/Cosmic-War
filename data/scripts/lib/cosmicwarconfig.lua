@@ -16,6 +16,18 @@ local defaults =
 
     rivalryThreshold = -45000,
     warBiasFloor = 550,
+
+    newsInterval = 420,
+    sanctionsInterval = 600,
+    ceasefireInterval = 900,
+    bountyInterval = 600,
+
+    sanctionBaseChance = 0.35, -- normalized 0..1
+    ceasefireChance = 0.25,    -- normalized 0..1
+
+    enableEconomyBridge = true,
+    enableCaptainBridge = true,
+
     debugLogs = true,
 }
 
@@ -55,8 +67,22 @@ local function build()
 
     out.rivalryThreshold = readNumber("rivalryThreshold", -100000, 0, defaults.rivalryThreshold)
 
-    -- currently script-only tuning (not exposed yet)
+    -- currently script-only tuning
     out.warBiasFloor = defaults.warBiasFloor
+
+    out.newsInterval = readNumber("newsInterval", 60, 3600, defaults.newsInterval)
+    out.sanctionsInterval = readNumber("sanctionsInterval", 60, 3600, defaults.sanctionsInterval)
+    out.ceasefireInterval = readNumber("ceasefireInterval", 60, 7200, defaults.ceasefireInterval)
+    out.bountyInterval = readNumber("bountyInterval", 60, 3600, defaults.bountyInterval)
+
+    local sanctionChancePercent = readNumber("sanctionBaseChance", 0, 100, defaults.sanctionBaseChance * 100)
+    out.sanctionBaseChance = sanctionChancePercent / 100
+
+    local ceasefireChancePercent = readNumber("ceasefireChance", 0, 100, defaults.ceasefireChance * 100)
+    out.ceasefireChance = ceasefireChancePercent / 100
+
+    out.enableEconomyBridge = readBool("enableEconomyBridge", defaults.enableEconomyBridge)
+    out.enableCaptainBridge = readBool("enableCaptainBridge", defaults.enableCaptainBridge)
 
     out.debugLogs = readBool("debugLogs", defaults.debugLogs)
 

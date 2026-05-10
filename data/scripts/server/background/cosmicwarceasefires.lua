@@ -7,7 +7,8 @@ local CosmicWarConfig = include("cosmicwarconfig")
 CosmicWarCeasefires = {}
 
 function CosmicWarCeasefires.getUpdateInterval()
-    return 900 -- every 15 minutes
+    local cfg = CosmicWarConfig.get()
+    return cfg.ceasefireInterval or 900 -- every 15 minutes
 end
 
 local function cwlog(msg, ...)
@@ -42,14 +43,20 @@ function CosmicWarCeasefires.update(timeStep)
                     local rel = a:getRelations(b.index) or 0
 
                     -- If relationship has recovered above rivalry threshold, allow détente chance.
-                    if rel > rivalryThreshold and random:test(0.25) then
+                    local ceasefireChance = cfg.ceasefireChance or 0.25
+                    if rel > rivalryThreshold and random:test(ceasefireChance) then
                         local gain = random:getInt(2000, 6000)
                         a:changeRelations(b, gain, RelationChangeType.Diplomatic)
                         b:changeRelations(a, gain, RelationChangeType.Diplomatic)
 
                         a:setValue("enemy_faction", 0)
+                        a:setValue("cw_target_faction", 0)
+
                         if (b:getValue("enemy_faction") or 0) == a.index then
                             b:setValue("enemy_faction", 0)
+                        end
+                        if (b:getValue("cw_target_faction") or 0) == a.index then
+                            b:setValue("cw_target_faction", 0)
                         end
 
                         eased = eased + 1

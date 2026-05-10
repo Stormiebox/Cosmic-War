@@ -1,3 +1,7 @@
+package.path = package.path .. ";data/scripts/lib/?.lua"
+
+include("cosmicwarconfig")
+
 -- namespace RebuildStations
 
 if onServer() then
@@ -18,14 +22,26 @@ if onServer() then
         end
 
         -- Optimization tweak:
-        -- If a faction has a non-zero rebuild throttle timestamp, clear it so station reconstruction
-        -- in active conflict areas can recover faster from repeated destruction.
+        -- In active war states only, reduce excessive rebuild throttle by lowering it to a near-term value,
+        -- instead of forcing a full reset to zero each tick.
         if RebuildStations.specsFactionIndex then
             local f = Faction(RebuildStations.specsFactionIndex)
             if f then
-                local ts = f:getValue("rebuild_stations_timestamp")
-                if ts and ts > 1 then
-                    f:setValue("rebuild_stations_timestamp", 0)
+                local enemy = f:getValue("enemy_faction") or 0
+                if enemy > 0 then
+                    local ts = f:getValue("rebuild_stations_timestamp")
+                    if ts and ts > 1 then
+                        local server = Server()
+                        local runtime = server and server.unpausedRuntime or 0
+                        local cfg = (CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get()) or {}
+                        local minSpacing = cfg.sectorPressureMinSpacing or 600
+                        local targetTs = runtime + math.floor(minSpacing * 0.5)
+
+                        -- only clamp down when current throttle is much farther out
+                        if ts > targetTs then
+                            f:setValue("rebuild_stations_timestamp", targetTs)
+                        end
+                    end
                 end
             end
         end
