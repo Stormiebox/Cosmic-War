@@ -3,6 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("randomext")
 include("faction")
 include("cosmicwarconfig")
+include("cosmicvaultdebug")
 
 -- namespace CosmicWarController
 CosmicWarController = {}
@@ -33,6 +34,11 @@ function CosmicWarController.getUpdateInterval()
 end
 
 local function cwlog(msg, ...)
+    if CosmicVaultDebug and CosmicVaultDebug.info then
+        CosmicVaultDebug.info("CosmicWar-Sector", msg, ...)
+        return
+    end
+
     local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][Sector] " .. msg, ...)
@@ -45,7 +51,7 @@ end
 
 local function getAliveWarFactionsInSector()
     local sector = Sector()
-    local entities = {sector:getEntitiesByType(EntityType.Ship)}
+    local entities = { sector:getEntitiesByType(EntityType.Ship) }
     local present = {}
 
     for _, e in pairs(entities) do

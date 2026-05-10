@@ -3,6 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("randomext")
 include("faction")
 include("cosmicwarconfig")
+include("cosmicvaultdebug")
 
 -- namespace CosmicWarDiplomacy
 CosmicWarDiplomacy = {}
@@ -32,6 +33,11 @@ function CosmicWarDiplomacy.getUpdateInterval()
 end
 
 local function cwlog(msg, ...)
+    if CosmicVaultDebug and CosmicVaultDebug.info then
+        CosmicVaultDebug.info("CosmicWar-Diplomacy", msg, ...)
+        return
+    end
+
     local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][Diplomacy] " .. msg, ...)
@@ -44,9 +50,9 @@ local function getWarFactionCandidates()
     local out = {}
     local factions = {}
     if galaxy.getFactions then
-        factions = {galaxy:getFactions()}
+        factions = { galaxy:getFactions() }
     elseif galaxy.getPirateFactions then
-        factions = {galaxy:getPirateFactions()}
+        factions = { galaxy:getPirateFactions() }
     end
 
     for _, f in pairs(factions) do

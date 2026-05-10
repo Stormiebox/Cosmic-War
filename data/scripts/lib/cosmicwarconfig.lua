@@ -3,6 +3,8 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 local mcm = include("mcm")
 local config = mcm and mcm.bind("Cosmic_War") or nil
 
+include("cosmicvaultconfig")
+
 CosmicWarConfig = CosmicWarConfig or {}
 
 local defaults =
@@ -84,7 +86,12 @@ local function build()
     out.enableEconomyBridge = readBool("enableEconomyBridge", defaults.enableEconomyBridge)
     out.enableCaptainBridge = readBool("enableCaptainBridge", defaults.enableCaptainBridge)
 
-    out.debugLogs = readBool("debugLogs", defaults.debugLogs)
+    local vaultCfg = (CosmicVaultConfig and CosmicVaultConfig.get and CosmicVaultConfig.get()) or nil
+    if vaultCfg and type(vaultCfg.debugEnabled) == "boolean" then
+        out.debugLogs = vaultCfg.debugEnabled
+    else
+        out.debugLogs = readBool("debugLogs", defaults.debugLogs)
+    end
 
     return out
 end

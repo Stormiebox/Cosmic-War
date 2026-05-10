@@ -2,6 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 local CosmicWarConfig = include("cosmicwarconfig")
+include("cosmicvaultdebug")
 
 -- namespace CosmicWarBounties
 CosmicWarBounties = {}
@@ -12,6 +13,11 @@ function CosmicWarBounties.getUpdateInterval()
 end
 
 local function cwlog(msg, ...)
+    if CosmicVaultDebug and CosmicVaultDebug.info then
+        CosmicVaultDebug.info("CosmicWar-Bounties", msg, ...)
+        return
+    end
+
     local cfg = CosmicWarConfig.get()
     if not cfg.debugLogs then return end
     print("[Cosmic War][Bounties] " .. msg, ...)
@@ -25,7 +31,7 @@ function CosmicWarBounties.update(timeStep)
     if not galaxy or not server then return end
 
     if type(galaxy.getFactions) ~= "function" then return end
-    local factions = {galaxy:getFactions()}
+    local factions = { galaxy:getFactions() }
     if #factions < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 60))

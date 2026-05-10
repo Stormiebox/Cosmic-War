@@ -2,6 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 include("cosmicwarconfig")
+include("cosmicvaultdebug")
 
 -- namespace CosmicWarNews
 CosmicWarNews = {}
@@ -18,21 +19,26 @@ local function getCfg()
     if CosmicWarConfig and CosmicWarConfig.get then
         return CosmicWarConfig.get()
     end
-    return {["debugLogs"] = false}
+    return { ["debugLogs"] = false }
 end
 
 local function getGalaxyFactions(galaxy)
     if not galaxy then return {} end
     if galaxy.getFactions then
-        return {galaxy:getFactions()}
+        return { galaxy:getFactions() }
     end
     if galaxy.getPirateFactions then
-        return {galaxy:getPirateFactions()}
+        return { galaxy:getPirateFactions() }
     end
     return {}
 end
 
 local function cwlog(msg, ...)
+    if CosmicVaultDebug and CosmicVaultDebug.info then
+        CosmicVaultDebug.info("CosmicWar-News", msg, ...)
+        return
+    end
+
     local cfg = getCfg()
     if not cfg.debugLogs then return end
     print("[Cosmic War][News] " .. msg, ...)
@@ -53,7 +59,7 @@ local function collectHotConflicts()
                 if b and b.isAIFaction then
                     local rel = a:getRelations(b.index) or 0
                     if rel <= -35000 then
-                        table.insert(hot, {a = a, b = b, rel = rel})
+                        table.insert(hot, { a = a, b = b, rel = rel })
                     end
                 end
             end
@@ -75,9 +81,9 @@ function CosmicWarNews.update(timeStep)
 
     local templates =
     {
-        "War Bulletin: %s and %s relations deteriorated to %d."%_t,
-        "Conflict Watch: %s and %s are entering open hostility (%d)."%_t,
-        "Strategic Alert: tensions between %s and %s reached %d."%_t,
+        "War Bulletin: %s and %s relations deteriorated to %d." % _t,
+        "Conflict Watch: %s and %s are entering open hostility (%d)." % _t,
+        "Strategic Alert: tensions between %s and %s reached %d." % _t,
     }
 
     local template = templates[random:getInt(1, #templates)] or templates[1]
