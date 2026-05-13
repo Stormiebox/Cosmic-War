@@ -1,6 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
+include("relations")
 local CosmicWarConfig = include("cosmicwarconfig")
 include("cosmicvaultdebug")
 
@@ -52,8 +53,7 @@ function CosmicWarCeasefires.update(timeStep)
                     local ceasefireChance = cfg.ceasefireChance or 0.25
                     if rel > rivalryThreshold and random:test(ceasefireChance) then
                         local gain = random:getInt(2000, 6000)
-                        a:changeRelations(b, gain, RelationChangeType.Diplomatic)
-                        b:changeRelations(a, gain, RelationChangeType.Diplomatic)
+                        changeRelations(a, b, gain, RelationChangeType.Diplomatic, true, true, nil)
 
                         a:setValue("enemy_faction", 0)
                         a:setValue("cw_target_faction", 0)

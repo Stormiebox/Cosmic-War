@@ -2,6 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 include("faction")
+include("relations")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
 
@@ -89,8 +90,8 @@ local function maybeAdjustPair(a, b, random)
     if random:test(math.min(0.55, warChance)) then
         local worsen = random:getInt(1000, 4500)
         local nr = math.max(-100000, rel - worsen)
-        a:setRelations(b.index, nr)
-        b:setRelations(a.index, nr)
+        local delta = nr - rel
+        changeRelations(a, b, delta, nil, true, true, nil)
         didChange = true
 
         local cfg = getCfg()
@@ -103,8 +104,8 @@ local function maybeAdjustPair(a, b, random)
     elseif random:test(math.min(0.40, peaceChance)) then
         local improve = random:getInt(500, 2200)
         local nr = math.min(100000, rel + improve)
-        a:setRelations(b.index, nr)
-        b:setRelations(a.index, nr)
+        local delta = nr - rel
+        changeRelations(a, b, delta, nil, true, true, nil)
         didChange = true
     end
 

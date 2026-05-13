@@ -2,6 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 include("faction")
+include("relations")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
 
@@ -105,10 +106,15 @@ local function applyWarPressure(a, b, random)
 
     local rel = a:getRelations(b.index) or 0
     local worsen = random:getInt(1500, 5000)
-    local newRel = math.max(-100000, rel - worsen)
+    local delta = -math.abs(worsen)
 
-    a:setRelations(b.index, newRel)
-    b:setRelations(a.index, newRel)
+    -- Avorion relation updates should be done through changeRelations() from relations.lua.
+    -- Direct setRelations() is not part of the exposed API and causes nil-method errors.
+    changeRelations(a, b, delta, nil, true, true, nil)
+
+    local newRelA = a:getRelations(b.index) or rel
+    local newRelB = b:getRelations(a.index) or rel
+    local effectiveRel = math.min(newRelA, newRelB)
 
     a:setValue("cw_target_faction", b.index)
     b:setValue("cw_target_faction", a.index)
@@ -116,10 +122,10 @@ local function applyWarPressure(a, b, random)
     a:setValue("enemy_faction", b.index)
     b:setValue("enemy_faction", a.index)
 
-    cwlog("War pressure applied: %s(%i) <-> %s(%i), rel %i -> %i",
+    cwlog("War pressure applied: %s(%i) <-> %s(%i), rel %i -> %i (delta %i)",
         a.name or "A", a.index or -1,
         b.name or "B", b.index or -1,
-        rel, newRel
+        rel, effectiveRel, delta
     )
 end
 
