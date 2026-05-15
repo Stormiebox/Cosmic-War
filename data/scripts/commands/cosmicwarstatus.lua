@@ -1,21 +1,21 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
-function execute(sender, commandName, ...)
-    local player = Player(sender)
-    if not player then
-        return 1, "", "Player not found"
-    end
+-- NOTE:
+-- Chat command scripts in Avorion are expected to expose global entry points:
+--   execute(sender, commandName, ...), getDescription(), getHelp()
+-- To reduce global collision risk while preserving compatibility, helpers are scoped locally.
 
+local function collectStatus()
     local galaxy = Galaxy()
     if not galaxy then
-        return 1, "", "Galaxy unavailable"
+        return nil, "Galaxy unavailable"
     end
 
     if type(galaxy.getFactions) ~= "function" then
-        return 1, "", "Galaxy API not ready"
+        return nil, "Galaxy API not ready"
     end
 
-    local factions = {galaxy:getFactions()}
+    local factions = { galaxy:getFactions() }
     local enabled = 0
     local rivalryMarkers = 0
     local bountyActive = 0
@@ -85,7 +85,20 @@ function execute(sender, commandName, ...)
         table.insert(parts, string.format("Hot %d: %s vs %s (%d)", i, item.a, item.b, item.rel))
     end
 
-    local msg = table.concat(parts, " | ")
+    return table.concat(parts, " | "), nil
+end
+
+function execute(sender, commandName, ...)
+    local player = Player(sender)
+    if not player then
+        return 1, "", "Player not found"
+    end
+
+    local msg, err = collectStatus()
+    if not msg then
+        return 1, "", err or "Status unavailable"
+    end
+
     return 0, msg, ""
 end
 
