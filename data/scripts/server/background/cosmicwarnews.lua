@@ -10,16 +10,16 @@ CosmicWarNews = {}
 function CosmicWarNews.initialize()
 end
 
-function CosmicWarNews.getUpdateInterval()
-    local cfg = getCfg()
-    return cfg.newsInterval or 420 -- every 7 minutes
-end
-
 local function getCfg()
     if CosmicWarConfig and CosmicWarConfig.get then
         return CosmicWarConfig.get()
     end
     return { ["debugLogs"] = false }
+end
+
+function CosmicWarNews.getUpdateInterval()
+    local cfg = getCfg()
+    return cfg.newsInterval or 420 -- every 7 minutes
 end
 
 local function getGalaxyFactions(galaxy)
