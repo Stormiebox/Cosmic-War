@@ -10,12 +10,21 @@ local function safeRelations(a, bIndex)
     return a:getRelations(bIndex) or 0
 end
 
-local function getGalaxyFactions(galaxy)
-    if not galaxy then return {} end
-    if type(galaxy.getFactions) == "function" then
-        return {galaxy:getFactions()}
+local function getGalaxyFactions(server)
+    if not server or type(server.getValue) ~= "function" then return {} end
+
+    local factions = {}
+    local factionIndices = server:getValue("factions")
+    if type(factionIndices) ~= "table" then return factions end
+
+    for _, index in pairs(factionIndices) do
+        local faction = Faction(index)
+        if faction then
+            table.insert(factions, faction)
+        end
     end
-    return {}
+
+    return factions
 end
 
 function CosmicWarBridge.computeWarHeatForFaction(faction)
@@ -49,10 +58,10 @@ end
 function CosmicWarBridge.publishWarHeatSnapshot()
     if not onServer() then return end
 
-    local galaxy = Galaxy()
-    if not galaxy then return end
+    local server = Server()
+    if not server then return end
 
-    local factions = getGalaxyFactions(galaxy)
+    local factions = getGalaxyFactions(server)
     local snapshot = {}
     local maxHeat = 0
 
@@ -65,8 +74,8 @@ function CosmicWarBridge.publishWarHeatSnapshot()
     end
 
     -- global snapshot for bridge consumers (Cosmic Overhaul hooks / scripts)
-    Server():setValue("cw_war_heat_snapshot", snapshot)
-    Server():setValue("cw_war_heat_max", maxHeat)
+    server:setValue("cw_war_heat_snapshot", snapshot)
+    server:setValue("cw_war_heat_max", maxHeat)
 end
 
 function CosmicWarBridge.getWarHeatSnapshot()

@@ -45,7 +45,6 @@ meta =
     -- },
     dependencies = {
         { id = "3727542782", min = "1.0" },
-        { id = "3674093144", min = "1.0" },
         { id = "Avorion",    min = "1.0", max = "5.0" }
     },
 
