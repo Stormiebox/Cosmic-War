@@ -22,15 +22,21 @@ function CosmicWarNews.getUpdateInterval()
     return cfg.newsInterval or 420 -- every 7 minutes
 end
 
-local function getGalaxyFactions(galaxy)
-    if not galaxy then return {} end
-    if galaxy.getFactions then
-        return { galaxy:getFactions() }
+local function getGalaxyFactions(server)
+    if not server or type(server.getValue) ~= "function" then return {} end
+
+    local factions = {}
+    local factionIndices = server:getValue("factions")
+    if type(factionIndices) ~= "table" then return factions end
+
+    for _, index in pairs(factionIndices) do
+        local faction = Faction(index)
+        if faction then
+            table.insert(factions, faction)
+        end
     end
-    if galaxy.getPirateFactions then
-        return { galaxy:getPirateFactions() }
-    end
-    return {}
+
+    return factions
 end
 
 local function cwlog(msg, ...)
@@ -45,10 +51,10 @@ local function cwlog(msg, ...)
 end
 
 local function collectHotConflicts()
-    local galaxy = Galaxy()
-    if not galaxy then return {} end
+    local server = Server()
+    if not server then return {} end
 
-    local factions = getGalaxyFactions(galaxy)
+    local factions = getGalaxyFactions(server)
     local hot = {}
 
     for _, a in pairs(factions) do

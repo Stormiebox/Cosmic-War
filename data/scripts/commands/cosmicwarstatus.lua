@@ -11,11 +11,26 @@ local function collectStatus()
         return nil, "Galaxy unavailable"
     end
 
-    if type(galaxy.getFactions) ~= "function" then
-        return nil, "Galaxy API not ready"
+    local server = Server()
+    if not server or type(server.getValue) ~= "function" then
+        return nil, "Server API not ready"
+    end
+    local now = server.unpausedRuntime or 0
+
+    -- Using the faction database ids and resolved each via Faction(index).
+    local factions = {}
+    local factionIndices = server:getValue("factions") -- expected: table<int> or nils
+    if type(factionIndices) ~= "table" then
+        return nil, "Faction database not ready"
     end
 
-    local factions = { galaxy:getFactions() }
+    for _, index in pairs(factionIndices) do
+        local f = Faction(index)
+        if f then
+            table.insert(factions, f)
+        end
+    end
+
     local enabled = 0
     local rivalryMarkers = 0
     local bountyActive = 0
@@ -58,7 +73,7 @@ local function collectStatus()
             local bountyEnemy = f:getValue("cw_bounty_enemy") or 0
             local bountyReward = f:getValue("cw_bounty_reward") or 0
             local bountyExpires = f:getValue("cw_bounty_expires") or 0
-            if bountyEnemy > 0 and bountyReward > 0 and bountyExpires > Server().unpausedRuntime then
+            if bountyEnemy > 0 and bountyReward > 0 and bountyExpires > now then
                 bountyActive = bountyActive + 1
             end
         end

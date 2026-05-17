@@ -24,15 +24,30 @@ local function cwlog(msg, ...)
     print("[Cosmic War][Ceasefire] " .. msg, ...)
 end
 
+local function getGalaxyFactions(server)
+    if not server or type(server.getValue) ~= "function" then return {} end
+
+    local factions = {}
+    local factionIndices = server:getValue("factions")
+    if type(factionIndices) ~= "table" then return factions end
+
+    for _, index in pairs(factionIndices) do
+        local faction = Faction(index)
+        if faction then
+            table.insert(factions, faction)
+        end
+    end
+
+    return factions
+end
+
 function CosmicWarCeasefires.update(timeStep)
     if not onServer() then return end
 
-    local galaxy = Galaxy()
     local server = Server()
-    if not galaxy or not server then return end
+    if not server then return end
 
-    if type(galaxy.getFactions) ~= "function" then return end
-    local factions = { galaxy:getFactions() }
+    local factions = getGalaxyFactions(server)
     if #factions < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 180))
