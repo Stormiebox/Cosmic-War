@@ -269,6 +269,28 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 - Baseline behavior is safely preserved when bridge toggles are disabled.
 </details>
 
+### 13) Dynamic War Contracts (Missions)
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:**
+- `data/scripts/entity/bulletinboard.lua`
+- `data/scripts/player/missions/cw_interception.lua`
+- `data/scripts/player/missions/cw_breakthrough.lua`
+- `data/scripts/player/missions/cw_frontlinesiege.lua`
+- `data/scripts/player/missions/cw_highvaluedefection.lua`
+- `data/scripts/player/missions/cw_decapitationstrike.lua`
+
+**What it does:**
+Injects custom, highly-scaled combat missions directly into station Bulletin Boards based on the current macro-level **War Heat** between the station's owner and their rival faction.
+
+**Available Contracts:**
+- **War Heat > 0.45:** *Interception* (Destroy enemy supply convoy) & *Breakthrough* (Defend allied supply convoy).
+- **War Heat > 0.60:** *Frontline Siege* (Assault a dynamically scaled enemy Forward Operating Base).
+- **War Heat > 0.80:** *High-Value Extraction* (Holdout survival while an enemy defector charges their hyperdrive).
+- **War Heat = 1.00:** *Decapitation Strike* (Ultra-hard Flagship Boss. Destroying it forces an immediate ceasefire).
+</details>
+
 ---
 
 ## Server & Performance Guidelines

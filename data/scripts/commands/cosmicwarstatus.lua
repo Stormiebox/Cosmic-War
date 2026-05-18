@@ -23,8 +23,16 @@ local function collectStatus()
     end
 
     local factions = {}
-    local factionIndices = server:getValue("factions") -- expected: table<int> or nils
-    if type(factionIndices) ~= "table" or #factionIndices == 0 then
+    local factionStr = server:getValue("factions")
+    local factionIndices = {}
+
+    if type(factionStr) == "string" and factionStr ~= "" then
+        for id in string.gmatch(factionStr, "([^,]+)") do
+            table.insert(factionIndices, tonumber(id))
+        end
+    end
+
+    if #factionIndices == 0 then
         return nil, "No indexed factions yet."
     end
 

@@ -51,8 +51,14 @@ local function getWarFactionCandidates()
     if not server:getValue("factions_ready") then return {} end
 
     local out = {}
-    local factionIndices = server:getValue("factions")
-    if type(factionIndices) ~= "table" then return out end
+    local factionStr = server:getValue("factions")
+    local factionIndices = {}
+
+    if type(factionStr) == "string" and factionStr ~= "" then
+        for id in string.gmatch(factionStr, "([^,]+)") do
+            table.insert(factionIndices, tonumber(id))
+        end
+    end
 
     for _, index in pairs(factionIndices) do
         local f = Faction(index)

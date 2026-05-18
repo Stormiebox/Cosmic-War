@@ -14,8 +14,14 @@ local function getGalaxyFactions(server)
     if not server or type(server.getValue) ~= "function" then return {} end
 
     local factions = {}
-    local factionIndices = server:getValue("factions")
-    if type(factionIndices) ~= "table" then return factions end
+    local factionStr = server:getValue("factions")
+    local factionIndices = {}
+
+    if type(factionStr) == "string" and factionStr ~= "" then
+        for id in string.gmatch(factionStr, "([^,]+)") do
+            table.insert(factionIndices, tonumber(id))
+        end
+    end
 
     for _, index in pairs(factionIndices) do
         local faction = Faction(index)
@@ -64,17 +70,20 @@ function CosmicWarBridge.publishWarHeatSnapshot()
     local factions = getGalaxyFactions(server)
     local snapshot = {}
     local maxHeat = 0
+    local snapshotParts = {}
 
     for _, f in pairs(factions) do
         if f and f.isAIFaction and f:getValue("cw_enabled") then
             local heat = CosmicWarBridge.computeWarHeatForFaction(f)
             snapshot[f.index] = heat
+            table.insert(snapshotParts, tostring(f.index) .. ":" .. tostring(heat))
             if heat > maxHeat then maxHeat = heat end
         end
     end
 
     -- global snapshot for bridge consumers (Cosmic Overhaul hooks / scripts)
-    server:setValue("cw_war_heat_snapshot", snapshot)
+    local snapshotStr = table.concat(snapshotParts, ",")
+    server:setValue("cw_war_heat_snapshot", snapshotStr)
     server:setValue("cw_war_heat_max", maxHeat)
 end
 
@@ -82,7 +91,19 @@ function CosmicWarBridge.getWarHeatSnapshot()
     local server = Server()
     if not server then return {}, 0 end
 
-    return server:getValue("cw_war_heat_snapshot") or {}, server:getValue("cw_war_heat_max") or 0
+    local snapshotStr = server:getValue("cw_war_heat_snapshot")
+    local snapshot = {}
+
+    if type(snapshotStr) == "string" and snapshotStr ~= "" then
+        for pair in string.gmatch(snapshotStr, "([^,]+)") do
+            local idxStr, heatStr = string.match(pair, "(%d+):([%d%.]+)")
+            if idxStr and heatStr then
+                snapshot[tonumber(idxStr)] = tonumber(heatStr)
+            end
+        end
+    end
+
+    return snapshot, server:getValue("cw_war_heat_max") or 0
 end
 
 function CosmicWarBridge.getFactionWarHeat(factionIndex)

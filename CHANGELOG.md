@@ -1,12 +1,21 @@
 # Changelog
 
-## [1.0.4] - 2026-05-18
+## [1.1.0] - 2026-05-18
+
+### Added
+- **Dynamic War Contracts:** Added four brand new, heat-scaling combat missions dynamically injected into station Bulletin Boards:
+  - *Operation: Interception* (Offense, Heat > 0.45): Intercept an enemy supply convoy.
+  - *Operation: Breakthrough* (Defense, Heat > 0.45): Protect an allied convoy while its hyperdrive spools.
+  - *Operation: Frontline Siege* (Escalation, Heat > 0.60): Destroy a heavily-scaled enemy Forward Operating Base (FOB) that actively calls in reinforcements.
+  - *Operation: Decapitation Strike* (Climax, Heat = 1.00): Face an astronomically scaled enemy Flagship Dreadnought. Destroying it instantly forces a ceasefire and resets relations between the two warring factions.
 
 ### Changed
 - **Architecture Update:** Migrated background script initialization from `data/scripts/server/init.lua` to `data/scripts/galaxy/init.lua`. This perfectly aligns with Avorion's modern component architecture, ensuring the macro war simulation safely and correctly attaches to the global `Galaxy` object.
 - Cosmic War now formally consumes the **Cosmic Vault Faction Index API** (`factions` and `factions_ready`) to dramatically reduce expensive API loops and guarantee consistency across all modules.
 
 ### Fixed
+- Fixed a C++ Engine crash where background scripts attempted to pass Lua tables directly into `Server():setValue()`. Shared caches (like faction indices and heat snapshots) are now safely encoded and decoded as comma-separated strings.
+- Fixed an issue where background scripts crashed with an `attempt to index upvalue 'CosmicWarConfig' (a boolean value)` error by ensuring the config library explicitly returns its table.
 - Fixed a critical bug in `cosmicwardiplomacy.lua` that was still attempting to use the broken vanilla `Galaxy():getFactions()` API. It now safely reads from the centralized Cosmic Vault faction index.
 - Background scripts and the `/cosmicwarstatus` command now gracefully halt and inform the user if the server is still compiling the faction index, preventing startup errors.
 

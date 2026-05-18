@@ -21,8 +21,14 @@ local function getGalaxyFactions(server)
     if not server or type(server.getValue) ~= "function" then return {} end
 
     local factions = {}
-    local factionIndices = server:getValue("factions")
-    if type(factionIndices) ~= "table" then return factions end
+    local factionStr = server:getValue("factions")
+    local factionIndices = {}
+
+    if type(factionStr) == "string" and factionStr ~= "" then
+        for id in string.gmatch(factionStr, "([^,]+)") do
+            table.insert(factionIndices, tonumber(id))
+        end
+    end
 
     for _, index in pairs(factionIndices) do
         local faction = Faction(index)

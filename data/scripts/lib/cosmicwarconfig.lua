@@ -99,3 +99,6 @@ end
 function CosmicWarConfig.get()
     return build()
 end
+
+-- Explicitly return the table so scripts using local variable captures do not crash
+return CosmicWarConfig
