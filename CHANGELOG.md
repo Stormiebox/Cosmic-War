@@ -3,10 +3,11 @@
 ## [1.1.0] - 2026-05-18
 
 ### Added
-- **Dynamic War Contracts:** Added four brand new, heat-scaling combat missions dynamically injected into station Bulletin Boards:
+- **Dynamic War Contracts:** Added five brand new, heat-scaling combat missions dynamically injected into station Bulletin Boards:
   - *Operation: Interception* (Offense, Heat > 0.45): Intercept an enemy supply convoy.
   - *Operation: Breakthrough* (Defense, Heat > 0.45): Protect an allied convoy while its hyperdrive spools.
   - *Operation: Frontline Siege* (Escalation, Heat > 0.60): Destroy a heavily-scaled enemy Forward Operating Base (FOB) that actively calls in reinforcements.
+  - *Operation: High-Value Extraction* (Survival, Heat > 0.80): Survive waves of elite hunters while a high-ranking enemy officer defects.
   - *Operation: Decapitation Strike* (Climax, Heat = 1.00): Face an astronomically scaled enemy Flagship Dreadnought. Destroying it instantly forces a ceasefire and resets relations between the two warring factions.
 
 ### Changed
