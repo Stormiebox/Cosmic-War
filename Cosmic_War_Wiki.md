@@ -274,7 +274,10 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
-- `data/scripts/entity/bulletinboard.lua`
+- `data/scripts/entity/bulletinboardmissions.lua`
+- `data/scripts/player/missions/cw_forcerecon.lua`
+- `data/scripts/player/missions/cw_borderskirmish.lua`
+- `data/scripts/player/missions/cw_resourcesabotage.lua`
 - `data/scripts/player/missions/cw_interception.lua`
 - `data/scripts/player/missions/cw_breakthrough.lua`
 - `data/scripts/player/missions/cw_frontlinesiege.lua`
@@ -282,13 +285,39 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 - `data/scripts/player/missions/cw_decapitationstrike.lua`
 
 **What it does:**
-Injects custom, highly-scaled combat missions directly into station Bulletin Boards based on the current macro-level **War Heat** between the station's owner and their rival faction.
+Injects custom, highly-scaled combat missions directly into Avorion's native Bulletin Board mission pools based on the current macro-level **War Heat** between the station's owner and their rival faction.
 
 **Available Contracts:**
+- **War Heat > 0.15:** *Force Recon* (Scout a hostile listening post).
+- **War Heat > 0.25:** *Border Skirmish* (Eliminate an enemy border patrol).
+- **War Heat > 0.35:** *Resource Sabotage* (Destroy an enemy mining operation).
 - **War Heat > 0.45:** *Interception* (Destroy enemy supply convoy) & *Breakthrough* (Defend allied supply convoy).
 - **War Heat > 0.60:** *Frontline Siege* (Assault a dynamically scaled enemy Forward Operating Base).
 - **War Heat > 0.80:** *High-Value Extraction* (Holdout survival while an enemy defector charges their hyperdrive).
 - **War Heat = 1.00:** *Decapitation Strike* (Ultra-hard Flagship Boss. Destroying it forces an immediate ceasefire).
+</details>
+
+### 14) Dynamic War Events (Flashpoints)
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:**
+- `data/scripts/player/eventscheduler.lua`
+- `data/scripts/events/cw_fleetclash.lua`
+- `data/scripts/events/cw_refugeeconvoy.lua`
+- `data/scripts/events/cw_strandedflagship.lua`
+- `data/scripts/events/cw_armsdeal.lua`
+- `data/scripts/events/cw_diplomaticsabotage.lua`
+
+**What it does:**
+Injects new spontaneous events into Avorion's global event scheduler. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation.
+
+**Available Events:**
+- **Fleet Clash (Heat > 0.60):** Massive enemy strike fleets jump into active AI sectors.
+- **Refugee Convoy (Heat > 0.40):** Civilian freighters are ambushed by hunter fleets.
+- **Stranded Flagship (Heat > 0.80):** A severely damaged dreadnought boss is discovered vulnerable, with a repair fleet en route.
+- **Arms Deal (Heat > 0.20):** An illegal weapon transaction occurs, dropping high-rarity turrets if interrupted.
+- **Diplomatic Sabotage (Heat > 0.20):** Extremists attack a peace envoy. Saving the envoy provides massive reputation.
 </details>
 
 ---

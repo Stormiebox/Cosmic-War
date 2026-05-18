@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0] - 2026-05-18
+
+### Added
+- **Early-Conflict Missions:** Added three new dynamic contracts for early war escalation (Heat 0.15 - 0.35):
+  - *Operation: Force Recon* (Heat > 0.15): Scout a hostile listening post without being destroyed.
+  - *Operation: Border Skirmish* (Heat > 0.25): Intercept and eliminate a small enemy border patrol.
+  - *Operation: Resource Sabotage* (Heat > 0.35): Cripple the enemy's economy by destroying a mining operation.
+- **Dynamic War Events (Flashpoints):** Injected five brand new, heat-scaling random events into the global exploration pool. You will now stumble upon live conflict scenarios while traveling through space:
+  - *Fleet Clash Flashpoint* (Heat > 0.60): A massive enemy invasion fleet jumps into an active AI-controlled sector.
+  - *Refugee Convoy Interception* (Heat > 0.40): Protect a fleeing civilian convoy from a ruthless hunter fleet until their hyperdrives charge.
+  - *The Stranded Flagship* (Heat > 0.80): Stumble upon a heavily damaged Dreadnought boss and destroy it before its repair fleet arrives!
+  - *Black Market Arms Deal* (Heat > 0.20): Intercept a covert arms deal to secure high-rarity Exceptional/Exotic turrets.
+  - *Diplomatic Sabotage* (Heat > 0.20): Defend a peace envoy from extremist saboteurs attempting to prevent a ceasefire.
+
+### Changed
+- **Bulletin Board Refactor:** Completely removed the custom ticking loop in `bulletinboard.lua`. Cosmic War now seamlessly injects its dynamic contracts directly into Avorion's native `bulletinboardmissions.lua` pool. This improves background performance and correctly triggers custom dialogue messages when players accept war contracts.
+
 ## [1.1.0] - 2026-05-18
 
 ### Added
