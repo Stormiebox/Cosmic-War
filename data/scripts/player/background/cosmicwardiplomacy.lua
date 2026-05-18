@@ -45,18 +45,17 @@ local function cwlog(msg, ...)
 end
 
 local function getWarFactionCandidates()
-    local galaxy = Galaxy()
-    if not galaxy then return {} end
+    local server = Server()
+    if not server then return {} end
+
+    if not server:getValue("factions_ready") then return {} end
 
     local out = {}
-    local factions = {}
-    if galaxy.getFactions then
-        factions = { galaxy:getFactions() }
-    elseif galaxy.getPirateFactions then
-        factions = { galaxy:getPirateFactions() }
-    end
+    local factionIndices = server:getValue("factions")
+    if type(factionIndices) ~= "table" then return out end
 
-    for _, f in pairs(factions) do
+    for _, index in pairs(factionIndices) do
+        local f = Faction(index)
         if f and f.isAIFaction and f:getValue("cw_enabled") then
             table.insert(out, f)
         end

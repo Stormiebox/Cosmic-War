@@ -25,7 +25,7 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 
 **Core Goals:**
 1. **Active Politics:** Make galaxy politics feel dynamic and alive instead of static.
-2. **Sustained Cycles:** Produce meaningful war and cooling cycles over long campaign sessions.
+2. **Sustained Cycles:** Produce meaningful war and cooling cycles over long campaign sessions via scripts properly attached to the global `Galaxy` loop.
 3. **Player Visibility:** Surface war-state consequences directly to players via news broadcasts, bounties, and sanctions pressure.
 4. **Configurability:** Remain highly configurable and server-operator friendly through the Mod Configuration Menu (MCM).
 5. **Safe Compatibility:** Preserve ecosystem compatibility by favoring non-invasive wrappers and safety guards over hard overwrites.
@@ -237,8 +237,9 @@ Requires the **Mod Configuration Menu (MCM)**.
 <summary><b>Click to expand details</b></summary>
 
 Recent iterations include:
-- Safer startup behavior during early server lifecycles.
-- Callable guards around faction-fetch paths.
+- Safer startup behavior during early server lifecycles by waiting for the **Cosmic Vault** `factions_ready` flag before running simulation steps.
+- Absolute abandonment of expensive `Galaxy():getFactions()` loops in favor of the performant, shared Cosmic Vault index cache (`Server():getValue("factions")`).
+- Corrected global simulation attachment (`galaxy/init.lua` instead of `server/init.lua`).
 - Defensive checks in background loops.
 
 **Gameplay/Ops Impact:**
@@ -274,6 +275,7 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 
 ### Multiplayer / Dedicated Server Behavior
 - Avorion's simulation is server-authoritative. **Cosmic War** logic is predominantly server-side with synchronization-aware behavior implemented where needed.
+- Global background loops (like news, sanctions, and ceasefires) are strictly attached to the `Galaxy()` component to ensure proper headless execution.
 - In mixed mod stacks, maintain consistent configuration and load order. Validate logs at startup to catch any issues early.
 
 ### Performance & Safety Notes
@@ -288,6 +290,7 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 ### Required Mods
 - Avorion
 - **Mod Configuration Menu (MCM)**
+- **Cosmic Vault** (Provides the underlying faction index API and shared data contracts).
 
 ### Compatibility Intent
 - Built to seamlessly coexist with **Cosmic Overhaul**.

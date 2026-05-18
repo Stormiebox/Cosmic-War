@@ -17,11 +17,15 @@ local function collectStatus()
     end
     local now = server.unpausedRuntime or 0
 
-    -- Using the faction database ids and resolved each via Faction(index).
+    local factionsReady = server:getValue("factions_ready")
+    if not factionsReady then
+        return nil, "Faction index initializing."
+    end
+
     local factions = {}
     local factionIndices = server:getValue("factions") -- expected: table<int> or nils
-    if type(factionIndices) ~= "table" then
-        return nil, "Faction database not ready"
+    if type(factionIndices) ~= "table" or #factionIndices == 0 then
+        return nil, "No indexed factions yet."
     end
 
     for _, index in pairs(factionIndices) do
@@ -53,7 +57,6 @@ local function collectStatus()
                     local left = math.min(f.index, enemyFaction.index)
                     local right = math.max(f.index, enemyFaction.index)
                     local key = tostring(left) .. ":" .. tostring(right)
-                    uniquePairs[key] = true
 
                     local reverseEnemy = enemyFaction:getValue("enemy_faction") or 0
                     if reverseEnemy == f.index and not mirroredKeys[key] then
@@ -61,12 +64,15 @@ local function collectStatus()
                         mirroredPairs = mirroredPairs + 1
                     end
 
-                    local rel = f:getRelations(enemyFaction.index) or 0
-                    table.insert(hot, {
-                        a = f.name or ("Faction " .. tostring(f.index)),
-                        b = enemyFaction.name or ("Faction " .. tostring(enemyFaction.index)),
-                        rel = rel
-                    })
+                    if not uniquePairs[key] then
+                        uniquePairs[key] = true
+                        local rel = f:getRelations(enemyFaction.index) or 0
+                        table.insert(hot, {
+                            a = f.name or ("Faction " .. tostring(f.index)),
+                            b = enemyFaction.name or ("Faction " .. tostring(enemyFaction.index)),
+                            rel = rel
+                        })
+                    end
                 end
             end
 

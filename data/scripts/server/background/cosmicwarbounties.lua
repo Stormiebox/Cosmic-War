@@ -7,8 +7,15 @@ include("cosmicvaultdebug")
 -- namespace CosmicWarBounties
 CosmicWarBounties = {}
 
+local function getCfg()
+    if CosmicWarConfig and CosmicWarConfig.get then
+        return CosmicWarConfig.get()
+    end
+    return { debugLogs = false, rivalryThreshold = -45000, bountyInterval = 600 }
+end
+
 function CosmicWarBounties.getUpdateInterval()
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     return cfg.bountyInterval or 600 -- every 10 minutes
 end
 
@@ -18,9 +25,9 @@ local function cwlog(msg, ...)
         return
     end
 
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     if not cfg.debugLogs then return end
-    print("[Cosmic War][Bounties] " .. msg, ...)
+    print("[Cosmic War][Bounties] " .. string.format(msg, ...))
 end
 
 local function getGalaxyFactions(server)
@@ -50,7 +57,7 @@ function CosmicWarBounties.update(timeStep)
     if #factions < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 60))
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     local rivalryThreshold = cfg.rivalryThreshold or -45000
 
     local spawned = 0

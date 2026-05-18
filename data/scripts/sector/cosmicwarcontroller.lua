@@ -42,7 +42,7 @@ local function cwlog(msg, ...)
 
     local cfg = getCfg()
     if not cfg.debugLogs then return end
-    print("[Cosmic War][Sector] " .. msg, ...)
+    print("[Cosmic War][Sector] " .. string.format(msg, ...))
 end
 
 local function getFactionByIndex(index)
@@ -53,6 +53,9 @@ end
 local function getAliveWarFactionsInSector()
     local sector = Sector()
     local entities = { sector:getEntitiesByType(EntityType.Ship) }
+    for _, s in pairs({ sector:getEntitiesByType(EntityType.Station) }) do
+        table.insert(entities, s)
+    end
     local present = {}
 
     for _, e in pairs(entities) do

@@ -8,8 +8,15 @@ include("cosmicvaultdebug")
 -- namespace CosmicWarCeasefires
 CosmicWarCeasefires = {}
 
+local function getCfg()
+    if CosmicWarConfig and CosmicWarConfig.get then
+        return CosmicWarConfig.get()
+    end
+    return { debugLogs = false, rivalryThreshold = -45000, ceasefireInterval = 900, ceasefireChance = 0.25 }
+end
+
 function CosmicWarCeasefires.getUpdateInterval()
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     return cfg.ceasefireInterval or 900 -- every 15 minutes
 end
 
@@ -19,9 +26,9 @@ local function cwlog(msg, ...)
         return
     end
 
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     if not cfg.debugLogs then return end
-    print("[Cosmic War][Ceasefire] " .. msg, ...)
+    print("[Cosmic War][Ceasefire] " .. string.format(msg, ...))
 end
 
 local function getGalaxyFactions(server)
@@ -51,10 +58,11 @@ function CosmicWarCeasefires.update(timeStep)
     if #factions < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 180))
-    local cfg = CosmicWarConfig.get()
+    local cfg = getCfg()
     local rivalryThreshold = cfg.rivalryThreshold or -45000
 
     local eased = 0
+    local processedPairs = {}
 
     for _, a in pairs(factions) do
         if a and a.isAIFaction and a:getValue("cw_enabled") then
@@ -62,25 +70,33 @@ function CosmicWarCeasefires.update(timeStep)
             if enemyIndex and enemyIndex > 0 then
                 local b = Faction(enemyIndex)
                 if b and b.isAIFaction then
-                    local rel = a:getRelations(b.index) or 0
+                    local left = math.min(a.index, b.index)
+                    local right = math.max(a.index, b.index)
+                    local pairKey = tostring(left) .. ":" .. tostring(right)
 
-                    -- If relationship has recovered above rivalry threshold, allow détente chance.
-                    local ceasefireChance = cfg.ceasefireChance or 0.25
-                    if rel > rivalryThreshold and random:test(ceasefireChance) then
-                        local gain = random:getInt(2000, 6000)
-                        changeRelations(a, b, gain, RelationChangeType.Diplomatic, true, true, nil)
+                    if not processedPairs[pairKey] then
+                        processedPairs[pairKey] = true
 
-                        a:setValue("enemy_faction", 0)
-                        a:setValue("cw_target_faction", 0)
+                        local rel = a:getRelations(b.index) or 0
 
-                        if (b:getValue("enemy_faction") or 0) == a.index then
-                            b:setValue("enemy_faction", 0)
+                        -- If relationship has recovered above rivalry threshold, allow détente chance.
+                        local ceasefireChance = cfg.ceasefireChance or 0.25
+                        if rel > rivalryThreshold and random:test(ceasefireChance) then
+                            local gain = random:getInt(2000, 6000)
+                            changeRelations(a, b, gain, RelationChangeType.Diplomatic, true, true, nil)
+
+                            a:setValue("enemy_faction", 0)
+                            a:setValue("cw_target_faction", 0)
+
+                            if (b:getValue("enemy_faction") or 0) == a.index then
+                                b:setValue("enemy_faction", 0)
+                            end
+                            if (b:getValue("cw_target_faction") or 0) == a.index then
+                                b:setValue("cw_target_faction", 0)
+                            end
+
+                            eased = eased + 1
                         end
-                        if (b:getValue("cw_target_faction") or 0) == a.index then
-                            b:setValue("cw_target_faction", 0)
-                        end
-
-                        eased = eased + 1
                     end
                 end
             end

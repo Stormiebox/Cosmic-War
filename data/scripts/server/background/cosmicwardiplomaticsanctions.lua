@@ -47,7 +47,7 @@ local function cwlog(msg, ...)
 
     local cfg = getCfg()
     if not cfg.debugLogs then return end
-    print("[Cosmic War][Sanctions] " .. msg, ...)
+    print("[Cosmic War][Sanctions] " .. string.format(msg, ...))
 end
 
 function CosmicWarDiplomaticSanctions.update(timeStep)

@@ -50,12 +50,10 @@ local function cwlog(msg, ...)
     print("[Cosmic War][News] " .. msg, ...)
 end
 
-local function collectHotConflicts()
-    local server = Server()
-    if not server then return {} end
-
+local function collectHotConflicts(server)
     local factions = getGalaxyFactions(server)
     local hot = {}
+    local processedPairs = {}
 
     for _, a in pairs(factions) do
         if a and a.isAIFaction and a:getValue("cw_enabled") then
@@ -63,9 +61,17 @@ local function collectHotConflicts()
             if enemy and enemy > 0 then
                 local b = Faction(enemy)
                 if b and b.isAIFaction then
-                    local rel = a:getRelations(b.index) or 0
-                    if rel <= -35000 then
-                        table.insert(hot, { a = a, b = b, rel = rel })
+                    local left = math.min(a.index, b.index)
+                    local right = math.max(a.index, b.index)
+                    local pairKey = tostring(left) .. ":" .. tostring(right)
+
+                    if not processedPairs[pairKey] then
+                        processedPairs[pairKey] = true
+
+                        local rel = a:getRelations(b.index) or 0
+                        if rel <= -35000 then
+                            table.insert(hot, { a = a, b = b, rel = rel })
+                        end
                     end
                 end
             end
@@ -78,26 +84,29 @@ end
 function CosmicWarNews.update(timeStep)
     if not onServer() then return end
 
-    local conflicts = collectHotConflicts()
+    local server = Server()
+    if not server then return end
+
+    local conflicts = collectHotConflicts(server)
     if #conflicts == 0 then return end
 
-    local random = Random(Server().seed + math.floor(Server().unpausedRuntime / 60) * 17)
+    local random = Random(server.seed + math.floor(server.unpausedRuntime / 60) * 17)
     local pick = conflicts[random:getInt(1, #conflicts)]
     if not pick then return end
 
     local templates =
     {
-        "War Bulletin: %s and %s relations deteriorated to %d." % _t,
-        "Conflict Watch: %s and %s are entering open hostility (%d)." % _t,
-        "Strategic Alert: tensions between %s and %s reached %d." % _t,
+        "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}." % _t,
+        "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})." % _t,
+        "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}." % _t,
     }
 
     local template = templates[random:getInt(1, #templates)] or templates[1]
-    local msg = string.format(template,
-        pick.a.name or ("Faction " .. tostring(pick.a.index)),
-        pick.b.name or ("Faction " .. tostring(pick.b.index)),
-        pick.rel
-    )
+    local msg = template % {
+        factionA = pick.a.name or ("Faction " .. tostring(pick.a.index)),
+        factionB = pick.b.name or ("Faction " .. tostring(pick.b.index)),
+        rel = pick.rel
+    }
 
     -- Server-wide chat style bulletin
     Server():broadcastChatMessage("Cosmic War", ChatMessageType.Information, msg)
