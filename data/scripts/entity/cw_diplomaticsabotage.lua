@@ -46,18 +46,17 @@ function CW_DiplomaticSabotageEvent.spawn()
 
     local generator = SectorGenerator(x, y)
     local envoy = ShipGenerator.createFreighterShip(envoyFaction, generator:createPositionInSector())
-    envoy.title = "Diplomatic Envoy"%_t
+    envoy.title = "Diplomatic Envoy"%_T
     envoy:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     CW_DiplomaticSabotageEvent.envoyId = envoy.id
 
     sector:broadcastChatMessage(envoyFaction.name, ChatMessageType.Warning,
-        "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!" %
-        _t)
+        "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!"%_T)
 
     local numAttackers = random():getInt(3, 5)
     for i = 1, numAttackers do
         local attacker = ShipGenerator.createMilitaryShip(pirateFaction, generator:createPositionInSector())
-        attacker.title = "Hardliner Extremist"%_t
+        attacker.title = "Hardliner Extremist"%_T
         attacker.name = "Saboteur"
         ShipAI(attacker.index):setAggressive()
         attacker:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
@@ -70,7 +69,7 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
     local envoy = Sector():getEntity(CW_DiplomaticSabotageEvent.envoyId)
     if envoy then
         Player():sendChatMessage(Faction(CW_DiplomaticSabotageEvent.envoyFactionId).name, ChatMessageType.Information,
-            "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_t)
+            "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_T)
         Sector():deleteEntityJumped(envoy)
     end
     terminate()

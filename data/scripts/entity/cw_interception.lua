@@ -11,7 +11,7 @@ local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
-mission._Name = "War Contract: Interception"
+mission._Name = "War Contract: Interception"%_T
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
@@ -58,13 +58,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a war contract from ${giver}."%_t % { giver = giverFaction.name },
-            "Intercept and destroy the supply convoy belonging to ${enemy}."%_t % { enemy = enemyName },
-            { text = "Head to sector (${location.x}:${location.y})", bulletPoint = true, fulfilled = false },
-            { text = "Destroy the convoy",                           bulletPoint = true, fulfilled = false, visible = false }
+            "You accepted a war contract from ${giver}."%_T % { giver = giverFaction.name },
+            "Intercept and destroy the supply convoy belonging to ${enemy}."%_T % { enemy = enemyName },
+            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the convoy"%_T,                           bulletPoint = true, fulfilled = false, visible = false }
         }
 
         -- Establish reward based on current Cosmic War Heat level
@@ -77,7 +77,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 6000,
-            paymentMessage = "Target destroyed. Contract payment transferred."%_t
+            paymentMessage = "Target destroyed. Contract payment transferred."%_T
         }
 
         cw_interception_init(factionIndex)
@@ -105,7 +105,7 @@ end
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
-        Player():sendChatMessage(giverFaction.name, 0, "We're tracking the convoy on your sensors. Take them out!"%_t)
+        Player():sendChatMessage(giverFaction.name, 0, "We're tracking the convoy on your sensors. Take them out!"%_T)
     end
 end
 

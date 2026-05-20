@@ -11,7 +11,7 @@ local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
-mission._Name = "War Contract: Resource Sabotage"
+mission._Name = "War Contract: Resource Sabotage"%_T
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
@@ -54,14 +54,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a sabotage contract from ${giver}."%_t % { giver = giverFaction.name },
-            "A mining fleet from ${enemy} has set up an extraction operation. Wipe them out."%_t %
-            { enemy = enemyName },
-            { text = "Head to sector (${location.x}:${location.y})", bulletPoint = true, fulfilled = false },
-            { text = "Destroy the mining operation",                 bulletPoint = true, fulfilled = false, visible = false }
+            "You accepted a sabotage contract from ${giver}."%_T % { giver = giverFaction.name },
+            "A mining fleet from ${enemy} has set up an extraction operation. Wipe them out."%_T % { enemy = enemyName },
+            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the mining operation"%_T,                 bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = 0
@@ -75,8 +74,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 5000,
-            paymentMessage =
-            "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."%_t
+            paymentMessage = "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."%_T
         }
 
         cw_sabotage_init(factionIndex)

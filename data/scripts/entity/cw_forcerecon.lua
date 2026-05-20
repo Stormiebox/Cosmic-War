@@ -11,7 +11,7 @@ local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
-mission._Name = "War Contract: Force Recon"
+mission._Name = "War Contract: Force Recon"%_T
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
@@ -54,13 +54,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a Force Recon contract from ${giver}."%_t % { giver = giverFaction.name },
-            "Locate and scan the Covert Listening Post belonging to ${enemy}."%_t % { enemy = enemyName },
-            { text = "Head to sector (${location.x}:${location.y})",                   bulletPoint = true, fulfilled = false },
-            { text = "Stay within 6km of the Listening Post until the scan completes", bulletPoint = true, fulfilled = false, visible = false }
+            "You accepted a Force Recon contract from ${giver}."%_T % { giver = giverFaction.name },
+            "Locate and scan the Covert Listening Post belonging to ${enemy}."%_T % { enemy = enemyName },
+            { text = "Head to sector (${location.x}:${location.y})"%_T,                   bulletPoint = true, fulfilled = false },
+            { text = "Stay within 6km of the Listening Post until the scan completes"%_T, bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = 0
@@ -72,7 +72,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 3000,
-            paymentMessage = "Data received loud and clear. Good work out there, captain. Payment transferred."%_t
+            paymentMessage = "Data received loud and clear. Good work out there, captain. Payment transferred."%_T
         }
 
         cw_forcerecon_init(factionIndex)
@@ -106,7 +106,7 @@ mission.phases[1].updateServer = function(timeStep)
 
     if not station then
         Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 1,
-            "The Listening Post was destroyed before we could extract the intel! The contract is void."%_t)
+            "The Listening Post was destroyed before we could extract the intel! The contract is void."%_T)
         fail()
         return
     end
@@ -121,7 +121,7 @@ mission.phases[1].updateServer = function(timeStep)
         if not mission.data.custom.scanning then
             mission.data.custom.scanning = true
             Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-                "You are in range. Establishing data link... Stay close!"%_t)
+                "You are in range. Establishing data link... Stay close!"%_T)
         end
 
         mission.data.custom.scanTimer = (mission.data.custom.scanTimer or 0) + timeStep
@@ -135,7 +135,7 @@ mission.phases[1].updateServer = function(timeStep)
         if mission.data.custom.scanning then
             mission.data.custom.scanning = false
             Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 1,
-                "Data link lost! You are too far away from the station!"%_t)
+                "Data link lost! You are too far away from the station!"%_T)
         end
     end
 end
@@ -145,7 +145,7 @@ function spawnReconTarget(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
     local station = generator:createStation(enemyFaction, "data/scripts/entity/merchants/sensorarray.lua")
-    station:setTitle("Covert Listening Post"%_t, {})
+    station:setTitle("Covert Listening Post"%_T, {})
     station:setValue("cw_recon_target", true)
 
     local numDefenders = random():getInt(1, 3)

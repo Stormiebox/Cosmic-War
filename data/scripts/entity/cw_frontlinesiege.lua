@@ -11,7 +11,7 @@ local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
-mission._Name = "War Contract: Frontline Siege"
+mission._Name = "War Contract: Frontline Siege"%_T
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
@@ -59,13 +59,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a siege contract from ${giver}."%_t % { giver = giverFaction.name },
-            "${enemy} has established a Forward Operating Base (FOB) in a nearby sector."%_t % { enemy = enemyName },
-            { text = "Jump to sector (${location.x}:${location.y})", bulletPoint = true, fulfilled = false },
-            { text = "Destroy the Forward Operating Base",           bulletPoint = true, fulfilled = false, visible = false }
+            "You accepted a siege contract from ${giver}."%_T % { giver = giverFaction.name },
+            "${enemy} has established a Forward Operating Base (FOB) in a nearby sector."%_T % { enemy = enemyName },
+            { text = "Jump to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the Forward Operating Base"%_T,           bulletPoint = true, fulfilled = false, visible = false }
         }
 
         -- Massive payout. Scales up to 4x base depending on War Heat
@@ -73,7 +73,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 12000,
-            paymentMessage = "Target destroyed. Excellent work, commander. Payment transferred."%_t
+            paymentMessage = "Target destroyed. Excellent work, commander. Payment transferred."%_T
         }
 
         cw_frontlinesiege_init(factionIndex)
@@ -101,7 +101,7 @@ end
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if enemyFaction then
-        Player():sendChatMessage(enemyFaction.name, 1, "We are under attack! Scramble all defenders!"%_t)
+        Player():sendChatMessage(enemyFaction.name, 1, "We are under attack! Scramble all defenders!"%_T)
     end
 end
 
@@ -138,7 +138,7 @@ function spawnSiegeTarget(x, y)
     -- Create a standard military base
     local station = generator:createMilitaryBase(enemyFaction)
 
-    station:setTitle("Forward Operating Base"%_t, {})
+    station:setTitle("Forward Operating Base"%_T, {})
     station:setValue("cw_siege_target", true)
 
     -- Scale HP based on War Heat
@@ -174,7 +174,7 @@ function spawnReinforcements()
         ShipAI(ship):setAggressive()
     end
 
-    Player():sendChatMessage(enemyFaction.name, 1, "Reinforcements have arrived! Destroy the attackers!"%_t)
+    Player():sendChatMessage(enemyFaction.name, 1, "Reinforcements have arrived! Destroy the attackers!"%_T)
 end
 
 function finishAndReward()

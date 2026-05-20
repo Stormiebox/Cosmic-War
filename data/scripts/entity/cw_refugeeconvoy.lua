@@ -61,8 +61,7 @@ function CW_RefugeeConvoyEvent.spawn()
     end
 
     sector:broadcastChatMessage(victimFaction.name, ChatMessageType.Warning,
-        "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!" %
-        _t)
+        "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"%_T)
 
     deferredCallback(12.0, "spawnHunters")
     deferredCallback(90.0, "escapeTransports")
@@ -79,7 +78,7 @@ function CW_RefugeeConvoyEvent.spawnHunters()
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
     Sector():broadcastChatMessage(attackerFaction.name, ChatMessageType.Warning,
-        "Target acquired. Leave no survivors."%_t)
+        "Target acquired. Leave no survivors."%_T)
 end
 
 function CW_RefugeeConvoyEvent.escapeTransports()
@@ -92,7 +91,7 @@ function CW_RefugeeConvoyEvent.escapeTransports()
     end
     if survived > 0 then
         Player():sendChatMessage(Faction(CW_RefugeeConvoyEvent.victimId).name, ChatMessageType.Information,
-            "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_t)
+            "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_T)
     end
     terminate()
 end

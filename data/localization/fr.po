@@ -1,0 +1,539 @@
+# ==========data/scripts/entity/bulletinboardmissions.lua ==========
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_forcerecon.lua:
+msgid "War Contract: Force Recon"
+msgstr "Contrat de guerre : Reconnaissance en force"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel."
+msgstr "Les tensions montent. Nous avons besoin d'un capitaine discret pour explorer un secteur hostile et recueillir des renseignements."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "This is a reconnaissance operation. Get in, gather the intel, and get out in one piece."
+msgstr "C'est une opération de reconnaissance. Entrez, recueillez les renseignements, et ressortez en un seul morceau."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_borderskirmish.lua:
+msgid "War Contract: Border Skirmish"
+msgstr "Contrat de guerre : Escarmouche frontalière"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Border disputes are getting violent. Intercept and eliminate an enemy border patrol."
+msgstr "Les conflits frontaliers deviennent violents. Interceptez et éliminez une patrouille frontalière ennemie."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Take out their patrol. We need to show them we won't be intimidated."
+msgstr "Éliminez leur patrouille. Nous devons leur montrer que nous ne nous laisserons pas intimider."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_resourcesabotage.lua:
+msgid "War Contract: Resource Sabotage"
+msgstr "Contrat de guerre : Sabotage de ressources"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "A hostile mining operation is extracting resources in contested space. Put an end to it."
+msgstr "Une opération minière hostile extrait des ressources dans l'espace contesté. Mettez-y un terme."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Crippling their resource flow now will save our fleets later. Destroy those miners."
+msgstr "Paralyser leur flux de ressources maintenant sauvera nos flottes plus tard. Détruisez ces mineurs."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_interception.lua:
+msgid "War Contract: Interception"
+msgstr "Contrat de guerre : Interception"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Conflict has intensified. Intercept hostile supply movement in nearby sectors."
+msgstr "Le conflit s'est intensifié. Interceptez les mouvements de ravitaillement hostiles dans les secteurs voisins."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "We need skilled captains to strike enemy supply lines immediately."
+msgstr "Nous avons besoin de capitaines qualifiés pour frapper immédiatement les lignes de ravitaillement ennemies."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_breakthrough.lua:
+msgid "War Contract: Breakthrough"
+msgstr "Contrat de guerre : Percée"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "We have a critical supply convoy moving through contested space. Defend them until they can jump."
+msgstr "Nous avons un convoi de ravitaillement critique qui traverse l'espace contesté. Défendez-les jusqu'à ce qu'ils puissent sauter."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Our convoy is vulnerable. We need a capable escort to ensure they make it."
+msgstr "Notre convoi est vulnérable. Nous avons besoin d'une escorte capable de s'assurer qu'ils y parviennent."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_frontlinesiege.lua:
+msgid "War Contract: Frontline Siege"
+msgstr "Contrat de guerre : Siège de première ligne"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "The enemy has established a Forward Operating Base. We need it destroyed."
+msgstr "L'ennemi a établi une base d'opérations avancée. Nous devons la détruire."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Command has authorized a strike on an enemy FOB. Are you ready to lead the assault?"
+msgstr "Le commandement a autorisé une frappe sur une FOB ennemie. Êtes-vous prêt à mener l'assaut ?"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "War Contract: High-Value Extraction"
+msgstr "Contrat de guerre : Extraction de haute valeur"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "A high-ranking enemy officer is defecting to our side. We need you to extract them safely."
+msgstr "Un officier ennemi de haut rang fait défection de notre côté. Nous avons besoin que vous l'extrayiez en toute sécurité."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "This is a highly classified operation. Extract the defector at all costs. Expect heavy resistance."
+msgstr "Il s'agit d'une opération hautement classifiée. Extrayez le transfuge à tout prix. Attendez-vous à une forte résistance."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_decapitationstrike.lua:
+msgid "War Contract: Decapitation Strike"
+msgstr "Contrat de guerre : Frappe de décapitation"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "The enemy Flagship has entered the sector. This is our chance to end the war."
+msgstr "Le vaisseau amiral ennemi est entré dans le secteur. C'est notre chance de mettre fin à la guerre."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."
+msgstr "Attention : C'est une mission suicide. Le vaisseau amiral ennemi est lourdement armé et escorté. N'acceptez pas à moins d'avoir une flotte."
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Extreme"
+msgstr "Extrême"
+
+
+# ==========data/scripts/entity/cosmicwarnews.lua ==========
+#: data/scripts/entity/cosmicwarnews.lua:
+#: data/scripts/server/background/cosmicwarnews.lua:
+msgid "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."
+msgstr "Bulletin de guerre : Les relations entre ${factionA} et ${factionB} se sont détériorées pour atteindre ${rel}."
+
+#: data/scripts/entity/cosmicwarnews.lua:
+#: data/scripts/server/background/cosmicwarnews.lua:
+msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."
+msgstr "Alerte de conflit : ${factionA} et ${factionB} entrent en hostilité ouverte (${rel})."
+
+#: data/scripts/entity/cosmicwarnews.lua:
+#: data/scripts/server/background/cosmicwarnews.lua:
+msgid "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."
+msgstr "Alerte stratégique : Les tensions entre ${factionA} et ${factionB} ont atteint ${rel}."
+
+#: data/scripts/entity/cosmicwarnews.lua:
+msgid "Cosmic War"
+msgstr "Guerre Cosmique"
+
+
+# ==========data/scripts/entity/cw_armsdeal.lua ==========
+#: data/scripts/entity/cw_armsdeal.lua:
+#: data/scripts/events/cw_armsdeal.lua:
+msgid "Covert Operative"
+msgstr "Agent secret"
+
+#: data/scripts/entity/cw_armsdeal.lua:
+#: data/scripts/events/cw_armsdeal.lua:
+msgid "Black Market Dealer"
+msgstr "Revendeur du marché noir"
+
+#: data/scripts/entity/cw_armsdeal.lua:
+#: data/scripts/events/cw_armsdeal.lua:
+msgid "We have company! The arms deal is compromised! Eradicate all witnesses!"
+msgstr "Nous avons de la compagnie ! Le marché d'armes est compromis ! Éliminez tous les témoins !"
+
+
+# ==========data/scripts/entity/cw_borderskirmish.lua ==========
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "hostiles"
+msgstr "ennemis"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+msgid "You accepted a skirmish contract from ${giver}."
+msgstr "Vous avez accepté un contrat d'escarmouche de la part de ${giver}."
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+msgid "Intercept and eliminate the border patrol belonging to ${enemy}."
+msgstr "Interceptez et éliminez la patrouille frontalière appartenant à ${enemy}."
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/entity/cw_resourcesabotage.lua:
+msgid "Head to sector (${location.x}:${location.y})"
+msgstr "Rendez-vous dans le secteur (${location.x}:${location.y})"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+msgid "Destroy the patrol"
+msgstr "Détruisez la patrouille"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+msgid "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."
+msgstr "Patrouille éliminée. Nous ne nous laisserons pas intimider sur nos propres frontières. Paiement transféré."
+
+
+# ==========data/scripts/entity/cw_breakthrough.lua ==========
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "You accepted an escort contract from ${giver}."
+msgstr "Vous avez accepté un contrat d'escorte de la part de ${giver}."
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "Defend their supply convoy from ${enemy} interceptors."
+msgstr "Défendez leur convoi de ravitaillement contre les intercepteurs de ${enemy}."
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/entity/cw_frontlinesiege.lua:
+msgid "Jump to sector (${location.x}:${location.y})"
+msgstr "Sautez dans le secteur (${location.x}:${location.y})"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+msgid "Protect the convoy until they jump"
+msgstr "Protégez le convoi jusqu'à ce qu'il saute"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "Convoy has escaped. Contract payment transferred."
+msgstr "Le convoi s'est échappé. Paiement du contrat transféré."
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "We are charging our hyperdrives. Hold them off until we can jump!"
+msgstr "Nous chargeons nos hyperpropulseurs. Retenez-les jusqu'à ce que nous puissions sauter !"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "The convoy was completely destroyed! We are withdrawing your contract!"
+msgstr "Le convoi a été complètement détruit ! Nous retirons votre contrat !"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "Target acquired! Destroy the convoy!"
+msgstr "Cible verrouillée ! Détruisez le convoi !"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "All ships safely away! Excellent work, commander. We've added a bonus to your payment."
+msgstr "Tous les vaisseaux sont à l'abri ! Excellent travail, commandant. Nous avons ajouté un bonus à votre paiement."
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "We took losses, but the convoy is away. Sending payment now."
+msgstr "Nous avons subi des pertes, mais le convoi est à l'abri. Envoi du paiement en cours."
+
+
+# ==========data/scripts/entity/cw_decapitationstrike.lua ==========
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "You accepted a Decapitation Strike contract from ${giver}."
+msgstr "Vous avez accepté un contrat de frappe de décapitation de la part de ${giver}."
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "${enemy} has deployed their Flagship to the frontline. Destroy it to end this war."
+msgstr "${enemy} a déployé son vaisseau amiral sur la ligne de front. Détruisez-le pour mettre fin à cette guerre."
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+msgid "Destroy the Enemy Flagship"
+msgstr "Détruisez le vaisseau amiral ennemi"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."
+msgstr "Le vaisseau amiral ennemi est détruit ! Leur flotte est complètement anéantie ! Nous demandons immédiatement la paix."
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "You dare challenge our Dreadnought? We will crush you and your cowardly employers!"
+msgstr "Vous osez défier notre Dreadnought ? Nous allons vous écraser, vous et vos lâches employeurs !"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "Flagship Dreadnought"
+msgstr "Dreadnought Amiral"
+
+
+# ==========data/scripts/entity/cw_diplomaticsabotage.lua ==========
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
+msgid "Diplomatic Envoy"
+msgstr "Émissaire diplomatique"
+
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+msgid "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!"
+msgstr "Mayday ! Ici un émissaire de paix diplomatique ! Des extrémistes tentent de saboter les pourparlers de cessez-le-feu ! Nous avons besoin d'une assistance immédiate !"
+
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
+msgid "Hardliner Extremist"
+msgstr "Extrémiste pur et dur"
+
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
+msgid "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."
+msgstr "Merci ! Avec la disparition de ces extrémistes, nous pouvons passer au sommet de la paix. Nous vous devons la vie."
+
+
+# ==========data/scripts/entity/cw_fleetclash.lua ==========
+#: data/scripts/entity/cw_fleetclash.lua:
+msgid "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"
+msgstr "Attention ! Détection de la signature d'une flotte hostile massive sortant de l'hyperespace ! Tous les vaisseaux aux postes de combat !"
+
+
+# ==========data/scripts/entity/cw_forcerecon.lua ==========
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "You accepted a Force Recon contract from ${giver}."
+msgstr "Vous avez accepté un contrat de reconnaissance en force de la part de ${giver}."
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Locate and scan the Covert Listening Post belonging to ${enemy}."
+msgstr "Localisez et scannez le poste d'écoute clandestin appartenant à ${enemy}."
+
+#: data/scripts/entity/cw_forcerecon.lua:
+msgid "Stay within 6km of the Listening Post until the scan completes"
+msgstr "Restez dans un rayon de 6 km du poste d'écoute jusqu'à ce que le scan soit terminé"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Data received loud and clear. Good work out there, captain. Payment transferred."
+msgstr "Données reçues cinq sur cinq. Bon travail, capitaine. Paiement transféré."
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "The Listening Post was destroyed before we could extract the intel! The contract is void."
+msgstr "Le poste d'écoute a été détruit avant que nous puissions extraire les renseignements ! Le contrat est annulé."
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "You are in range. Establishing data link... Stay close!"
+msgstr "Vous êtes à portée. Établissement de la liaison de données... Restez près !"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Data link lost! You are too far away from the station!"
+msgstr "Liaison de données perdue ! Vous êtes trop loin de la station !"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Covert Listening Post"
+msgstr "Poste d'écoute clandestin"
+
+
+# ==========data/scripts/entity/cw_frontlinesiege.lua ==========
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "You accepted a siege contract from ${giver}."
+msgstr "Vous avez accepté un contrat de siège de la part de ${giver}."
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "${enemy} has established a Forward Operating Base (FOB) in a nearby sector."
+msgstr "${enemy} a établi une base d'opérations avancée (FOB) dans un secteur voisin."
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+msgid "Destroy the Forward Operating Base"
+msgstr "Détruisez la base d'opérations avancée"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "Target destroyed. Excellent work, commander. Payment transferred."
+msgstr "Cible détruite. Excellent travail, commandant. Paiement transféré."
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "We are under attack! Scramble all defenders!"
+msgstr "Nous sommes attaqués ! Déployez tous les défenseurs !"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "Forward Operating Base"
+msgstr "Base d'opérations avancée"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "Reinforcements have arrived! Destroy the attackers!"
+msgstr "Les renforts sont arrivés ! Détruisez les assaillants !"
+
+
+# ==========data/scripts/entity/cw_highvaluedefection.lua ==========
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "You accepted a classified extraction contract from ${giver}."
+msgstr "Vous avez accepté un contrat d'extraction classifié de la part de ${giver}."
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "A high-ranking officer from ${enemy} is attempting to defect."
+msgstr "Un officier de haut rang de ${enemy} tente de faire défection."
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "Rendezvous at sector (${location.x}:${location.y})"
+msgstr "Point de rendez-vous dans le secteur (${location.x}:${location.y})"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "Protect the defector until their hyperdrive charges"
+msgstr "Protégez le transfuge jusqu'à ce que son hyperpropulseur soit chargé"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."
+msgstr "Cible sécurisée. Vous avez porté un coup massif à la structure de commandement ennemie. Paiement transféré."
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!"
+msgstr "Dieu merci, vous êtes là. Mon hyperpropulseur est endommagé et a besoin de 3 minutes pour se recharger. Ne les laissez pas me prendre !"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "The defector's signal was lost... The mission is a failure."
+msgstr "Le signal du transfuge a été perdu... La mission est un échec."
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "Hold them off! Hyperdrive is at 60 seconds!"
+msgstr "Retenez-les ! L'hyperpropulseur est prêt dans 60 secondes !"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "Defecting Officer"
+msgstr "Officier transfuge"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "There is the traitor! Execute them immediately!"
+msgstr "Voilà le traître ! Exécutez-le immédiatement !"
+
+
+# ==========data/scripts/entity/cw_interception.lua ==========
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "You accepted a war contract from ${giver}."
+msgstr "Vous avez accepté un contrat de guerre de la part de ${giver}."
+
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "Intercept and destroy the supply convoy belonging to ${enemy}."
+msgstr "Interceptez et détruisez le convoi de ravitaillement appartenant à ${enemy}."
+
+#: data/scripts/entity/cw_interception.lua:
+msgid "Destroy the convoy"
+msgstr "Détruisez le convoi"
+
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "Target destroyed. Contract payment transferred."
+msgstr "Cible détruite. Paiement du contrat transféré."
+
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "We're tracking the convoy on your sensors. Take them out!"
+msgstr "Nous suivons le convoi sur vos capteurs. Éliminez-les !"
+
+
+# ==========data/scripts/entity/cw_refugeeconvoy.lua ==========
+#: data/scripts/entity/cw_refugeeconvoy.lua:
+msgid "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"
+msgstr "Mayday, mayday ! Ici un convoi de réfugiés civils ! Nous sommes traqués par une flotte de chasseurs ! À quiconque dans le secteur, aidez-nous jusqu'à ce que nos hyperpropulseurs soient chargés !"
+
+#: data/scripts/entity/cw_refugeeconvoy.lua:
+#: data/scripts/events/cw_refugeeconvoy.lua:
+msgid "Target acquired. Leave no survivors."
+msgstr "Cible verrouillée. Ne laissez aucun survivant."
+
+#: data/scripts/entity/cw_refugeeconvoy.lua:
+#: data/scripts/events/cw_refugeeconvoy.lua:
+msgid "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"
+msgstr "Merci ! Nos moteurs sont chargés et nous sautons en sécurité. Nous n'oublierons jamais ça !"
+
+
+# ==========data/scripts/entity/cw_resourcesabotage.lua ==========
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "You accepted a sabotage contract from ${giver}."
+msgstr "Vous avez accepté un contrat de sabotage de la part de ${giver}."
+
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "A mining fleet from ${enemy} has set up an extraction operation. Wipe them out."
+msgstr "Une flotte minière de ${enemy} a mis en place une opération d'extraction. Anéantissez-les."
+
+#: data/scripts/entity/cw_resourcesabotage.lua:
+msgid "Destroy the mining operation"
+msgstr "Détruisez l'opération minière"
+
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."
+msgstr "Opération minière détruite. Cela va certainement entamer leurs lignes de ravitaillement. Paiement transféré."
+
+
+# ==========data/scripts/entity/cw_strandedflagship.lua ==========
+#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
+msgid "Stranded Flagship"
+msgstr "Vaisseau amiral échoué"
+
+#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
+msgid "Ship Computer"
+msgstr "Ordinateur de bord"
+
+#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
+msgid "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."
+msgstr "Attention : Dégâts structurels massifs détectés sur un Dreadnought à la dérive. Ses moteurs semblent désactivés."
+
+#: data/scripts/entity/cw_strandedflagship.lua:
+msgid "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"
+msgstr "Ici la flotte de réparation ! Nous sommes arrivés sur la position du vaisseau amiral. Ennemis détectés ! Engagez le combat immédiatement !"
+
+
+# ==========data/scripts/events/cw_armsdeal.lua ==========
+
+# ==========data/scripts/events/cw_diplomaticsabotage.lua ==========
+
+# ==========data/scripts/events/cw_refugeeconvoy.lua ==========
+
+# ==========data/scripts/events/cw_strandedflagship.lua ==========
+
+# ==========data/scripts/player/missions/cw_borderskirmish.lua ==========
+
+# ==========data/scripts/player/missions/cw_breakthrough.lua ==========
+
+# ==========data/scripts/player/missions/cw_decapitationstrike.lua ==========
+
+# ==========data/scripts/player/missions/cw_forcerecon.lua ==========
+
+# ==========data/scripts/player/missions/cw_frontlinesiege.lua ==========
+
+# ==========data/scripts/player/missions/cw_highvaluedefection.lua ==========
+
+# ==========data/scripts/player/missions/cw_interception.lua ==========
+
+# ==========data/scripts/player/missions/cw_resourcesabotage.lua ==========
+
+# ==========data/scripts/server/background/cosmicwarnews.lua ==========

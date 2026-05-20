@@ -45,7 +45,7 @@ function CW_StrandedFlagshipEvent.spawn()
 
     local generator = SectorGenerator(x, y)
     local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:createPositionInSector(), 25.0) -- Volume factor x25
-    ship.title = "Stranded Flagship"%_t
+    ship.title = "Stranded Flagship"%_T
     ship.name = flagshipFaction.name .. " Dreadnought"
     ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
@@ -57,8 +57,8 @@ function CW_StrandedFlagshipEvent.spawn()
 
     CW_StrandedFlagshipEvent.flagshipId = ship.id
 
-    sector:broadcastChatMessage("Ship Computer"%_t, ChatMessageType.Warning,
-        "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."%_t)
+    sector:broadcastChatMessage("Ship Computer"%_T, ChatMessageType.Warning,
+        "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."%_T)
     deferredCallback(45.0, "spawnRepairFleet")
 end
 
@@ -69,8 +69,7 @@ function CW_StrandedFlagshipEvent.spawnRepairFleet()
 
     local faction = Faction(CW_StrandedFlagshipEvent.flagshipFactionId)
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
-        "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!" %
-        _t)
+        "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"%_T)
 
     local generator = SectorGenerator(sector:getCoordinates())
     for i = 1, 4 do

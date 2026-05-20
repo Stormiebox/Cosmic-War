@@ -1,0 +1,539 @@
+# ==========data/scripts/entity/bulletinboardmissions.lua ==========
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_forcerecon.lua:
+msgid "War Contract: Force Recon"
+msgstr "战争契约：武力侦察"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel."
+msgstr "局势日益紧张。我们需要一位谨慎的舰长去侦察敌对星区并收集情报。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "This is a reconnaissance operation. Get in, gather the intel, and get out in one piece."
+msgstr "这是一次侦察行动。潜入，收集情报，然后全身而退。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_borderskirmish.lua:
+msgid "War Contract: Border Skirmish"
+msgstr "战争契约：边境冲突"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Border disputes are getting violent. Intercept and eliminate an enemy border patrol."
+msgstr "边境争端正变得越来越暴力。拦截并消灭一支敌方边境巡逻队。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Take out their patrol. We need to show them we won't be intimidated."
+msgstr "干掉他们的巡逻队。我们需要向他们展示我们不会被吓倒。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_resourcesabotage.lua:
+msgid "War Contract: Resource Sabotage"
+msgstr "战争契约：资源破坏"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "A hostile mining operation is extracting resources in contested space. Put an end to it."
+msgstr "一个敌对的采矿行动正在争议星域开采资源。去终结它。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Crippling their resource flow now will save our fleets later. Destroy those miners."
+msgstr "现在切断他们的资源流动将拯救我们未来的舰队。摧毁那些采矿船。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_interception.lua:
+msgid "War Contract: Interception"
+msgstr "战争契约：拦截"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Conflict has intensified. Intercept hostile supply movement in nearby sectors."
+msgstr "冲突已经加剧。拦截附近星区的敌方补给运输。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "We need skilled captains to strike enemy supply lines immediately."
+msgstr "我们需要技艺精湛的舰长立即打击敌人的补给线。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_breakthrough.lua:
+msgid "War Contract: Breakthrough"
+msgstr "战争契约：突围"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "We have a critical supply convoy moving through contested space. Defend them until they can jump."
+msgstr "我们有一支关键的补给车队正在穿越争议星域。保护他们，直到他们能够跃迁。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Our convoy is vulnerable. We need a capable escort to ensure they make it."
+msgstr "我们的车队很脆弱。我们需要一支有能力的护航队来确保他们能成功抵达。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_frontlinesiege.lua:
+msgid "War Contract: Frontline Siege"
+msgstr "战争契约：前线围攻"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "The enemy has established a Forward Operating Base. We need it destroyed."
+msgstr "敌人建立了一个前线作战基地。我们需要摧毁它。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Command has authorized a strike on an enemy FOB. Are you ready to lead the assault?"
+msgstr "指挥部已经授权对敌方前线作战基地进行打击。你准备好领导这次突击了吗？"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "War Contract: High-Value Extraction"
+msgstr "战争契约：高价值营救"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "A high-ranking enemy officer is defecting to our side. We need you to extract them safely."
+msgstr "一名敌方高级军官正向我们投诚。我们需要你安全地将他们救出。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "This is a highly classified operation. Extract the defector at all costs. Expect heavy resistance."
+msgstr "这是一次高度机密的行动。不惜一切代价救出叛逃者。做好遭遇猛烈抵抗的准备。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+#: data/scripts/entity/cw_decapitationstrike.lua:
+msgid "War Contract: Decapitation Strike"
+msgstr "战争契约：斩首打击"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "The enemy Flagship has entered the sector. This is our chance to end the war."
+msgstr "敌方旗舰已经进入该星区。这是我们结束战争的机会。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."
+msgstr "警告：这是一次自杀式任务。敌方旗舰武装到了牙齿且有重兵护航。除非你拥有一支舰队，否则不要接受。"
+
+#: data/scripts/entity/bulletinboardmissions.lua:
+msgid "Extreme"
+msgstr "极限"
+
+
+# ==========data/scripts/entity/cosmicwarnews.lua ==========
+#: data/scripts/entity/cosmicwarnews.lua:
+#: data/scripts/server/background/cosmicwarnews.lua:
+msgid "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."
+msgstr "战争简报：${factionA} 与 ${factionB} 的关系恶化至 ${rel}。"
+
+#: data/scripts/entity/cosmicwarnews.lua:
+#: data/scripts/server/background/cosmicwarnews.lua:
+msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."
+msgstr "冲突观察：${factionA} 和 ${factionB} 正在进入公开敌对状态 (${rel})。"
+
+#: data/scripts/entity/cosmicwarnews.lua:
+#: data/scripts/server/background/cosmicwarnews.lua:
+msgid "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."
+msgstr "战略警报：${factionA} 和 ${factionB} 之间的紧张局势达到 ${rel}。"
+
+#: data/scripts/entity/cosmicwarnews.lua:
+msgid "Cosmic War"
+msgstr "宇宙战争"
+
+
+# ==========data/scripts/entity/cw_armsdeal.lua ==========
+#: data/scripts/entity/cw_armsdeal.lua:
+#: data/scripts/events/cw_armsdeal.lua:
+msgid "Covert Operative"
+msgstr "秘密特工"
+
+#: data/scripts/entity/cw_armsdeal.lua:
+#: data/scripts/events/cw_armsdeal.lua:
+msgid "Black Market Dealer"
+msgstr "黑市商人"
+
+#: data/scripts/entity/cw_armsdeal.lua:
+#: data/scripts/events/cw_armsdeal.lua:
+msgid "We have company! The arms deal is compromised! Eradicate all witnesses!"
+msgstr "有伴了！军火交易暴露了！消灭所有目击者！"
+
+
+# ==========data/scripts/entity/cw_borderskirmish.lua ==========
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "hostiles"
+msgstr "敌方"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+msgid "You accepted a skirmish contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的冲突契约。"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+msgid "Intercept and eliminate the border patrol belonging to ${enemy}."
+msgstr "拦截并消灭属于 ${enemy} 的边境巡逻队。"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/entity/cw_resourcesabotage.lua:
+msgid "Head to sector (${location.x}:${location.y})"
+msgstr "前往星区 (${location.x}:${location.y})"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+msgid "Destroy the patrol"
+msgstr "摧毁巡逻队"
+
+#: data/scripts/entity/cw_borderskirmish.lua:
+msgid "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."
+msgstr "巡逻队已被消灭。在我们的边境上，我们绝不屈服。报酬已转账。"
+
+
+# ==========data/scripts/entity/cw_breakthrough.lua ==========
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "You accepted an escort contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的护航契约。"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "Defend their supply convoy from ${enemy} interceptors."
+msgstr "保护他们的补给车队免受 ${enemy} 拦截机的袭击。"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/entity/cw_frontlinesiege.lua:
+msgid "Jump to sector (${location.x}:${location.y})"
+msgstr "跃迁至星区 (${location.x}:${location.y})"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+msgid "Protect the convoy until they jump"
+msgstr "保护车队直到他们跃迁"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "Convoy has escaped. Contract payment transferred."
+msgstr "车队已逃脱。契约报酬已转账。"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "We are charging our hyperdrives. Hold them off until we can jump!"
+msgstr "我们正在为超空间引擎充能。顶住他们，直到我们能够跃迁！"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "The convoy was completely destroyed! We are withdrawing your contract!"
+msgstr "车队被彻底摧毁了！我们将撤销你的契约！"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "Target acquired! Destroy the convoy!"
+msgstr "已锁定目标！摧毁车队！"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "All ships safely away! Excellent work, commander. We've added a bonus to your payment."
+msgstr "所有船只安全撤离！干得漂亮，指挥官。我们在你的报酬中增加了一笔奖金。"
+
+#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+msgid "We took losses, but the convoy is away. Sending payment now."
+msgstr "我们遭受了损失，但车队已经离开。现在发送报酬。"
+
+
+# ==========data/scripts/entity/cw_decapitationstrike.lua ==========
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "You accepted a Decapitation Strike contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的斩首打击契约。"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "${enemy} has deployed their Flagship to the frontline. Destroy it to end this war."
+msgstr "${enemy} 已经将他们的旗舰部署到前线。摧毁它以结束这场战争。"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+msgid "Destroy the Enemy Flagship"
+msgstr "摧毁敌方旗舰"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."
+msgstr "敌方旗舰已被摧毁！他们的舰队已经彻底崩溃！我们立即请求和平。"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "You dare challenge our Dreadnought? We will crush you and your cowardly employers!"
+msgstr "你敢挑战我们的无畏舰？我们将粉碎你和你懦弱的雇主！"
+
+#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+msgid "Flagship Dreadnought"
+msgstr "旗舰无畏舰"
+
+
+# ==========data/scripts/entity/cw_diplomaticsabotage.lua ==========
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
+msgid "Diplomatic Envoy"
+msgstr "外交使节"
+
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+msgid "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!"
+msgstr "求救！这里是外交和平使节！极端分子正试图破坏停火谈判！我们需要立即援助！"
+
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
+msgid "Hardliner Extremist"
+msgstr "强硬派极端分子"
+
+#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
+msgid "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."
+msgstr "谢谢你们！没有了那些极端分子，我们可以继续前往和平峰会了。我们欠你们一条命。"
+
+
+# ==========data/scripts/entity/cw_fleetclash.lua ==========
+#: data/scripts/entity/cw_fleetclash.lua:
+msgid "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"
+msgstr "警告！探测到大量敌对舰队信号正脱离超空间！所有舰只进入战斗岗位！"
+
+
+# ==========data/scripts/entity/cw_forcerecon.lua ==========
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "You accepted a Force Recon contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的武力侦察契约。"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Locate and scan the Covert Listening Post belonging to ${enemy}."
+msgstr "定位并扫描属于 ${enemy} 的秘密监听站。"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+msgid "Stay within 6km of the Listening Post until the scan completes"
+msgstr "在扫描完成前，保持在监听站 6 公里范围内"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Data received loud and clear. Good work out there, captain. Payment transferred."
+msgstr "数据接收清晰无误。干得好，舰长。报酬已转账。"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "The Listening Post was destroyed before we could extract the intel! The contract is void."
+msgstr "在我们可以提取情报之前，监听站就被摧毁了！契约作废。"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "You are in range. Establishing data link... Stay close!"
+msgstr "你已进入范围。正在建立数据链接……保持距离！"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Data link lost! You are too far away from the station!"
+msgstr "数据链接丢失！你离空间站太远了！"
+
+#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+msgid "Covert Listening Post"
+msgstr "秘密监听站"
+
+
+# ==========data/scripts/entity/cw_frontlinesiege.lua ==========
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "You accepted a siege contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的围攻契约。"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "${enemy} has established a Forward Operating Base (FOB) in a nearby sector."
+msgstr "${enemy} 在附近星区建立了一个前线作战基地（FOB）。"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+msgid "Destroy the Forward Operating Base"
+msgstr "摧毁前线作战基地"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "Target destroyed. Excellent work, commander. Payment transferred."
+msgstr "目标已摧毁。干得好，指挥官。报酬已转账。"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "We are under attack! Scramble all defenders!"
+msgstr "我们遭到攻击！紧急起飞所有防御部队！"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "Forward Operating Base"
+msgstr "前线作战基地"
+
+#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
+msgid "Reinforcements have arrived! Destroy the attackers!"
+msgstr "增援已到达！消灭攻击者！"
+
+
+# ==========data/scripts/entity/cw_highvaluedefection.lua ==========
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "You accepted a classified extraction contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的机密营救契约。"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "A high-ranking officer from ${enemy} is attempting to defect."
+msgstr "一名来自 ${enemy} 的高级军官正企图叛逃。"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "Rendezvous at sector (${location.x}:${location.y})"
+msgstr "在星区 (${location.x}:${location.y}) 会合"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "Protect the defector until their hyperdrive charges"
+msgstr "保护叛逃者，直到他们的超空间引擎充能完毕"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."
+msgstr "目标已安全。你对敌方指挥系统造成了沉重打击。报酬已转账。"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+msgid "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!"
+msgstr "谢天谢地你来了。我的超空间引擎损坏了，需要 3 分钟来启动。别让他们抓走我！"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "The defector's signal was lost... The mission is a failure."
+msgstr "叛逃者的信号丢失了……任务失败。"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "Hold them off! Hyperdrive is at 60 seconds!"
+msgstr "顶住他们！超空间引擎还有 60 秒！"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "Defecting Officer"
+msgstr "叛逃军官"
+
+#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
+msgid "There is the traitor! Execute them immediately!"
+msgstr "叛徒在那里！立即处决他们！"
+
+
+# ==========data/scripts/entity/cw_interception.lua ==========
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "You accepted a war contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的战争契约。"
+
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "Intercept and destroy the supply convoy belonging to ${enemy}."
+msgstr "拦截并摧毁属于 ${enemy} 的补给车队。"
+
+#: data/scripts/entity/cw_interception.lua:
+msgid "Destroy the convoy"
+msgstr "摧毁车队"
+
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "Target destroyed. Contract payment transferred."
+msgstr "目标已摧毁。契约报酬已转账。"
+
+#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+msgid "We're tracking the convoy on your sensors. Take them out!"
+msgstr "我们在你的传感器上追踪到了车队。干掉他们！"
+
+
+# ==========data/scripts/entity/cw_refugeeconvoy.lua ==========
+#: data/scripts/entity/cw_refugeeconvoy.lua:
+msgid "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"
+msgstr "求救，求救！这是一支平民难民车队！我们正被一支猎杀舰队追踪！星区内的任何人，请帮助我们，直到我们的超空间引擎充能完毕！"
+
+#: data/scripts/entity/cw_refugeeconvoy.lua:
+#: data/scripts/events/cw_refugeeconvoy.lua:
+msgid "Target acquired. Leave no survivors."
+msgstr "目标已锁定。不留活口。"
+
+#: data/scripts/entity/cw_refugeeconvoy.lua:
+#: data/scripts/events/cw_refugeeconvoy.lua:
+msgid "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"
+msgstr "谢谢你们！我们的引擎充能完毕，我们将跃迁到安全地点。我们不会忘记这份恩情的！"
+
+
+# ==========data/scripts/entity/cw_resourcesabotage.lua ==========
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "You accepted a sabotage contract from ${giver}."
+msgstr "你接受了来自 ${giver} 的破坏契约。"
+
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "A mining fleet from ${enemy} has set up an extraction operation. Wipe them out."
+msgstr "一支来自 ${enemy} 的采矿舰队建立了一个开采行动。消灭他们。"
+
+#: data/scripts/entity/cw_resourcesabotage.lua:
+msgid "Destroy the mining operation"
+msgstr "摧毁采矿行动"
+
+#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
+msgid "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."
+msgstr "采矿行动已被摧毁。那肯定会对他们的补给线造成打击。报酬已转账。"
+
+
+# ==========data/scripts/entity/cw_strandedflagship.lua ==========
+#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
+msgid "Stranded Flagship"
+msgstr "被困的旗舰"
+
+#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
+msgid "Ship Computer"
+msgstr "飞船计算机"
+
+#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
+msgid "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."
+msgstr "警告：在一艘漂浮的无畏舰上检测到巨大的结构损坏。其引擎似乎处于离线状态。"
+
+#: data/scripts/entity/cw_strandedflagship.lua:
+msgid "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"
+msgstr "这里是维修舰队！我们已抵达旗舰的位置。探测到敌方！立即交战！"
+
+
+# ==========data/scripts/events/cw_armsdeal.lua ==========
+
+# ==========data/scripts/events/cw_diplomaticsabotage.lua ==========
+
+# ==========data/scripts/events/cw_refugeeconvoy.lua ==========
+
+# ==========data/scripts/events/cw_strandedflagship.lua ==========
+
+# ==========data/scripts/player/missions/cw_borderskirmish.lua ==========
+
+# ==========data/scripts/player/missions/cw_breakthrough.lua ==========
+
+# ==========data/scripts/player/missions/cw_decapitationstrike.lua ==========
+
+# ==========data/scripts/player/missions/cw_forcerecon.lua ==========
+
+# ==========data/scripts/player/missions/cw_frontlinesiege.lua ==========
+
+# ==========data/scripts/player/missions/cw_highvaluedefection.lua ==========
+
+# ==========data/scripts/player/missions/cw_interception.lua ==========
+
+# ==========data/scripts/player/missions/cw_resourcesabotage.lua ==========
+
+# ==========data/scripts/server/background/cosmicwarnews.lua ==========
