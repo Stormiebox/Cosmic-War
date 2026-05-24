@@ -69,8 +69,7 @@ function CW_StrandedFlagshipEvent.spawnRepairFleet()
 
     local faction = Faction(CW_StrandedFlagshipEvent.flagshipFactionId)
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
-        "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!" %
-        _t)
+        "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"%_t)
 
     local generator = SectorGenerator(sector:getCoordinates())
     for i = 1, 4 do

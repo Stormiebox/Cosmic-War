@@ -107,8 +107,7 @@ mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
         Player():sendChatMessage(giverFaction.name, 0,
-            "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!" %
-            _t)
+            "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!"%_t)
     end
 end
 

@@ -51,8 +51,7 @@ function CW_DiplomaticSabotageEvent.spawn()
     CW_DiplomaticSabotageEvent.envoyId = envoy.id
 
     sector:broadcastChatMessage(envoyFaction.name, ChatMessageType.Warning,
-        "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!" %
-        _t)
+        "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!"%_t)
 
     local numAttackers = random():getInt(3, 5)
     for i = 1, numAttackers do
@@ -69,7 +68,7 @@ end
 function CW_DiplomaticSabotageEvent.checkSurvival()
     local envoy = Sector():getEntity(CW_DiplomaticSabotageEvent.envoyId)
     if envoy then
-        Player():sendChatMessage(Faction(CW_DiplomaticSabotageEvent.envoyFactionId).name, ChatMessageType.Information,
+        Sector():broadcastChatMessage(Faction(CW_DiplomaticSabotageEvent.envoyFactionId).name, ChatMessageType.Information,
             "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_t)
         Sector():deleteEntityJumped(envoy)
     end

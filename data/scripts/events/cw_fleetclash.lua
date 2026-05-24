@@ -75,6 +75,5 @@ function CW_FleetClashEvent.spawn()
     end
 
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
-        "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!" %
-        _t)
+        "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"%_t)
 end

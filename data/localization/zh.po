@@ -1,6 +1,6 @@
 # ==========data/scripts/entity/bulletinboardmissions.lua ==========
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "War Contract: Force Recon"
 msgstr "战争契约：武力侦察"
 
@@ -13,7 +13,7 @@ msgid "This is a reconnaissance operation. Get in, gather the intel, and get out
 msgstr "这是一次侦察行动。潜入，收集情报，然后全身而退。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
 msgid "War Contract: Border Skirmish"
 msgstr "战争契约：边境冲突"
 
@@ -26,7 +26,7 @@ msgid "Take out their patrol. We need to show them we won't be intimidated."
 msgstr "干掉他们的巡逻队。我们需要向他们展示我们不会被吓倒。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "War Contract: Resource Sabotage"
 msgstr "战争契约：资源破坏"
 
@@ -39,7 +39,7 @@ msgid "Crippling their resource flow now will save our fleets later. Destroy tho
 msgstr "现在切断他们的资源流动将拯救我们未来的舰队。摧毁那些采矿船。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
 msgid "War Contract: Interception"
 msgstr "战争契约：拦截"
 
@@ -52,7 +52,7 @@ msgid "We need skilled captains to strike enemy supply lines immediately."
 msgstr "我们需要技艺精湛的舰长立即打击敌人的补给线。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "War Contract: Breakthrough"
 msgstr "战争契约：突围"
 
@@ -65,7 +65,7 @@ msgid "Our convoy is vulnerable. We need a capable escort to ensure they make it
 msgstr "我们的车队很脆弱。我们需要一支有能力的护航队来确保他们能成功抵达。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "War Contract: Frontline Siege"
 msgstr "战争契约：前线围攻"
 
@@ -78,7 +78,7 @@ msgid "Command has authorized a strike on an enemy FOB. Are you ready to lead th
 msgstr "指挥部已经授权对敌方前线作战基地进行打击。你准备好领导这次突击了吗？"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "War Contract: High-Value Extraction"
 msgstr "战争契约：高价值营救"
 
@@ -91,7 +91,7 @@ msgid "This is a highly classified operation. Extract the defector at all costs.
 msgstr "这是一次高度机密的行动。不惜一切代价救出叛逃者。做好遭遇猛烈抵抗的准备。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "War Contract: Decapitation Strike"
 msgstr "战争契约：斩首打击"
 
@@ -507,33 +507,6 @@ msgstr "飞船计算机"
 msgid "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."
 msgstr "警告：在一艘漂浮的无畏舰上检测到巨大的结构损坏。其引擎似乎处于离线状态。"
 
-#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
 msgid "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"
 msgstr "这里是维修舰队！我们已抵达旗舰的位置。探测到敌方！立即交战！"
-
-
-# ==========data/scripts/events/cw_armsdeal.lua ==========
-
-# ==========data/scripts/events/cw_diplomaticsabotage.lua ==========
-
-# ==========data/scripts/events/cw_refugeeconvoy.lua ==========
-
-# ==========data/scripts/events/cw_strandedflagship.lua ==========
-
-# ==========data/scripts/player/missions/cw_borderskirmish.lua ==========
-
-# ==========data/scripts/player/missions/cw_breakthrough.lua ==========
-
-# ==========data/scripts/player/missions/cw_decapitationstrike.lua ==========
-
-# ==========data/scripts/player/missions/cw_forcerecon.lua ==========
-
-# ==========data/scripts/player/missions/cw_frontlinesiege.lua ==========
-
-# ==========data/scripts/player/missions/cw_highvaluedefection.lua ==========
-
-# ==========data/scripts/player/missions/cw_interception.lua ==========
-
-# ==========data/scripts/player/missions/cw_resourcesabotage.lua ==========
-
-# ==========data/scripts/server/background/cosmicwarnews.lua ==========

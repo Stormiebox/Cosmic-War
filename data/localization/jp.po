@@ -1,6 +1,6 @@
 # ==========data/scripts/entity/bulletinboardmissions.lua ==========
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "War Contract: Force Recon"
 msgstr "戦争契約: 威力偵察"
 
@@ -13,7 +13,7 @@ msgid "This is a reconnaissance operation. Get in, gather the intel, and get out
 msgstr "これは偵察作戦だ。潜入し、情報を収集し、無事に脱出してくれ。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
 msgid "War Contract: Border Skirmish"
 msgstr "戦争契約: 国境紛争"
 
@@ -26,7 +26,7 @@ msgid "Take out their patrol. We need to show them we won't be intimidated."
 msgstr "彼らのパトロールを排除しろ。我々が脅しには屈しないことを彼らに示す必要がある。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "War Contract: Resource Sabotage"
 msgstr "戦争契約: 資源サボタージュ"
 
@@ -39,7 +39,7 @@ msgid "Crippling their resource flow now will save our fleets later. Destroy tho
 msgstr "今、彼らの資源の流れを断ち切ることは、後で我々の艦隊を救うことになる。それらの採掘船を破壊してくれ。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
 msgid "War Contract: Interception"
 msgstr "戦争契約: 迎撃"
 
@@ -52,7 +52,7 @@ msgid "We need skilled captains to strike enemy supply lines immediately."
 msgstr "直ちに敵の補給線を叩くため、熟練したキャプテンが必要だ。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "War Contract: Breakthrough"
 msgstr "戦争契約: 突破"
 
@@ -65,7 +65,7 @@ msgid "Our convoy is vulnerable. We need a capable escort to ensure they make it
 msgstr "我々のコンボイは脆弱だ。彼らが無事に到着するため、有能な護衛が必要だ。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "War Contract: Frontline Siege"
 msgstr "戦争契約: 前線包囲"
 
@@ -78,7 +78,7 @@ msgid "Command has authorized a strike on an enemy FOB. Are you ready to lead th
 msgstr "司令部は敵のFOBへの攻撃を承認した。強襲を指揮する準備はできているか？"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "War Contract: High-Value Extraction"
 msgstr "戦争契約: 価値の高い対象の救出"
 
@@ -91,7 +91,7 @@ msgid "This is a highly classified operation. Extract the defector at all costs.
 msgstr "これは最高機密の作戦だ。何としても亡命者を救出せよ。激しい抵抗が予想される。"
 
 #: data/scripts/entity/bulletinboardmissions.lua:
-#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "War Contract: Decapitation Strike"
 msgstr "戦争契約: 斬首作戦"
 
@@ -128,33 +128,20 @@ msgstr "戦略警報: ${factionA} と ${factionB} の間の緊張が ${rel} に�
 msgid "Cosmic War"
 msgstr "コズミック・ウォー"
 
-
-# ==========data/scripts/entity/cw_armsdeal.lua ==========
-#: data/scripts/entity/cw_armsdeal.lua:
+# ==========data/scripts/events/cw_armsdeal.lua ==========
 #: data/scripts/events/cw_armsdeal.lua:
 msgid "Covert Operative"
 msgstr "秘密工作員"
 
-#: data/scripts/entity/cw_armsdeal.lua:
 #: data/scripts/events/cw_armsdeal.lua:
 msgid "Black Market Dealer"
 msgstr "闇市場のディーラー"
 
-#: data/scripts/entity/cw_armsdeal.lua:
 #: data/scripts/events/cw_armsdeal.lua:
 msgid "We have company! The arms deal is compromised! Eradicate all witnesses!"
 msgstr "招かれざる客だ！武器取引が発覚した！目撃者をすべて消せ！"
 
-
-# ==========data/scripts/entity/cw_borderskirmish.lua ==========
-#: data/scripts/entity/cw_borderskirmish.lua:
-#: data/scripts/entity/cw_breakthrough.lua:
-#: data/scripts/entity/cw_decapitationstrike.lua:
-#: data/scripts/entity/cw_forcerecon.lua:
-#: data/scripts/entity/cw_frontlinesiege.lua:
-#: data/scripts/entity/cw_highvaluedefection.lua:
-#: data/scripts/entity/cw_interception.lua:
-#: data/scripts/entity/cw_resourcesabotage.lua:
+# ==========data/scripts/player/missions/cw_borderskirmish.lua ==========
 #: data/scripts/player/missions/cw_borderskirmish.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
@@ -166,374 +153,286 @@ msgstr "招かれざる客だ！武器取引が発覚した！目撃者をすべ
 msgid "hostiles"
 msgstr "敵"
 
-#: data/scripts/entity/cw_borderskirmish.lua:
 #: data/scripts/player/missions/cw_borderskirmish.lua:
 msgid "You accepted a skirmish contract from ${giver}."
 msgstr "${giver} から小競り合いの契約を受諾した。"
 
-#: data/scripts/entity/cw_borderskirmish.lua:
 #: data/scripts/player/missions/cw_borderskirmish.lua:
 msgid "Intercept and eliminate the border patrol belonging to ${enemy}."
 msgstr "${enemy} に所属する国境パトロールを捕捉し、排除せよ。"
 
-#: data/scripts/entity/cw_borderskirmish.lua:
-#: data/scripts/entity/cw_forcerecon.lua:
-#: data/scripts/entity/cw_interception.lua:
-#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_interception.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "Head to sector (${location.x}:${location.y})"
 msgstr "セクター (${location.x}:${location.y}) に向かえ"
 
-#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
 msgid "Destroy the patrol"
 msgstr "パトロールを破壊せよ"
 
-#: data/scripts/entity/cw_borderskirmish.lua:
+#: data/scripts/player/missions/cw_borderskirmish.lua:
 msgid "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."
 msgstr "パトロールを排除した。我々の国境で脅されるようなことはない。報酬を振り込んだ。"
 
-
-# ==========data/scripts/entity/cw_breakthrough.lua ==========
-#: data/scripts/entity/cw_breakthrough.lua:
+# ==========data/scripts/player/missions/cw_breakthrough.lua ==========
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "You accepted an escort contract from ${giver}."
 msgstr "${giver} から護衛契約を受諾した。"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "Defend their supply convoy from ${enemy} interceptors."
 msgstr "${enemy} の迎撃機から彼らの補給コンボイを守れ。"
 
-#: data/scripts/entity/cw_breakthrough.lua:
-#: data/scripts/entity/cw_decapitationstrike.lua:
-#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "Jump to sector (${location.x}:${location.y})"
 msgstr "セクター (${location.x}:${location.y}) にジャンプせよ"
 
-#: data/scripts/entity/cw_breakthrough.lua:
+#: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "Protect the convoy until they jump"
 msgstr "彼らがジャンプするまでコンボイを守れ"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "Convoy has escaped. Contract payment transferred."
 msgstr "コンボイが脱出した。契約の報酬を振り込んだ。"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "We are charging our hyperdrives. Hold them off until we can jump!"
 msgstr "ハイパードライブをチャージしている。ジャンプできるまで持ちこたえてくれ！"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "The convoy was completely destroyed! We are withdrawing your contract!"
 msgstr "コンボイは完全に破壊された！契約を打ち切る！"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "Target acquired! Destroy the convoy!"
 msgstr "目標を捕捉！コンボイを破壊しろ！"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "All ships safely away! Excellent work, commander. We've added a bonus to your payment."
 msgstr "全艦安全に脱出した！素晴らしい仕事だ、コマンダー。報酬にボーナスを追加した。"
 
-#: data/scripts/entity/cw_breakthrough.lua:
 #: data/scripts/player/missions/cw_breakthrough.lua:
 msgid "We took losses, but the convoy is away. Sending payment now."
 msgstr "被害は出たが、コンボイは脱出した。報酬を送信する。"
 
-
-# ==========data/scripts/entity/cw_decapitationstrike.lua ==========
-#: data/scripts/entity/cw_decapitationstrike.lua:
+# ==========data/scripts/player/missions/cw_decapitationstrike.lua ==========
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "You accepted a Decapitation Strike contract from ${giver}."
 msgstr "${giver} から斬首作戦の契約を受諾した。"
 
-#: data/scripts/entity/cw_decapitationstrike.lua:
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "${enemy} has deployed their Flagship to the frontline. Destroy it to end this war."
 msgstr "${enemy} が旗艦を前線に展開した。破壊してこの戦争を終わらせろ。"
 
-#: data/scripts/entity/cw_decapitationstrike.lua:
+#: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "Destroy the Enemy Flagship"
 msgstr "敵の旗艦を破壊せよ"
 
-#: data/scripts/entity/cw_decapitationstrike.lua:
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."
 msgstr "敵の旗艦を破壊した！彼らの艦隊は完全に崩壊した！直ちに和平交渉に入る。"
 
-#: data/scripts/entity/cw_decapitationstrike.lua:
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "You dare challenge our Dreadnought? We will crush you and your cowardly employers!"
 msgstr "我々のドレッドノートに挑むというのか？お前も、お前の臆病な雇い主も粉砕してやる！"
 
-#: data/scripts/entity/cw_decapitationstrike.lua:
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
 msgid "Flagship Dreadnought"
 msgstr "旗艦ドレッドノート"
 
-
-# ==========data/scripts/entity/cw_diplomaticsabotage.lua ==========
-#: data/scripts/entity/cw_diplomaticsabotage.lua:
+# ==========data/scripts/events/cw_diplomaticsabotage.lua ==========
 #: data/scripts/events/cw_diplomaticsabotage.lua:
 msgid "Diplomatic Envoy"
 msgstr "外交特使"
 
-#: data/scripts/entity/cw_diplomaticsabotage.lua:
+#: data/scripts/events/cw_diplomaticsabotage.lua:
 msgid "Mayday! This is a diplomatic peace envoy! Extremists are trying to sabotage the ceasefire talks! We need immediate assistance!"
 msgstr "メーデー！こちら外交平和特使！過激派が停戦交渉を妨害しようとしている！至急支援を！"
 
-#: data/scripts/entity/cw_diplomaticsabotage.lua:
 #: data/scripts/events/cw_diplomaticsabotage.lua:
 msgid "Hardliner Extremist"
 msgstr "強硬な過激派"
 
-#: data/scripts/entity/cw_diplomaticsabotage.lua:
 #: data/scripts/events/cw_diplomaticsabotage.lua:
 msgid "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."
 msgstr "ありがとう！過激派がいなくなったことで、平和サミットに進むことができる。命の恩人だ。"
 
-
-# ==========data/scripts/entity/cw_fleetclash.lua ==========
-#: data/scripts/entity/cw_fleetclash.lua:
+# ==========data/scripts/events/cw_fleetclash.lua ==========
+#: data/scripts/events/cw_fleetclash.lua:
 msgid "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"
 msgstr "警告！ハイパースペースからの大規模な敵艦隊のシグネチャを検出！全艦、戦闘配置！"
 
-
-# ==========data/scripts/entity/cw_forcerecon.lua ==========
-#: data/scripts/entity/cw_forcerecon.lua:
+# ==========data/scripts/player/missions/cw_forcerecon.lua ==========
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "You accepted a Force Recon contract from ${giver}."
 msgstr "${giver} から威力偵察の契約を受諾した。"
 
-#: data/scripts/entity/cw_forcerecon.lua:
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "Locate and scan the Covert Listening Post belonging to ${enemy}."
 msgstr "${enemy} の秘密傍受基地を見つけ、スキャンせよ。"
 
-#: data/scripts/entity/cw_forcerecon.lua:
+#: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "Stay within 6km of the Listening Post until the scan completes"
 msgstr "スキャンが完了するまで傍受基地の6km以内に留まれ"
 
-#: data/scripts/entity/cw_forcerecon.lua:
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "Data received loud and clear. Good work out there, captain. Payment transferred."
 msgstr "データは正常に受信された。よくやった、キャプテン。報酬を振り込んだ。"
 
-#: data/scripts/entity/cw_forcerecon.lua:
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "The Listening Post was destroyed before we could extract the intel! The contract is void."
 msgstr "情報を抽出する前に傍受基地が破壊された！契約は無効だ。"
 
-#: data/scripts/entity/cw_forcerecon.lua:
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "You are in range. Establishing data link... Stay close!"
 msgstr "範囲内に入った。データリンクを確立中... そのまま離れないでくれ！"
 
-#: data/scripts/entity/cw_forcerecon.lua:
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "Data link lost! You are too far away from the station!"
 msgstr "データリンクを喪失！ステーションから離れすぎている！"
 
-#: data/scripts/entity/cw_forcerecon.lua:
 #: data/scripts/player/missions/cw_forcerecon.lua:
 msgid "Covert Listening Post"
 msgstr "秘密傍受基地"
 
-
-# ==========data/scripts/entity/cw_frontlinesiege.lua ==========
-#: data/scripts/entity/cw_frontlinesiege.lua:
+# ==========data/scripts/player/missions/cw_frontlinesiege.lua ==========
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "You accepted a siege contract from ${giver}."
 msgstr "${giver} から包囲契約を受諾した。"
 
-#: data/scripts/entity/cw_frontlinesiege.lua:
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "${enemy} has established a Forward Operating Base (FOB) in a nearby sector."
 msgstr "${enemy} が近隣のセクターに前線作戦基地 (FOB) を建設した。"
 
-#: data/scripts/entity/cw_frontlinesiege.lua:
+#: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "Destroy the Forward Operating Base"
 msgstr "前線作戦基地を破壊せよ"
 
-#: data/scripts/entity/cw_frontlinesiege.lua:
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "Target destroyed. Excellent work, commander. Payment transferred."
 msgstr "目標を破壊した。素晴らしい仕事だ、コマンダー。報酬を振り込んだ。"
 
-#: data/scripts/entity/cw_frontlinesiege.lua:
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "We are under attack! Scramble all defenders!"
 msgstr "攻撃を受けている！全防衛部隊はスクランブル発進せよ！"
 
-#: data/scripts/entity/cw_frontlinesiege.lua:
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "Forward Operating Base"
 msgstr "前線作戦基地"
 
-#: data/scripts/entity/cw_frontlinesiege.lua:
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "Reinforcements have arrived! Destroy the attackers!"
 msgstr "増援が到着した！攻撃者を撃破せよ！"
 
-
-# ==========data/scripts/entity/cw_highvaluedefection.lua ==========
-#: data/scripts/entity/cw_highvaluedefection.lua:
+# ==========data/scripts/player/missions/cw_highvaluedefection.lua ==========
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "You accepted a classified extraction contract from ${giver}."
 msgstr "${giver} から機密の救出契約を受諾した。"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "A high-ranking officer from ${enemy} is attempting to defect."
 msgstr "${enemy} の高官が亡命を試みている。"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "Rendezvous at sector (${location.x}:${location.y})"
 msgstr "セクター (${location.x}:${location.y}) で合流せよ"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "Protect the defector until their hyperdrive charges"
 msgstr "彼らのハイパードライブがチャージされるまで亡命者を守れ"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."
 msgstr "目標を確保した。敵の指揮系統に大打撃を与えたぞ。報酬を振り込んだ。"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
+#: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!"
 msgstr "来てくれて助かった。ハイパードライブが破損しており、スピンアップに3分かかる。奴らに捕まらせないでくれ！"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "The defector's signal was lost... The mission is a failure."
 msgstr "亡命者の信号が失われた... ミッションは失敗だ。"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "Hold them off! Hyperdrive is at 60 seconds!"
 msgstr "持ちこたえろ！ハイパードライブまであと60秒だ！"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "Defecting Officer"
 msgstr "亡命将校"
 
-#: data/scripts/entity/cw_highvaluedefection.lua:
 #: data/scripts/player/missions/cw_highvaluedefection.lua:
 msgid "There is the traitor! Execute them immediately!"
 msgstr "裏切り者がいるぞ！直ちに処刑しろ！"
 
-
-# ==========data/scripts/entity/cw_interception.lua ==========
-#: data/scripts/entity/cw_interception.lua:
+# ==========data/scripts/player/missions/cw_interception.lua ==========
 #: data/scripts/player/missions/cw_interception.lua:
 msgid "You accepted a war contract from ${giver}."
 msgstr "${giver} からの戦争契約を受諾した。"
 
-#: data/scripts/entity/cw_interception.lua:
 #: data/scripts/player/missions/cw_interception.lua:
 msgid "Intercept and destroy the supply convoy belonging to ${enemy}."
 msgstr "${enemy} に所属する補給コンボイを捕捉し、破壊せよ。"
 
-#: data/scripts/entity/cw_interception.lua:
+#: data/scripts/player/missions/cw_interception.lua:
 msgid "Destroy the convoy"
 msgstr "コンボイを破壊せよ"
 
-#: data/scripts/entity/cw_interception.lua:
 #: data/scripts/player/missions/cw_interception.lua:
 msgid "Target destroyed. Contract payment transferred."
 msgstr "目標を破壊した。契約の報酬を振り込んだ。"
 
-#: data/scripts/entity/cw_interception.lua:
 #: data/scripts/player/missions/cw_interception.lua:
 msgid "We're tracking the convoy on your sensors. Take them out!"
 msgstr "お前のセンサーでコンボイを追跡している。奴らを始末しろ！"
 
-
-# ==========data/scripts/entity/cw_refugeeconvoy.lua ==========
-#: data/scripts/entity/cw_refugeeconvoy.lua:
+# ==========data/scripts/events/cw_refugeeconvoy.lua ==========
+#: data/scripts/events/cw_refugeeconvoy.lua:
 msgid "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"
 msgstr "メーデー、メーデー！こちら民間難民のコンボイ！ハンター艦隊に追跡されている！セクター内にいる誰か、ハイパードライブがチャージされるまで助けてくれ！"
 
-#: data/scripts/entity/cw_refugeeconvoy.lua:
 #: data/scripts/events/cw_refugeeconvoy.lua:
 msgid "Target acquired. Leave no survivors."
 msgstr "目標捕捉。生存者を残すな。"
 
-#: data/scripts/entity/cw_refugeeconvoy.lua:
 #: data/scripts/events/cw_refugeeconvoy.lua:
 msgid "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"
 msgstr "ありがとう！ドライブがチャージされ、安全な場所にジャンプする。この恩は忘れない！"
 
-
-# ==========data/scripts/entity/cw_resourcesabotage.lua ==========
-#: data/scripts/entity/cw_resourcesabotage.lua:
+# ==========data/scripts/player/missions/cw_resourcesabotage.lua ==========
 #: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "You accepted a sabotage contract from ${giver}."
 msgstr "${giver} からサボタージュの契約を受諾した。"
 
-#: data/scripts/entity/cw_resourcesabotage.lua:
 #: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "A mining fleet from ${enemy} has set up an extraction operation. Wipe them out."
 msgstr "${enemy} の採掘艦隊が採掘作戦を開始した。彼らを一掃せよ。"
 
-#: data/scripts/entity/cw_resourcesabotage.lua:
+#: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "Destroy the mining operation"
 msgstr "採掘作戦を破壊せよ"
 
-#: data/scripts/entity/cw_resourcesabotage.lua:
 #: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."
 msgstr "採掘作戦を破壊した。これで彼らの補給線に確実に打撃を与えられるだろう。報酬を振り込んだ。"
 
-
-# ==========data/scripts/entity/cw_strandedflagship.lua ==========
-#: data/scripts/entity/cw_strandedflagship.lua:
+# ==========data/scripts/events/cw_strandedflagship.lua ==========
 #: data/scripts/events/cw_strandedflagship.lua:
 msgid "Stranded Flagship"
 msgstr "座礁した旗艦"
 
-#: data/scripts/entity/cw_strandedflagship.lua:
 #: data/scripts/events/cw_strandedflagship.lua:
 msgid "Ship Computer"
 msgstr "艦載コンピューター"
 
-#: data/scripts/entity/cw_strandedflagship.lua:
 #: data/scripts/events/cw_strandedflagship.lua:
 msgid "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."
 msgstr "警告：漂流中のドレッドノートに大規模な構造的損傷を検出。エンジンはオフラインのようです。"
 
-#: data/scripts/entity/cw_strandedflagship.lua:
+#: data/scripts/events/cw_strandedflagship.lua:
 msgid "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"
 msgstr "こちら修理艦隊！旗艦の場所に到着した。敵影を検出！直ちに交戦せよ！"
-
-
-# ==========data/scripts/events/cw_armsdeal.lua ==========
-
-# ==========data/scripts/events/cw_diplomaticsabotage.lua ==========
-
-# ==========data/scripts/events/cw_refugeeconvoy.lua ==========
-
-# ==========data/scripts/events/cw_strandedflagship.lua ==========
-
-# ==========data/scripts/player/missions/cw_borderskirmish.lua ==========
-
-# ==========data/scripts/player/missions/cw_breakthrough.lua ==========
-
-# ==========data/scripts/player/missions/cw_decapitationstrike.lua ==========
-
-# ==========data/scripts/player/missions/cw_forcerecon.lua ==========
-
-# ==========data/scripts/player/missions/cw_frontlinesiege.lua ==========
-
-# ==========data/scripts/player/missions/cw_highvaluedefection.lua ==========
-
-# ==========data/scripts/player/missions/cw_interception.lua ==========
-
-# ==========data/scripts/player/missions/cw_resourcesabotage.lua ==========
-
-# ==========data/scripts/server/background/cosmicwarnews.lua ==========

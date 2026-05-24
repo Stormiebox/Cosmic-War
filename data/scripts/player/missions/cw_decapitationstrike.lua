@@ -70,7 +70,7 @@ function initialize(factionIndex)
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 35000,
             paymentMessage =
-            "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_t
+                "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_t
         }
 
         cw_decapitationstrike_init(factionIndex)
@@ -123,9 +123,8 @@ function spawnFlagship(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
     -- Create the Flagship (Massive Super Boss)
-    local volume = Balancing_GetSectorShipVolume(x, y) * 10
     local pos = generator:createPositionInSector()
-    local flagship = ShipGenerator.createCarrier(enemyFaction, pos, volume)
+    local flagship = ShipGenerator.createCarrier(enemyFaction, pos, 10.0) -- 3rd argument is volumeFactor, not raw volume
 
     flagship:setTitle("Flagship Dreadnought"%_t, {})
     flagship:setValue("cw_flagship", true)
@@ -162,7 +161,7 @@ function finishAndReward()
         local rel = giverFaction:getRelations(enemyFaction.index) or 0
         local targetRel = 0 -- Neutral
         if rel < targetRel then
-            changeRelations(giverFaction, enemyFaction, targetRel - rel, RelationChangeType.Diplomatic, true, true, nil)
+            changeRelations(giverFaction, enemyFaction, targetRel - rel, RelationChangeType.Diplomacy, true, true, nil)
         end
 
         -- Clear war markers

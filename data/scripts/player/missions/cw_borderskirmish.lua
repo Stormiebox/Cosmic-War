@@ -74,8 +74,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 4000,
-            paymentMessage = "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred." %
-            _t
+            paymentMessage = "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."%_t
         }
 
         cw_skirmish_init(factionIndex)
