@@ -5,6 +5,7 @@ local ShipGenerator = include("shipgenerator")
 local SectorTurretGenerator = include("sectorturretgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
+include("stringutility")
 
 -- namespace CW_ArmsDealEvent
 CW_ArmsDealEvent = {}
@@ -47,11 +48,11 @@ function CW_ArmsDealEvent.spawn()
     local generator = SectorGenerator(x, y)
 
     local buyer = ShipGenerator.createMilitaryShip(militaryFaction, generator:createPositionInSector())
-    buyer.title = "Covert Operative"%_t
+    buyer.title = "Covert Operative"%_T
     buyer:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
     local seller = ShipGenerator.createFreighterShip(smugglerFaction, generator:createPositionInSector())
-    seller.title = "Black Market Dealer"%_t
+    seller.title = "Black Market Dealer"%_T
     seller:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
     -- Guarantee high-rarity loot on the smuggler
@@ -61,7 +62,7 @@ function CW_ArmsDealEvent.spawn()
     if random():test(0.5) then Loot(seller):insert(InventoryTurret(turretGenerator:generate(x, y))) end
 
     sector:broadcastChatMessage(buyer.name, ChatMessageType.Warning,
-        "We have company! The arms deal is compromised! Eradicate all witnesses!"%_t)
+        "We have company! The arms deal is compromised! Eradicate all witnesses!"%_T)
 
     ShipAI(buyer.index):setAggressive()
     ShipAI(seller.index):setAggressive()

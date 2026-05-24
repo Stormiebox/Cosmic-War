@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.1] - 2026-05-24
+
+### Fixed
+- **Mid-Game Save Compatibility:** Added a self-healing retrofit loop to the background war simulation. If the mod is installed on an existing save or server, it will now automatically detect older AI factions missing their Cosmic War metadata (`cw_enabled`, `cw_war_bias`, etc.) and safely initialize them on the fly.
+- **Diagnostics Command:** Fixed an issue where `/cosmicwarstatus` would report `0` active AI factions and `0` rivalries when loaded into an existing galaxy.
+
 ## [1.3.0] - 2026-05-24
 
 ### Fixed

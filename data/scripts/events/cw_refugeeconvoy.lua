@@ -4,6 +4,7 @@ local SectorGenerator = include("SectorGenerator")
 local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
+include("stringutility")
 
 -- namespace CW_RefugeeConvoyEvent
 CW_RefugeeConvoyEvent = {}
@@ -78,7 +79,7 @@ function CW_RefugeeConvoyEvent.spawnHunters()
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
     Sector():broadcastChatMessage(attackerFaction.name, ChatMessageType.Warning,
-        "Target acquired. Leave no survivors."%_t)
+        "Target acquired. Leave no survivors."%_T)
 end
 
 function CW_RefugeeConvoyEvent.escapeTransports()
@@ -91,7 +92,7 @@ function CW_RefugeeConvoyEvent.escapeTransports()
     end
     if survived > 0 then
         Sector():broadcastChatMessage(Faction(CW_RefugeeConvoyEvent.victimId).name, ChatMessageType.Information,
-            "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_t)
+            "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_T)
     end
     terminate()
 end

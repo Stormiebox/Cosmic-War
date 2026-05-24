@@ -3,6 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("randomext")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
+include("stringutility")
 
 -- namespace CosmicWarNews
 CosmicWarNews = {}
@@ -102,9 +103,9 @@ function CosmicWarNews.update(timeStep)
 
     local templates =
     {
-        "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."%_t,
-        "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."%_t,
-        "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."%_t,
+        "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."%_T,
+        "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."%_T,
+        "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."%_T,
     }
 
     local template = templates[random:getInt(1, #templates)] or templates[1]
@@ -115,6 +116,6 @@ function CosmicWarNews.update(timeStep)
     }
 
     -- Server-wide chat style bulletin
-    Server():broadcastChatMessage("Cosmic War", ChatMessageType.Information, msg)
+    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, msg)
     cwlog("%s", msg)
 end

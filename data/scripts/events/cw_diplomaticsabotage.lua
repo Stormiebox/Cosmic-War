@@ -4,6 +4,7 @@ local SectorGenerator = include("SectorGenerator")
 local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
+include("stringutility")
 
 -- namespace CW_DiplomaticSabotageEvent
 CW_DiplomaticSabotageEvent = {}
@@ -69,7 +70,7 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
     local envoy = Sector():getEntity(CW_DiplomaticSabotageEvent.envoyId)
     if envoy then
         Sector():broadcastChatMessage(Faction(CW_DiplomaticSabotageEvent.envoyFactionId).name, ChatMessageType.Information,
-            "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_t)
+            "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_T)
         Sector():deleteEntityJumped(envoy)
     end
     terminate()

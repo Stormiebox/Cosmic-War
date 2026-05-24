@@ -4,6 +4,7 @@ local SectorGenerator = include("SectorGenerator")
 local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
+include("stringutility")
 
 -- namespace CW_FleetClashEvent
 CW_FleetClashEvent = {}
@@ -75,5 +76,5 @@ function CW_FleetClashEvent.spawn()
     end
 
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
-        "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"%_t)
+        "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"%_T)
 end
