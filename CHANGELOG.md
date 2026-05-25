@@ -3,6 +3,7 @@
 ## [1.4.1] - 2026-05-24
 
 ### Fixed
+
 - **Localization:** Fixed several localization strings that were not being properly translated due to incorrect syntax (`%_t` vs. `%_T`).
 - **Mission Descriptions:** Updated mission descriptions to use the new localization syntax.
 - **String Arguments:** Fixed several instances where string arguments were not being passed correctly to localization functions, leading to untranslated text.
@@ -16,6 +17,7 @@
 ## [1.4.0] - 2026-05-24
 
 ### Fixed
+
 - **Mid-Game Save Compatibility:** Added a self-healing retrofit loop to the background war simulation. If the mod is installed on an existing save or server, it will now automatically detect older AI factions missing their Cosmic War metadata (`cw_enabled`, `cw_war_bias`, etc.) and safely initialize them on the fly.
 - **Diagnostics Command:** Fixed an issue where `/cosmicwarstatus` would report `0` active AI factions and `0` rivalries when loaded into an existing galaxy.
 
@@ -38,15 +40,15 @@
 ### Added
 
 - **Early-Conflict Missions:** Added three new dynamic contracts for early war escalation (Heat 0.15 - 0.35):
-  - *Operation: Force Recon* (Heat > 0.15): Scout a hostile listening post without being destroyed.
-  - *Operation: Border Skirmish* (Heat > 0.25): Intercept and eliminate a small enemy border patrol.
-  - *Operation: Resource Sabotage* (Heat > 0.35): Cripple the enemy's economy by destroying a mining operation.
+  - _Operation: Force Recon_ (Heat > 0.15): Scout a hostile listening post without being destroyed.
+  - _Operation: Border Skirmish_ (Heat > 0.25): Intercept and eliminate a small enemy border patrol.
+  - _Operation: Resource Sabotage_ (Heat > 0.35): Cripple the enemy's economy by destroying a mining operation.
 - **Dynamic War Events (Flashpoints):** Injected five brand new, heat-scaling random events into the global exploration pool. You will now stumble upon live conflict scenarios while traveling through space:
-  - *Fleet Clash Flashpoint* (Heat > 0.60): A massive enemy invasion fleet jumps into an active AI-controlled sector.
-  - *Refugee Convoy Interception* (Heat > 0.40): Protect a fleeing civilian convoy from a ruthless hunter fleet until their hyperdrives charge.
-  - *The Stranded Flagship* (Heat > 0.80): Stumble upon a heavily damaged Dreadnought boss and destroy it before its repair fleet arrives!
-  - *Black Market Arms Deal* (Heat > 0.20): Intercept a covert arms deal to secure high-rarity Exceptional/Exotic turrets.
-  - *Diplomatic Sabotage* (Heat > 0.20): Defend a peace envoy from extremist saboteurs attempting to prevent a ceasefire.
+  - _Fleet Clash Flashpoint_ (Heat > 0.60): A massive enemy invasion fleet jumps into an active AI-controlled sector.
+  - _Refugee Convoy Interception_ (Heat > 0.40): Protect a fleeing civilian convoy from a ruthless hunter fleet until their hyperdrives charge.
+  - _The Stranded Flagship_ (Heat > 0.80): Stumble upon a heavily damaged Dreadnought boss and destroy it before its repair fleet arrives!
+  - _Black Market Arms Deal_ (Heat > 0.20): Intercept a covert arms deal to secure high-rarity Exceptional/Exotic turrets.
+  - _Diplomatic Sabotage_ (Heat > 0.20): Defend a peace envoy from extremist saboteurs attempting to prevent a ceasefire.
 
 ### Changed
 
@@ -57,11 +59,11 @@
 ### Added
 
 - **Dynamic War Contracts:** Added five brand new, heat-scaling combat missions dynamically injected into station Bulletin Boards:
-  - *Operation: Interception* (Offense, Heat > 0.45): Intercept an enemy supply convoy.
-  - *Operation: Breakthrough* (Defense, Heat > 0.45): Protect an allied convoy while its hyperdrive spools.
-  - *Operation: Frontline Siege* (Escalation, Heat > 0.60): Destroy a heavily-scaled enemy Forward Operating Base (FOB) that actively calls in reinforcements.
-  - *Operation: High-Value Extraction* (Survival, Heat > 0.80): Survive waves of elite hunters while a high-ranking enemy officer defects.
-  - *Operation: Decapitation Strike* (Climax, Heat = 1.00): Face an astronomically scaled enemy Flagship Dreadnought. Destroying it instantly forces a ceasefire and resets relations between the two warring factions.
+  - _Operation: Interception_ (Offense, Heat > 0.45): Intercept an enemy supply convoy.
+  - _Operation: Breakthrough_ (Defense, Heat > 0.45): Protect an allied convoy while its hyperdrive spools.
+  - _Operation: Frontline Siege_ (Escalation, Heat > 0.60): Destroy a heavily-scaled enemy Forward Operating Base (FOB) that actively calls in reinforcements.
+  - _Operation: High-Value Extraction_ (Survival, Heat > 0.80): Survive waves of elite hunters while a high-ranking enemy officer defects.
+  - _Operation: Decapitation Strike_ (Climax, Heat = 1.00): Face an astronomically scaled enemy Flagship Dreadnought. Destroying it instantly forces a ceasefire and resets relations between the two warring factions.
 
 ### Changed
 
@@ -84,7 +86,7 @@
 ### Changed
 
 - Refactored background scripts (`cosmicwarnews.lua`, `cosmicwarceasefires.lua`, and `cosmicwarstatus.lua`) to correctly track and filter mirrored rivalries, preventing mutual conflicts from being evaluated or displayed twice.
-- Updated Avorion localization tags in `cosmicwarnews.lua` to correctly use strict `%_t` syntax and named template variables (`${factionA}`, etc.).
+- Updated Avorion localization tags in `cosmicwarnews.lua` to correctly use strict `%_t` syntax and named template variables (`%1%`, etc.).
 - Standardized safe `getCfg()` fallback wrappers across background scripts.
 
 ### Fixed

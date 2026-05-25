@@ -97,27 +97,24 @@ function CosmicWarNews.update(timeStep)
     local conflicts = collectHotConflicts(server)
     if #conflicts == 0 then return end
 
-    local random = Random(server.seed + math.floor(server.unpausedRuntime / 60) * 17)
+    local random = Random(server.seed+math.floor(server.unpausedRuntime/60)*17)
     local pick = conflicts[random:getInt(1, #conflicts)]
     if not pick then return end
 
     local templates =
     {
-        "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."%_T,
-        "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."%_T,
-        "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."%_T,
+        "War Bulletin: %1% and %2% relations deteriorated to %3%."%_T,
+        "Conflict Watch: %1% and %2% are entering open hostility. Relations at %3%."%_T,
+        "Strategic Alert: tensions between %1% and %2% reached %3%."%_T,
     }
 
     local template = templates[random:getInt(1, #templates)] or templates[1]
-    local args = {
-        factionA = pick.a.name or ("Faction " .. tostring(pick.a.index)),
-        factionB = pick.b.name or ("Faction " .. tostring(pick.b.index)),
-        rel = tostring(pick.rel)
-    }
+    local factionA = pick.a.name or ("Faction " .. tostring(pick.a.index))
+    local factionB = pick.b.name or ("Faction " .. tostring(pick.b.index))
+    local relStr = tostring(pick.rel)
 
-    -- Server-wide chat style bulletin (Deferred Translation)
-    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, template, args)
+    -- Server-wide chat style bulletin (Deferred Translation using positional C++ varargs)
+    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, template, factionA, factionB, relStr)
 
-    local logMsg = template % args
-    cwlog("%s", logMsg)
+    cwlog("War Bulletin: %s and %s relations deteriorated to %s.", factionA, factionB, relStr)
 end

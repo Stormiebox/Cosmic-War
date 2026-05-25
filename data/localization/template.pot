@@ -111,17 +111,17 @@ msgstr ""
 # ==========data/scripts/entity/cosmicwarnews.lua ==========
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."
+msgid "War Bulletin: %1% and %2% relations deteriorated to %3%."
 msgstr ""
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."
+msgid "Conflict Watch: %1% and %2% are entering open hostility. Relations at %3%."
 msgstr ""
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."
+msgid "Strategic Alert: tensions between %1% and %2% reached %3%."
 msgstr ""
 
 #: data/scripts/entity/cosmicwarnews.lua:

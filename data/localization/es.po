@@ -111,18 +111,18 @@ msgstr "Extremo"
 # ==========data/scripts/entity/cosmicwarnews.lua ==========
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."
-msgstr "Boletín de Guerra: Las relaciones entre ${factionA} y ${factionB} se deterioraron a ${rel}."
+msgid "War Bulletin: %1% and %2% relations deteriorated to %3%."
+msgstr "Boletín de Guerra: Las relaciones entre %1% y %2% se deterioraron a %3%."
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."
-msgstr "Alerta de Conflicto: ${factionA} y ${factionB} están entrando en hostilidad abierta. Relaciones al ${rel}."
+msgid "Conflict Watch: %1% and %2% are entering open hostility. Relations at %3%."
+msgstr "Alerta de Conflicto: %1% y %2% están entrando en hostilidad abierta. Relaciones al %3%."
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."
-msgstr "Alerta Estratégica: las tensiones entre ${factionA} y ${factionB} alcanzaron ${rel}."
+msgid "Strategic Alert: tensions between %1% and %2% reached %3%."
+msgstr "Alerta Estratégica: las tensiones entre %1% y %2% alcanzaron %3%."
 
 #: data/scripts/entity/cosmicwarnews.lua:
 msgid "Cosmic War"
