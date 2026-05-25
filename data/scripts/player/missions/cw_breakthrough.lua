@@ -59,13 +59,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted an escort contract from ${giver}."%_t % { giver = giverFaction.name },
-            "Defend their supply convoy from ${enemy} interceptors."%_t % { enemy = enemyName },
-            { text = "Jump to sector (${location.x}:${location.y})", bulletPoint = true, fulfilled = false },
-            { text = "Protect the convoy until they jump",           bulletPoint = true, fulfilled = false, visible = false }
+            { text = "You accepted an escort contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
+            { text = "Defend their supply convoy from ${enemy} interceptors."%_T, arguments = { enemy = enemyName } },
+            { text = "Jump to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Protect the convoy until they jump"%_T,           bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local baseReward = math.floor(35000 + heat * 50000)
@@ -75,7 +75,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 4000,
-            paymentMessage = "Convoy has escaped. Contract payment transferred."%_t
+            paymentMessage = "Convoy has escaped. Contract payment transferred."%_T
         }
 
         cw_breakthrough_init(factionIndex)
@@ -107,7 +107,7 @@ mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
         Player():sendChatMessage(giverFaction.name, 0,
-            "We are charging our hyperdrives. Hold them off until we can jump!"%_t)
+            "We are charging our hyperdrives. Hold them off until we can jump!"%_T)
     end
 end
 
@@ -121,7 +121,7 @@ mission.phases[1].updateServer = function(timeStep)
         local giverFaction = Faction(mission.data.custom.giverIndex)
         if giverFaction then
             Player():sendChatMessage(giverFaction.name, 1,
-                "The convoy was completely destroyed! We are withdrawing your contract!"%_t)
+                "The convoy was completely destroyed! We are withdrawing your contract!"%_T)
         end
         fail()
         return
@@ -176,7 +176,7 @@ function spawnInterceptors()
         ShipAI(ship):setAggressive()
     end
 
-    Player():sendChatMessage(enemyFaction.name, 1, "Target acquired! Destroy the convoy!"%_t)
+    Player():sendChatMessage(enemyFaction.name, 1, "Target acquired! Destroy the convoy!"%_T)
 end
 
 function finishAndReward(survivors)
@@ -187,10 +187,10 @@ function finishAndReward(survivors)
 
     if survivors == 3 then
         Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-            "All ships safely away! Excellent work, commander. We've added a bonus to your payment."%_t)
+            "All ships safely away! Excellent work, commander. We've added a bonus to your payment."%_T)
     elseif survivors > 0 then
         Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-            "We took losses, but the convoy is away. Sending payment now."%_t)
+            "We took losses, but the convoy is away. Sending payment now."%_T)
     end
 
     if bonus > 0 then

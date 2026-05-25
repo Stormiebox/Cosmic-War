@@ -54,14 +54,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a Decapitation Strike contract from ${giver}."%_t % { giver = giverFaction.name },
-            "${enemy} has deployed their Flagship to the frontline. Destroy it to end this war."%_t %
-            { enemy = enemyName },
-            { text = "Jump to sector (${location.x}:${location.y})", bulletPoint = true, fulfilled = false },
-            { text = "Destroy the Enemy Flagship",                   bulletPoint = true, fulfilled = false, visible = false }
+            { text = "You accepted a Decapitation Strike contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
+            { text = "${enemy} has deployed their Flagship to the frontline. Destroy it to end this war."%_T, arguments = { enemy = enemyName } },
+            { text = "Jump to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the Enemy Flagship"%_T,                   bulletPoint = true, fulfilled = false, visible = false }
         }
 
         -- Astronomical base reward for a boss fight
@@ -70,7 +69,7 @@ function initialize(factionIndex)
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 35000,
             paymentMessage =
-                "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_t
+                "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_T
         }
 
         cw_decapitationstrike_init(factionIndex)
@@ -99,7 +98,7 @@ mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if enemyFaction then
         Player():sendChatMessage(enemyFaction.name, 1,
-            "You dare challenge our Dreadnought? We will crush you and your cowardly employers!"%_t)
+            "You dare challenge our Dreadnought? We will crush you and your cowardly employers!"%_T)
     end
 end
 
@@ -126,7 +125,7 @@ function spawnFlagship(x, y)
     local pos = generator:createPositionInSector()
     local flagship = ShipGenerator.createCarrier(enemyFaction, pos, 10.0) -- 3rd argument is volumeFactor, not raw volume
 
-    flagship:setTitle("Flagship Dreadnought"%_t, {})
+    flagship:setTitle("Flagship Dreadnought"%_T, {})
     flagship:setValue("cw_flagship", true)
 
     -- Give it boss properties

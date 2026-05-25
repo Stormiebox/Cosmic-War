@@ -116,8 +116,8 @@ msgstr "Boletim de Guerra: As relações entre ${factionA} e ${factionB} deterio
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."
-msgstr "Alerta de Conflito: ${factionA} e ${factionB} estão entrando em hostilidade aberta (${rel})."
+msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."
+msgstr "Alerta de Conflito: ${factionA} e ${factionB} estão entrando em hostilidade aberta. Relações em ${rel}."
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.1] - 2026-05-24
+
+### Fixed
+- **Localization:** Fixed several localization strings that were not being properly translated due to incorrect syntax (`%_t` vs. `%_T`).
+- **Mission Descriptions:** Updated mission descriptions to use the new localization syntax.
+- **String Arguments:** Fixed several instances where string arguments were not being passed correctly to localization functions, leading to untranslated text.
+- **Dialogue System:** Fixed an issue where the dialogue system would sometimes fail to display mission-specific dialogue due to incorrect string formatting. This primarily affected mission acceptance and completion messages.
+- **Mission Generation:** Fixed an issue where certain mission types (e.g., "Operation: Force Recon") would fail to generate due to incorrect parameter passing to the mission generation function.
+- **Mission Generation (Operation: Resource Sabotage):** Fixed an issue where "Operation: Resource Sabotage" missions would sometimes fail to generate due to an invalid target entity type.
+- **Mission Generation (Operation: Interception):** Fixed an issue where "Operation: Interception" missions would sometimes fail to generate due to an invalid target entity type. This could lead to missions being offered but immediately failing upon acceptance.
+- **Mission Generation (Operation: Breakthrough):** Fixed an issue where "Operation: Breakthrough" missions would sometimes fail to generate due to an invalid target entity type.
+- **Mission Generation (Operation: Frontline Siege):** Fixed an issue where "Operation: Frontline Siege" missions would sometimes fail to generate due to an invalid target entity type.
+
 ## [1.4.0] - 2026-05-24
 
 ### Fixed

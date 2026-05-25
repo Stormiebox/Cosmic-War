@@ -116,8 +116,8 @@ msgstr "戦争公報: ${factionA} と ${factionB} の関係が ${rel} に悪化�
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."
-msgstr "紛争監視: ${factionA} と ${factionB} が公然と敵対状態に入った (${rel})。"
+msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."
+msgstr "紛争監視: ${factionA} と ${factionB} が公然と敵対状態に入った。現在の関係は ${rel}。"
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:

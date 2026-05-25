@@ -59,13 +59,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a classified extraction contract from ${giver}."%_t % { giver = giverFaction.name },
-            "A high-ranking officer from ${enemy} is attempting to defect."%_t % { enemy = enemyName },
-            { text = "Rendezvous at sector (${location.x}:${location.y})",  bulletPoint = true, fulfilled = false },
-            { text = "Protect the defector until their hyperdrive charges", bulletPoint = true, fulfilled = false, visible = false }
+            { text = "You accepted a classified extraction contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
+            { text = "A high-ranking officer from ${enemy} is attempting to defect."%_T, arguments = { enemy = enemyName } },
+            { text = "Rendezvous at sector (${location.x}:${location.y})"%_T,  bulletPoint = true, fulfilled = false },
+            { text = "Protect the defector until their hyperdrive charges"%_T, bulletPoint = true, fulfilled = false, visible = false }
         }
 
         -- Extremely high base reward due to the heat requirement
@@ -75,7 +75,7 @@ function initialize(factionIndex)
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 18000,
             paymentMessage =
-            "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_t
+            "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_T
         }
 
         cw_extraction_init(factionIndex)
@@ -107,7 +107,7 @@ mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
         Player():sendChatMessage(giverFaction.name, 0,
-            "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!"%_t)
+            "Thank goodness you arrived. My hyperdrive is damaged and needs 3 minutes to spool up. Don't let them take me!"%_T)
     end
 end
 
@@ -121,7 +121,7 @@ mission.phases[1].updateServer = function(timeStep)
         local giverFaction = Faction(mission.data.custom.giverIndex)
         if giverFaction then
             Player():sendChatMessage(giverFaction.name, 1,
-                "The defector's signal was lost... The mission is a failure."%_t)
+                "The defector's signal was lost... The mission is a failure."%_T)
         end
         fail()
         return
@@ -134,7 +134,7 @@ mission.phases[1].updateServer = function(timeStep)
     if mission.data.custom.jumpTimer > 120 and not mission.data.custom.warned then
         mission.data.custom.warned = true
         Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-            "Hold them off! Hyperdrive is at 60 seconds!"%_t)
+            "Hold them off! Hyperdrive is at 60 seconds!"%_T)
     end
 
     -- Defector jumps out after 3 minutes (180 seconds)
@@ -163,7 +163,7 @@ function spawnDefector(x, y)
     local ship = ShipGenerator.createDefender(giverFaction, pos)
 
     ship:setValue("cw_defector", true)
-    ship:setTitle("Defecting Officer"%_t, {})
+    ship:setTitle("Defecting Officer"%_T, {})
 end
 
 function spawnHunters()
@@ -180,7 +180,7 @@ function spawnHunters()
         ShipAI(ship):setAggressive()
     end
 
-    Player():sendChatMessage(enemyFaction.name, 1, "There is the traitor! Execute them immediately!"%_t)
+    Player():sendChatMessage(enemyFaction.name, 1, "There is the traitor! Execute them immediately!"%_T)
 end
 
 function finishAndReward()

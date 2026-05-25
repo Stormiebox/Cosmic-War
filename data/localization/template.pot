@@ -116,7 +116,7 @@ msgstr ""
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."
+msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."
 msgstr ""
 
 #: data/scripts/entity/cosmicwarnews.lua:

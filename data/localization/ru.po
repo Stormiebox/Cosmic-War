@@ -116,8 +116,8 @@ msgstr "Военный бюллетень: Отношения между ${facti
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
-msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."
-msgstr "Обзор конфликта: ${factionA} и ${factionB} вступают в открытую враждебность (${rel})."
+msgid "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."
+msgstr "Обзор конфликта: ${factionA} и ${factionB} вступают в открытую враждебность. Отношения на уровне ${rel}."
 
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:

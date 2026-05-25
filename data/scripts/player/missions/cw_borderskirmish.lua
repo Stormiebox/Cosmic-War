@@ -54,13 +54,13 @@ function initialize(factionIndex)
         mission.data.location = { x = targetX, y = targetY }
 
         local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_t
+        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
         mission.data.description = {
-            "You accepted a skirmish contract from ${giver}."%_t % { giver = giverFaction.name },
-            "Intercept and eliminate the border patrol belonging to ${enemy}."%_t % { enemy = enemyName },
-            { text = "Head to sector (${location.x}:${location.y})", bulletPoint = true, fulfilled = false },
-            { text = "Destroy the patrol",                           bulletPoint = true, fulfilled = false, visible = false }
+            { text = "You accepted a skirmish contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
+            { text = "Intercept and eliminate the border patrol belonging to ${enemy}."%_T, arguments = { enemy = enemyName } },
+            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the patrol"%_T,                           bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = 0
@@ -74,7 +74,7 @@ function initialize(factionIndex)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 4000,
-            paymentMessage = "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."%_t
+            paymentMessage = "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."%_T
         }
 
         cw_skirmish_init(factionIndex)

@@ -104,18 +104,20 @@ function CosmicWarNews.update(timeStep)
     local templates =
     {
         "War Bulletin: ${factionA} and ${factionB} relations deteriorated to ${rel}."%_T,
-        "Conflict Watch: ${factionA} and ${factionB} are entering open hostility (${rel})."%_T,
+        "Conflict Watch: ${factionA} and ${factionB} are entering open hostility. Relations at ${rel}."%_T,
         "Strategic Alert: tensions between ${factionA} and ${factionB} reached ${rel}."%_T,
     }
 
     local template = templates[random:getInt(1, #templates)] or templates[1]
-    local msg = template % {
+    local args = {
         factionA = pick.a.name or ("Faction " .. tostring(pick.a.index)),
         factionB = pick.b.name or ("Faction " .. tostring(pick.b.index)),
-        rel = pick.rel
+        rel = tostring(pick.rel)
     }
 
-    -- Server-wide chat style bulletin
-    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, msg)
-    cwlog("%s", msg)
+    -- Server-wide chat style bulletin (Deferred Translation)
+    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, template, args)
+
+    local logMsg = template % args
+    cwlog("%s", logMsg)
 end
