@@ -57,12 +57,51 @@ local function getAliveWarFactionsInSector()
         table.insert(entities, s)
     end
     local present = {}
+    local server = Server()
 
     for _, e in pairs(entities) do
         if valid(e) and e.factionIndex and e.factionIndex > 0 and e.durability > 0 then
             local f = getFactionByIndex(e.factionIndex)
-            if f and f.isAIFaction and f:getValue("cw_enabled") then
-                present[f.index] = f
+            if f and f.isAIFaction then
+
+                -- Self-heal any encountered factions that missed initialization
+                if f:getValue("cw_enabled") == nil then
+                    local seed = (server and server.seed or 0) + f.index * 101 + 17
+                    local rnd = Random(seed)
+                    local targetAggressive = rnd:getFloat(0.55, 1.0)
+                    local mistrustful = rnd:getFloat(-0.25, 0.85)
+                    local forgiving = rnd:getFloat(-0.25, 0.85)
+
+                    if rnd:test(0.65) then
+                        mistrustful = math.min(1.0, math.max(-1.0, mistrustful + rnd:getFloat(0.10, 0.35)))
+                        forgiving = math.min(1.0, math.max(-1.0, forgiving - rnd:getFloat(0.05, 0.25)))
+                    else
+                        mistrustful = math.min(1.0, math.max(-1.0, mistrustful - rnd:getFloat(0.05, 0.20)))
+                        forgiving = math.min(1.0, math.max(-1.0, forgiving + rnd:getFloat(0.10, 0.30)))
+                    end
+
+                    f:setValue("cw_enabled", true)
+                    f:setValue("cw_war_bias", math.floor(targetAggressive * 1000))
+                    f:setValue("cw_diplomatic_polarity", math.floor((mistrustful - forgiving) * 1000))
+                    if f:getValue("enemy_faction") == nil then
+                        f:setValue("enemy_faction", 0)
+                    end
+                end
+
+                -- Safely register faction with the Cosmic Vault index
+                if server then
+                    local factionStr = server:getValue("factions") or ""
+                    local searchStr = "," .. tostring(f.index) .. ","
+                    if factionStr == "" then
+                        server:setValue("factions", tostring(f.index))
+                    elseif not string.find("," .. factionStr .. ",", searchStr) then
+                        server:setValue("factions", factionStr .. "," .. tostring(f.index))
+                    end
+                end
+
+                if f:getValue("cw_enabled") then
+                    present[f.index] = f
+                end
             end
         end
     end

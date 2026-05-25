@@ -66,6 +66,18 @@ function initializeAIFaction(faction, baseName, stateFormName)
         faction:setValue("enemy_faction", 0)
     end
 
+    -- Register this newly created faction with Cosmic Vault's faction index
+    local server = Server()
+    if server then
+        local factionStr = server:getValue("factions") or ""
+        local searchStr = "," .. tostring(faction.index) .. ","
+        if factionStr == "" then
+            server:setValue("factions", tostring(faction.index))
+        elseif not string.find("," .. factionStr .. ",", searchStr) then
+            server:setValue("factions", factionStr .. "," .. tostring(faction.index))
+        end
+    end
+
     cw_debug("Initialized faction '%s' (%i): war_bias=%i polarity=%i",
         faction.name or "Unknown",
         faction.index or -1,

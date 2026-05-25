@@ -1,9 +1,11 @@
 # Changelog
 
-## [1.4.1] - 2026-05-24
+## [1.5.0] - 2026-05-24
 
 ### Fixed
 
+- **Invisible Factions (Pirates & Xsotan):** Fixed a major blind spot where dynamically generated high-ID factions (such as Pirates, Xsotan, and DLC factions) were invisible to the background war simulation. `Cosmic War` will now dynamically self-heal and force-register these factions into the global Vault index the moment they are encountered!
+- **Global Conflict Tracking:** Background scripts (`cosmicwarnews`, `cosmicwarbounties`, and `/cosmicwarstatus`) will now correctly report, track, and broadcast events involving Pirate and Xsotan factions.
 - **Localization:** Fixed several localization strings that were not being properly translated due to incorrect syntax (`%_t` vs. `%_T`).
 - **Mission Descriptions:** Updated mission descriptions to use the new localization syntax.
 - **String Arguments:** Fixed several instances where string arguments were not being passed correctly to localization functions, leading to untranslated text.
