@@ -4,6 +4,7 @@ local SectorGenerator = include("SectorGenerator")
 local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
+include("relations")
 include("stringutility")
 
 -- namespace CW_RefugeeConvoyEvent
@@ -93,6 +94,13 @@ function CW_RefugeeConvoyEvent.escapeTransports()
     if survived > 0 then
         Sector():broadcastChatMessage(Faction(CW_RefugeeConvoyEvent.victimId).name, ChatMessageType.Information,
             "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_T)
+
+        local faction = Faction(CW_RefugeeConvoyEvent.victimId)
+        if faction then
+            for _, player in pairs({Sector():getPlayers()}) do
+                changeRelations(player, faction, survived * 2500, RelationChangeType.General)
+            end
+        end
     end
     terminate()
 end

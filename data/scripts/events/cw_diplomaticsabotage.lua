@@ -5,6 +5,7 @@ local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 include("galaxy")
+include("relations")
 include("stringutility")
 
 -- namespace CW_DiplomaticSabotageEvent
@@ -72,6 +73,13 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
     if envoy then
         Sector():broadcastChatMessage(Faction(CW_DiplomaticSabotageEvent.envoyFactionId).name, ChatMessageType.Information,
             "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_T)
+
+        local faction = Faction(CW_DiplomaticSabotageEvent.envoyFactionId)
+        if faction then
+            for _, player in pairs({Sector():getPlayers()}) do
+                changeRelations(player, faction, 15000, RelationChangeType.General)
+            end
+        end
         Sector():deleteEntityJumped(envoy)
     end
     terminate()
