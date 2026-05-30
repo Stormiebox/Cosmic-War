@@ -134,6 +134,7 @@ mission.phases[1].triggers = {
 function spawnSiegeTarget(x, y)
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     -- Create a standard military base
     local station = generator:createMilitaryBase(enemyFaction)
@@ -157,7 +158,7 @@ function spawnSiegeTarget(x, y)
     local numDefenders = math.floor(3 + (heat * 4))
     for i = 1, numDefenders do
         local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
-        ShipAI(ship):setAggressive()
+        ShipAI(ship.index):setAggressive()
     end
 end
 
@@ -165,13 +166,14 @@ function spawnReinforcements()
     local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     local heat = mission.data.custom.heat or 0
     local numReinforcements = math.floor(1 + (heat * 2))
 
     for i = 1, numReinforcements do
         local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
-        ShipAI(ship):setAggressive()
+        ShipAI(ship.index):setAggressive()
     end
 
     Player():sendChatMessage(enemyFaction.name, 1, "Reinforcements have arrived! Destroy the attackers!"%_T)

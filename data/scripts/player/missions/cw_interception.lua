@@ -128,6 +128,7 @@ mission.phases[1].triggers = {
 function spawnConvoy(x, y)
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     local numFreighters = random():getInt(1, 3)
     for i = 1, numFreighters do

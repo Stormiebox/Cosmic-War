@@ -118,5 +118,6 @@ function spawnSkirmish(x, y)
     for i = 1, numDefenders do
         local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
         ship:setValue("cw_skirmish_target", true)
+        ShipAI(ship.index):setAggressive()
     end
 end

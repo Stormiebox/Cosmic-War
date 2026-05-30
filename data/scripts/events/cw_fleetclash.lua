@@ -73,6 +73,7 @@ function CW_FleetClashEvent.spawn()
     for i = 1, numAttackers do
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, generator:createPositionInSector())
         ShipAI(ship.index):setAggressive()
+        ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
 
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,

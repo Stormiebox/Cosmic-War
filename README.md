@@ -55,4 +55,4 @@ For complete feature and architecture details, see:
 
 - Use `/cosmicwarstatus` for runtime diagnostics visibility.
 - In large mod stacks, validate load order and check logs during startup.
-- See `CHANGELOG.md` for detailed project change history.
+- See `Cosmic_War_CHANGELOG.md` for detailed project change history.

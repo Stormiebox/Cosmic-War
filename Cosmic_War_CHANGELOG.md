@@ -1,5 +1,25 @@
 # Changelog
 
+All notable changes to **Cosmic War** will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.6.0] - 2026-05-30 - In Sync With Cosmic Overhaul v4.0.0 Update
+
+### Added
+- **Localization Expansion:** Added proper translation support for the new Diplomatic Sanctions system messages across all 7 supported languages.
+
+### Fixed
+- **Mission Spawn Crash:** Fixed a critical bug in `cw_resourcesabotage.lua` where a missing enemy faction would cause a silent crash during sector generation.
+- **Phantom Event Crash:** Fixed a critical issue in `eventscheduler.lua` where dynamic events (Fleet Clashes, Arms Deals, etc.) failed to trigger because they were trying to attach to a non-existent vanilla script wrapper (`sectoreventstarter`).
+- **Brittle Rebuild API:** Fixed a silent failure in `rebuildstations.lua` where the script relied on private vanilla variables. It now correctly uses standard C++ bindings to identify controlling factions and properly clamp station rebuilding during active wars.
+- **Array Traversal Bias:** Fixed a massive simulation bias in `cosmicwarbounties.lua` and `cosmicwardiplomaticsanctions.lua`. Previous deduplication logic prevented newer factions from ever issuing bounties or paying sanctions. Every faction now evaluates these actions independently.
+- **Engine Payment Crash:** Fixed a silent engine error in `cosmicwardiplomaticsanctions.lua` where the script attempted to pass negative numbers to `Faction:receive()`. It now safely uses `Faction:pay()` to ensure reliable deductions.
+
+### Removed
+- **Dead Code:** Removed leftover and commented-out diplomacy loop attachments from `player/init.lua` to keep the player execution context pristine.
+
 ## [1.5.0] - 2026-05-24
 
 ### Fixed

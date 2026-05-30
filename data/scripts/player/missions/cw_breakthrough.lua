@@ -150,6 +150,7 @@ end
 function spawnConvoy(x, y)
     local generator = SectorGenerator(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
+    if not giverFaction then return end
 
     local numFreighters = 3
     for i = 1, numFreighters do
@@ -165,6 +166,7 @@ function spawnInterceptors()
     local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     local heat = mission.data.custom.heat or 0
     local numEnemies = math.floor(2 + (heat * 3))
@@ -185,12 +187,15 @@ function finishAndReward(survivors)
 
     local bonus = (mission.data.custom.bonusPerShip or 15000) * survivors * rewardFactor
 
-    if survivors == 3 then
-        Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-            "All ships safely away! Excellent work, commander. We've added a bonus to your payment."%_T)
-    elseif survivors > 0 then
-        Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-            "We took losses, but the convoy is away. Sending payment now."%_T)
+    local giverFaction = Faction(mission.data.custom.giverIndex)
+    if giverFaction then
+        if survivors == 3 then
+            Player():sendChatMessage(giverFaction.name, 0,
+                "All ships safely away! Excellent work, commander. We've added a bonus to your payment."%_T)
+        elseif survivors > 0 then
+            Player():sendChatMessage(giverFaction.name, 0,
+                "We took losses, but the convoy is away. Sending payment now."%_T)
+        end
     end
 
     if bonus > 0 then

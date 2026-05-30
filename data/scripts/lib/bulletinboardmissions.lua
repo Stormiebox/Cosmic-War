@@ -97,9 +97,10 @@ if onServer() then
             arguments = { entity.factionIndex },
             msg = pick.msg,
             onAccept = [[
-            local self, player = ...
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
             local faction = Faction(self.arguments[1])
-            if faction then player:sendChatMessage(faction.name, 0, self.msg) end
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
         }
     end

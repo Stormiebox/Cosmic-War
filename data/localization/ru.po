@@ -436,3 +436,7 @@ msgstr "Внимание: Обнаружены массивные структу
 #: data/scripts/events/cw_strandedflagship.lua:
 msgid "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"
 msgstr "Это ремонтный флот! Мы прибыли на местоположение флагмана. Обнаружен противник! Немедленно вступить в бой!"
+
+# ==========data/scripts/server/background/cosmicwardiplomaticsanctions.lua ==========
+msgid "Diplomatic Sanctions"
+msgstr "Дипломатические санкции"

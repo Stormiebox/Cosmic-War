@@ -46,9 +46,11 @@ function CW_StrandedFlagshipEvent.spawn()
 
     local generator = SectorGenerator(x, y)
     local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:createPositionInSector(), 25.0) -- Volume factor x25
-    ship.title = "Stranded Flagship"%_T
+
+    ship:setTitle("Stranded Flagship"%_T, {})
     ship.name = flagshipFaction.name .. " Dreadnought"
     ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
+    ship:addScript("data/scripts/entity/story/boss.lua")
 
     -- Cripple the ship
     ship.durability = ship.durability * 0.15

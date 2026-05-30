@@ -101,12 +101,16 @@ mission.phases[1].updateServer = function(timeStep)
     if not atTargetLocation() or not mission.data.custom.spawned then return end
     if mission.data.custom.finished then return end
 
+    local giverFaction = Faction(mission.data.custom.giverIndex)
+
     local targets = { Sector():getEntitiesByScriptValue("cw_recon_target") }
     local station = targets[1]
 
     if not station then
-        Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 1,
-            "The Listening Post was destroyed before we could extract the intel! The contract is void."%_T)
+        if giverFaction then
+            Player():sendChatMessage(giverFaction.name, 1,
+                "The Listening Post was destroyed before we could extract the intel! The contract is void."%_T)
+        end
         fail()
         return
     end
@@ -120,8 +124,10 @@ mission.phases[1].updateServer = function(timeStep)
     if dist < 600 then
         if not mission.data.custom.scanning then
             mission.data.custom.scanning = true
-            Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-                "You are in range. Establishing data link... Stay close!"%_T)
+            if giverFaction then
+                Player():sendChatMessage(giverFaction.name, 0,
+                    "You are in range. Establishing data link... Stay close!"%_T)
+            end
         end
 
         mission.data.custom.scanTimer = (mission.data.custom.scanTimer or 0) + timeStep
@@ -134,8 +140,10 @@ mission.phases[1].updateServer = function(timeStep)
     else
         if mission.data.custom.scanning then
             mission.data.custom.scanning = false
-            Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 1,
-                "Data link lost! You are too far away from the station!"%_T)
+            if giverFaction then
+                Player():sendChatMessage(giverFaction.name, 1,
+                    "Data link lost! You are too far away from the station!"%_T)
+            end
         end
     end
 end
@@ -143,6 +151,7 @@ end
 function spawnReconTarget(x, y)
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     local station = generator:createStation(enemyFaction, "data/scripts/entity/merchants/sensorarray.lua")
     station:setTitle("Covert Listening Post"%_T, {})

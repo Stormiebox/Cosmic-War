@@ -133,8 +133,11 @@ mission.phases[1].updateServer = function(timeStep)
     -- Give a 60 second warning
     if mission.data.custom.jumpTimer > 120 and not mission.data.custom.warned then
         mission.data.custom.warned = true
-        Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0,
-            "Hold them off! Hyperdrive is at 60 seconds!"%_T)
+        local giverFaction = Faction(mission.data.custom.giverIndex)
+        if giverFaction then
+            Player():sendChatMessage(giverFaction.name, 0,
+                "Hold them off! Hyperdrive is at 60 seconds!"%_T)
+        end
     end
 
     -- Defector jumps out after 3 minutes (180 seconds)
@@ -158,6 +161,7 @@ end
 function spawnDefector(x, y)
     local generator = SectorGenerator(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
+    if not giverFaction then return end
 
     local pos = generator:createPositionInSector()
     local ship = ShipGenerator.createDefender(giverFaction, pos)
@@ -170,6 +174,7 @@ function spawnHunters()
     local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     local heat = mission.data.custom.heat or 0
     local numEnemies = math.floor(3 + (heat * 3))
@@ -177,7 +182,7 @@ function spawnHunters()
     for i = 1, numEnemies do
         local pos = generator:createPositionInSector(1500)
         local ship = ShipGenerator.createDefender(enemyFaction, pos)
-        ShipAI(ship):setAggressive()
+        ShipAI(ship.index):setAggressive()
     end
 
     Player():sendChatMessage(enemyFaction.name, 1, "There is the traitor! Execute them immediately!"%_T)

@@ -62,7 +62,7 @@ function CW_RefugeeConvoyEvent.spawn()
     end
 
     sector:broadcastChatMessage(victimFaction.name, ChatMessageType.Warning,
-        "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"%_t)
+        "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"%_T)
 
     deferredCallback(12.0, "spawnHunters")
     deferredCallback(90.0, "escapeTransports")

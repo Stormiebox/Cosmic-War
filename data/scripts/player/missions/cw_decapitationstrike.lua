@@ -56,6 +56,12 @@ function initialize(factionIndex)
         local enemyFaction = Faction(enemyIndex)
         local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
+        local heat = 0
+        if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+            heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
+        end
+        mission.data.custom.heat = heat
+
         mission.data.description = {
             { text = "You accepted a Decapitation Strike contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
             { text = "${enemy} has deployed their Flagship to the frontline. Destroy it to end this war."%_T, arguments = { enemy = enemyName } },
@@ -64,7 +70,7 @@ function initialize(factionIndex)
         }
 
         -- Astronomical base reward for a boss fight
-        local baseReward = 1500000
+        local baseReward = math.floor(500000 + heat * 1000000)
         mission.data.reward = {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 35000,
@@ -132,8 +138,9 @@ function spawnFlagship(x, y)
     flagship:addScript("data/scripts/entity/story/boss.lua")
     flagship.damageMultiplier = 3.0
 
-    -- Scale HP immensely (8x)
-    local hpMult = 8.0
+    -- Scale HP immensely (up to 8x based on heat)
+    local heat = mission.data.custom.heat or 1.0
+    local hpMult = math.max(4.0, 8.0 * heat)
 
     flagship.durability = flagship.durability * hpMult
     flagship.maxDurability = flagship.maxDurability * hpMult
@@ -144,10 +151,10 @@ function spawnFlagship(x, y)
     end
 
     -- Spawn a massive defender fleet to protect it
-    local numDefenders = 8
+    local numDefenders = math.floor(4 + (heat * 4))
     for i = 1, numDefenders do
         local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector(1500))
-        ShipAI(ship):setAggressive()
+        ShipAI(ship.index):setAggressive()
     end
 end
 
@@ -160,7 +167,7 @@ function finishAndReward()
         local rel = giverFaction:getRelations(enemyFaction.index) or 0
         local targetRel = 0 -- Neutral
         if rel < targetRel then
-            changeRelations(giverFaction, enemyFaction, targetRel - rel, RelationChangeType.Diplomacy, true, true, nil)
+            changeRelations(giverFaction, enemyFaction, targetRel - rel, nil, true, true, nil)
         end
 
         -- Clear war markers

@@ -123,14 +123,13 @@ local function maybeAdjustPair(a, b, random)
     end
 end
 
-function CosmicWarDiplomacy.updateServer(timeStep)
-    local player = Player()
-    if not player then return end
+function CosmicWarDiplomacy.update(timeStep)
+    if not onServer() then return end
 
     local server = Server()
     if not server then return end
 
-    local seed = server.seed + player.index * 137 + math.floor(server.unpausedRuntime / 300)
+    local seed = server.seed + math.floor(server.unpausedRuntime / 300)
     local random = Random(seed)
 
     local factions = getWarFactionCandidates()

@@ -114,6 +114,7 @@ mission.phases[1].triggers = {
 function spawnMiningOp(x, y)
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     generator:createAsteroidField()
 

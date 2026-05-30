@@ -5,6 +5,7 @@ local ShipGenerator = include("shipgenerator")
 local SectorTurretGenerator = include("sectorturretgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
+include("galaxy")
 include("stringutility")
 
 -- namespace CW_ArmsDealEvent
@@ -57,7 +58,7 @@ function CW_ArmsDealEvent.spawn()
 
     -- Guarantee high-rarity loot on the smuggler
     local turretGenerator = SectorTurretGenerator()
-    turretGenerator.minRarity = Rarity(RarityType.Exceptional)
+    turretGenerator.rarities = { [RarityType.Exceptional] = 1 }
     Loot(seller):insert(InventoryTurret(turretGenerator:generate(x, y)))
     if random():test(0.5) then Loot(seller):insert(InventoryTurret(turretGenerator:generate(x, y))) end
 

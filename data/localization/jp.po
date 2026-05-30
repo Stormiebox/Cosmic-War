@@ -436,3 +436,7 @@ msgstr "警告：漂流中のドレッドノートに大規模な構造的損傷
 #: data/scripts/events/cw_strandedflagship.lua:
 msgid "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"
 msgstr "こちら修理艦隊！旗艦の場所に到着した。敵影を検出！直ちに交戦せよ！"
+
+# ==========data/scripts/server/background/cosmicwardiplomaticsanctions.lua ==========
+msgid "Diplomatic Sanctions"
+msgstr "外交制裁"

@@ -15,18 +15,24 @@ if onServer() then
             return cw_oldUpdateServer(timeStep)
         end
 
-        -- Ensure specs are initialized before adjusting faction rebuild timestamp behavior.
-        if not RebuildStations.specsInitialized then
-            RebuildStations.initializeSpecs(sector:getCoordinates())
-            RebuildStations.specsInitialized = true
-        end
-
         -- Optimization tweak:
         -- In active war states only, reduce excessive rebuild throttle by lowering it to a near-term value,
         -- instead of forcing a full reset to zero each tick.
-        if RebuildStations.specsFactionIndex then
-            local f = Faction(RebuildStations.specsFactionIndex)
-            if f then
+        local x, y = sector:getCoordinates()
+        local controlling = Galaxy():getControllingFaction(x, y)
+        local factions = { sector:getPresentFactions() }
+
+        local factionMap = {}
+        if controlling then factionMap[controlling.index] = controlling end
+        for _, fIndex in pairs(factions) do
+            if not factionMap[fIndex] then
+                local f = Faction(fIndex)
+                if f then factionMap[fIndex] = f end
+            end
+        end
+
+        for _, f in pairs(factionMap) do
+            if f.isAIFaction then
                 local enemy = f:getValue("enemy_faction") or 0
                 if enemy > 0 then
                     local ts = f:getValue("rebuild_stations_timestamp")

@@ -89,7 +89,7 @@ function CosmicWarCeasefires.update(timeStep)
                         local ceasefireChance = cfg.ceasefireChance or 0.25
                         if rel > rivalryThreshold and random:test(ceasefireChance) then
                             local gain = random:getInt(2000, 6000)
-                            changeRelations(a, b, gain, RelationChangeType.Diplomatic, true, true, nil)
+                            changeRelations(a, b, gain, nil, true, true, nil)
 
                             a:setValue("enemy_faction", 0)
                             a:setValue("cw_target_faction", 0)
