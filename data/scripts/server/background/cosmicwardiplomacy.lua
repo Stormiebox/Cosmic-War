@@ -95,8 +95,7 @@ local function maybeAdjustPair(a, b, random)
     if random:test(math.min(0.55, warChance)) then
         local worsen = random:getInt(1000, 4500)
         local nr = math.max(-100000, rel - worsen)
-        local delta = nr - rel
-        changeRelations(a, b, delta, nil, true, true, nil)
+        Galaxy():setFactionRelations(a, b, nr)
         didChange = true
 
         local cfg = getCfg()
@@ -109,8 +108,7 @@ local function maybeAdjustPair(a, b, random)
     elseif random:test(math.min(0.40, peaceChance)) then
         local improve = random:getInt(500, 2200)
         local nr = math.min(100000, rel + improve)
-        local delta = nr - rel
-        changeRelations(a, b, delta, nil, true, true, nil)
+        Galaxy():setFactionRelations(a, b, nr)
         didChange = true
     end
 

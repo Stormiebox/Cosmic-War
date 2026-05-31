@@ -150,9 +150,10 @@ local function applyWarPressure(a, b, random)
     local worsen = random:getInt(1500, 5000)
     local delta = -math.abs(worsen)
 
-    -- Avorion relation updates should be done through changeRelations() from relations.lua.
-    -- Direct setRelations() is not part of the exposed API and causes nil-method errors.
-    changeRelations(a, b, delta, nil, true, true, nil)
+    -- Vanilla changeRelations() ignores AI vs AI factions.
+    -- We must use the Galaxy API to force the relation change between two AI entities.
+    local newRel = math.max(-100000, math.min(100000, rel + delta))
+    Galaxy():setFactionRelations(a, b, newRel)
 
     local newRelA = a:getRelations(b.index) or rel
     local newRelB = b:getRelations(a.index) or rel

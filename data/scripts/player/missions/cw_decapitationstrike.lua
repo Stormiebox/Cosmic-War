@@ -167,7 +167,7 @@ function finishAndReward()
         local rel = giverFaction:getRelations(enemyFaction.index) or 0
         local targetRel = 0 -- Neutral
         if rel < targetRel then
-            changeRelations(giverFaction, enemyFaction, targetRel - rel, nil, true, true, nil)
+            Galaxy():setFactionRelations(giverFaction, enemyFaction, targetRel)
         end
 
         -- Clear war markers
