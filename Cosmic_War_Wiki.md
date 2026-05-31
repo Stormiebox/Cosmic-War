@@ -3,12 +3,14 @@
 Welcome to the **Cosmic War** official wiki! This page contains the full, detailed documentation for the faction-conflict simulation module in the **Cosmic** mod series.
 
 **Cosmic War** is designed to:
+
 - Run seamlessly as a standalone module.
 - Synergize with **Cosmic Overhaul** through optional bridge behaviors where available.
 
 ---
 
 ## Table of Contents
+
 - [Mod Identity & Design Goals](#mod-identity--design-goals)
 - [Architecture Summary](#architecture-summary)
 - [Full Feature Breakdown](#full-feature-breakdown)
@@ -24,6 +26,7 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 **Primary Focus:** Living, persistent AI faction politics and war-state simulation.
 
 **Core Goals:**
+
 1. **Active Politics:** Make galaxy politics feel dynamic and alive instead of static.
 2. **Sustained Cycles:** Produce meaningful war and cooling cycles over long campaign sessions via scripts properly attached to the global `Galaxy` loop.
 3. **Player Visibility:** Surface war-state consequences directly to players via news broadcasts, bounties, and sanctions pressure.
@@ -50,6 +53,7 @@ The mod utilizes a layered simulation model to bring the galaxy to life:
 ## Full Feature Breakdown
 
 ### 1) War-Oriented AI Faction Seeding
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
@@ -59,22 +63,27 @@ The mod utilizes a layered simulation model to bring the galaxy to life:
 Injects and maintains faction-level war metadata for AI factions so behavior trends are less random and more identity-driven over time.
 
 **Typical Stored Values:**
+
 - `cw_enabled`
 - `cw_war_bias`
 - `cw_diplomatic_polarity`
 - Rivalry target helpers used by downstream systems.
 
 **Gameplay Impact:**
+
 - AI factions feel less interchangeable.
 - Rivalries become more coherent in long campaigns.
 - Better continuity between isolated events and long-term politics.
+
 </details>
 
 ### 2) Sector War-Pressure Controller
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
+
 - `data/scripts/sector/init.lua`
 - `data/scripts/sector/cosmicwarcontroller.lua`
 
@@ -82,20 +91,25 @@ Injects and maintains faction-level war metadata for AI factions so behavior tre
 Runs periodic sector-level scans and applies pressure to selected faction pairs when local conflict conditions align.
 
 **Behavior Goals:**
+
 - Encourage natural hotspot emergence.
 - Avoid spam via spacing/cooldown logic.
 - Prevent every loaded sector from escalating identically.
 
 **Gameplay Impact:**
+
 - Frontlines and contested regions emerge organically.
 - Different sectors can diverge into quiet vs. volatile states.
+
 </details>
 
 ### 3) Persistent Diplomacy Drift
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
+
 - `data/scripts/player/init.lua`
 - `data/scripts/player/background/cosmicwardiplomacy.lua`
 
@@ -106,11 +120,14 @@ Periodically evaluates random/eligible faction-pair subsets and nudges diplomacy
 Without drift, diplomacy can remain too static between discrete scripted events.
 
 **Gameplay Impact:**
+
 - Politics evolve continuously.
 - Rivalry maintenance feels systemic, not scripted-only.
+
 </details>
 
 ### 4) War News / Broadcast Layer
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
@@ -120,16 +137,20 @@ Without drift, diplomacy can remain too static between discrete scripted events.
 Publishes periodic war bulletins to improve player awareness of macro conflict shifts.
 
 **Implementation Style:**
+
 - Collects currently hot conflicts.
 - Chooses one using stable randomization.
 - Broadcasts informational message server-wide.
 
 **Gameplay Impact:**
+
 - Players can react strategically to political shifts.
 - Background simulation becomes visible and actionable.
+
 </details>
 
 ### 5) Diplomatic Sanctions Pressure
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
@@ -139,11 +160,14 @@ Publishes periodic war bulletins to improve player awareness of macro conflict s
 Applies sanction-like pressure behavior tied to entrenched rivalries and hostile diplomatic states.
 
 **Gameplay Impact:**
+
 - Wars have economic/diplomatic consequences, not only combat outcomes.
 - Political hostility influences broader strategic conditions.
+
 </details>
 
 ### 6) Ceasefire / Détente Logic
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
@@ -153,11 +177,14 @@ Applies sanction-like pressure behavior tied to entrenched rivalries and hostile
 Allows conditional de-escalation when hostility recovers and ceasefire chance criteria are met.
 
 **Gameplay Impact:**
+
 - Conflict cycles can resolve naturally.
 - The galaxy does not lock permanently into one escalated state.
+
 </details>
 
 ### 7) War Bounty Generation
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
@@ -167,20 +194,25 @@ Allows conditional de-escalation when hostility recovers and ceasefire chance cr
 Creates time-bound bounty opportunities linked to active faction rivalries.
 
 **Typical Stored Value Pattern:**
+
 - Target faction ID.
 - Reward value.
 - Expiration runtime.
 
 **Gameplay Impact:**
+
 - Gives players direct incentives to engage with active wars.
 - Converts geopolitical state into mission-like opportunities.
+
 </details>
 
 ### 8) Runtime Cleanup / Compatibility Hooks
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
+
 - `data/scripts/sector/factionwar/temporarydefender.lua`
 - `data/scripts/sector/background/rebuildstations.lua`
 
@@ -188,11 +220,14 @@ Creates time-bound bounty opportunities linked to active faction rivalries.
 Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wartime leftovers and transition artifacts.
 
 **Gameplay Impact:**
+
 - Cleaner war transitions.
 - Lower chance of lingering war-state artifacts.
+
 </details>
 
 ### 9) Admin / Diagnostics Command
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
@@ -201,6 +236,7 @@ Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wart
 **Command:** `/cosmicwarstatus`
 
 **What it provides:**
+
 - Quick status and health visibility.
 - Easier balancing and debug workflows.
 - Sanity checks for running servers.
@@ -210,10 +246,12 @@ The command path includes readiness guards (e.g., galaxy API availability checks
 </details>
 
 ### 10) MCM Configuration Integration
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
+
 - `modconfig.lua`
 - `data/scripts/lib/cosmicwarconfig.lua`
 - `modinfo.lua`
@@ -222,36 +260,45 @@ The command path includes readiness guards (e.g., galaxy API availability checks
 Requires the **Mod Configuration Menu (MCM)**.
 
 **Config Groups Currently Exposed:**
+
 - **War Pressure:** `sectorPressureInterval`, `sectorPressureChance`, `sectorPressureMinSpacing`
 - **Diplomacy:** `diplomacyInterval`, `diplomacyPairSteps`, `rivalryThreshold`
 - **Diagnostics:** `debugLogs`
 
 **Config Handling Notes:**
+
 - Numeric values are clamped to safe ranges.
 - Percent slider values are normalized for simulation use.
 - Config bridge returns defaults if MCM/config context is unavailable.
+
 </details>
 
 ### 11) Stability Hardening
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 Recent iterations include:
+
 - Safer startup behavior during early server lifecycles by waiting for the **Cosmic Vault** `factions_ready` flag before running simulation steps.
 - Absolute abandonment of expensive `Galaxy():getFactions()` loops in favor of the performant, shared Cosmic Vault index cache (`Server():getValue("factions")`).
 - Corrected global simulation attachment (`galaxy/init.lua` instead of `server/init.lua`).
 - Defensive checks in background loops.
 
 **Gameplay/Ops Impact:**
+
 - Fewer nil-method crashes at startup.
 - Stronger behavior in heavily modded stacks.
+
 </details>
 
 ### 12) Cosmic Overhaul Synergy (Bridge Layer)
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary bridge files:**
+
 - `data/scripts/lib/cosmicwareconomybridge.lua`
 - `data/scripts/lib/cosmicwarcaptainbridge.lua`
 
@@ -259,21 +306,26 @@ Recent iterations include:
 Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refine, mine, salvage variants).
 
 **Design Intent:**
+
 - Emphasizes non-invasive composition over hard overwrites.
 - The original prediction path runs first.
 - The bridge applies bounded post-processing only when enabled and when the context is valid.
 - Graceful no-op fallback occurs when disabled or when missing context.
 
 **High-Level Effect:**
+
 - Command planning outputs can reflect war-heat pressure more clearly.
 - Baseline behavior is safely preserved when bridge toggles are disabled.
+
 </details>
 
 ### 13) Dynamic War Contracts (Missions)
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
+
 - `data/scripts/entity/bulletinboardmissions.lua`
 - `data/scripts/player/missions/cw_forcerecon.lua`
 - `data/scripts/player/missions/cw_borderskirmish.lua`
@@ -288,6 +340,7 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 Injects custom, highly-scaled combat missions directly into Avorion's native Bulletin Board mission pools based on the current macro-level **War Heat** between the station's owner and their rival faction.
 
 **Available Contracts:**
+
 - **War Heat > 0.15:** *Force Recon* (Scout a hostile listening post).
 - **War Heat > 0.25:** *Border Skirmish* (Eliminate an enemy border patrol).
 - **War Heat > 0.35:** *Resource Sabotage* (Destroy an enemy mining operation).
@@ -295,13 +348,16 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 - **War Heat > 0.60:** *Frontline Siege* (Assault a dynamically scaled enemy Forward Operating Base).
 - **War Heat > 0.80:** *High-Value Extraction* (Holdout survival while an enemy defector charges their hyperdrive).
 - **War Heat = 1.00:** *Decapitation Strike* (Ultra-hard Flagship Boss. Destroying it forces an immediate ceasefire).
+
 </details>
 
 ### 14) Dynamic War Events (Flashpoints)
+
 <details>
 <summary><b>Click to expand details</b></summary>
 
 **Primary files:**
+
 - `data/scripts/player/eventscheduler.lua`
 - `data/scripts/events/cw_fleetclash.lua`
 - `data/scripts/events/cw_refugeeconvoy.lua`
@@ -313,11 +369,13 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 Injects new spontaneous events into Avorion's global event scheduler. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation.
 
 **Available Events:**
+
 - **Fleet Clash (Heat > 0.60):** Massive enemy strike fleets jump into active AI sectors.
 - **Refugee Convoy (Heat > 0.40):** Civilian freighters are ambushed by hunter fleets.
 - **Stranded Flagship (Heat > 0.80):** A severely damaged dreadnought boss is discovered vulnerable, with a repair fleet en route.
 - **Arms Deal (Heat > 0.20):** An illegal weapon transaction occurs, dropping high-rarity turrets if interrupted.
 - **Diplomatic Sabotage (Heat > 0.20):** Extremists attack a peace envoy. Saving the envoy provides massive reputation.
+
 </details>
 
 ---
@@ -325,11 +383,13 @@ Injects new spontaneous events into Avorion's global event scheduler. As players
 ## Server & Performance Guidelines
 
 ### Multiplayer / Dedicated Server Behavior
+
 - Avorion's simulation is server-authoritative. **Cosmic War** logic is predominantly server-side with synchronization-aware behavior implemented where needed.
 - Global background loops (like news, sanctions, and ceasefires) are strictly attached to the `Galaxy()` component to ensure proper headless execution.
 - In mixed mod stacks, maintain consistent configuration and load order. Validate logs at startup to catch any issues early.
 
 ### Performance & Safety Notes
+
 - Interval-driven loops are strictly favored over heavy per-frame (`update()`) logic to maintain server TPS.
 - Defensive nil and callable checks are heavily used in high-risk lifecycle paths.
 - Debug logging is toggleable via the MCM config to reduce noise and overhead in live production environments.
@@ -339,11 +399,13 @@ Injects new spontaneous events into Avorion's global event scheduler. As players
 ## Dependencies & Compatibility
 
 ### Required Mods
+
 - Avorion
 - **Mod Configuration Menu (MCM)**
 - **Cosmic Vault** (Provides the underlying faction index API and shared data contracts).
 
 ### Compatibility Intent
+
 - Built to seamlessly coexist with **Cosmic Overhaul**.
 - Bridge-style integration explicitly avoids hard coupling to external mods.
 - For large custom stacks, always verify your load order and check the server startup logs.
@@ -362,6 +424,7 @@ Injects new spontaneous events into Avorion's global event scheduler. As players
 4. Restart the game or server.
 
 ### Troubleshooting Checklist
+
 - [ ] Confirm the mod is active in your Avorion mod settings.
 - [ ] Confirm the **MCM** dependency is enabled and loaded before this mod.
 - [ ] Review the latest client/server logs for any early startup warnings.
@@ -375,6 +438,7 @@ Injects new spontaneous events into Avorion's global event scheduler. As players
 **Cosmic War** remains an actively iterated **WIP** with ongoing balancing and long-session validation.
 
 The current architectural direction is heavily focused on:
+
 - Resilient lifecycle behavior.
 - Highly configurable war simulation.
 - Stable, predictable coexistence with broader **Cosmic** series mod stacks.
