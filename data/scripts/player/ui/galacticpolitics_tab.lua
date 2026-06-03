@@ -66,6 +66,15 @@ if onClient() then
         politicsList:setEntryNoCallback(3, 0, "Status"%_t, true, false, white)
         politicsList:setEntryNoCallback(4, 0, "Relations"%_t, true, false, white)
 
+        local function getRelationColor(rel)
+            if rel >= 80000 then return ColorRGB(0.2, 1.0, 0.2)
+            elseif rel >= 30000 then return ColorRGB(0.6, 1.0, 0.6)
+            elseif rel <= -80000 then return ColorRGB(1.0, 0.2, 0.2)
+            elseif rel <= -30000 then return ColorRGB(1.0, 0.6, 0.2)
+            else return ColorRGB(0.8, 0.8, 0.8) end
+        end
+
+        local player = Player()
         for _, conflict in pairs(data) do
             politicsList:addRow()
             local row = politicsList.rows - 1
@@ -76,11 +85,41 @@ if onClient() then
             elseif conflict.heat > 0 then heatColor = ColorRGB(1.0, 1.0, 0.2)     -- Yellow
             else heatColor = ColorRGB(0.2, 1.0, 0.2) end                          -- Green
 
-            politicsList:setEntryNoCallback(0, row, conflict.factionA, false, false, gray)
-            politicsList:setEntryNoCallback(1, row, conflict.factionB, false, false, gray)
+            local relA = player:getRelations(conflict.factionAIndex) or 0
+            local relB = player:getRelations(conflict.factionBIndex) or 0
+
+            local nameA = conflict.factionA
+            if conflict.bountyA > 0 then nameA = nameA .. " [!]" end
+
+            local nameB = conflict.factionB
+            if conflict.bountyB > 0 then nameB = nameB .. " [!]" end
+
+            politicsList:setEntryNoCallback(0, row, nameA, false, false, getRelationColor(relA))
+            politicsList:setEntryNoCallback(1, row, nameB, false, false, getRelationColor(relB))
             politicsList:setEntryNoCallback(2, row, tostring(conflict.heat) .. "%", false, false, heatColor)
             politicsList:setEntryNoCallback(3, row, conflict.status%_t, false, false, heatColor)
             politicsList:setEntryNoCallback(4, row, tostring(conflict.relation), false, false, gray)
+
+            local function concatLocalizedTraits(traits)
+                local str = ""
+                for i, t in ipairs(traits) do
+                    str = str .. t%_t
+                    if i < #traits then str = str .. ", " end
+                end
+                return str
+            end
+
+            local tooltip = "=== " .. conflict.factionA .. " ===\n"
+            tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsA) .. "\n"
+            tooltip = tooltip .. "Your Relation: "%_t .. tostring(math.floor(relA)) .. "\n"
+            if conflict.bountyA > 0 then tooltip = tooltip .. "Bounty on Enemy: ¢"%_t .. createMonetaryString(conflict.bountyA) .. "\n" end
+
+            tooltip = tooltip .. "\n=== " .. conflict.factionB .. " ===\n"
+            tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsB) .. "\n"
+            tooltip = tooltip .. "Your Relation: "%_t .. tostring(math.floor(relB)) .. "\n"
+            if conflict.bountyB > 0 then tooltip = tooltip .. "Bounty on Enemy: ¢"%_t .. createMonetaryString(conflict.bountyB) .. "\n" end
+
+            politicsList:setTooltip(row, tooltip)
         end
     end
 end
@@ -100,6 +139,17 @@ function GalacticPoliticsTab.serverFetchData()
 
     local conflicts, uniquePairs = {}, {}
     local cw_success = pcall(include, "cosmicwarbridge")
+    local now = server.unpausedRuntime or 0
+
+    local function getFactionTraits(faction)
+        local traits = {}
+        if faction:getTrait("aggressive") then table.insert(traits, "Aggressive"%_T) end
+        if faction:getTrait("peaceful") then table.insert(traits, "Peaceful"%_T) end
+        if faction:getTrait("wealthy") then table.insert(traits, "Wealthy"%_T) end
+        if faction:getTrait("poor") then table.insert(traits, "Poor"%_T) end
+        if #traits == 0 then return {"Unknown"%_T} end
+        return traits
+    end
 
     for _, idx in pairs(factionIndices) do
         local f = Faction(idx)
@@ -125,9 +175,25 @@ function GalacticPoliticsTab.serverFetchData()
                         elseif rel < 0 then status = "Cold War"%_T
                         else status = "Ceasefire"%_T end
 
+                        local bountyA = 0
+                        if f:getValue("cw_bounty_enemy") == e.index and (f:getValue("cw_bounty_expires") or 0) > now then
+                            bountyA = f:getValue("cw_bounty_reward") or 0
+                        end
+
+                        local bountyB = 0
+                        if e:getValue("cw_bounty_enemy") == f.index and (e:getValue("cw_bounty_expires") or 0) > now then
+                            bountyB = e:getValue("cw_bounty_reward") or 0
+                        end
+
                         table.insert(conflicts, {
                             factionA = f.name,
+                            factionAIndex = f.index,
+                            traitsA = getFactionTraits(f),
+                            bountyA = bountyA,
                             factionB = e.name,
+                            factionBIndex = e.index,
+                            traitsB = getFactionTraits(e),
+                            bountyB = bountyB,
                             heat = math.floor(heat * 100),
                             relation = rel,
                             status = status
