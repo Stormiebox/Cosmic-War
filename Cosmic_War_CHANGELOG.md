@@ -13,6 +13,10 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - **Strategic Tooltips:** Hovering over a conflict now reveals internal Faction Indices, AI Traits (Aggressive, Wealthy, Peaceful, etc.), exact numerical player relations, and active War Bounties.
   - **War Bounties Indicator:** Factions with active bounties placed against them now display a `[!]` indicator next to their name.
   - **Immersive Relation Text:** Added a "Numeric Relations" checkbox. Players can now toggle between seeing raw relation numbers or immersive diplomatic states (e.g., "Allied", "Confrontational", "All-Out War").
+  - **Interactive Column Sorting:** Added clickable column headers (Faction A, Faction B, War Heat, Status, Relations) to instantly sort the list ascending or descending.
+  - **Conflict Filters:** Added a dropdown to instantly filter the list by "All", "Active Conflicts", "Ceasefires Only", or "Active Bounties".
+  - **Quick Diplomacy Links:** Added context buttons that identify the exact Faction Index of combatants in a selected conflict to help easily locate them in the vanilla Diplomacy tab.
+  - **Legend & Summary Panel:** Added a bottom UI panel that clearly explains the color-coding, bounty indicators, and how the Cosmic War simulation operates in the background.
 
 ### Fixed - During Testing
 - **UI Thread Crash (Translation Trap):** Fixed a critical bug in the Galactic Politics tab where server-side translation objects (`%_T`) were being sent across the network, instantly crashing the client UI thread when formatted.

@@ -60,18 +60,27 @@ if onClient() then
         refreshButton.icon = "data/textures/icons/cw_refresh.png"
         refreshButton.tooltip = "Refresh Galactic Intelligence"%_t
 
-        self.numericCheck = container:createCheckBox(Rect(hsplit.top.width - 360, 5, hsplit.top.width - 160, hsplit.top.height - 25), "Numeric Relations"%_t, "onNumericCheckChanged")
+        self.numericCheck = container:createCheckBox(Rect(hsplit.top.width - 320, 5, hsplit.top.width - 160, hsplit.top.height - 25), "Numeric Relations"%_t, "onNumericCheckChanged")
         self.numericCheck.checked = false
         self.numericCheck.tooltip = "Toggle between numeric and descriptive relation values."%_t
 
+        self.filterComboBox = container:createValueComboBox(Rect(hsplit.top.width - 530, 5, hsplit.top.width - 330, hsplit.top.height - 25), "onFilterChanged")
+        self.filterComboBox:addEntry("All", "All"%_t)
+        self.filterComboBox:addEntry("Active Conflicts", "Active Conflicts"%_t)
+        self.filterComboBox:addEntry("Ceasefires Only", "Ceasefires Only"%_t)
+        self.filterComboBox:addEntry("Active Bounties", "Active Bounties"%_t)
+        self.filterComboBox.tooltip = "Filter Conflicts"%_t
+
         container:createLabel(Rect(margin, 5, margin + 300, hsplit.top.height - 5), "Active Galactic Conflicts"%_t, 20)
 
-        politicsList = container:createListBoxEx(Rect(margin, hsplit.top.height, hsplit.bottom.width - 2 * margin, hsplit.bottom.height))
+        -- Reserve 130px at the bottom of the UI for the Legend/Summary section
+        local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - 130)
+        politicsList = container:createListBoxEx(listRect)
         politicsList.columns = 5
         politicsList.rowHeight = 35
 
         -- Calculate column widths cleanly to account for the scrollbar
-        local width = container.size.x - 2 * margin - 20
+        local width = listRect.width - 20
         politicsList:setColumnWidth(0, width * 0.25)
         politicsList:setColumnWidth(1, width * 0.25)
         politicsList:setColumnWidth(2, width * 0.15)
@@ -79,6 +88,46 @@ if onClient() then
         politicsList:setColumnWidth(4, width * 0.15)
 
         politicsList.headline = true
+        politicsList.onSelectFunction = "onConflictSelected"
+
+        self.selectedSorting = 3
+        self.sortingType = -1
+        self.sortingButtons = {}
+        local colWidths = { width * 0.25, width * 0.25, width * 0.15, width * 0.20, width * 0.15 }
+        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Status"%_t, "Relations"%_t}
+        local currentX = margin
+        for i = 1, 5 do
+            local btnRect = Rect(currentX, listRect.lower.y, currentX + colWidths[i] - 2, listRect.lower.y + 35)
+            local btn = container:createButton(btnRect, "", "onSort" .. i)
+            btn.hasFrame = false
+            btn.tooltip = "Sort by "%_t .. sortingLabels[i]
+            table.insert(self.sortingButtons, btn)
+            currentX = currentX + colWidths[i]
+        end
+        self.updateSortingIcons()
+
+        -- Bottom Information Section (Legend & Summary)
+        local infoRect = Rect(margin, container.size.y - 120, container.size.x - margin, container.size.y - 10)
+        local infoFrame = container:createFrame(infoRect)
+        local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.40)
+
+        local legendStr = "Legend:\n [!] Active War Bounty (Check Tooltip)\n War Heat: \\c(f33)Critical\\c() | \\c(f93)High\\c() | \\c(ff3)Rising\\c() | \\c(3f3)Zero\\c()\n Relations: \\c(3f3)Friendly\\c() | \\c(ccc)Neutral\\c() | \\c(f33)Hostile\\c()"%_t
+        local legendRectInset = Rect(infoSplit.left.lower + vec2(10, 10), infoSplit.left.upper - vec2(10, 10))
+        local legendLabel = container:createLabel(legendRectInset, legendStr, 14)
+        legendLabel:setTopLeftAligned()
+
+        local summaryStr = "Cosmic War Simulation:\nConflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions.\n\nNote: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."%_t
+        local summaryRectInset = Rect(infoSplit.right.lower + vec2(10, 10), infoSplit.right.upper - vec2(10, 10))
+        local summaryLabel = container:createLabel(summaryRectInset, summaryStr, 14)
+        summaryLabel.wordWrap = true
+        summaryLabel:setTopLeftAligned()
+
+        self.btnDiplomacyA = container:createButton(Rect(infoSplit.right.lower.x + 10, infoSplit.right.upper.y - 35, infoSplit.right.lower.x + 200, infoSplit.right.upper.y - 5), "Diplomacy (A)"%_t, "onDiplomacyA")
+        self.btnDiplomacyB = container:createButton(Rect(infoSplit.right.lower.x + 210, infoSplit.right.upper.y - 35, infoSplit.right.lower.x + 400, infoSplit.right.upper.y - 5), "Diplomacy (B)"%_t, "onDiplomacyB")
+        self.btnDiplomacyA.active = false
+        self.btnDiplomacyB.active = false
+        self.btnDiplomacyA.textSize = 12
+        self.btnDiplomacyB.textSize = 12
     end
 
     function GalacticPoliticsTab.clientFetchData()
@@ -93,13 +142,118 @@ if onClient() then
         end
     end
 
+    function GalacticPoliticsTab.onFilterChanged()
+        self.applyFiltersAndSort()
+    end
+
+    function GalacticPoliticsTab.onSort1() self.updateSorting(1) end
+    function GalacticPoliticsTab.onSort2() self.updateSorting(2) end
+    function GalacticPoliticsTab.onSort3() self.updateSorting(3) end
+    function GalacticPoliticsTab.onSort4() self.updateSorting(4) end
+    function GalacticPoliticsTab.onSort5() self.updateSorting(5) end
+
+    function GalacticPoliticsTab.updateSorting(newSorting)
+        if self.selectedSorting == newSorting then
+            self.sortingType = self.sortingType * -1
+        else
+            self.selectedSorting = newSorting
+            self.sortingType = 1
+        end
+        self.updateSortingIcons()
+        self.applyFiltersAndSort()
+    end
+
+    function GalacticPoliticsTab.updateSortingIcons()
+        for ndx, button in ipairs(self.sortingButtons) do
+            if ndx == self.selectedSorting then
+                if self.sortingType < 0 then
+                    button.icon = "data/textures/icons/arrow-down2.png"
+                else
+                    button.icon = "data/textures/icons/arrow-up2.png"
+                end
+            else
+                button.icon = ""
+            end
+        end
+    end
+
+    function GalacticPoliticsTab.applyFiltersAndSort()
+        if not self.lastData then return end
+
+        local filter = self.filterComboBox.selectedValue
+        self.displayedConflicts = {}
+
+        for _, conflict in ipairs(self.lastData) do
+            local match = true
+            if filter == "Active Conflicts"%_t and conflict.heat == 0 then match = false end
+            if filter == "Ceasefires Only"%_t and conflict.heat > 0 then match = false end
+            if filter == "Active Bounties"%_t and conflict.bountyA == 0 and conflict.bountyB == 0 then match = false end
+
+            if match then
+                table.insert(self.displayedConflicts, conflict)
+            end
+        end
+
+        table.sort(self.displayedConflicts, function(a, b)
+            local valA, valB
+            if self.selectedSorting == 1 then valA, valB = a.factionA, b.factionA
+            elseif self.selectedSorting == 2 then valA, valB = a.factionB, b.factionB
+            elseif self.selectedSorting == 3 then valA, valB = a.heat, b.heat
+            elseif self.selectedSorting == 4 then valA, valB = a.status, b.status
+            elseif self.selectedSorting == 5 then valA, valB = a.relation, b.relation
+            end
+
+            if valA == valB then return false end
+            if self.sortingType == 1 then
+                return valA < valB
+            else
+                return valA > valB
+            end
+        end)
+
+        self.populateUI()
+    end
+
+    function GalacticPoliticsTab.onConflictSelected()
+        local row = politicsList.selectedRow
+        if not row or row == 0 then return end
+        local conflict = self.displayedConflicts[row]
+        if not conflict then return end
+
+        self.btnDiplomacyA.active = true
+        self.btnDiplomacyB.active = true
+        self.btnDiplomacyA.caption = "Diplomacy: "%_t .. conflict.factionA
+        self.btnDiplomacyB.caption = "Diplomacy: "%_t .. conflict.factionB
+    end
+
+    function GalacticPoliticsTab.onDiplomacyA()
+        local row = politicsList.selectedRow
+        if not row or row == 0 then return end
+        local conflict = self.displayedConflicts[row]
+        if not conflict then return end
+
+        local player = Player()
+        player:sendChatMessage("Ship Computer"%_t, 0, "To negotiate with %1%, locate them in your Diplomacy tab (Index: %2%)."%_t, conflict.factionA, conflict.factionAIndex)
+    end
+
+    function GalacticPoliticsTab.onDiplomacyB()
+        local row = politicsList.selectedRow
+        if not row or row == 0 then return end
+        local conflict = self.displayedConflicts[row]
+        if not conflict then return end
+
+        local player = Player()
+        player:sendChatMessage("Ship Computer"%_t, 0, "To negotiate with %1%, locate them in your Diplomacy tab (Index: %2%)."%_t, conflict.factionB, conflict.factionBIndex)
+    end
+
     function GalacticPoliticsTab.receiveData(data)
         if not politicsList then return end
         if type(data) ~= "table" then return end
         self.lastData = data
+        self.applyFiltersAndSort()
+    end
 
-        -- Cosmic War: Clears and rebuilds the UI list with the freshly fetched server data.
-
+    function GalacticPoliticsTab.populateUI()
         politicsList:clear()
         local white = ColorRGB(1, 1, 1)
         local gray = ColorRGB(0.8, 0.8, 0.8)
@@ -112,7 +266,7 @@ if onClient() then
         politicsList:setEntryNoCallback(4, 0, "Relations"%_t, true, false, white)
 
         local player = Player()
-        for _, conflict in pairs(data) do
+        for _, conflict in ipairs(self.displayedConflicts) do
             politicsList:addRow()
             local row = politicsList.rows - 1
 
@@ -157,12 +311,25 @@ if onClient() then
 
             politicsList:setTooltip(row, tooltip)
         end
+
+        self.btnDiplomacyA.active = false
+        self.btnDiplomacyB.active = false
+        self.btnDiplomacyA.caption = "Diplomacy (A)"%_t
+        self.btnDiplomacyB.caption = "Diplomacy (B)"%_t
     end
 end
 
 -- Cosmic War: Computes AI Faction Traits to display in the UI Tooltip. Consider surfacing cw_war_bias and cw_diplomatic_polarity here in the future.
-local function getFactionTraits(faction)
+local function getFactionTraitsSafe(faction)
     local traits = {}
+    if faction.isPlayer then
+        table.insert(traits, "Player Faction")
+        return traits
+    elseif faction.isAlliance then
+        table.insert(traits, "Player Alliance")
+        return traits
+    end
+
     -- Send pure strings across the network boundary, the client will apply the local %_t translation!
     if faction:getTrait("aggressive") then table.insert(traits, "Aggressive") end
     if faction:getTrait("peaceful") then table.insert(traits, "Peaceful") end
@@ -196,8 +363,9 @@ function GalacticPoliticsTab.serverFetchData()
             local enemyIdx = f:getValue("enemy_faction") or 0
             if enemyIdx > 0 then
                 local e = Faction(enemyIdx)
-                -- Bulletproof: Ensure the enemy faction actually exists AND is still an AI Faction (in case the index was recycled to a new Player)
-                if e and e.isAIFaction then
+                -- Bulletproof: Ensure the enemy faction actually exists.
+                -- Player and Alliance conflicts are safely swept up if the AI explicitly targeted them!
+                if e and (e.isAIFaction or e.isAlliance or e.isPlayer) then
                     local left, right = math.min(f.index, e.index), math.max(f.index, e.index)
                     local key = tostring(left) .. ":" .. tostring(right)
 
@@ -230,11 +398,11 @@ function GalacticPoliticsTab.serverFetchData()
                         table.insert(conflicts, {
                             factionA = f.name or ("Faction " .. tostring(f.index)),
                             factionAIndex = f.index,
-                            traitsA = getFactionTraits(f),
+                            traitsA = getFactionTraitsSafe(f),
                             bountyA = bountyA,
                             factionB = e.name or ("Faction " .. tostring(e.index)),
                             factionBIndex = e.index,
-                            traitsB = getFactionTraits(e),
+                            traitsB = getFactionTraitsSafe(e),
                             bountyB = bountyB,
                             heat = math.floor(heat * 100),
                             relation = rel,
@@ -246,9 +414,6 @@ function GalacticPoliticsTab.serverFetchData()
         end
     end
 
-    -- Cosmic War: Sorts the list so the hottest warzones and most active conflicts appear right at the top.
-    -- Sort with the hottest warzones right at the top!
-    table.sort(conflicts, function(a, b) return a.heat > b.heat end)
 
     invokeClientFunction(player, "receiveData", conflicts)
 end
