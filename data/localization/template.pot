@@ -440,3 +440,172 @@ msgstr ""
 # ==========data/scripts/server/background/cosmicwardiplomaticsanctions.lua ==========
 msgid "Diplomatic Sanctions"
 msgstr ""
+
+# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Refresh"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Refresh Galactic Intelligence"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Numeric Relations"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Toggle between numeric and descriptive relation values."
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "All"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Conflicts"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Ceasefires Only"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Bounties"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Filter Conflicts"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Galactic Conflicts"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Faction A"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Faction B"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Heat"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Status"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Relations"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Sort by "
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Legend:"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active War Bounty (Check Tooltip)"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Heat:"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Red"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Critical"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Orange"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "High"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Yellow"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Rising"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Green"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Zero"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Relations:"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Friendly"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Gray"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Neutral"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Hostile"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Cosmic War Simulation:"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Ceasefire"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "All-Out War"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Confrontational"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Bounty Active!"
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Traits: "
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Target Faction: "
+msgstr ""
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Unknown Faction"
+msgstr ""

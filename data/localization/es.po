@@ -441,3 +441,172 @@ msgstr "¡Esta es la flota de reparación! Hemos llegado a la ubicación de la N
 # ==========data/scripts/server/background/cosmicwardiplomaticsanctions.lua ==========
 msgid "Diplomatic Sanctions"
 msgstr "Sanciones Diplomáticas"
+
+# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Refresh"
+msgstr "Actualizar"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Refresh Galactic Intelligence"
+msgstr "Actualizar Inteligencia Galáctica"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Numeric Relations"
+msgstr "Relaciones Numéricas"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Toggle between numeric and descriptive relation values."
+msgstr "Alternar entre valores de relación numéricos y descriptivos."
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "All"
+msgstr "Todo"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Conflicts"
+msgstr "Conflictos Activos"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Ceasefires Only"
+msgstr "Solo Altos el Fuego"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Bounties"
+msgstr "Recompensas Activas"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Filter Conflicts"
+msgstr "Filtrar Conflictos"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Galactic Conflicts"
+msgstr "Conflictos Galácticos Activos"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Faction A"
+msgstr "Facción A"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Faction B"
+msgstr "Facción B"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Heat"
+msgstr "Tensión de Guerra"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Status"
+msgstr "Estado"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Relations"
+msgstr "Relaciones"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Sort by "
+msgstr "Ordenar por "
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Legend:"
+msgstr "Leyenda:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active War Bounty (Check Tooltip)"
+msgstr "Recompensa de Guerra Activa (Ver descripción)"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Heat:"
+msgstr "Tensión de Guerra:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Red"
+msgstr "Rojo"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Critical"
+msgstr "Crítica"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Orange"
+msgstr "Naranja"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "High"
+msgstr "Alta"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Yellow"
+msgstr "Amarillo"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Rising"
+msgstr "En Aumento"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Green"
+msgstr "Verde"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Zero"
+msgstr "Cero"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Relations:"
+msgstr "Relaciones:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Friendly"
+msgstr "Amistoso"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Gray"
+msgstr "Gris"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Neutral"
+msgstr "Neutral"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Hostile"
+msgstr "Hostil"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Cosmic War Simulation:"
+msgstr "Simulación de Guerra Cósmica:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."
+msgstr "El conflicto escala dinámicamente según la 'Tensión de Guerra', provocando enfrentamientos masivos de flotas, recompensas y sanciones económicas."
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
+msgstr "Nota: Aunque la política y las escaramuzas son muy dinámicas, la propiedad de las estaciones de la facción y las fronteras del mapa permanecen estáticas en Avorion."
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Ceasefire"
+msgstr "Alto el Fuego"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "All-Out War"
+msgstr "Guerra Total"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Confrontational"
+msgstr "Confrontación"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Bounty Active!"
+msgstr "¡Recompensa de Guerra Activa!"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Traits: "
+msgstr "Rasgos: "
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Target Faction: "
+msgstr "Facción Objetivo: "
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Unknown Faction"
+msgstr "Facción Desconocida"

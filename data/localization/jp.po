@@ -440,3 +440,172 @@ msgstr "こちら修理艦隊！旗艦の場所に到着した。敵影を検出
 # ==========data/scripts/server/background/cosmicwardiplomaticsanctions.lua ==========
 msgid "Diplomatic Sanctions"
 msgstr "外交制裁"
+
+# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Refresh"
+msgstr "更新"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Refresh Galactic Intelligence"
+msgstr "銀河情報の更新"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Numeric Relations"
+msgstr "数値関係"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Toggle between numeric and descriptive relation values."
+msgstr "数値と説明的な関係値の表示を切り替えます。"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "All"
+msgstr "すべて"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Conflicts"
+msgstr "現在進行中の紛争"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Ceasefires Only"
+msgstr "停戦のみ"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Bounties"
+msgstr "アクティブな懸賞金"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Filter Conflicts"
+msgstr "紛争をフィルタリング"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active Galactic Conflicts"
+msgstr "現在進行中の銀河紛争"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Faction A"
+msgstr "派閥 A"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Faction B"
+msgstr "派閥 B"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Heat"
+msgstr "戦争熱"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Status"
+msgstr "ステータス"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Relations"
+msgstr "関係"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Sort by "
+msgstr "並べ替え: "
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Legend:"
+msgstr "凡例:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Active War Bounty (Check Tooltip)"
+msgstr "アクティブな戦争懸賞金 (ツールチップを確認)"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Heat:"
+msgstr "戦争熱:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Red"
+msgstr "赤"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Critical"
+msgstr "危機的"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Orange"
+msgstr "オレンジ"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "High"
+msgstr "高い"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Yellow"
+msgstr "黄"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Rising"
+msgstr "上昇中"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Green"
+msgstr "緑"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Zero"
+msgstr "ゼロ"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Relations:"
+msgstr "関係:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Friendly"
+msgstr "友好的"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Gray"
+msgstr "灰色"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Neutral"
+msgstr "中立"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Hostile"
+msgstr "敵対的"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Cosmic War Simulation:"
+msgstr "コズミック・ウォーのシミュレーション:"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."
+msgstr "紛争は「戦争熱」に基づいて動的に激化し、大規模な艦隊の衝突、懸賞金、および経済制裁を引き起こします。"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
+msgstr "注：政治や小競り合いは非常にダイナミックですが、派閥のステーション所有権やマップの境界線はAvorionでは静的なままです。"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Ceasefire"
+msgstr "停戦"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "All-Out War"
+msgstr "全面戦争"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Confrontational"
+msgstr "対立的"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "War Bounty Active!"
+msgstr "戦争懸賞金が有効です！"
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Traits: "
+msgstr "特性: "
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Target Faction: "
+msgstr "標的の派閥: "
+
+#: data/scripts/player/ui/galacticpolitics_tab.lua:
+msgid "Unknown Faction"
+msgstr "未知の派閥"

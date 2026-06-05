@@ -378,6 +378,34 @@ Injects new spontaneous events into Avorion's global event scheduler. As players
 
 </details>
 
+### 15) Galactic Politics Tab (UI)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:**
+- `data/scripts/player/ui/galacticpolitics_tab.lua`
+- `data/scripts/player/init.lua`
+
+**What it does:**
+Adds a fully featured, interactive intelligence UI tab to the native Player Window, giving players unprecedented visibility into the macro-geopolitical state of the galaxy.
+
+**Key Features:**
+- **Active Conflict Tracking:** Displays a real-time, sortable list of all active AI wars, skirmishes, and ceasefires across the galaxy.
+- **Interactive Column Sorting:** Click on any column header (Faction A, Faction B, War Heat, Status, Relations) to instantly sort the intelligence data ascending or descending.
+- **Strategic Filtering:** Use the dropdown menu to filter the list by "All", "Active Conflicts", "Ceasefires Only", or factions with "Active Bounties".
+- **Immersive Relation Toggle:** A checkbox allows players to switch between raw numeric relation values and immersive diplomatic descriptors (e.g., "Allied", "Confrontational", "All-Out War").
+- **Strategic Tooltips:** Hovering over any conflict reveals deep intelligence, including internal Faction Indices, AI Traits (Aggressive, Peaceful, Wealthy, etc.), exact numerical player relations, and the exact credit payout of active War Bounties.
+- **Bounty Indicators:** Factions with active bounties placed against them display a clear `[!]` indicator next to their name.
+- **Color-Coded Standing:** Faction names are dynamically colored based on your personal reputation with them, allowing you to instantly spot when your allies are under attack.
+- **Legend & Summary:** A clean bottom panel explains the color-coding system and provides a brief summary of how the Cosmic War simulation operates in the background.
+
+**Gameplay Impact:**
+- Transforms invisible background math into actionable intelligence.
+- Allows players to strategically hunt for lucrative war bounties, intercept conflicts involving their allies, or identify highly volatile regions to exploit.
+
+</details>
+
 ---
 
 ## Server & Performance Guidelines

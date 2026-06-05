@@ -57,6 +57,15 @@ Cosmic War doesn't just wait for you to take a mission. As you explore the galax
 * **Fleet Clashes:** In highly volatile sectors, you might hear a warning siren right before a massive, multi-ship invasion fleet drops out of hyperspace to assault the sector you are currently in.
 * **Stranded Flagships:** You might stumble across a heavily damaged enemy Dreadnought drifting in space. Do you destroy it, or do you flee before its repair fleet arrives?
 
+### 4. The Galactic Politics Tab
+
+In vanilla Avorion, you have no way to know who is fighting who unless you memorize chat messages or stumble into a warzone. Cosmic War introduces a brand-new **Galactic Politics Tab** directly into your Player Window.
+
+* **Real-Time Intelligence:** See a live, color-coded list of every active war, ceasefire, and bounty across the entire galaxy.
+* **Interactive Filtering:** Sort the list by "War Heat" to find the most explosive warzones, or filter for "Active Bounties" if you want to make some quick credits as a mercenary.
+* **Strategic Tooltips:** Hover over any conflict to reveal hidden AI personalities (like Aggressive or Peaceful) and the exact credit payout for active war bounties.
+* **Immersive Diplomacy:** Instantly see how you stand with fighting factions, helping you decide whether to intervene and save your allies, or sit back and watch your enemies destroy each other.
+
 ---
 
 ### Cross-Mod Synergy

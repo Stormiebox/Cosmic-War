@@ -5,7 +5,7 @@ All notable changes to **Cosmic War** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.7.0] (WORK-IN-PROGRESS) - 2026-06-03
+## [1.7.0] - 2026-06-04
 
 ### Added
 - **Galactic Politics Tab:** Added a new tab to the player window that displays active galactic conflicts, including faction names, war heat, status, and relations.
@@ -16,6 +16,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - **Interactive Column Sorting:** Added clickable column headers (Faction A, Faction B, War Heat, Status, Relations) to instantly sort the list ascending or descending.
   - **Conflict Filters:** Added a dropdown to instantly filter the list by "All", "Active Conflicts", "Ceasefires Only", or "Active Bounties".
   - **Legend & Summary Panel:** Added a bottom UI panel that clearly explains the color-coding, bounty indicators, and how the Cosmic War simulation operates in the background.
+- **Localization Expansion:** Fully localized the new Galactic Politics Tab and its interactive features into all 7 supported languages (German, Russian, Portuguese, French, Japanese, Spanish, and Chinese).
 
 ## [1.6.0] - 2026-05-30 - In Sync With Cosmic Overhaul v4.0.0 Update
 
