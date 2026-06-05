@@ -15,14 +15,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - **Immersive Relation Text:** Added a "Numeric Relations" checkbox. Players can now toggle between seeing raw relation numbers or immersive diplomatic states (e.g., "Allied", "Confrontational", "All-Out War").
   - **Interactive Column Sorting:** Added clickable column headers (Faction A, Faction B, War Heat, Status, Relations) to instantly sort the list ascending or descending.
   - **Conflict Filters:** Added a dropdown to instantly filter the list by "All", "Active Conflicts", "Ceasefires Only", or "Active Bounties".
-  - **Quick Diplomacy Links:** Added context buttons that identify the exact Faction Index of combatants in a selected conflict to help easily locate them in the vanilla Diplomacy tab.
   - **Legend & Summary Panel:** Added a bottom UI panel that clearly explains the color-coding, bounty indicators, and how the Cosmic War simulation operates in the background.
-
-### Fixed - During Testing
-- **UI Thread Crash (Translation Trap):** Fixed a critical bug in the Galactic Politics tab where server-side translation objects (`%_T`) were being sent across the network, instantly crashing the client UI thread when formatted.
-- **UI Memory Churn:** Optimized the Galactic Politics tab by hoisting helper functions out of the main rendering loop, preventing massive closure memory allocation and micro-stutters during UI refreshes.
-- **Obliterated Faction Crash:** Bulletproofed the UI against database corruption. If a faction is completely wiped from the galaxy and its name is deleted, the UI will now gracefully display "Unknown Faction" instead of crashing.
-- **Ghost Faction UI Bug:** Added strict `isAIFaction` validation to prevent purged AI indices that were recycled to Player/Alliance entities from erroneously appearing in the conflict list.
 
 ## [1.6.0] - 2026-05-30 - In Sync With Cosmic Overhaul v4.0.0 Update
 

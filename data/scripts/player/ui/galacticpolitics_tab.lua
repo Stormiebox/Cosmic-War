@@ -64,17 +64,17 @@ if onClient() then
         self.numericCheck.checked = false
         self.numericCheck.tooltip = "Toggle between numeric and descriptive relation values."%_t
 
-        self.filterComboBox = container:createValueComboBox(Rect(hsplit.top.width - 530, 5, hsplit.top.width - 330, hsplit.top.height - 25), "onFilterChanged")
+        self.filterComboBox = container:createValueComboBox(Rect(hsplit.top.width - 530, 6, hsplit.top.width - 330, hsplit.top.height - 28), "onFilterChanged")
         self.filterComboBox:addEntry("All", "All"%_t)
         self.filterComboBox:addEntry("Active Conflicts", "Active Conflicts"%_t)
         self.filterComboBox:addEntry("Ceasefires Only", "Ceasefires Only"%_t)
         self.filterComboBox:addEntry("Active Bounties", "Active Bounties"%_t)
         self.filterComboBox.tooltip = "Filter Conflicts"%_t
 
-        container:createLabel(Rect(margin, 5, margin + 300, hsplit.top.height - 5), "Active Galactic Conflicts"%_t, 20)
+        container:createLabel(Rect(margin, 5, margin + 300, hsplit.top.height - 25), "Active Galactic Conflicts"%_t, 20)
 
-        -- Reserve 130px at the bottom of the UI for the Legend/Summary section
-        local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - 130)
+        -- Reserve 160px at the bottom of the UI for the Legend/Summary section
+        local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - 160)
         politicsList = container:createListBoxEx(listRect)
         politicsList.columns = 5
         politicsList.rowHeight = 35
@@ -87,9 +87,6 @@ if onClient() then
         politicsList:setColumnWidth(3, width * 0.20)
         politicsList:setColumnWidth(4, width * 0.15)
 
-        politicsList.headline = true
-        politicsList.onSelectFunction = "onConflictSelected"
-
         self.selectedSorting = 3
         self.sortingType = -1
         self.sortingButtons = {}
@@ -97,9 +94,10 @@ if onClient() then
         local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Status"%_t, "Relations"%_t}
         local currentX = margin
         for i = 1, 5 do
-            local btnRect = Rect(currentX, listRect.lower.y, currentX + colWidths[i] - 2, listRect.lower.y + 35)
-            local btn = container:createButton(btnRect, "", "onSort" .. i)
+            local btnRect = Rect(currentX, listRect.lower.y - 25, currentX + colWidths[i] - 2, listRect.lower.y)
+            local btn = container:createButton(btnRect, sortingLabels[i], "onSort" .. i)
             btn.hasFrame = false
+            btn.textSize = 14
             btn.tooltip = "Sort by "%_t .. sortingLabels[i]
             table.insert(self.sortingButtons, btn)
             currentX = currentX + colWidths[i]
@@ -107,27 +105,26 @@ if onClient() then
         self.updateSortingIcons()
 
         -- Bottom Information Section (Legend & Summary)
-        local infoRect = Rect(margin, container.size.y - 120, container.size.x - margin, container.size.y - 10)
+        local infoRect = Rect(margin, container.size.y - 150, container.size.x - margin, container.size.y - 10)
         local infoFrame = container:createFrame(infoRect)
-        local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.40)
+        local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.45)
 
-        local legendStr = "Legend:\n [!] Active War Bounty (Check Tooltip)\n War Heat: \\c(f33)Critical\\c() | \\c(f93)High\\c() | \\c(ff3)Rising\\c() | \\c(3f3)Zero\\c()\n Relations: \\c(3f3)Friendly\\c() | \\c(ccc)Neutral\\c() | \\c(f33)Hostile\\c()"%_t
+        local legendStr = "Legend:"%_t .. "\n" ..
+            " [!] " .. "Active War Bounty (Check Tooltip)"%_t .. "\n" ..
+            " " .. "War Heat:"%_t .. " (" .. "Red"%_t .. ") " .. "Critical"%_t .. " | (" .. "Orange"%_t .. ") " .. "High"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Rising"%_t .. " | (" .. "Green"%_t .. ") " .. "Zero"%_t .. "\n" ..
+            " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t
         local legendRectInset = Rect(infoSplit.left.lower + vec2(10, 10), infoSplit.left.upper - vec2(10, 10))
-        local legendLabel = container:createLabel(legendRectInset, legendStr, 14)
+        local legendLabel = container:createLabel(legendRectInset, legendStr, 15)
+        legendLabel.wordBreak = true
         legendLabel:setTopLeftAligned()
 
-        local summaryStr = "Cosmic War Simulation:\nConflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions.\n\nNote: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."%_t
+        local summaryStr = "Cosmic War Simulation:"%_t .. "\n" ..
+            "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."%_t .. "\n\n" ..
+            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."%_t
         local summaryRectInset = Rect(infoSplit.right.lower + vec2(10, 10), infoSplit.right.upper - vec2(10, 10))
-        local summaryLabel = container:createLabel(summaryRectInset, summaryStr, 14)
-        summaryLabel.wordWrap = true
+        local summaryLabel = container:createLabel(summaryRectInset, summaryStr, 15)
+        summaryLabel.wordBreak = true
         summaryLabel:setTopLeftAligned()
-
-        self.btnDiplomacyA = container:createButton(Rect(infoSplit.right.lower.x + 10, infoSplit.right.upper.y - 35, infoSplit.right.lower.x + 200, infoSplit.right.upper.y - 5), "Diplomacy (A)"%_t, "onDiplomacyA")
-        self.btnDiplomacyB = container:createButton(Rect(infoSplit.right.lower.x + 210, infoSplit.right.upper.y - 35, infoSplit.right.lower.x + 400, infoSplit.right.upper.y - 5), "Diplomacy (B)"%_t, "onDiplomacyB")
-        self.btnDiplomacyA.active = false
-        self.btnDiplomacyB.active = false
-        self.btnDiplomacyA.textSize = 12
-        self.btnDiplomacyB.textSize = 12
     end
 
     function GalacticPoliticsTab.clientFetchData()
@@ -164,16 +161,19 @@ if onClient() then
     end
 
     function GalacticPoliticsTab.updateSortingIcons()
+        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Status"%_t, "Relations"%_t}
         for ndx, button in ipairs(self.sortingButtons) do
+            local label = sortingLabels[ndx]
             if ndx == self.selectedSorting then
                 if self.sortingType < 0 then
-                    button.icon = "data/textures/icons/arrow-down2.png"
+                    button.caption = label .. " ▼"
                 else
-                    button.icon = "data/textures/icons/arrow-up2.png"
+                    button.caption = label .. " ▲"
                 end
             else
-                button.icon = ""
+                button.caption = label
             end
+            button.icon = ""
         end
     end
 
@@ -214,38 +214,6 @@ if onClient() then
         self.populateUI()
     end
 
-    function GalacticPoliticsTab.onConflictSelected()
-        local row = politicsList.selectedRow
-        if not row or row == 0 then return end
-        local conflict = self.displayedConflicts[row]
-        if not conflict then return end
-
-        self.btnDiplomacyA.active = true
-        self.btnDiplomacyB.active = true
-        self.btnDiplomacyA.caption = "Diplomacy: "%_t .. conflict.factionA
-        self.btnDiplomacyB.caption = "Diplomacy: "%_t .. conflict.factionB
-    end
-
-    function GalacticPoliticsTab.onDiplomacyA()
-        local row = politicsList.selectedRow
-        if not row or row == 0 then return end
-        local conflict = self.displayedConflicts[row]
-        if not conflict then return end
-
-        local player = Player()
-        player:sendChatMessage("Ship Computer"%_t, 0, "To negotiate with %1%, locate them in your Diplomacy tab (Index: %2%)."%_t, conflict.factionA, conflict.factionAIndex)
-    end
-
-    function GalacticPoliticsTab.onDiplomacyB()
-        local row = politicsList.selectedRow
-        if not row or row == 0 then return end
-        local conflict = self.displayedConflicts[row]
-        if not conflict then return end
-
-        local player = Player()
-        player:sendChatMessage("Ship Computer"%_t, 0, "To negotiate with %1%, locate them in your Diplomacy tab (Index: %2%)."%_t, conflict.factionB, conflict.factionBIndex)
-    end
-
     function GalacticPoliticsTab.receiveData(data)
         if not politicsList then return end
         if type(data) ~= "table" then return end
@@ -258,16 +226,9 @@ if onClient() then
         local white = ColorRGB(1, 1, 1)
         local gray = ColorRGB(0.8, 0.8, 0.8)
 
-        politicsList:addRow() -- Headline
-        politicsList:setEntryNoCallback(0, 0, "Faction A"%_t, true, false, white)
-        politicsList:setEntryNoCallback(1, 0, "Faction B"%_t, true, false, white)
-        politicsList:setEntryNoCallback(2, 0, "War Heat"%_t, true, false, white)
-        politicsList:setEntryNoCallback(3, 0, "Status"%_t, true, false, white)
-        politicsList:setEntryNoCallback(4, 0, "Relations"%_t, true, false, white)
-
         local player = Player()
-        for _, conflict in ipairs(self.displayedConflicts) do
-            politicsList:addRow()
+        for index, conflict in ipairs(self.displayedConflicts) do
+            politicsList:addRow(tostring(index))
             local row = politicsList.rows - 1
 
             local heatColor = gray
@@ -311,11 +272,6 @@ if onClient() then
 
             politicsList:setTooltip(row, tooltip)
         end
-
-        self.btnDiplomacyA.active = false
-        self.btnDiplomacyB.active = false
-        self.btnDiplomacyA.caption = "Diplomacy (A)"%_t
-        self.btnDiplomacyB.caption = "Diplomacy (B)"%_t
     end
 end
 
