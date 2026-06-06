@@ -8,6 +8,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [2.0.0] - 2026-06-06
 
 ### Fixed
+- **Engine Bootstrap Compliance:** Removed invalid `initialize()` wrappers from `player/init.lua` and `sector/init.lua`. Avorion expects these to be global execution scripts. This resolves a fatal bug where the core `cosmicwarcontroller.lua` and UI tabs completely failed to load on fresh saves.
 - **Architectural Overhaul (Event Scheduler):** Fixed a massive, silent game-breaking bug where the mod entirely overwrote the vanilla `player/init.lua` and `player/eventscheduler.lua` files. This previously resulted in the total deletion of all vanilla player scripts and disabled all vanilla events (pirate attacks, Xsotan spawns, etc.).
   - The Event Scheduler has been rewritten into a standalone `cw_eventscheduler.lua` module that safely attaches to the player and runs strictly parallel to the vanilla game, guaranteeing that dynamic war flashpoints actually trigger.
 - **Architectural Overhaul (War Contracts):** Fixed a major bug where the `bulletinboardmissions.lua` library was completely unhooked and relying on deprecated Avorion 1.0 architecture. War Contracts literally never spawned.
