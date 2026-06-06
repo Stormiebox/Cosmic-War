@@ -14,6 +14,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - All 8 War Contract mission scripts have been completely modernized with inline `getBulletin()` functions.
   - Wrote a safe, compliant hook into `data/scripts/entity/missionbulletins.lua` that seamlessly injects War Contracts into the vanilla dynamic mission generation pool based entirely on local faction War Heat.
 
+### Added
+- **Ecosystem Soft Bridges:** Implemented 4 massive new features designed to work beautifully standalone or synergize with the full Cosmic Series (Overhaul, Starfall, Chronicles).
+- **War Profiteering (Economy Hooks):** At Critical War Heat, military goods naturally bleed out from stations to simulate consumption. Soft bridges to Cosmic Overhaul to create massive profiteering margins and to Cosmic Chronicles for news alerts.
+- **Wreckage Fields:** New dynamic event spawns 4-9 wrecked capital ships to simulate recent fleet clashes. Scavengers can loot these fields for scrap and Cosmic Overhaul Black Boxes.
+- **Trade Interdiction Blockades:** New dynamic event spawns Hostile NPC military squads at jump-gate distances in warring sectors to harass neutral traders and players.
+- **Elite Headhunters (Mercenary Alignment):** Dropping below -80000 relations with an actively warring faction will dispatch Elite Headhunters against you. Soft-bridges to Cosmic Starfall to dynamically equip them with devastating heavy subsystems.
+
 ### Removed
 - **Texture Folder:** All textures were removed and migrated into `Cosmic Vault`.
 
@@ -41,6 +48,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Brittle Rebuild API:** Fixed a silent failure in `rebuildstations.lua` where the script relied on private vanilla variables. It now correctly uses standard C++ bindings to identify controlling factions and properly clamp station rebuilding during active wars.
 - **Array Traversal Bias:** Fixed a massive simulation bias in `cosmicwarbounties.lua` and `cosmicwardiplomaticsanctions.lua`. Previous deduplication logic prevented newer factions from ever issuing bounties or paying sanctions. Every faction now evaluates these actions independently.
 - **Engine Payment Crash:** Fixed a silent engine error in `cosmicwardiplomaticsanctions.lua` where the script attempted to pass negative numbers to `Faction:receive()`. It now safely uses `Faction:pay()` to ensure reliable deductions.
+
+### Added
+- **Ecosystem Soft Bridges:** Implemented 4 massive new features designed to work beautifully standalone or synergize with the full Cosmic Series (Overhaul, Starfall, Chronicles).
+- **War Profiteering (Economy Hooks):** At Critical War Heat, military goods naturally bleed out from stations to simulate consumption. Soft bridges to Cosmic Overhaul to create massive profiteering margins and to Cosmic Chronicles for news alerts.
+- **Wreckage Fields:** New dynamic event spawns 4-9 wrecked capital ships to simulate recent fleet clashes. Scavengers can loot these fields for scrap and Cosmic Overhaul Black Boxes.
+- **Trade Interdiction Blockades:** New dynamic event spawns Hostile NPC military squads at jump-gate distances in warring sectors to harass neutral traders and players.
+- **Elite Headhunters (Mercenary Alignment):** Dropping below -80000 relations with an actively warring faction will dispatch Elite Headhunters against you. Soft-bridges to Cosmic Starfall to dynamically equip them with devastating heavy subsystems.
 
 ### Removed
 - **Dead Code:** Removed leftover and commented-out diplomacy loop attachments from `player/init.lua` to keep the player execution context pristine.
@@ -169,4 +183,5 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - This release is a patch-level stability/compatibility update.
 - Versioning remains **1.0.2** (no major or minor feature expansion in this cycle).
+
 

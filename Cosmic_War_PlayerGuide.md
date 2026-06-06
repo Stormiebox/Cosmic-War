@@ -70,11 +70,15 @@ In vanilla Avorion, you have no way to know who is fighting who unless you memor
 
 ### Cross-Mod Synergy
 
-Cosmic War is powerful on its own, but it was designed to plug directly into the rest of the Cosmic ecosystem.
+Cosmic War is designed to be fully standalone, but it is deeply aware of its sister mods in the Cosmic Series. If you install them alongside Cosmic War, the ecosystem wakes up:
 
-* If you use **Cosmic Chronicles**, the ambient dialogue of civilians and station workers will change dynamically based on the current War Heat.
-* If you use **Cosmic Overhaul**, the War Heat will actively manipulate the economy, making trade routes through warzones far more dangerous, but drastically more profitable!
+- **War Profiteering:** Wars naturally consume military stock (Ammunition, Medical Supplies) from local stations. If you install **Cosmic Overhaul**, the resulting local shortages trigger massive hazard-pay multipliers for Smugglers and Merchants, turning wars into the most lucrative trade zones in the galaxy.
+- **Wreckage Fields:** High-heat fleet clashes leave behind massive capital ship graveyards. If you have **Cosmic Overhaul** installed, your Scavengers can loot these fresh battlefields for rare, highly-valuable Black Boxes.
+- **Blockades & News Reports:** Hostile military fleets will blockade jump-gates. If you have **Cosmic Chronicles** installed, these blockades, wartime shortages, and graveyard discoveries are automatically broadcast across the galactic news network to warn (or entice) players.
+- **Elite Headhunters:** If you earn too much infamy with a warring faction (relations <= -80000), they will dispatch elite Headhunter fleets to hunt you down. If you have **Cosmic Starfall** installed, these assassins will spawn equipped with devastating heavy subsystems specifically designed to counter late-game player builds.
 
 ### Summary
 
 **Cosmic War** gives factions a memory, a personality, and a real geopolitical presence. It ensures that no two playthroughs are the same, and that the galaxy is always moving, shifting, and escalating around you!
+
+

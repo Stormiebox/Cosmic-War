@@ -292,7 +292,13 @@ Recent iterations include:
 
 </details>
 
-### 12) Cosmic Overhaul Synergy (Bridge Layer)
+### 12) Ecosystem Synergy (Soft Bridges)
+
+Cosmic War adheres to a strict "Standalone but Synergistic" philosophy. It requires nothing but the Cosmic Vault to function, but it includes blind hooks that naturally interface with the rest of the Cosmic Series if installed:
+
+- **War Profiteering (Overhaul + Chronicles):** At Critical War Heat, factions naturally consume their station stocks of Military Goods. If Cosmic Overhaul is installed, this artificial deficit triggers massive Smuggler/Merchant hazard-pay multipliers. Cosmic Chronicles detects the deficit and broadcasts a "Wartime Shortage" news flash.
+- **Wreckage Fields (Overhaul + Chronicles):** Spawns dense capital ship graveyards after high-heat battles. Cosmic Overhaul's Scavenger logic natively detects these as high-value Black Box loot tables, while Chronicles reports the graveyard's discovery.
+- **Elite Headhunters (Starfall):** Angering a warring faction to extreme levels (-80000 relations) spawns Elite Hit-Squads. The script attempts a soft-bridge to Cosmic Starfall to dynamically equip the squad with devastating heavy subsystems. If Starfall isn't present, they spawn as standard vanilla military ships.
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -470,4 +476,5 @@ The current architectural direction is heavily focused on:
 - Resilient lifecycle behavior.
 - Highly configurable war simulation.
 - Stable, predictable coexistence with broader **Cosmic** series mod stacks.
+
 

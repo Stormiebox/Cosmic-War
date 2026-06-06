@@ -1,6 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
+include("goods")
 include("faction")
 include("relations")
 include("cosmicwarconfig")
@@ -144,6 +145,7 @@ local function chooseWarPair(factions, random)
 end
 
 local function applyWarPressure(a, b, random)
+    applyWarProfiteeringShortages(factions)
     if not a or not b then return end
 
     local rel = a:getRelations(b.index) or 0
@@ -170,6 +172,52 @@ local function applyWarPressure(a, b, random)
         b.name or "B", b.index or -1,
         rel, effectiveRel, delta
     )
+end
+
+local function applyWarProfiteeringShortages(factions)
+    local sector = Sector()
+    local x, y = sector:getCoordinates()
+    local didShortage = false
+
+    for _, f in pairs(factions) do
+        local heat = f:getValue("cw_war_bias") or 0
+        local enemy = f:getValue("enemy_faction") or 0
+        local rel = 0
+        if enemy > 0 then rel = f:getRelations(enemy) end
+
+        -- If at critical war heat (relations very low, bias high)
+        if rel <= -80000 then
+            local stations = {sector:getEntitiesByFaction(f.index)}
+            for _, station in pairs(stations) do
+                if station.isStation and (station:hasScript("tradingpost.lua") or station:hasScript("equipmentdock.lua") or station:hasScript("militaryoutpost.lua")) then
+                    -- Artificially drain military goods
+                    local goodsToDrain = {"Ammunition", "Medical Supplies", "Steel", "Weapon Components", "Energy Tubes"}
+                    for _, goodName in pairs(goodsToDrain) do
+                        local good = goods[goodName]
+                        if good then
+                            -- Soft Bridge: We just remove stock. If Cosmic Overhaul is installed, 
+                            -- its dynamic economy will naturally detect the deficit and amplify prices.
+                            station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, math.random(500, 2000))
+                            didShortage = true
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    if didShortage then
+        -- Soft Bridge to Cosmic Chronicles News
+        pcall(function()
+            local server = Server()
+            local article = {
+                title = "Wartime Shortage",
+                category = "Trade Crisis",
+                content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
+            }
+            server:invokeFunction("server/cosmicvaultnews_server.lua", "publishArticle", article)
+        end)
+    end
 end
 
 function CosmicWarController.updateServer(timeStep)
@@ -199,5 +247,8 @@ function CosmicWarController.updateServer(timeStep)
     if not a or not b then return end
 
     applyWarPressure(a, b, random)
+    applyWarProfiteeringShortages(factions)
     CosmicWarController._lastEventAt = now
 end
+
+

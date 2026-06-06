@@ -24,10 +24,11 @@ For complete feature and architecture details, see:
 
 ## Quick Highlights
 
-- Sector war-pressure controller for emergent conflict hotspots.
-- Persistent diplomacy movement so politics evolve over time.
-- Broadcast/news and bounty generation to expose macro war states to players.
-- MCM-driven tuning for pressure, diplomacy, and diagnostics behavior.
+- **Dynamic Escalation:** Replaces the static vanilla war system with a fluid "War Heat" spectrum.
+- **Deep Economy Impacts:** Wars drain military station stocks (War Profiteering), allowing smugglers to reap massive profits.
+- **Persistent Flashpoints:** Introduces fleet clashes, wreckage fields, civilian blockades, and elite headhunter hit-squads.
+- **Galactic News Integration:** Broadcasts shifting borders, blockades, and ceasefires natively to the Cosmic Vault News API.
+- **Modular Ecosystem:** Runs 100% standalone, but features seamless "soft-bridges" that naturally hook into Cosmic Overhaul, Cosmic Starfall, and Cosmic Chronicles.
 
 ---
 
@@ -56,3 +57,4 @@ For complete feature and architecture details, see:
 - Use `/cosmicwarstatus` for runtime diagnostics visibility.
 - In large mod stacks, validate load order and check logs during startup.
 - See `Cosmic_War_CHANGELOG.md` for detailed project change history.
+

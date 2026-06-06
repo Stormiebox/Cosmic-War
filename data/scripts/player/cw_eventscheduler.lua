@@ -17,6 +17,13 @@ local events = {
     -- Black Market Arms Deal: Early war escalation.
     { schedule = random():getInt(90, 150) * 60, script = "events/cw_armsdeal.lua", timer = 0 },
 
+    -- Wreckage Field Discovery: Aftermath of a massive fleet clash.
+    { schedule = random():getInt(100, 160) * 60, script = "events/cw_wreckagefield.lua", timer = 0 },
+
+    -- Elite Headhunters: Triggers if player is highly hated by a warring faction.
+    { schedule = random():getInt(60, 120) * 60, script = "events/cw_headhunters.lua", timer = 0 },
+    -- Trade Route Blockade: Hostile fleets cut off supply lines.
+    { schedule = random():getInt(100, 160) * 60, script = "events/cw_blockade.lua", timer = 0 },
     -- Diplomatic Sabotage: Cooling heat / Ceasefire push.
     { schedule = random():getInt(120, 180) * 60, script = "events/cw_diplomaticsabotage.lua", timer = 0 }
 }
@@ -59,3 +66,6 @@ function CW_EventScheduler.updateServer(timeStep)
         end
     end
 end
+
+
+
