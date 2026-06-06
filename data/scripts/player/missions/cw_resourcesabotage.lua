@@ -124,3 +124,27 @@ function spawnMiningOp(x, y)
         ship:setValue("cw_sabotage_target", true)
     end
 end
+
+-- Added by Cosmic War for Avorion 2.0 Compatibility
+function getBulletin(station)
+    local heat = 0
+    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    end
+    if heat < 0.35 then return end
+    
+    return {
+        brief = "War Contract: Resource Sabotage"%_T,
+        description = "A hostile mining operation is extracting resources in contested space. Put an end to it."%_T,
+        difficulty = "Extreme"%_T,
+        script = "data/scripts/player/missions/cw_resourcesabotage.lua",
+        arguments = { station.factionIndex },
+        msg = "Crippling their resource flow now will save our fleets later. Destroy those miners."%_T,
+        onAccept = [[
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
+            local faction = Faction(self.arguments[1])
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
+        ]]
+    }
+end

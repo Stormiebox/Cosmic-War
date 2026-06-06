@@ -366,7 +366,7 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 - `data/scripts/events/cw_diplomaticsabotage.lua`
 
 **What it does:**
-Injects new spontaneous events into Avorion's global event scheduler. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation.
+Injects new spontaneous events via a dedicated background scheduler (cw_eventscheduler.lua). This standalone module runs strictly parallel to vanilla Avorion, guaranteeing that dynamic war flashpoints seamlessly interweave with standard pirate and Xsotan attacks without breaking any core game files. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation.
 
 **Available Events:**
 
@@ -470,3 +470,4 @@ The current architectural direction is heavily focused on:
 - Resilient lifecycle behavior.
 - Highly configurable war simulation.
 - Stable, predictable coexistence with broader **Cosmic** series mod stacks.
+

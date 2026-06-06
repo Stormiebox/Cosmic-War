@@ -5,6 +5,15 @@ All notable changes to **Cosmic War** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - Release Date TBD (Work In Progress)
+
+### Fixed
+- **Architectural Overhaul (Event Scheduler):** Fixed a massive, silent game-breaking bug where the mod entirely overwrote the vanilla `player/init.lua` and `player/eventscheduler.lua` files. This previously resulted in the total deletion of all vanilla player scripts and disabled all vanilla events (pirate attacks, Xsotan spawns, etc.).
+  - The Event Scheduler has been rewritten into a standalone `cw_eventscheduler.lua` module that safely attaches to the player and runs strictly parallel to the vanilla game, guaranteeing that dynamic war flashpoints actually trigger.
+- **Architectural Overhaul (War Contracts):** Fixed a major bug where the `bulletinboardmissions.lua` library was completely unhooked and relying on deprecated Avorion 1.0 architecture. War Contracts literally never spawned.
+  - All 8 War Contract mission scripts have been completely modernized with inline `getBulletin()` functions.
+  - Wrote a safe, compliant hook into `data/scripts/entity/missionbulletins.lua` that seamlessly injects War Contracts into the vanilla dynamic mission generation pool based entirely on local faction War Heat.
+
 ## [1.7.0] - 2026-06-04
 
 ### Added

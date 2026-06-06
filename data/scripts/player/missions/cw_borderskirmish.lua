@@ -121,3 +121,27 @@ function spawnSkirmish(x, y)
         ShipAI(ship.index):setAggressive()
     end
 end
+
+-- Added by Cosmic War for Avorion 2.0 Compatibility
+function getBulletin(station)
+    local heat = 0
+    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    end
+    if heat < 0.25 then return end
+    
+    return {
+        brief = "War Contract: Border Skirmish"%_T,
+        description = "Border disputes are getting violent. Intercept and eliminate an enemy border patrol."%_T,
+        difficulty = "Extreme"%_T,
+        script = "data/scripts/player/missions/cw_borderskirmish.lua",
+        arguments = { station.factionIndex },
+        msg = "Take out their patrol. We need to show them we won't be intimidated."%_T,
+        onAccept = [[
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
+            local faction = Faction(self.arguments[1])
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
+        ]]
+    }
+end

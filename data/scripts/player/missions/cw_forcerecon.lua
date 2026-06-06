@@ -163,3 +163,27 @@ function spawnReconTarget(x, y)
         ShipAI(ship.index):setAggressive()
     end
 end
+
+-- Added by Cosmic War for Avorion 2.0 Compatibility
+function getBulletin(station)
+    local heat = 0
+    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    end
+    if heat < 0.15 then return end
+    
+    return {
+        brief = "War Contract: Force Recon"%_T,
+        description = "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel."%_T,
+        difficulty = "Extreme"%_T,
+        script = "data/scripts/player/missions/cw_forcerecon.lua",
+        arguments = { station.factionIndex },
+        msg = "This is a reconnaissance operation. Get in, gather the intel, and get out in one piece."%_T,
+        onAccept = [[
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
+            local faction = Faction(self.arguments[1])
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
+        ]]
+    }
+end

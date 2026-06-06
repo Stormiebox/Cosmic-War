@@ -206,3 +206,27 @@ function finishAndReward(survivors)
     reward()
     accomplish()
 end
+
+-- Added by Cosmic War for Avorion 2.0 Compatibility
+function getBulletin(station)
+    local heat = 0
+    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    end
+    if heat < 0.45 then return end
+    
+    return {
+        brief = "War Contract: Breakthrough"%_T,
+        description = "We have a critical supply convoy moving through contested space. Defend them until they can jump."%_T,
+        difficulty = "Extreme"%_T,
+        script = "data/scripts/player/missions/cw_breakthrough.lua",
+        arguments = { station.factionIndex },
+        msg = "Our convoy is vulnerable. We need a capable escort to ensure they make it."%_T,
+        onAccept = [[
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
+            local faction = Faction(self.arguments[1])
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
+        ]]
+    }
+end

@@ -183,3 +183,27 @@ function finishAndReward()
     reward()
     accomplish()
 end
+
+-- Added by Cosmic War for Avorion 2.0 Compatibility
+function getBulletin(station)
+    local heat = 0
+    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    end
+    if heat < 1 then return end
+    
+    return {
+        brief = "War Contract: Decapitation Strike"%_T,
+        description = "The enemy Flagship has entered the sector. This is our chance to end the war."%_T,
+        difficulty = "Extreme"%_T,
+        script = "data/scripts/player/missions/cw_decapitationstrike.lua",
+        arguments = { station.factionIndex },
+        msg = "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."%_T,
+        onAccept = [[
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
+            local faction = Faction(self.arguments[1])
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
+        ]]
+    }
+end

@@ -190,3 +190,27 @@ function finishAndReward()
     reward()
     accomplish()
 end
+
+-- Added by Cosmic War for Avorion 2.0 Compatibility
+function getBulletin(station)
+    local heat = 0
+    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    end
+    if heat < 0.6 then return end
+    
+    return {
+        brief = "War Contract: Frontline Siege"%_T,
+        description = "The enemy has established a Forward Operating Base. We need it destroyed."%_T,
+        difficulty = "Extreme"%_T,
+        script = "data/scripts/player/missions/cw_frontlinesiege.lua",
+        arguments = { station.factionIndex },
+        msg = "Command has authorized a strike on an enemy FOB. Are you ready to lead the assault?"%_T,
+        onAccept = [[
+            local self, playerIndex = ...
+            local player = Player(playerIndex)
+            local faction = Faction(self.arguments[1])
+            if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
+        ]]
+    }
+end
