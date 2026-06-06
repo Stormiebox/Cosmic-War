@@ -4,7 +4,7 @@ package.path = package.path .. ";data/scripts/?.lua"
 include("randomext")
 include("structuredmission")
 
-local MissionUT = include("missionut")
+local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 local Balancing = include("galaxy")
 local SectorGenerator = include("SectorGenerator")

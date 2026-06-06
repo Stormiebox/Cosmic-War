@@ -5,7 +5,7 @@ include("randomext")
 include("structuredmission")
 include("relations")
 
-local MissionUT = include("missionut")
+local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 local Balancing = include("galaxy")
 local SectorGenerator = include("SectorGenerator")

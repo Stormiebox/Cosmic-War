@@ -169,3 +169,4 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - This release is a patch-level stability/compatibility update.
 - Versioning remains **1.0.2** (no major or minor feature expansion in this cycle).
+
