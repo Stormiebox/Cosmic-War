@@ -14,6 +14,9 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - All 8 War Contract mission scripts have been completely modernized with inline `getBulletin()` functions.
   - Wrote a safe, compliant hook into `data/scripts/entity/missionbulletins.lua` that seamlessly injects War Contracts into the vanilla dynamic mission generation pool based entirely on local faction War Heat.
 
+### Removed
+- **Texture Folder:** All textures were removed and migrated into `Cosmic Vault`.
+
 ## [1.7.0] - 2026-06-04
 
 ### Added
