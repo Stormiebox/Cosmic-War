@@ -122,3 +122,5 @@ function CosmicWarBridge.computeCaptainRiskModifier(captain, factionIndex)
 
     return riskMult, rewardMult
 end
+
+return CosmicWarBridge

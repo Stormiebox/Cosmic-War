@@ -37,3 +37,5 @@ function CosmicWarCaptainBridge.modifyPredictionByWarHeat(prediction, factionInd
 
     return prediction
 end
+
+return CosmicWarCaptainBridge

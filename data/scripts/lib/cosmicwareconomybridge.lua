@@ -41,3 +41,5 @@ function CosmicWarEconomyBridge.getTradeRiskMultiplier(factionIndex)
     if mult > 1.25 then mult = 1.25 end
     return mult
 end
+
+return CosmicWarEconomyBridge
