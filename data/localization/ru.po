@@ -609,3 +609,165 @@ msgstr "Целевая фракция: "
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Unknown Faction"
 msgstr "Неизвестная фракция"
+
+# Cosmic War - Radio Chatter Expansion
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Did you catch the latest broadcast on the Galactic News network? War tensions are rising in the neighboring sectors."
+msgstr "Вы слышали последний выпуск Галактических Новостей? Напряженность в соседних секторах растет."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I swear, these recent overhauls to the hyperdrive systems have made my ship run smoother than ever!"
+msgstr "Клянусь, после недавнего капитального ремонта гипердвигателей мой корабль летит как никогда плавно!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Security update: Headhunter hit-squads have been reported in the area. Please ensure your bounties are paid in full."
+msgstr "Обновление безопасности: В этом районе замечены отряды охотников за головами. Пожалуйста, убедитесь, что ваши штрафы полностью оплачены."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The chroniclers are saying that this era of galactic politics will be remembered for centuries."
+msgstr "Летописцы говорят, что эта эпоха галактической политики запомнится на века."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "If you ever meet a rogue engineer named Stormbox, buy him a drink. I heard he basically rewired the entire galaxy's framework!"
+msgstr "Если вы когда-нибудь встретите инженера-отступника по имени Stormbox, угостите его выпивкой. Я слышал, он перестроил всю структуру галактики!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Attention: All civilian traffic must detour around the new wreckage field in sector ${LN3}. Salvage crews are already en route."
+msgstr "Внимание: Все гражданские суда должны обходить новое поле обломков в секторе ${LN3}. Спасательные команды уже в пути."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Ever since the stars started falling, I've had this terrible feeling that we're being watched by something ancient."
+msgstr "С тех пор как звезды начали падать, у меня ужасное чувство, что за нами наблюдает нечто древнее."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "A refugee convoy just docked at bay ${N}. They say their home was caught in a massive fleet clash."
+msgstr "В доке ${N} только что пришвартовался конвой беженцев. Говорят, их дом оказался в эпицентре масштабного столкновения флотов."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We are currently experiencing a shortage of military-grade targeting systems due to the ongoing border skirmishes."
+msgstr "В настоящее время мы испытываем нехватку систем наведения военного класса из-за непрекращающихся пограничных стычек."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Remember, war profiteering is entirely legal as long as the local bureaucrats get their cut!"
+msgstr "Помните, спекуляция на войне абсолютно легальна, пока местные бюрократы получают свою долю!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I've been reading the historical chronicles lately... makes you realize how small we really are in this war."
+msgstr "В последнее время я читал исторические летописи... понимаешь, насколько мы на самом деле малы в этой войне."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "You hear about that legendary pilot, Stormbox? They say he flies a ship made entirely of anomalous, overhauled tech."
+msgstr "Вы слышали о легендарном пилоте Stormbox? Говорят, он летает на корабле, полностью собранном из аномальных, модифицированных технологий."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "My sensors keep picking up strange readings. Could just be interference, or maybe another catastrophic stellar event."
+msgstr "Мои сенсоры постоянно фиксируют странные показания. Может быть просто помехи, а может, еще одно катастрофическое звездное событие."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I wouldn't jump to the outer rim right now. The war heat is off the charts out there."
+msgstr "Я бы не стал прыгать во внешние миры прямо сейчас. Накал войны там просто зашкаливает."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Thank the stars for the automated news broadcasts. Without them, we'd never know which trade routes were blockaded!"
+msgstr "Хвала звездам за автоматические выпуски новостей. Без них мы бы никогда не узнали, какие торговые пути заблокированы!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Ever since the new galactic regulations, I've had to replace every single sub-system on my ship. Good thing it runs better now."
+msgstr "С момента введения новых галактических правил мне пришлось заменить каждую подсистему на моем корабле. Хорошо хоть он теперь работает лучше."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Just saw a massive fleet dropping out of hyperspace. Looks like diplomatic relations are finally boiling over."
+msgstr "Только что видел огромный флот, выходящий из гиперпространства. Похоже, дипломатические отношения наконец-то достигли точки кипения."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "If we get interdicted by headhunters, I'm ejecting the cargo and blaming it on you."
+msgstr "Если нас перехватят охотники за головами, я сброшу груз и свалю всю вину на тебя."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Did you see that stranded flagship earlier? Looked like it had been drifting since the last great conflict."
+msgstr "Вы видели этот застрявший флагман ранее? Похоже, он дрейфует со времен последнего великого конфликта."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Keep your transponder active. You don't want the local military mistaking us for blockade runners."
+msgstr "Держи транспондер включенным. Тебе не захочется, чтобы местные военные приняли нас за нарушителей блокады."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Hauling military supplies into a warzone... The pay better be worth the risk of being intercepted."
+msgstr "Перевозка военных припасов в зону боевых действий... Плата должна стоить риска перехвата."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I heard Stormbox pays double for high-grade processors. Let's make a detour to his station."
+msgstr "Я слышал, Stormbox платит вдвойне за высококлассные процессоры. Давай сделаем крюк до его станции."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "War is good for business, sure, but I'd rather not end up as a wreckage field for some salvage crew to pick clean."
+msgstr "Война — это хорошо для бизнеса, конечно, но я бы не хотел закончить как поле обломков для спасательной команды."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "If the galactic news is right, the trade route through sector ${N2}:${N} is completely blockaded by hostile forces."
+msgstr "Если верить галактическим новостям, торговый путь через сектор ${N2}:${N} полностью заблокирован вражескими силами."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We need to offload these weapons before a ceasefire is declared, otherwise prices will plummet!"
+msgstr "Нам нужно выгрузить это оружие до того, как объявят прекращение огня, иначе цены рухнут!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "A smuggler told me they managed to bypass the blockade. Sounds like a good way to get vaporized."
+msgstr "Один контрабандист сказал мне, что ему удалось обойти блокаду. Звучит как хороший способ быть распыленным на атомы."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Are you sure these coordinates from the old chronicles are safe? I'm not looking to become a footnote in history."
+msgstr "Ты уверен, что эти координаты из старых летописей безопасны? Я не хочу стать просто сноской в истории."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The latest sweeping overhauls to customs are making it really hard to falsify our cargo manifests."
+msgstr "Последние масштабные проверки на таможне делают фальсификацию наших грузовых манифестов очень сложной задачей."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Another stellar anomaly means another shortage of rare minerals. Time to hike up our prices!"
+msgstr "Еще одна звездная аномалия означает очередную нехватку редких минералов. Пора поднимать цены!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Just keep the engines hot and the comms silent. I don't want any diplomatic sabotage fleets spotting us."
+msgstr "Просто держите двигатели разогретыми, а связь молчащей. Я не хочу, чтобы нас засекли флоты дипломатического саботажа."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Your name just popped up on the galactic bounty boards. Time to collect!"
+msgstr "Твое имя только что появилось на галактических досках за награду. Пора получить выплату!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The war heat is peaking, and you just jumped into the wrong sector, friend."
+msgstr "Накал войны достигает пика, и ты только что прыгнул не в тот сектор, приятель."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Stormbox sends his regards. Say goodbye to your hull integrity!"
+msgstr "Stormbox передает привет. Попрощайся с целостностью своего корпуса!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "This sector is under military blockade! Turn back or be destroyed!"
+msgstr "Этот сектор находится под военной блокадой! Поворачивай назад или будешь уничтожен!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Your presence here is a diplomatic incident waiting to happen. We're going to make sure it doesn't."
+msgstr "Твое присутствие здесь — это дипломатический инцидент, готовый случиться. Мы позаботимся о том, чтобы этого не произошло."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The chroniclers will remember you as just another piece of debris!"
+msgstr "Летописцы запомнят тебя лишь как очередной кусок обломков!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We don't care about your trade routes. This is a warzone, and you're the enemy."
+msgstr "Нас не волнуют твои торговые пути. Это зона боевых действий, и ты — враг."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Target locked. Prepare to experience a catastrophic event of your own!"
+msgstr "Цель зафиксирована. Приготовься пережить свое собственное катастрофическое событие!"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We've got orders to leave no survivors in this fleet clash. You're first."
+msgstr "У нас приказ не оставлять выживших в этом столкновении флотов. Ты первый."
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Even a complete ship overhaul can't save you from what we're about to do to it!"
+msgstr "Даже полная модернизация корабля не спасет тебя от того, что мы собираемся с тобой сделать!"
+

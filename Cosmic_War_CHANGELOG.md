@@ -21,6 +21,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Wreckage Fields:** New dynamic event spawns 4-9 wrecked capital ships to simulate recent fleet clashes. Scavengers can loot these fields for scrap and Cosmic Overhaul Black Boxes.
 - **Trade Interdiction Blockades:** New dynamic event spawns Hostile NPC military squads at jump-gate distances in warring sectors to harass neutral traders and players.
 - **Elite Headhunters (Mercenary Alignment):** Dropping below -80000 relations with an actively warring faction will dispatch Elite Headhunters against you. Soft-bridges to Cosmic Starfall to dynamically equip them with devastating heavy subsystems.
+- **Expanded Radio Chatter:** Injected 40 brand new, highly thematic background radio chatter lines to civilian, military, and freighter ships. These lines subtly hint at the broader Cosmic ecosystem and developer lore, and have been fully localized into all 7 supported languages.
 
 ### Removed
 - **Texture Folder:** All textures were removed and migrated into `Cosmic Vault`.

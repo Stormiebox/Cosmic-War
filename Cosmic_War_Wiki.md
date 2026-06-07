@@ -412,6 +412,27 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 
 </details>
 
+### 16) Ambient Radio Chatter
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:**
+- `data/scripts/sector/background/radiochatter.lua`
+
+**What it does:**
+Injects 40 brand new, highly thematic background radio chatter lines into Avorion's vanilla ambient dialogue pool.
+
+**Key Features:**
+- **Thematic Integration:** Lines are dynamically spoken by General Stations, General Ships, Freighters, and Hostile Ships.
+- **Lore Bridging:** The chatter subtly references core mechanics from the Cosmic mod series (War Heat, Overhauls, Starfalls, Galactic News) and drops easter eggs related to the developer (Stormbox).
+- **Localization:** Fully localized into all 7 supported languages.
+
+**Gameplay Impact:**
+- Makes the galaxy feel vastly more alive and reactive to the political background simulation.
+
+</details>
+
 ---
 
 ## Server & Performance Guidelines
@@ -476,5 +497,3 @@ The current architectural direction is heavily focused on:
 - Resilient lifecycle behavior.
 - Highly configurable war simulation.
 - Stable, predictable coexistence with broader **Cosmic** series mod stacks.
-
-

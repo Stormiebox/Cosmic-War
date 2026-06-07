@@ -683,3 +683,165 @@ msgstr "目标派系： "
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Unknown Faction"
 msgstr "未知派系"
+
+# Cosmic War - Radio Chatter Expansion
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Did you catch the latest broadcast on the Galactic News network? War tensions are rising in the neighboring sectors."
+msgstr "你收看银河新闻网络的最新广播了吗？邻近星区的战争紧张局势正在加剧。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I swear, these recent overhauls to the hyperdrive systems have made my ship run smoother than ever!"
+msgstr "我发誓，最近对超空间引擎系统的全面检修让我的船运行得比以往任何时候都顺畅！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Security update: Headhunter hit-squads have been reported in the area. Please ensure your bounties are paid in full."
+msgstr "安全更新：据报道该地区出现了赏金猎人小队。请确保您的赏金已全额结清。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The chroniclers are saying that this era of galactic politics will be remembered for centuries."
+msgstr "编年史家们说，这个银河政治时代将被铭记几个世纪。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "If you ever meet a rogue engineer named Stormbox, buy him a drink. I heard he basically rewired the entire galaxy's framework!"
+msgstr "如果你遇到一个名叫 Stormbox 的流氓工程师，请他喝杯酒。我听说他基本上重塑了整个银河系的框架！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Attention: All civilian traffic must detour around the new wreckage field in sector ${LN3}. Salvage crews are already en route."
+msgstr "注意：所有民用船只必须绕开星区 ${LN3} 的新残骸区。打捞船队已经在路上了。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Ever since the stars started falling, I've had this terrible feeling that we're being watched by something ancient."
+msgstr "自从群星开始坠落，我一直有一种可怕的感觉，好像我们在被某种古老的东西注视着。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "A refugee convoy just docked at bay ${N}. They say their home was caught in a massive fleet clash."
+msgstr "一个难民船队刚刚在 ${N} 号停靠湾靠岸。他们说他们的家园卷入了一场大规模的舰队冲突。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We are currently experiencing a shortage of military-grade targeting systems due to the ongoing border skirmishes."
+msgstr "由于持续的边境冲突，我们目前正面临军用级瞄准系统的短缺。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Remember, war profiteering is entirely legal as long as the local bureaucrats get their cut!"
+msgstr "记住，发战争财是完全合法的，只要当地官僚能拿到他们那份！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I've been reading the historical chronicles lately... makes you realize how small we really are in this war."
+msgstr "我最近一直在阅读历史编年史……这让你意识到在这场战争中我们是多么渺小。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "You hear about that legendary pilot, Stormbox? They say he flies a ship made entirely of anomalous, overhauled tech."
+msgstr "你听说过那个传奇飞行员 Stormbox 吗？他们说他驾驶的是一艘完全由异常的大修科技制造的飞船。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "My sensors keep picking up strange readings. Could just be interference, or maybe another catastrophic stellar event."
+msgstr "我的传感器不断接收到奇怪的读数。可能是干扰，也可能是另一次灾难性的恒星事件。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I wouldn't jump to the outer rim right now. The war heat is off the charts out there."
+msgstr "我现在不会跳跃到外环。那里的战争热度已经爆表了。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Thank the stars for the automated news broadcasts. Without them, we'd never know which trade routes were blockaded!"
+msgstr "感谢星星提供的自动新闻广播。如果没有它们，我们永远不会知道哪些贸易路线被封锁了！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Ever since the new galactic regulations, I've had to replace every single sub-system on my ship. Good thing it runs better now."
+msgstr "自从新的银河法规颁布以来，我不得不更换船上的每一个子系统。好在它现在运行得更好了。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Just saw a massive fleet dropping out of hyperspace. Looks like diplomatic relations are finally boiling over."
+msgstr "刚刚看到一支庞大的舰队从超空间中脱离。看来外交关系终于沸腾了。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "If we get interdicted by headhunters, I'm ejecting the cargo and blaming it on you."
+msgstr "如果我们被赏金猎人拦截，我就把货物弹射出去，然后把责任推给你。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Did you see that stranded flagship earlier? Looked like it had been drifting since the last great conflict."
+msgstr "你看到之前那艘搁浅的旗舰了吗？看起来它从上次大规模冲突以来就一直在漂流。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Keep your transponder active. You don't want the local military mistaking us for blockade runners."
+msgstr "保持你的应答机开启。你不会希望当地军队把我们误认为封锁突破者的。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Hauling military supplies into a warzone... The pay better be worth the risk of being intercepted."
+msgstr "把军用物资运进战区……这报酬最好对得起被拦截的风险。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "I heard Stormbox pays double for high-grade processors. Let's make a detour to his station."
+msgstr "我听说 Stormbox 花双倍价钱收购高级处理器。我们绕道去他的空间站吧。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "War is good for business, sure, but I'd rather not end up as a wreckage field for some salvage crew to pick clean."
+msgstr "战争对生意有好处，当然，但我可不想变成打捞船队清理的残骸区。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "If the galactic news is right, the trade route through sector ${N2}:${N} is completely blockaded by hostile forces."
+msgstr "如果银河新闻没错的话，穿过星区 ${N2}:${N} 的贸易路线已经被敌对势力完全封锁了。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We need to offload these weapons before a ceasefire is declared, otherwise prices will plummet!"
+msgstr "我们需要在宣布停火之前卸下这些武器，否则价格会暴跌！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "A smuggler told me they managed to bypass the blockade. Sounds like a good way to get vaporized."
+msgstr "一个走私者告诉我他成功绕过了封锁。听起来像个被蒸发的好办法。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Are you sure these coordinates from the old chronicles are safe? I'm not looking to become a footnote in history."
+msgstr "你确定这些旧编年史中的坐标安全吗？我可不想成为历史的注脚。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The latest sweeping overhauls to customs are making it really hard to falsify our cargo manifests."
+msgstr "海关最新的大规模审查让我们很难伪造货物清单了。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Another stellar anomaly means another shortage of rare minerals. Time to hike up our prices!"
+msgstr "又一次恒星异常意味着稀有矿物再次短缺。是时候提高我们的价格了！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Just keep the engines hot and the comms silent. I don't want any diplomatic sabotage fleets spotting us."
+msgstr "保持引擎预热，通讯静默。我不想让任何外交破坏舰队发现我们。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Your name just popped up on the galactic bounty boards. Time to collect!"
+msgstr "你的名字刚刚出现在银河悬赏板上。收账的时间到了！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The war heat is peaking, and you just jumped into the wrong sector, friend."
+msgstr "战争热度正在达到顶峰，而你刚跳进了一个错误的星区，朋友。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Stormbox sends his regards. Say goodbye to your hull integrity!"
+msgstr "Stormbox 向你问好。向你的船体完整性说再见吧！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "This sector is under military blockade! Turn back or be destroyed!"
+msgstr "该星区正处于军事封锁之下！回头，否则将被摧毁！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Your presence here is a diplomatic incident waiting to happen. We're going to make sure it doesn't."
+msgstr "你在这里出现就是一个即将发生的外交事件。我们要确保它不会发生。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "The chroniclers will remember you as just another piece of debris!"
+msgstr "编年史家们只会把你当作另一块碎片来记住！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We don't care about your trade routes. This is a warzone, and you're the enemy."
+msgstr "我们不在乎你的贸易路线。这里是战区，而你就是敌人。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Target locked. Prepare to experience a catastrophic event of your own!"
+msgstr "目标锁定。准备好体验你自己的灾难性事件吧！"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "We've got orders to leave no survivors in this fleet clash. You're first."
+msgstr "我们接到命令，在这场舰队冲突中不留活口。你是第一个。"
+
+#: data/scripts/sector/background/radiochatter.lua
+msgid "Even a complete ship overhaul can't save you from what we're about to do to it!"
+msgstr "即使是一次彻底的飞船大修也救不了你，准备接受我们的攻击吧！"
+
