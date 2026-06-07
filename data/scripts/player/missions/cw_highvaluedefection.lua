@@ -165,7 +165,7 @@ function spawnDefector(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if not giverFaction then return end
 
-    local pos = generator:createPositionInSector()
+    local pos = generator:getPositionInSector()
     local ship = ShipGenerator.createDefender(giverFaction, pos)
 
     ship:setValue("cw_defector", true)
@@ -183,7 +183,7 @@ function spawnHunters()
     local numEnemies = math.floor(3 + (heat * 3))
 
     for i = 1, numEnemies do
-        local pos = generator:createPositionInSector(1500)
+        local pos = generator:getPositionInSector(1500)
         local ship = ShipGenerator.createDefender(enemyFaction, pos)
         ShipAI(ship.index):setAggressive()
     end

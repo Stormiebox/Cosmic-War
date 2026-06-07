@@ -101,8 +101,10 @@ end
 
 mission.phases[1].triggers = {
     {
-        condition = function() return atTargetLocation() and mission.data.custom.spawned and
-            #Sector():getEntitiesByScriptValue("cw_skirmish_target") == 0 end,
+        condition = function() 
+            local targets = { Sector():getEntitiesByScriptValue("cw_skirmish_target") }
+            return atTargetLocation() and mission.data.custom.spawned and #targets == 0 
+        end,
         callback = function()
             reward()
             accomplish()
@@ -117,7 +119,7 @@ function spawnSkirmish(x, y)
     local numDefenders = math.floor(3 + ((mission.data.custom.heat or 0) * 4))
 
     for i = 1, numDefenders do
-        local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ship:setValue("cw_skirmish_target", true)
         ShipAI(ship.index):setAggressive()
     end

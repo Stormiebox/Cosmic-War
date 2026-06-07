@@ -134,7 +134,7 @@ function spawnConvoy(x, y)
 
     local numFreighters = random():getInt(1, 3)
     for i = 1, numFreighters do
-        local pos = generator:createPositionInSector()
+        local pos = generator:getPositionInSector()
         local ship = ShipGenerator.createFreighterShip(enemyFaction, pos)
 
         -- Tag the ship so the trigger can track it
@@ -145,7 +145,7 @@ function spawnConvoy(x, y)
 
     local numDefenders = random():getInt(2, 4)
     for i = 1, numDefenders do
-        local pos = generator:createPositionInSector()
+        local pos = generator:getPositionInSector()
         local ship = ShipGenerator.createDefender(enemyFaction, pos)
 
         ship:setValue("cw_interception_target", true)

@@ -102,8 +102,10 @@ end
 
 mission.phases[1].triggers = {
     {
-        condition = function() return atTargetLocation() and mission.data.custom.spawned and
-            #Sector():getEntitiesByScriptValue("cw_sabotage_target") == 0 end,
+        condition = function() 
+            local targets = { Sector():getEntitiesByScriptValue("cw_sabotage_target") }
+            return atTargetLocation() and mission.data.custom.spawned and #targets == 0 
+        end,
         callback = function()
             reward()
             accomplish()
@@ -121,7 +123,7 @@ function spawnMiningOp(x, y)
 
     local numTargets = math.floor(3 + ((mission.data.custom.heat or 0) * 5))
     for i = 1, numTargets do
-        local ship = ShipGenerator.createMiningShip(enemyFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createMiningShip(enemyFaction, generator:getPositionInSector())
         ship:setValue("cw_sabotage_target", true)
     end
 end

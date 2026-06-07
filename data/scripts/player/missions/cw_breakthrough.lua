@@ -156,7 +156,7 @@ function spawnConvoy(x, y)
 
     local numFreighters = 3
     for i = 1, numFreighters do
-        local pos = generator:createPositionInSector()
+        local pos = generator:getPositionInSector()
         local ship = ShipGenerator.createFreighterShip(giverFaction, pos)
 
         ship:setValue("cw_convoy", true)
@@ -176,7 +176,7 @@ function spawnInterceptors()
 
     for i = 1, numEnemies do
         -- Spawn them further out so they have to fly in
-        local pos = generator:createPositionInSector(1500)
+        local pos = generator:getPositionInSector(1500)
         local ship = ShipGenerator.createDefender(enemyFaction, pos)
         ShipAI(ship):setAggressive()
     end

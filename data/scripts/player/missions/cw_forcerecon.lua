@@ -160,7 +160,7 @@ function spawnReconTarget(x, y)
 
     local numDefenders = random():getInt(1, 3)
     for i = 1, numDefenders do
-        local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
     end
 end

@@ -130,7 +130,7 @@ function spawnFlagship(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
     -- Create the Flagship (Massive Super Boss)
-    local pos = generator:createPositionInSector()
+    local pos = generator:getPositionInSector()
     local flagship = ShipGenerator.createCarrier(enemyFaction, pos, 10.0) -- 3rd argument is volumeFactor, not raw volume
 
     flagship:setTitle("Flagship Dreadnought"%_T, {})
@@ -155,7 +155,7 @@ function spawnFlagship(x, y)
     -- Spawn a massive defender fleet to protect it
     local numDefenders = math.floor(4 + (heat * 4))
     for i = 1, numDefenders do
-        local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector(1500))
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector(1500))
         ShipAI(ship.index):setAggressive()
     end
 end

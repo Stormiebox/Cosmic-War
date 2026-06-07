@@ -159,7 +159,7 @@ function spawnSiegeTarget(x, y)
     -- Spawn Initial defenders
     local numDefenders = math.floor(3 + (heat * 4))
     for i = 1, numDefenders do
-        local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
     end
 end
@@ -174,7 +174,7 @@ function spawnReinforcements()
     local numReinforcements = math.floor(1 + (heat * 2))
 
     for i = 1, numReinforcements do
-        local ship = ShipGenerator.createDefender(enemyFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
     end
 
