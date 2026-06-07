@@ -14,6 +14,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Architectural Overhaul (War Contracts):** Fixed a major bug where the `bulletinboardmissions.lua` library was completely unhooked and relying on deprecated Avorion 1.0 architecture. War Contracts literally never spawned.
   - All 8 War Contract mission scripts have been completely modernized with inline `getBulletin()` functions.
   - Wrote a safe, compliant hook into `data/scripts/entity/missionbulletins.lua` that seamlessly injects War Contracts into the vanilla dynamic mission generation pool based entirely on local faction War Heat.
+- **Event Spawning Typo:** Fixed a massive crash across all 5 dynamic space events (`cw_fleetclash.lua`, `cw_armsdeal.lua`, `cw_diplomaticsabotage.lua`, `cw_strandedflagship.lua`, `cw_refugeeconvoy.lua`) where the script attempted to call `generator:createPositionInSector()` instead of Avorion's native `generator:getPositionInSector()`. Events will now correctly spawn their ships instead of instantly aborting.
 - **Library Include Bug:** Fixed a critical bug across all dynamic war events and missions where they would crash upon triggering (`attempt to index upvalue 'CosmicWarBridge' (a boolean value)`). This was caused by `cosmicwarbridge.lua`, `cosmicwarcaptainbridge.lua`, and `cosmicwareconomybridge.lua` missing their `return` statements, causing Avorion's `include()` function to return `true` instead of the actual library table.
 
 ### Added

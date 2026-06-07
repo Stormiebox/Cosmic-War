@@ -57,7 +57,7 @@ function CW_RefugeeConvoyEvent.spawn()
     local generator = SectorGenerator(x, y)
     local numTransports = random():getInt(2, 4)
     for i = 1, numTransports do
-        local ship = ShipGenerator.createFreighterShip(victimFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createFreighterShip(victimFaction, generator:getPositionInSector())
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
         table.insert(transports, ship.id)
     end
@@ -75,7 +75,7 @@ function CW_RefugeeConvoyEvent.spawnHunters()
     local generator = SectorGenerator(Sector():getCoordinates())
     local numHunters = random():getInt(3, 5)
     for i = 1, numHunters do
-        local ship = ShipGenerator.createMilitaryShip(attackerFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createMilitaryShip(attackerFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end

@@ -48,11 +48,11 @@ function CW_ArmsDealEvent.spawn()
 
     local generator = SectorGenerator(x, y)
 
-    local buyer = ShipGenerator.createMilitaryShip(militaryFaction, generator:createPositionInSector())
+    local buyer = ShipGenerator.createMilitaryShip(militaryFaction, generator:getPositionInSector())
     buyer.title = "Covert Operative"%_T
     buyer:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
-    local seller = ShipGenerator.createFreighterShip(smugglerFaction, generator:createPositionInSector())
+    local seller = ShipGenerator.createFreighterShip(smugglerFaction, generator:getPositionInSector())
     seller.title = "Black Market Dealer"%_T
     seller:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
@@ -69,10 +69,10 @@ function CW_ArmsDealEvent.spawn()
     ShipAI(seller.index):setAggressive()
 
     for i = 1, 2 do
-        local e1 = ShipGenerator.createMilitaryShip(militaryFaction, generator:createPositionInSector())
+        local e1 = ShipGenerator.createMilitaryShip(militaryFaction, generator:getPositionInSector())
         ShipAI(e1.index):setAggressive(); e1:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
-        local e2 = ShipGenerator.createDefender(smugglerFaction, generator:createPositionInSector())
+        local e2 = ShipGenerator.createDefender(smugglerFaction, generator:getPositionInSector())
         ShipAI(e2.index):setAggressive(); e2:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
 end

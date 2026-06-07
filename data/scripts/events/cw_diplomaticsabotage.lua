@@ -48,7 +48,7 @@ function CW_DiplomaticSabotageEvent.spawn()
     local pirateFaction = Galaxy():getPirateFaction(Balancing_GetPirateLevel(x, y))
 
     local generator = SectorGenerator(x, y)
-    local envoy = ShipGenerator.createFreighterShip(envoyFaction, generator:createPositionInSector())
+    local envoy = ShipGenerator.createFreighterShip(envoyFaction, generator:getPositionInSector())
     envoy.title = "Diplomatic Envoy"%_T
     envoy:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     CW_DiplomaticSabotageEvent.envoyId = envoy.id
@@ -58,7 +58,7 @@ function CW_DiplomaticSabotageEvent.spawn()
 
     local numAttackers = random():getInt(3, 5)
     for i = 1, numAttackers do
-        local attacker = ShipGenerator.createMilitaryShip(pirateFaction, generator:createPositionInSector())
+        local attacker = ShipGenerator.createMilitaryShip(pirateFaction, generator:getPositionInSector())
         attacker.title = "Hardliner Extremist"%_T
         attacker.name = "Saboteur"
         ShipAI(attacker.index):setAggressive()

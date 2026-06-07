@@ -45,7 +45,7 @@ function CW_StrandedFlagshipEvent.spawn()
     local flagshipFaction = Faction(CW_StrandedFlagshipEvent.flagshipFactionId)
 
     local generator = SectorGenerator(x, y)
-    local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:createPositionInSector(), 25.0) -- Volume factor x25
+    local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:getPositionInSector(), 25.0) -- Volume factor x25
 
     ship:setTitle("Stranded Flagship"%_T, {})
     ship.name = flagshipFaction.name .. " Dreadnought"
@@ -76,7 +76,7 @@ function CW_StrandedFlagshipEvent.spawnRepairFleet()
 
     local generator = SectorGenerator(sector:getCoordinates())
     for i = 1, 4 do
-        local defender = ShipGenerator.createMilitaryShip(faction, generator:createPositionInSector())
+        local defender = ShipGenerator.createMilitaryShip(faction, generator:getPositionInSector())
         ShipAI(defender.index):setAggressive()
         defender:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end

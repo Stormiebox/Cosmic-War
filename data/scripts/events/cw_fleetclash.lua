@@ -71,7 +71,7 @@ function CW_FleetClashEvent.spawn()
 
     -- Spawn the invading fleet
     for i = 1, numAttackers do
-        local ship = ShipGenerator.createMilitaryShip(enemyFaction, generator:createPositionInSector())
+        local ship = ShipGenerator.createMilitaryShip(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
