@@ -15,7 +15,7 @@ mission._Name = "War Contract: Resource Sabotage"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/mining.png"
+mission.data.icon = "data/textures/icons/ResourceSteal.png"
 mission.data.autoTrackMission = true
 
 local cw_sabotage_init = initialize
@@ -112,6 +112,7 @@ mission.phases[1].triggers = {
 }
 
 function spawnMiningOp(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if not enemyFaction then return end
@@ -132,18 +133,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.35 then return end
-    
+
     return {
         brief = "War Contract: Resource Sabotage"%_T,
         description = "A hostile mining operation is extracting resources in contested space. Put an end to it."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_resourcesabotage.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ResourceSteal.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "Crippling their resource flow now will save our fleets later. Destroy those miners."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

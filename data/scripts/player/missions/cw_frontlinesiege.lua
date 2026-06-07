@@ -15,7 +15,7 @@ mission._Name = "War Contract: Frontline Siege"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/combat.png"
+mission.data.icon = "data/textures/icons/ShipCombat.png"
 mission.data.autoTrackMission = true
 
 local cw_frontlinesiege_init = initialize
@@ -99,6 +99,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
 end
 
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
+    if onClient() then return end
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if enemyFaction then
         Player():sendChatMessage(enemyFaction.name, 1, "We are under attack! Scramble all defenders!"%_T)
@@ -132,6 +133,7 @@ mission.phases[1].triggers = {
 }
 
 function spawnSiegeTarget(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if not enemyFaction then return end
@@ -198,18 +200,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.6 then return end
-    
+
     return {
         brief = "War Contract: Frontline Siege"%_T,
         description = "The enemy has established a Forward Operating Base. We need it destroyed."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_frontlinesiege.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipCombat.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "Command has authorized a strike on an enemy FOB. Are you ready to lead the assault?"%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

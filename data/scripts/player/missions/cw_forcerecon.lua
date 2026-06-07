@@ -15,7 +15,7 @@ mission._Name = "War Contract: Force Recon"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/radar-sweep.png"
+mission.data.icon = "data/textures/icons/ShipRecon.png"
 mission.data.autoTrackMission = true
 
 local cw_forcerecon_init = initialize
@@ -149,6 +149,7 @@ mission.phases[1].updateServer = function(timeStep)
 end
 
 function spawnReconTarget(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if not enemyFaction then return end
@@ -171,18 +172,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.15 then return end
-    
+
     return {
         brief = "War Contract: Force Recon"%_T,
         description = "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_forcerecon.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipRecon.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "This is a reconnaissance operation. Get in, gather the intel, and get out in one piece."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

@@ -15,7 +15,7 @@ mission._Name = "War Contract: Interception"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/crosshairs.png"
+mission.data.icon = "data/textures/icons/ShipBounty.png"
 mission.data.autoTrackMission = true
 
 local cw_interception_init = initialize
@@ -103,6 +103,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
 end
 
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
+    if onClient() then return end
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
         Player():sendChatMessage(giverFaction.name, 0, "We're tracking the convoy on your sensors. Take them out!"%_T)
@@ -126,6 +127,7 @@ mission.phases[1].triggers = {
 }
 
 function spawnConvoy(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if not enemyFaction then return end
@@ -163,18 +165,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.45 then return end
-    
+
     return {
         brief = "War Contract: Interception"%_T,
         description = "Conflict has intensified. Intercept hostile supply movement in nearby sectors."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_interception.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipBounty.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "We need skilled captains to strike enemy supply lines immediately."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

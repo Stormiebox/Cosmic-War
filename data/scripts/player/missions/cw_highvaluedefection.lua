@@ -15,7 +15,7 @@ mission._Name = "War Contract: High-Value Extraction"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/escort.png"
+mission.data.icon = "data/textures/icons/ShipEscort.png"
 mission.data.autoTrackMission = true
 
 local cw_extraction_init = initialize
@@ -104,6 +104,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
 end
 
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
+    if onClient() then return end
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
         Player():sendChatMessage(giverFaction.name, 0,
@@ -159,6 +160,7 @@ mission.phases[1].updateServer = function(timeStep)
 end
 
 function spawnDefector(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if not giverFaction then return end
@@ -171,6 +173,7 @@ function spawnDefector(x, y)
 end
 
 function spawnHunters()
+    if onClient() then return end
     local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
@@ -200,18 +203,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.8 then return end
-    
+
     return {
         brief = "War Contract: High-Value Extraction"%_T,
         description = "A high-ranking enemy officer is defecting to our side. We need you to extract them safely."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_highvaluedefection.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipEscort.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "This is a highly classified operation. Extract the defector at all costs. Expect heavy resistance."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

@@ -15,7 +15,7 @@ mission._Name = "War Contract: Breakthrough"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/shield.png"
+mission.data.icon = "data/textures/icons/ShipEscort.png"
 mission.data.autoTrackMission = true
 
 local cw_breakthrough_init = initialize
@@ -104,6 +104,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
 end
 
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
+    if onClient() then return end
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if giverFaction then
         Player():sendChatMessage(giverFaction.name, 0,
@@ -148,6 +149,7 @@ mission.phases[1].updateServer = function(timeStep)
 end
 
 function spawnConvoy(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
     if not giverFaction then return end
@@ -163,6 +165,7 @@ function spawnConvoy(x, y)
 end
 
 function spawnInterceptors()
+    if onClient() then return end
     local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
@@ -214,18 +217,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.45 then return end
-    
+
     return {
         brief = "War Contract: Breakthrough"%_T,
         description = "We have a critical supply convoy moving through contested space. Defend them until they can jump."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_breakthrough.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipEscort.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "Our convoy is vulnerable. We need a capable escort to ensure they make it."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

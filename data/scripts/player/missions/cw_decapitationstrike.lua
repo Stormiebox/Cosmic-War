@@ -16,7 +16,7 @@ mission._Name = "War Contract: Decapitation Strike"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/crosshairs.png"
+mission.data.icon = "data/textures/icons/ShipBounty.png"
 mission.data.autoTrackMission = true
 
 local cw_decapitationstrike_init = initialize
@@ -101,6 +101,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
 end
 
 mission.phases[1].onTargetLocationArrivalConfirmed = function(x, y)
+    if onClient() then return end
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if enemyFaction then
         Player():sendChatMessage(enemyFaction.name, 1,
@@ -124,6 +125,7 @@ mission.phases[1].triggers = {
 }
 
 function spawnFlagship(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
@@ -191,18 +193,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 1 then return end
-    
+
     return {
         brief = "War Contract: Decapitation Strike"%_T,
         description = "The enemy Flagship has entered the sector. This is our chance to end the war."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_decapitationstrike.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipBounty.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }

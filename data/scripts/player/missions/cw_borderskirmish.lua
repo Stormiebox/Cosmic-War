@@ -15,7 +15,7 @@ mission._Name = "War Contract: Border Skirmish"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/combat.png"
+mission.data.icon = "data/textures/icons/ShipCombat.png"
 mission.data.autoTrackMission = true
 
 local cw_skirmish_init = initialize
@@ -111,6 +111,7 @@ mission.phases[1].triggers = {
 }
 
 function spawnSkirmish(x, y)
+    if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     local numDefenders = math.floor(3 + ((mission.data.custom.heat or 0) * 4))
@@ -129,18 +130,18 @@ function getBulletin(station)
         heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     end
     if heat < 0.25 then return end
-    
+
     return {
         brief = "War Contract: Border Skirmish"%_T,
         description = "Border disputes are getting violent. Intercept and eliminate an enemy border patrol."%_T,
         difficulty = "Extreme"%_T,
         script = "data/scripts/player/missions/cw_borderskirmish.lua",
-        arguments = { station.factionIndex },
+        icon = "data/textures/icons/ShipCombat.png",
+        arguments = { { giver = station.factionIndex } },
         msg = "Take out their patrol. We need to show them we won't be intimidated."%_T,
         onAccept = [[
-            local self, playerIndex = ...
-            local player = Player(playerIndex)
-            local faction = Faction(self.arguments[1])
+            local self, player = ...
+            local faction = Faction(self.arguments[1].giver)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }
