@@ -9,6 +9,9 @@ include("stringutility")
 CosmicWarNews = {}
 
 function CosmicWarNews.initialize()
+    if onServer() then
+        Server():registerCallback("onCCNewsRequestSeed", "onSeedNews")
+    end
 end
 
 local function getCfg()
@@ -117,4 +120,22 @@ function CosmicWarNews.update(timeStep)
     Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, template, factionA, factionB, relStr)
 
     cwlog("War Bulletin: %s and %s relations deteriorated to %s.", factionA, factionB, relStr)
+end
+
+function CosmicWarNews.onSeedNews()
+    local server = Server()
+    if not server then return end
+
+    local conflicts = collectHotConflicts(server)
+    for _, pick in pairs(conflicts) do
+        local factionA = pick.a.name or ("Faction " .. tostring(pick.a.index))
+        local factionB = pick.b.name or ("Faction " .. tostring(pick.b.index))
+        
+        local article = {
+            title = "Active Conflict: " .. factionA,
+            category = "War Update",
+            content = string.format("Diplomatic relations between %s and %s have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, factionB)
+        }
+        server:sendCallback("onCCNewsPublishArticle", article)
+    end
 end

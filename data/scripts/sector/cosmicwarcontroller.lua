@@ -145,7 +145,6 @@ local function chooseWarPair(factions, random)
 end
 
 local function applyWarPressure(a, b, random)
-    applyWarProfiteeringShortages(factions)
     if not a or not b then return end
 
     local rel = a:getRelations(b.index) or 0
@@ -195,7 +194,7 @@ local function applyWarProfiteeringShortages(factions)
                     for _, goodName in pairs(goodsToDrain) do
                         local good = goods[goodName]
                         if good then
-                            -- Soft Bridge: We just remove stock. If Cosmic Overhaul is installed, 
+                            -- Soft Bridge: We just remove stock. If Cosmic Overhaul is installed,
                             -- its dynamic economy will naturally detect the deficit and amplify prices.
                             station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, math.random(500, 2000))
                             didShortage = true
@@ -215,7 +214,7 @@ local function applyWarProfiteeringShortages(factions)
                 category = "Trade Crisis",
                 content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
             }
-            server:invokeFunction("server/cosmicvaultnews_server.lua", "publishArticle", article)
+            server:sendCallback("onCCNewsPublishArticle", article)
         end)
     end
 end
