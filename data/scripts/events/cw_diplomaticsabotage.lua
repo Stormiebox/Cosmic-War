@@ -67,14 +67,12 @@ function CW_DiplomaticSabotageEvent.spawn()
 
     deferredCallback(60.0, "checkSurvival")
 
-    local cv_success = pcall(include, "cosmicvaultnews")
-    if cv_success and CosmicVaultNews then
-        CosmicVaultNews.publishArticle({
-            title = "Diplomatic Convoy Under Attack",
-            content = "An assassination attempt is currently underway! A diplomatic convoy belonging to " .. envoyFaction.name .. " is under heavy assault by " .. pirateFaction.name .. " forces in sector [" .. x .. ":" .. y .. "].",
-            category = "Conflict"
-        })
-    end
+    local article = {
+        title = "Diplomatic Convoy Under Attack",
+        content = "An assassination attempt is currently underway! A diplomatic convoy belonging to " .. envoyFaction.name .. " is under heavy assault by " .. pirateFaction.name .. " forces in sector [" .. x .. ":" .. y .. "].",
+        category = "Conflict"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
 end
 
 function CW_DiplomaticSabotageEvent.checkSurvival()

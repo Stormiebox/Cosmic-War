@@ -81,6 +81,19 @@ function initialize(factionIndex)
     end
 end
 
+function finishAndReward()
+    local x, y = Sector():getCoordinates()
+    local faction = Faction(mission.data.custom.enemyIndex)
+    local article = {
+        title = "Forward Outpost Obliterated",
+        content = "Military intelligence confirms the total destruction of a fortified " .. (faction and faction.name or "unknown") .. " reconnaissance outpost in sector [" .. x .. ":" .. y .. "] following a surgical strike.",
+        category = "War"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
+
+    reward()
+end
+
 mission.globalPhase.noBossEncountersTargetSector = true
 mission.globalPhase.noPlayerEventsTargetSector = true
 

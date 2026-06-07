@@ -120,6 +120,7 @@ end
 mission.phases[1].triggers = {
     {
         condition = function()
+            if onClient() then return false end
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
 
@@ -188,6 +189,15 @@ function finishAndReward()
         local currentBias = enemyFaction:getValue("cw_war_bias") or 550
         enemyFaction:setValue("cw_war_bias", math.max(400, currentBias - 30))
     end
+
+    local x, y = Sector():getCoordinates()
+    local giverFaction = Faction(mission.data.custom.giverIndex)
+    local article = {
+        title = "Siege Broken in Sector " .. x .. ":" .. y,
+        content = "A brutal siege has been broken! Defending " .. (giverFaction and giverFaction.name or "unknown") .. " forces, bolstered by independent commanders, successfully routed the invading fleet.",
+        category = "War"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
 
     reward()
     accomplish()

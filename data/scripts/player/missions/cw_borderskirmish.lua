@@ -102,10 +102,20 @@ end
 mission.phases[1].triggers = {
     {
         condition = function() 
+            if onClient() then return false end
             local targets = { Sector():getEntitiesByScriptValue("cw_skirmish_target") }
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0 
         end,
         callback = function()
+            local x, y = Sector():getCoordinates()
+            local faction = Faction(mission.data.custom.giverIndex)
+            local article = {
+                title = "Border Skirmish Resolved",
+                content = "A violent border patrol clash in sector [" .. x .. ":" .. y .. "] has been decisively ended by independent mercenaries fighting on behalf of " .. (faction and faction.name or "an unknown faction") .. ".",
+                category = "War"
+            }
+            Server():sendCallback("onCCNewsPublishArticle", article)
+            
             reward()
             accomplish()
         end

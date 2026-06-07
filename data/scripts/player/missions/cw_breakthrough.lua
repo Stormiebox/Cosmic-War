@@ -136,7 +136,7 @@ mission.phases[1].updateServer = function(timeStep)
         mission.data.custom.finished = true
 
         for _, ship in pairs(convoyShips) do
-            ship:addScript("ai/jumpout.lua")
+            ship:addScript("entity/deletejumped.lua")
         end
 
         finishAndReward(#convoyShips)
@@ -205,6 +205,13 @@ function finishAndReward(survivors)
         mission.data.reward.credits = mission.data.reward.credits + bonus
         mission.data.reward.relations = mission.data.reward.relations + (survivors * 1500)
     end
+
+    local article = {
+        title = "Supply Convoy Breaks Blockade",
+        content = "A vital supply convoy belonging to " .. (giverFaction and giverFaction.name or "an unknown faction") .. " successfully broke through enemy lines in sector [" .. x .. ":" .. y .. "] with the help of hired escorts.",
+        category = "War"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
 
     reward()
     accomplish()

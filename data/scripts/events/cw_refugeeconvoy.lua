@@ -68,14 +68,12 @@ function CW_RefugeeConvoyEvent.spawn()
     deferredCallback(12.0, "spawnHunters")
     deferredCallback(90.0, "escapeTransports")
 
-    local cv_success = pcall(include, "cosmicvaultnews")
-    if cv_success and CosmicVaultNews then
-        CosmicVaultNews.publishArticle({
-            title = "Refugee Convoy Hunted",
-            content = "Tragic reports are coming in from sector [" .. x .. ":" .. y .. "]. A civilian refugee convoy belonging to " .. victimFaction.name .. " is being ruthlessly pursued and fired upon by hostile military forces.",
-            category = "Conflict"
-        })
-    end
+    local article = {
+        title = "Refugee Convoy Hunted",
+        content = "Tragic reports are coming in from sector [" .. x .. ":" .. y .. "]. A civilian refugee convoy belonging to " .. victimFaction.name .. " is being ruthlessly pursued and fired upon by hostile military forces.",
+        category = "Conflict"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
 end
 
 function CW_RefugeeConvoyEvent.spawnHunters()

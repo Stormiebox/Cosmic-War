@@ -103,10 +103,20 @@ end
 mission.phases[1].triggers = {
     {
         condition = function() 
+            if onClient() then return false end
             local targets = { Sector():getEntitiesByScriptValue("cw_sabotage_target") }
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0 
         end,
         callback = function()
+            local x, y = Sector():getCoordinates()
+            local faction = Faction(mission.data.custom.enemyIndex)
+            local article = {
+                title = "Resource Operations Sabotaged",
+                content = "Mining operations in sector [" .. x .. ":" .. y .. "] have ground to a halt following a devastating attack on " .. (faction and faction.name or "unknown") .. " resource gatherers.",
+                category = "War"
+            }
+            Server():sendCallback("onCCNewsPublishArticle", article)
+            
             reward()
             accomplish()
         end

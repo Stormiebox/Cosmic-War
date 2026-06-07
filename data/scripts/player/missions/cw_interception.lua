@@ -113,6 +113,7 @@ end
 mission.phases[1].triggers = {
     {
         condition = function()
+            if onClient() then return false end
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
 
@@ -154,6 +155,14 @@ function spawnConvoy(x, y)
 end
 
 function finishAndReward()
+    local x, y = Sector():getCoordinates()
+    local article = {
+        title = "Black Ops Fleet Intercepted",
+        content = "A classified black ops fleet moving through sector [" .. x .. ":" .. y .. "] has been completely wiped out by independent contractors.",
+        category = "War"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
+
     reward()
     accomplish()
 end

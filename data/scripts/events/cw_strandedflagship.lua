@@ -64,14 +64,12 @@ function CW_StrandedFlagshipEvent.spawn()
         "Warning: Massive structural damage detected on an adrift Dreadnought. Its engines appear offline."%_T)
     deferredCallback(45.0, "spawnRepairFleet")
 
-    local cv_success = pcall(include, "cosmicvaultnews")
-    if cv_success and CosmicVaultNews then
-        CosmicVaultNews.publishArticle({
-            title = "High-Value Flagship Stranded",
-            content = "A massive flagship belonging to " .. flagshipFaction.name .. " has suffered critical engine failure and is stranded in sector [" .. x .. ":" .. y .. "]. Rival factions and opportunistic mercenaries are already moving in to capitalize on the vulnerability.",
-            category = "Conflict"
-        })
-    end
+    local article = {
+        title = "High-Value Flagship Stranded",
+        content = "A massive flagship belonging to " .. flagshipFaction.name .. " has suffered critical engine failure and is stranded in sector [" .. x .. ":" .. y .. "]. Rival factions and opportunistic mercenaries are already moving in to capitalize on the vulnerability.",
+        category = "Conflict"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
 end
 
 function CW_StrandedFlagshipEvent.spawnRepairFleet()

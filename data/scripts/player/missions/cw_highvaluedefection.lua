@@ -146,7 +146,7 @@ mission.phases[1].updateServer = function(timeStep)
         mission.data.custom.finished = true
 
         for _, ship in pairs(defectorShips) do
-            ship:addScript("ai/jumpout.lua")
+            ship:addScript("entity/deletejumped.lua")
         end
 
         finishAndReward()
@@ -192,6 +192,15 @@ function spawnHunters()
 end
 
 function finishAndReward()
+    local x, y = Sector():getCoordinates()
+    local faction = Faction(mission.data.custom.enemyIndex)
+    local article = {
+        title = "High-Ranking Officer Defects",
+        content = "Rumors are swirling after a high-ranking military officer successfully defected from " .. (faction and faction.name or "unknown") .. " under heavy escort in sector [" .. x .. ":" .. y .. "].",
+        category = "War"
+    }
+    Server():sendCallback("onCCNewsPublishArticle", article)
+
     reward()
     accomplish()
 end
