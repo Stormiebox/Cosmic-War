@@ -22,8 +22,10 @@ local cw_extraction_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
         local fIndex = factionIndex
+        local precomputedReward = nil
         if type(factionIndex) == "table" then
             fIndex = factionIndex.giver or factionIndex[1]
+            precomputedReward = factionIndex.reward
         end
 
         local giverFaction = Faction(fIndex)
@@ -39,6 +41,7 @@ function initialize(factionIndex)
         end
 
         mission.data.custom.giverIndex = fIndex
+        mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
         local heat = 0
@@ -71,11 +74,10 @@ function initialize(factionIndex)
         -- Extremely high base reward due to the heat requirement
         local baseReward = math.floor(150000 + heat * 150000)
 
-        mission.data.reward = {
+        mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 18000,
-            paymentMessage =
-            "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_T
+            paymentMessage = "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_T
         }
 
         cw_extraction_init(factionIndex)
@@ -213,13 +215,23 @@ function getBulletin(station)
     end
     if heat < 0.8 then return end
 
+    local baseReward = math.floor(150000 + heat * 150000)
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local rewardStruct = {
+        credits = rewardCredits,
+        relations = 18000,
+        paymentMessage = "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_T
+    }
+
     return {
         brief = "War Contract: High-Value Extraction"%_T,
         description = "A high-ranking enemy officer is defecting to our side. We need you to extract them safely."%_T,
         difficulty = "Extreme"%_T,
+        reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_highvaluedefection.lua",
         icon = "data/textures/icons/ShipEscort.png",
-        arguments = { { giver = station.factionIndex } },
+        formatArguments = { reward = createMonetaryString(rewardCredits) },
+        arguments = { { giver = station.factionIndex, reward = rewardStruct } },
         msg = "This is a highly classified operation. Extract the defector at all costs. Expect heavy resistance."%_T,
         onAccept = [[
             local self, player = ...

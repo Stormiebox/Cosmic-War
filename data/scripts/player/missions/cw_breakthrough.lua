@@ -22,8 +22,10 @@ local cw_breakthrough_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
         local fIndex = factionIndex
+        local precomputedReward = nil
         if type(factionIndex) == "table" then
             fIndex = factionIndex.giver or factionIndex[1]
+            precomputedReward = factionIndex.reward
         end
 
         local giverFaction = Faction(fIndex)
@@ -39,6 +41,7 @@ function initialize(factionIndex)
         end
 
         mission.data.custom.giverIndex = fIndex
+        mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
         local heat = 0
@@ -72,7 +75,7 @@ function initialize(factionIndex)
         mission.data.custom.baseReward = baseReward
         mission.data.custom.bonusPerShip = math.floor(15000 + heat * 20000)
 
-        mission.data.reward = {
+        mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 4000,
             paymentMessage = "Convoy has escaped. Contract payment transferred."%_T
@@ -225,13 +228,23 @@ function getBulletin(station)
     end
     if heat < 0.45 then return end
 
+    local baseReward = math.floor(35000 + heat * 50000)
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local rewardStruct = {
+        credits = rewardCredits,
+        relations = 4000,
+        paymentMessage = "Convoy has escaped. Contract payment transferred."%_T
+    }
+
     return {
         brief = "War Contract: Breakthrough"%_T,
         description = "We have a critical supply convoy moving through contested space. Defend them until they can jump."%_T,
         difficulty = "Extreme"%_T,
+        reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_breakthrough.lua",
         icon = "data/textures/icons/ShipEscort.png",
-        arguments = { { giver = station.factionIndex } },
+        formatArguments = { reward = createMonetaryString(rewardCredits) },
+        arguments = { { giver = station.factionIndex, reward = rewardStruct } },
         msg = "Our convoy is vulnerable. We need a capable escort to ensure they make it."%_T,
         onAccept = [[
             local self, player = ...

@@ -22,8 +22,10 @@ local cw_sabotage_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
         local fIndex = factionIndex
+        local precomputedReward = nil
         if type(factionIndex) == "table" then
             fIndex = factionIndex.giver or factionIndex[1]
+            precomputedReward = factionIndex.reward
         end
 
         local giverFaction = Faction(fIndex)
@@ -40,6 +42,7 @@ function initialize(factionIndex)
         end
 
         mission.data.custom.giverIndex = fIndex
+        mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
         local x, y = Sector():getCoordinates()
@@ -71,11 +74,10 @@ function initialize(factionIndex)
 
         local baseReward = math.floor(25000 + heat * 40000)
 
-        mission.data.reward = {
+        mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 5000,
-            paymentMessage =
-            "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."%_T
+            paymentMessage = "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."%_T
         }
 
         cw_sabotage_init(factionIndex)
@@ -146,13 +148,23 @@ function getBulletin(station)
     end
     if heat < 0.35 then return end
 
+    local baseReward = math.floor(25000 + heat * 40000)
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local rewardStruct = {
+        credits = rewardCredits,
+        relations = 5000,
+        paymentMessage = "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."%_T
+    }
+
     return {
         brief = "War Contract: Resource Sabotage"%_T,
         description = "A hostile mining operation is extracting resources in contested space. Put an end to it."%_T,
         difficulty = "Extreme"%_T,
+        reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_resourcesabotage.lua",
         icon = "data/textures/icons/ResourceSteal.png",
-        arguments = { { giver = station.factionIndex } },
+        formatArguments = { reward = createMonetaryString(rewardCredits) },
+        arguments = { { giver = station.factionIndex, reward = rewardStruct } },
         msg = "Crippling their resource flow now will save our fleets later. Destroy those miners."%_T,
         onAccept = [[
             local self, player = ...

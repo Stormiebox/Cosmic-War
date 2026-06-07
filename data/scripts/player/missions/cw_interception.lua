@@ -23,8 +23,10 @@ function initialize(factionIndex)
     if onServer() and not _restoring then
         -- Safely extract the argument passed from bulletinboard.lua
         local fIndex = factionIndex
+        local precomputedReward = nil
         if type(factionIndex) == "table" then
             fIndex = factionIndex.giver or factionIndex[1]
+            precomputedReward = factionIndex.reward
         end
 
         local giverFaction = Faction(fIndex)
@@ -43,6 +45,7 @@ function initialize(factionIndex)
         end
 
         mission.data.custom.giverIndex = fIndex
+        mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
         -- Find a nearby empty target sector
@@ -74,7 +77,7 @@ function initialize(factionIndex)
         end
         local baseReward = math.floor(25000 + heat * 50000)
 
-        mission.data.reward = {
+        mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 6000,
             paymentMessage = "Target destroyed. Contract payment transferred."%_T
@@ -175,13 +178,23 @@ function getBulletin(station)
     end
     if heat < 0.45 then return end
 
+    local baseReward = math.floor(25000 + heat * 50000)
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local rewardStruct = {
+        credits = rewardCredits,
+        relations = 6000,
+        paymentMessage = "Target destroyed. Contract payment transferred."%_T
+    }
+
     return {
         brief = "War Contract: Interception"%_T,
         description = "Conflict has intensified. Intercept hostile supply movement in nearby sectors."%_T,
         difficulty = "Extreme"%_T,
+        reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_interception.lua",
         icon = "data/textures/icons/ShipBounty.png",
-        arguments = { { giver = station.factionIndex } },
+        formatArguments = { reward = createMonetaryString(rewardCredits) },
+        arguments = { { giver = station.factionIndex, reward = rewardStruct } },
         msg = "We need skilled captains to strike enemy supply lines immediately."%_T,
         onAccept = [[
             local self, player = ...

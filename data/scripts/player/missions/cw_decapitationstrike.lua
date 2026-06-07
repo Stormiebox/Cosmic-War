@@ -23,8 +23,10 @@ local cw_decapitationstrike_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
         local fIndex = factionIndex
+        local precomputedReward = nil
         if type(factionIndex) == "table" then
             fIndex = factionIndex.giver or factionIndex[1]
+            precomputedReward = factionIndex.reward
         end
 
         local giverFaction = Faction(fIndex)
@@ -40,6 +42,7 @@ function initialize(factionIndex)
         end
 
         mission.data.custom.giverIndex = fIndex
+        mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
         local x, y = Sector():getCoordinates()
@@ -71,7 +74,7 @@ function initialize(factionIndex)
 
         -- Astronomical base reward for a boss fight
         local baseReward = math.floor(500000 + heat * 1000000)
-        mission.data.reward = {
+        mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
             relations = 35000,
             paymentMessage =
@@ -203,13 +206,23 @@ function getBulletin(station)
     end
     if heat < 1 then return end
 
+    local baseReward = math.floor(500000 + heat * 1000000)
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local rewardStruct = {
+        credits = rewardCredits,
+        relations = 35000,
+        paymentMessage = "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_T
+    }
+
     return {
         brief = "War Contract: Decapitation Strike"%_T,
         description = "The enemy Flagship has entered the sector. This is our chance to end the war."%_T,
         difficulty = "Extreme"%_T,
+        reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_decapitationstrike.lua",
         icon = "data/textures/icons/ShipBounty.png",
-        arguments = { { giver = station.factionIndex } },
+        formatArguments = { reward = createMonetaryString(rewardCredits) },
+        arguments = { { giver = station.factionIndex, reward = rewardStruct } },
         msg = "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."%_T,
         onAccept = [[
             local self, player = ...
