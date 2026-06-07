@@ -188,16 +188,22 @@ Allows conditional de-escalation when hostility recovers and ceasefire chance cr
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary file:** `data/scripts/server/background/cosmicwarbounties.lua`
+**Primary files:**
+- `data/scripts/server/background/cosmicwarbounties.lua`
+- `data/scripts/sector/cw_bountypayouts.lua`
 
 **What it does:**
-Creates time-bound bounty opportunities linked to active faction rivalries.
+Creates time-bound bounty opportunities linked to active faction rivalries, and actively pays players who assassinate targeted ships.
 
 **Typical Stored Value Pattern:**
 
 - Target faction ID.
 - Reward value.
 - Expiration runtime.
+
+**Functional Payouts:**
+- Actively listens to sector combat via `onDestroyed`.
+- When a player destroys an enemy with an active bounty, the system deposits the reward (scaled 3x for bosses, 5x for stations) into the player's bank, clears the bounty to prevent farming, and broadcasts a "War Bounty Claimed" Galactic News report.
 
 **Gameplay Impact:**
 

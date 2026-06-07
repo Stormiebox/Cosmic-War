@@ -20,6 +20,10 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Client-Side Mission Execution Crash (`12ClientPlayer`):** Fixed a massive game-breaking bug across all 8 War Contracts where entering a mission sector caused a fatal UI crash. Avorion's engine naturally executes the `onTargetLocationEntered` and `onTargetLocationArrivalConfirmed` hooks on both the client and server. The mission files were missing their `if onClient() then return end` safety guards, causing the client to illegally attempt to use `SectorGenerator()` to natively spawn ships into the local simulation.
 
 ### Added
+- **Functional War Bounties:** The War Bounty system is now fully functional. A new lightweight sector script (`cw_bountypayouts.lua`) tracks player kills and actively cashes in active faction bounties.
+  - Sinking a standard ship pays 1x the bounty. Bosses pay 3x. Stations pay 5x!
+  - Collecting a bounty clears it to prevent farming, acting as a true "High-Profile Hit".
+  - Instantly hooks into Galactic News to broadcast a "War Bounty Claimed" alert to all players.
 - **Galactic News Integration:** All 5 dynamic space events now fully integrate with the Galactic News Network, pushing live, localized conflict reports to the server whenever a flashpoint erupts.
 - **War Contract Icons:** All 8 War Contracts now correctly display high-quality thematic mission icons on the bulletin board UI (Shield, Crosshairs, Radar, etc.) instead of blank textures.
 - **Ecosystem Soft Bridges:** Implemented 4 massive new features designed to work beautifully standalone or synergize with the full Cosmic Series (Overhaul, Starfall, Chronicles).

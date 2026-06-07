@@ -26,6 +26,7 @@ For complete feature and architecture details, see:
 
 - **Dynamic Escalation:** Replaces the static vanilla war system with a fluid "War Heat" spectrum.
 - **Deep Economy Impacts:** Wars drain military station stocks (War Profiteering), allowing smugglers to reap massive profits.
+- **Functional War Bounties:** Track, hunt, and destroy targeted faction ships/stations to instantly cash in massive credit bounties and trigger Galactic News broadcasts of your success.
 - **Persistent Flashpoints:** Introduces fleet clashes, wreckage fields, civilian blockades, and elite headhunter hit-squads.
 - **Galactic News Integration:** Broadcasts shifting borders, blockades, and ceasefires natively to the Cosmic Vault News API.
 - **Modular Ecosystem:** Runs 100% standalone, but features seamless "soft-bridges" that naturally hook into Cosmic Overhaul, Cosmic Starfall, and Cosmic Chronicles.

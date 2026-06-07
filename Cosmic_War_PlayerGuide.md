@@ -35,7 +35,7 @@ As relations deteriorate between two rival factions, the **War Heat** scale rise
 Because of these hidden personalities, politics constantly drift. A highly aggressive faction might bully their neighbors, driving up War Heat.
 
 * **Diplomatic Sanctions:** As War Heat rises, factions actively embargo and sanction each other. You will see factions physically losing millions of credits as their economies bleed from the war effort.
-* **War Bounties:** Factions will post massive, time-sensitive bounties on their rivals, offering you huge payouts to join the fight.
+* **War Bounties:** Factions will post massive, time-sensitive bounties on their rivals. Destroying any ship or station belonging to the targeted faction will instantly cash in the bounty directly to your bank account, clear the contract, and broadcast your success on the Galactic News network! (Stations pay out 5x the reward!).
 * **The News Network:** You don't have to guess who is fighting anymore. The Cosmic War News Network will actively broadcast strategic alerts to your chat window, letting you know exactly when relations deteriorate and where the hotspots are.
 * **Ambient Radio Chatter:** Civilian, military, and freighter ships will now broadcast thematic radio chatter as you explore, reflecting the state of galactic politics, blockades, and the broader Cosmic ecosystem.
 * **Détente & Ceasefires:** Unlike vanilla, wars in Cosmic War can naturally end. If frontline commanders suffer enough losses, or if relations slowly recover, factions will sign ceasefires and return to peace.
