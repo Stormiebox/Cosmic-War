@@ -28,7 +28,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - Sinking a standard ship pays 1x the bounty. Bosses pay 3x. Stations pay 5x!
   - Collecting a bounty clears it to prevent farming, acting as a true "High-Profile Hit".
   - Instantly hooks into Galactic News to broadcast a "War Bounty Claimed" alert to all players.
-- **Galactic News Integration:** All 5 dynamic space events now fully integrate with the Galactic News Network, pushing live, localized conflict reports to the server whenever a flashpoint erupts.
+- **Galactic News Integration (Events):** All 5 dynamic space events have had their `CosmicVaultNews` library wrapper dependencies removed. They now natively use the built-in `Server():sendCallback` engine hooks, ensuring perfectly stable broadcasts regardless of mod load order.
+- **Galactic News Integration (Missions):** All 8 War Contracts now fully integrate with the Galactic News Network! Upon mission completion, a localized news article detailing the outcome and the coordinates of the conflict will instantly be pushed to the server.
 - **War Contract Icons:** All 8 War Contracts now correctly display high-quality thematic mission icons on the bulletin board UI (Shield, Crosshairs, Radar, etc.) instead of blank textures.
 - **Ecosystem Soft Bridges:** Implemented 4 massive new features designed to work beautifully standalone or synergize with the full Cosmic Series (Overhaul, Starfall, Chronicles).
 - **War Profiteering (Economy Hooks):** At Critical War Heat, military goods naturally bleed out from stations to simulate consumption. Soft bridges to Cosmic Overhaul to create massive profiteering margins and to Cosmic Chronicles for news alerts.
