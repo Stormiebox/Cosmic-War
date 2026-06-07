@@ -141,16 +141,15 @@ function spawnFlagship(x, y)
     flagship:addScript("data/scripts/entity/story/boss.lua")
     flagship.damageMultiplier = 3.0
 
-    -- Scale HP immensely (up to 8x based on heat)
+    -- Scale Damage and Boarding Defense (Safer than maxDurability since block damage recalculates HP)
     local heat = mission.data.custom.heat or 1.0
     local hpMult = math.max(4.0, 8.0 * heat)
 
-    flagship.durability = flagship.durability * hpMult
-    flagship.maxDurability = flagship.maxDurability * hpMult
-
-    if flagship.shieldDurability then
-        flagship.shieldDurability = flagship.shieldDurability * hpMult
-        flagship.shieldMaxDurability = flagship.shieldMaxDurability * hpMult
+    flagship.damageMultiplier = flagship.damageMultiplier * (hpMult / 2.0)
+    
+    local boarding = Boarding(flagship.index)
+    if boarding then
+        boarding.defenseMultiplier = boarding.defenseMultiplier * hpMult
     end
 
     -- Spawn a massive defender fleet to protect it

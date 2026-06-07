@@ -145,16 +145,15 @@ function spawnSiegeTarget(x, y)
     station:setTitle("Forward Operating Base"%_T, {})
     station:setValue("cw_siege_target", true)
 
-    -- Scale HP based on War Heat
+    -- Scale Damage based on War Heat (Safer than maxDurability since block damage recalculates HP)
     local heat = mission.data.custom.heat or 0
-    local hpMult = 1.0 + (heat * 3.0) -- Up to 4x Health at max heat
+    local hpMult = 1.0 + (heat * 3.0) -- Up to 4x Damage at max heat
 
-    station.durability = station.durability * hpMult
-    station.maxDurability = station.maxDurability * hpMult
-
-    if station.shieldDurability then
-        station.shieldDurability = station.shieldDurability * hpMult
-        station.shieldMaxDurability = station.shieldMaxDurability * hpMult
+    station.damageMultiplier = (station.damageMultiplier or 1.0) * hpMult
+    
+    local boarding = Boarding(station.index)
+    if boarding then
+        boarding.defenseMultiplier = boarding.defenseMultiplier * hpMult
     end
 
     -- Spawn Initial defenders
