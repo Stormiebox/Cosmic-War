@@ -51,7 +51,7 @@ In vanilla Avorion, military missions are mostly "Go here, kill pirates." Cosmic
 
 ### 3. Deep Space Flashpoints
 
-Cosmic War doesn't just wait for you to take a mission. As you explore the galaxy, the war will find *you*. If you jump into an empty or border sector, you might stumble directly into a **Dynamic Flashpoint** based on local tensions:
+Cosmic War doesn't just wait for you to take a mission. As you explore the galaxy, the war will find *you*. If you jump into an empty or border sector, you might stumble directly into a **Dynamic Flashpoint** based on local tensions (which are then automatically broadcast across the Galactic News Network):
 
 * **Refugee Convoys:** You might intercept a civilian convoy with damaged hyperdrives begging for help while a ruthless hunter fleet closes in.
 * **Diplomatic Sabotage:** You might find a Peace Envoy under heavy fire from hardliner extremists trying to prevent a ceasefire.

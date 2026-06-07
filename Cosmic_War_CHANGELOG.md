@@ -5,7 +5,7 @@ All notable changes to **Cosmic War** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2026-06-06
+## [2.0.0] - 2026-06-07
 
 ### Fixed
 - **Engine Bootstrap Compliance:** Removed invalid `initialize()` wrappers from `player/init.lua` and `sector/init.lua`. Avorion expects these to be global execution scripts. This resolves a fatal bug where the core `cosmicwarcontroller.lua` and UI tabs completely failed to load on fresh saves.
@@ -18,6 +18,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Library Include Bug:** Fixed a critical bug across all dynamic war events and missions where they would crash upon triggering (`attempt to index upvalue 'CosmicWarBridge' (a boolean value)`). This was caused by `cosmicwarbridge.lua`, `cosmicwarcaptainbridge.lua`, and `cosmicwareconomybridge.lua` missing their `return` statements, causing Avorion's `include()` function to return `true` instead of the actual library table.
 
 ### Added
+- **Galactic News Integration:** All 5 dynamic space events now fully integrate with the Galactic News Network, pushing live, localized conflict reports to the server whenever a flashpoint erupts.
 - **Ecosystem Soft Bridges:** Implemented 4 massive new features designed to work beautifully standalone or synergize with the full Cosmic Series (Overhaul, Starfall, Chronicles).
 - **War Profiteering (Economy Hooks):** At Critical War Heat, military goods naturally bleed out from stations to simulate consumption. Soft bridges to Cosmic Overhaul to create massive profiteering margins and to Cosmic Chronicles for news alerts.
 - **Wreckage Fields:** New dynamic event spawns 4-9 wrecked capital ships to simulate recent fleet clashes. Scavengers can loot these fields for scrap and Cosmic Overhaul Black Boxes.

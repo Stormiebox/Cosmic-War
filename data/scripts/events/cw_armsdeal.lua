@@ -75,4 +75,13 @@ function CW_ArmsDealEvent.spawn()
         local e2 = ShipGenerator.createDefender(smugglerFaction, generator:getPositionInSector())
         ShipAI(e2.index):setAggressive(); e2:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
+
+    local cv_success = pcall(include, "cosmicvaultnews")
+    if cv_success and CosmicVaultNews then
+        CosmicVaultNews.publishArticle({
+            title = "Black Market Arms Deal Intercepted",
+            content = "Military forces belonging to the " .. militaryFaction.name .. " have reportedly intercepted an illegal weapons transfer orchestrated by the " .. smugglerFaction.name .. " in sector [" .. x .. ":" .. y .. "]. Heavy fighting is ongoing.",
+            category = "Conflict"
+        })
+    end
 end

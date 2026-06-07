@@ -78,4 +78,13 @@ function CW_FleetClashEvent.spawn()
 
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
         "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"%_T)
+
+    local cv_success = pcall(include, "cosmicvaultnews")
+    if cv_success and CosmicVaultNews then
+        CosmicVaultNews.publishArticle({
+            title = "Massive Fleet Clash Erupts",
+            content = "A colossal hostile fleet signature has been detected dropping out of hyperspace in sector [" .. x .. ":" .. y .. "]. The " .. faction.name .. " military has declared a sector-wide state of emergency as they engage the invading " .. enemyFaction.name .. " forces.",
+            category = "Conflict"
+        })
+    end
 end
