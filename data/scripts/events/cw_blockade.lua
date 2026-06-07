@@ -60,7 +60,7 @@ function cw_blockade.initialize()
             category = "War Update",
             content = attacker.name .. " forces have established a blockade on the outskirts of sector (" .. x .. ":" .. y .. "). All neutral merchants and civilian vessels are advised to steer clear or risk being fired upon."
         }
-        server:invokeFunction("server/cosmicvaultnews_server.lua", "publishArticle", article)
+        server:sendCallback("onCCNewsPublishArticle", article)
     end)
     
     terminate()

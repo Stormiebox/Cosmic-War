@@ -44,7 +44,7 @@ function cw_wreckagefield.initialize()
             category = "War Casualties",
             content = "Scouts returning from sector (" .. x .. ":" .. y .. ") report finding a dense cluster of capital ship wreckages. Scavengers are already flocking to the area to pick the bones clean."
         }
-        server:invokeFunction("server/cosmicvaultnews_server.lua", "publishArticle", article)
+        server:sendCallback("onCCNewsPublishArticle", article)
     end)
     
     terminate()
