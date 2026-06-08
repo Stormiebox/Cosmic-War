@@ -103,11 +103,6 @@ msgstr "Вражеский флагман вошел в сектор. Это н�
 msgid "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."
 msgstr "Предупреждение: Это самоубийственная миссия. Вражеский флагман тяжело вооружен и имеет эскорт. Не принимайте, если у вас нет флота."
 
-#: data/scripts/entity/bulletinboardmissions.lua:
-msgid "Extreme"
-msgstr "Экстремально"
-
-
 # ==========data/scripts/entity/cosmicwarnews.lua ==========
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
@@ -441,11 +436,6 @@ msgstr "Это ремонтный флот! Мы прибыли на место�
 msgid "Diplomatic Sanctions"
 msgstr "Дипломатические санкции"
 
-# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Refresh"
-msgstr "Обновить"
-
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Refresh Galactic Intelligence"
 msgstr "Обновить галактические разведданные"
@@ -457,10 +447,6 @@ msgstr "Числовые отношения"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Toggle between numeric and descriptive relation values."
 msgstr "Переключение между числовыми и текстовыми значениями отношений."
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "All"
-msgstr "Все"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Active Conflicts"
@@ -495,14 +481,6 @@ msgid "War Heat"
 msgstr "Накал войны"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Status"
-msgstr "Статус"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Relations"
-msgstr "Отношения"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Sort by "
 msgstr "Сортировать по "
 
@@ -519,32 +497,12 @@ msgid "War Heat:"
 msgstr "Накал войны:"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Red"
-msgstr "Красный"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Critical"
 msgstr "Критический"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Orange"
-msgstr "Оранжевый"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "High"
-msgstr "Высокий"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Yellow"
-msgstr "Жёлтый"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Rising"
 msgstr "Растущий"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Green"
-msgstr "Зелёный"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Zero"
@@ -553,22 +511,6 @@ msgstr "Нулевой"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Relations:"
 msgstr "Отношения:"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Friendly"
-msgstr "Дружественные"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Gray"
-msgstr "Серый"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Neutral"
-msgstr "Нейтральные"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Hostile"
-msgstr "Враждебные"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Cosmic War Simulation:"
@@ -581,10 +523,6 @@ msgstr "Конфликт динамически обостряется на ос
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
 msgstr "Примечание: Хотя политика и стычки весьма динамичны, принадлежность станций фракциям и границы на карте в Avorion остаются статичными."
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Ceasefire"
-msgstr "Прекращение огня"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "All-Out War"

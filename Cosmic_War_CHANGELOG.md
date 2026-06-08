@@ -1,3 +1,5 @@
+# 2.0.1
+- **Hotfix:** Removed duplicate base-game translation strings from the mod's localization files to prevent 	inygettext collision warnings from spamming the client log.
 # Changelog
 
 All notable changes to **Cosmic War** will be documented in this file.
@@ -201,5 +203,6 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - This release is a patch-level stability/compatibility update.
 - Versioning remains **1.0.2** (no major or minor feature expansion in this cycle).
+
 
 

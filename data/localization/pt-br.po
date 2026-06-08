@@ -103,11 +103,6 @@ msgstr "A Nau Capitânia inimiga entrou no setor. Esta é a nossa chance de acab
 msgid "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."
 msgstr "Aviso: Esta é uma missão suicida. A Nau Capitânia inimiga é fortemente armada e escoltada. Não aceite a menos que você tenha uma frota."
 
-#: data/scripts/entity/bulletinboardmissions.lua:
-msgid "Extreme"
-msgstr "Extremo"
-
-
 # ==========data/scripts/entity/cosmicwarnews.lua ==========
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
@@ -441,11 +436,6 @@ msgstr "Esta é a frota de reparos! Chegamos à localização da Nau Capitânia.
 msgid "Diplomatic Sanctions"
 msgstr "Sanções Diplomáticas"
 
-# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Refresh"
-msgstr "Atualizar"
-
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Refresh Galactic Intelligence"
 msgstr "Atualizar Inteligência Galáctica"
@@ -457,10 +447,6 @@ msgstr "Relações Numéricas"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Toggle between numeric and descriptive relation values."
 msgstr "Alternar entre valores de relação numéricos e descritivos."
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "All"
-msgstr "Todos"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Active Conflicts"
@@ -495,14 +481,6 @@ msgid "War Heat"
 msgstr "Tensão de Guerra"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Status"
-msgstr "Status"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Relations"
-msgstr "Relações"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Sort by "
 msgstr "Classificar por "
 
@@ -519,32 +497,12 @@ msgid "War Heat:"
 msgstr "Tensão de Guerra:"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Red"
-msgstr "Vermelho"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Critical"
 msgstr "Crítico"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Orange"
-msgstr "Laranja"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "High"
-msgstr "Alto"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Yellow"
-msgstr "Amarelo"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Rising"
 msgstr "Em Ascensão"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Green"
-msgstr "Verde"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Zero"
@@ -553,22 +511,6 @@ msgstr "Zero"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Relations:"
 msgstr "Relações:"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Friendly"
-msgstr "Amigável"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Gray"
-msgstr "Cinza"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Neutral"
-msgstr "Neutro"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Hostile"
-msgstr "Hostil"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Cosmic War Simulation:"
@@ -581,10 +523,6 @@ msgstr "O conflito escala dinamicamente com base na 'Tensão de Guerra', desenca
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
 msgstr "Nota: Embora a política e as escaramuças sejam altamente dinâmicas, a propriedade das estações da facção e as fronteiras do mapa permanecem estáticas em Avorion."
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Ceasefire"
-msgstr "Cessar-fogo"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "All-Out War"

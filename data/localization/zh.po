@@ -103,11 +103,6 @@ msgstr "敌方旗舰已经进入该星区。这是我们结束战争的机会。
 msgid "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."
 msgstr "警告：这是一次自杀式任务。敌方旗舰武装到了牙齿且有重兵护航。除非你拥有一支舰队，否则不要接受。"
 
-#: data/scripts/entity/bulletinboardmissions.lua:
-msgid "Extreme"
-msgstr "极限"
-
-
 # ==========data/scripts/entity/cosmicwarnews.lua ==========
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
@@ -128,7 +123,6 @@ msgstr "战略警报：%1% 和 %2% 之间的紧张局势达到 %3%。"
 msgid "Cosmic War"
 msgstr "宇宙战争"
 
-
 # ==========data/scripts/entity/cw_armsdeal.lua ==========
 #: data/scripts/entity/cw_armsdeal.lua:
 #: data/scripts/events/cw_armsdeal.lua:
@@ -144,7 +138,6 @@ msgstr "黑市商人"
 #: data/scripts/events/cw_armsdeal.lua:
 msgid "We have company! The arms deal is compromised! Eradicate all witnesses!"
 msgstr "有伴了！军火交易暴露了！消灭所有目击者！"
-
 
 # ==========data/scripts/entity/cw_borderskirmish.lua ==========
 #: data/scripts/entity/cw_borderskirmish.lua:
@@ -190,7 +183,6 @@ msgstr "摧毁巡逻队"
 #: data/scripts/entity/cw_borderskirmish.lua:
 msgid "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."
 msgstr "巡逻队已被消灭。在我们的边境上，我们绝不屈服。报酬已转账。"
-
 
 # ==========data/scripts/entity/cw_breakthrough.lua ==========
 #: data/scripts/entity/cw_breakthrough.lua:
@@ -243,7 +235,6 @@ msgstr "所有船只安全撤离！干得漂亮，指挥官。我们在你的报
 msgid "We took losses, but the convoy is away. Sending payment now."
 msgstr "我们遭受了损失，但车队已经离开。现在发送报酬。"
 
-
 # ==========data/scripts/entity/cw_decapitationstrike.lua ==========
 #: data/scripts/entity/cw_decapitationstrike.lua:
 #: data/scripts/player/missions/cw_decapitationstrike.lua:
@@ -274,7 +265,6 @@ msgstr "你敢挑战我们的无畏舰？我们将粉碎你和你懦弱的雇主
 msgid "Flagship Dreadnought"
 msgstr "旗舰无畏舰"
 
-
 # ==========data/scripts/entity/cw_diplomaticsabotage.lua ==========
 #: data/scripts/entity/cw_diplomaticsabotage.lua:
 #: data/scripts/events/cw_diplomaticsabotage.lua:
@@ -295,12 +285,10 @@ msgstr "强硬派极端分子"
 msgid "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."
 msgstr "谢谢你们！没有了那些极端分子，我们可以继续前往和平峰会了。我们欠你们一条命。"
 
-
 # ==========data/scripts/entity/cw_fleetclash.lua ==========
 #: data/scripts/entity/cw_fleetclash.lua:
 msgid "Warning! Massive hostile fleet signature detected dropping out of hyperspace! All vessels to battle stations!"
 msgstr "警告！探测到大量敌对舰队信号正脱离超空间！所有舰只进入战斗岗位！"
-
 
 # ==========data/scripts/entity/cw_forcerecon.lua ==========
 #: data/scripts/entity/cw_forcerecon.lua:
@@ -342,7 +330,6 @@ msgstr "数据链接丢失！你离空间站太远了！"
 msgid "Covert Listening Post"
 msgstr "秘密监听站"
 
-
 # ==========data/scripts/entity/cw_frontlinesiege.lua ==========
 #: data/scripts/entity/cw_frontlinesiege.lua:
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
@@ -377,7 +364,6 @@ msgstr "前线作战基地"
 #: data/scripts/player/missions/cw_frontlinesiege.lua:
 msgid "Reinforcements have arrived! Destroy the attackers!"
 msgstr "增援已到达！消灭攻击者！"
-
 
 # ==========data/scripts/entity/cw_highvaluedefection.lua ==========
 #: data/scripts/entity/cw_highvaluedefection.lua:
@@ -427,7 +413,6 @@ msgstr "叛逃军官"
 msgid "There is the traitor! Execute them immediately!"
 msgstr "叛徒在那里！立即处决他们！"
 
-
 # ==========data/scripts/entity/cw_interception.lua ==========
 #: data/scripts/entity/cw_interception.lua:
 #: data/scripts/player/missions/cw_interception.lua:
@@ -453,7 +438,6 @@ msgstr "目标已摧毁。契约报酬已转账。"
 msgid "We're tracking the convoy on your sensors. Take them out!"
 msgstr "我们在你的传感器上追踪到了车队。干掉他们！"
 
-
 # ==========data/scripts/entity/cw_refugeeconvoy.lua ==========
 #: data/scripts/entity/cw_refugeeconvoy.lua:
 msgid "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"
@@ -468,7 +452,6 @@ msgstr "目标已锁定。不留活口。"
 #: data/scripts/events/cw_refugeeconvoy.lua:
 msgid "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"
 msgstr "谢谢你们！我们的引擎充能完毕，我们将跃迁到安全地点。我们不会忘记这份恩情的！"
-
 
 # ==========data/scripts/entity/cw_resourcesabotage.lua ==========
 #: data/scripts/entity/cw_resourcesabotage.lua:
@@ -489,7 +472,6 @@ msgstr "摧毁采矿行动"
 #: data/scripts/player/missions/cw_resourcesabotage.lua:
 msgid "Mining operation destroyed. That will surely put a dent in their supply lines. Payment transferred."
 msgstr "采矿行动已被摧毁。那肯定会对他们的补给线造成打击。报酬已转账。"
-
 
 # ==========data/scripts/entity/cw_strandedflagship.lua ==========
 #: data/scripts/entity/cw_strandedflagship.lua:
@@ -515,11 +497,6 @@ msgstr "这里是维修舰队！我们已抵达旗舰的位置。探测到敌方
 msgid "Diplomatic Sanctions"
 msgstr "外交制裁"
 
-# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Refresh"
-msgstr "刷新"
-
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Refresh Galactic Intelligence"
 msgstr "刷新银河情报"
@@ -531,10 +508,6 @@ msgstr "数值关系"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Toggle between numeric and descriptive relation values."
 msgstr "在数值关系和描述性关系之间切换。"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "All"
-msgstr "全部"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Active Conflicts"
@@ -569,14 +542,6 @@ msgid "War Heat"
 msgstr "战争热度"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Status"
-msgstr "状态"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Relations"
-msgstr "关系"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Sort by "
 msgstr "排序方式 "
 
@@ -593,32 +558,12 @@ msgid "War Heat:"
 msgstr "战争热度："
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Red"
-msgstr "红色"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Critical"
 msgstr "临界"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Orange"
-msgstr "橙色"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "High"
-msgstr "高"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Yellow"
-msgstr "黄色"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Rising"
 msgstr "上升"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Green"
-msgstr "绿色"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Zero"
@@ -627,22 +572,6 @@ msgstr "零"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Relations:"
 msgstr "关系："
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Friendly"
-msgstr "友好"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Gray"
-msgstr "灰色"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Neutral"
-msgstr "中立"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Hostile"
-msgstr "敌对"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Cosmic War Simulation:"
@@ -655,10 +584,6 @@ msgstr "冲突会根据“战争热度”动态升级，从而引发大规模的
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
 msgstr "注意：尽管政治和冲突是高度动态的，但在 Avorion 中派系空间站的所有权和地图边界是静态的。"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Ceasefire"
-msgstr "停火"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "All-Out War"

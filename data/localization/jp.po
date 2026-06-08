@@ -103,11 +103,6 @@ msgstr "敵の旗艦がセクターに入った。これは戦争を終わらせ
 msgid "Warning: This is a suicide mission. The enemy Flagship is heavily armed and escorted. Do not accept unless you have a fleet."
 msgstr "警告: これは自殺ミッションだ。敵の旗艦は重武装で護衛されている。艦隊を持っていない限り、引き受けないように。"
 
-#: data/scripts/entity/bulletinboardmissions.lua:
-msgid "Extreme"
-msgstr "極限"
-
-
 # ==========data/scripts/entity/cosmicwarnews.lua ==========
 #: data/scripts/entity/cosmicwarnews.lua:
 #: data/scripts/server/background/cosmicwarnews.lua:
@@ -441,11 +436,6 @@ msgstr "こちら修理艦隊！旗艦の場所に到着した。敵影を検出
 msgid "Diplomatic Sanctions"
 msgstr "外交制裁"
 
-# ==========data/scripts/player/ui/galacticpolitics_tab.lua ==========
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Refresh"
-msgstr "更新"
-
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Refresh Galactic Intelligence"
 msgstr "銀河情報の更新"
@@ -457,10 +447,6 @@ msgstr "数値関係"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Toggle between numeric and descriptive relation values."
 msgstr "数値と説明的な関係値の表示を切り替えます。"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "All"
-msgstr "すべて"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Active Conflicts"
@@ -495,14 +481,6 @@ msgid "War Heat"
 msgstr "戦争熱"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Status"
-msgstr "ステータス"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Relations"
-msgstr "関係"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Sort by "
 msgstr "並べ替え: "
 
@@ -519,32 +497,12 @@ msgid "War Heat:"
 msgstr "戦争熱:"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Red"
-msgstr "赤"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Critical"
 msgstr "危機的"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Orange"
-msgstr "オレンジ"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "High"
-msgstr "高い"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Yellow"
-msgstr "黄"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Rising"
 msgstr "上昇中"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Green"
-msgstr "緑"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Zero"
@@ -553,22 +511,6 @@ msgstr "ゼロ"
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Relations:"
 msgstr "関係:"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Friendly"
-msgstr "友好的"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Gray"
-msgstr "灰色"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Neutral"
-msgstr "中立"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Hostile"
-msgstr "敵対的"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Cosmic War Simulation:"
@@ -581,10 +523,6 @@ msgstr "紛争は「戦争熱」に基づいて動的に激化し、大規模な
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."
 msgstr "注：政治や小競り合いは非常にダイナミックですが、派閥のステーション所有権やマップの境界線はAvorionでは静的なままです。"
-
-#: data/scripts/player/ui/galacticpolitics_tab.lua:
-msgid "Ceasefire"
-msgstr "停戦"
 
 #: data/scripts/player/ui/galacticpolitics_tab.lua:
 msgid "All-Out War"
