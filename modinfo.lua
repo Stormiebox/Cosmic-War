@@ -16,8 +16,7 @@ meta =
     type = "mod",
 
     -- Description of your mod that will be displayed to players
-    description =
-    "Faction relations, wars, conquest pressure, and battle escalation systems for Avorion. Built as a companion to Cosmic Overhaul.",
+    description = "A living, persistent AI faction politics and dynamic war-state simulation module. Now featuring Bounties and Galactic News broadcasts!",
 
     -- Insert all authors into this list
     authors = { "Stormbox" },
