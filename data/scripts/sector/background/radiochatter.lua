@@ -1,6 +1,7 @@
 local cw_old_RadioChatter_initialize = RadioChatter.initialize
 function RadioChatter.initialize(...)
     if cw_old_RadioChatter_initialize then cw_old_RadioChatter_initialize(...) end
+    if onServer() then return end
     
     local generalStationChatter = {
         "Did you catch the latest broadcast on the Galactic News network? War tensions are rising in the neighboring sectors."%_t,

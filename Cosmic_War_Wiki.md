@@ -1,4 +1,5 @@
 # Cosmic War - Detailed Features
+*Current Version: v2.0.2*
 
 Welcome to the **Cosmic War** official wiki! This page contains the full, detailed documentation for the faction-conflict simulation module in the **Cosmic** mod series.
 

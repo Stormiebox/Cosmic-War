@@ -1,5 +1,8 @@
+# 2.0.2
+- **Hotfix:** Added server execution guards to `radiochatter.lua` to prevent client-only UI/speech bubbles from executing on the server thread, fixing dedicated server exceptions and crashes.
+
 # 2.0.1
-- **Hotfix:** Removed duplicate base-game translation strings from the mod's localization files to prevent 	inygettext collision warnings from spamming the client log.
+- **Hotfix:** Removed duplicate base-game translation strings from the mod's localization files to prevent tinygettext collision warnings from spamming the client log.
 # Changelog
 
 All notable changes to **Cosmic War** will be documented in this file.

@@ -1,4 +1,5 @@
 # Cosmic War: A Player's Guide to a Living Conflict
+*Current Version: v2.0.2*
 
 In the vast universe of Avorion, empires rise and fall, but have you ever felt like the wars between them lack impact? **Cosmic War** was built to change that by transforming the static, unpredictable faction battles of the base game into a deeply simulated, escalating geopolitical sandbox.
 
