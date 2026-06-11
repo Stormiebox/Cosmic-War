@@ -1,11 +1,52 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
-local mcm = include("mcm")
-local config = mcm and mcm.bind("Cosmic_War") or nil
+local ccm = include("ccm")
+local config = ccm and ccm.bind("Cosmic_War") or nil
 
 include("cosmicvaultconfig")
 
 CosmicWarConfig = CosmicWarConfig or {}
+
+if ccm then
+    ccm.register("Cosmic_War", {
+        pages = {
+            {
+                title = "War & Skirmish Configurations",
+                options = {
+                    { key = "sectorPressureInterval", type = "number", title = "Sector Pressure Interval (s)", description = "Time between war skirmish spawn checks.", default = 180, min = 30, max = 1800 },
+                    { key = "sectorPressureChance", type = "number", title = "Sector Pressure Chance (%)", description = "Base chance of skirmish spawn.", default = 35, min = 0, max = 100 },
+                    { key = "sectorPressureMinSpacing", type = "number", title = "Skirmish Minimum Spacing (s)", description = "Cool-down for skirmishes in a single sector.", default = 600, min = 60, max = 7200 },
+                },
+            },
+            {
+                title = "Diplomacy Configurations",
+                options = {
+                    { key = "diplomacyInterval", type = "number", title = "Diplomacy Processing Interval (s)", description = "Time between periodic diplomacy updates.", default = 300, min = 30, max = 3600 },
+                    { key = "diplomacyPairSteps", type = "number", title = "Diplomatic Pair Process Batch", description = "Number of faction pairs processed per tick.", default = 10, min = 1, max = 100 },
+                    { key = "rivalryThreshold", type = "number", title = "Rivalry Relations Threshold", description = "Relation score when factions declare rivalry.", default = -45000, min = -100000, max = 0 },
+                },
+            },
+            {
+                title = "News & Event Configurations",
+                options = {
+                    { key = "newsInterval", type = "number", title = "News Dispatch Interval (s)", description = "How often news is dispatched to BBS.", default = 420, min = 60, max = 3600 },
+                    { key = "sanctionsInterval", type = "number", title = "Sanction Dispatch Interval (s)", description = "How often trade sanctions are considered.", default = 600, min = 60, max = 3600 },
+                    { key = "ceasefireInterval", type = "number", title = "Ceasefire Processing Interval (s)", description = "How often ceasefires are checked.", default = 900, min = 60, max = 7200 },
+                    { key = "bountyInterval", type = "number", title = "Bounty Creation Interval (s)", description = "How often war bounties are listed.", default = 600, min = 60, max = 3600 },
+                    { key = "sanctionBaseChance", type = "number", title = "Trade Sanction Chance (%)", description = "Base chance to enact sanctions between rivals.", default = 35, min = 0, max = 100 },
+                    { key = "ceasefireChance", type = "number", title = "Ceasefire Negotiation Chance (%)", description = "Base chance for war fatigue to trigger a ceasefire.", default = 25, min = 0, max = 100 },
+                },
+            },
+            {
+                title = "Mod Integrations",
+                options = {
+                    { key = "enableEconomyBridge", type = "bool", title = "Enable Cosmic Economy Bridge", description = "Enable dynamic trade routes affected by war.", default = true },
+                    { key = "enableCaptainBridge", type = "bool", title = "Enable Cosmic Captain Bridge", description = "Enables simulation overrides for captain operations during wartime.", default = true },
+                },
+            },
+        },
+    })
+end
 
 local defaults =
 {
@@ -58,7 +99,7 @@ local function build()
 
     out.sectorPressureInterval = readNumber("sectorPressureInterval", 30, 1800, defaults.sectorPressureInterval)
 
-    -- MCM stores chance as percent (0..100), convert to normalized 0..1
+    -- CCM stores chance as percent (0..100), convert to normalized 0..1
     local chancePercent = readNumber("sectorPressureChance", 0, 100, defaults.sectorPressureChance * 100)
     out.sectorPressureChance = chancePercent / 100
 

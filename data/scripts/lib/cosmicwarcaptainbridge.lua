@@ -29,8 +29,8 @@ function CosmicWarCaptainBridge.modifyPredictionByWarHeat(prediction, factionInd
         prediction.reward.value = prediction.reward.value * rewardMult
     end
 
-    prediction.mcm = prediction.mcm or {}
-    prediction.mcm.cosmicWarCaptain = {
+    prediction.ccm = prediction.ccm or {}
+    prediction.ccm.cosmicWarCaptain = {
         riskMultiplier = riskMult,
         rewardMultiplier = rewardMult
     }
