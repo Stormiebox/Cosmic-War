@@ -16,7 +16,7 @@ meta =
     type = "mod",
 
     -- Description of your mod that will be displayed to players
-    description = "A living, persistent AI faction politics and dynamic war-state simulation module. Now featuring Bounties and Galactic News broadcasts!",
+    description = "A living, persistent AI faction politics and dynamic war-state simulation module. Now featuring Bounties and Galactic News broadcasts! This version fully integrates with the Cosmic Vault API framework for unified progression, enhanced background simulation safety, and global news reporting.",
 
     -- Insert all authors into this list
     authors = { "Stormbox" },

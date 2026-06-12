@@ -171,7 +171,12 @@ function finishAndReward()
         content = "A massive blow to enemy morale! An independent strike force has successfully tracked down and eliminated a heavily guarded " .. (faction and faction.name or "unknown") .. " flagship in sector [" .. x .. ":" .. y .. "].",
         category = "War"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+    if cvn_success and cvn and cvn.publishArticle then
+        cvn.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 
     local giverFaction = Faction(mission.data.custom.giverIndex)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
@@ -181,7 +186,12 @@ function finishAndReward()
         local rel = giverFaction:getRelations(enemyFaction.index) or 0
         local targetRel = 0 -- Neutral
         if rel < targetRel then
-            Galaxy():setFactionRelations(giverFaction, enemyFaction, targetRel)
+            local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+            if cvf_success and cvf and cvf.changeRelations then
+                cvf.changeRelations(giverFaction.index, enemyFaction.index, targetRel - rel)
+            else
+                Galaxy():setFactionRelations(giverFaction, enemyFaction, targetRel)
+            end
         end
 
         -- Clear war markers

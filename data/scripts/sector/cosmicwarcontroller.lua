@@ -153,8 +153,13 @@ local function applyWarPressure(a, b, random)
 
     -- Vanilla changeRelations() ignores AI vs AI factions.
     -- We must use the Galaxy API to force the relation change between two AI entities.
-    local newRel = math.max(-100000, math.min(100000, rel + delta))
-    Galaxy():setFactionRelations(a, b, newRel)
+    local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+    if cvf_success and cvf and cvf.changeRelations then
+        cvf.changeRelations(a.index, b.index, delta)
+    else
+        local newRel = math.max(-100000, math.min(100000, rel + delta))
+        Galaxy():setFactionRelations(a, b, newRel)
+    end
 
     local newRelA = a:getRelations(b.index) or rel
     local newRelB = b:getRelations(a.index) or rel
@@ -206,7 +211,7 @@ local function applyWarProfiteeringShortages(factions)
     end
 
     if didShortage then
-        -- Soft Bridge to Cosmic Chronicles News
+        -- Soft Bridge to Cosmic Vault News
         pcall(function()
             local server = Server()
             local article = {
@@ -214,7 +219,12 @@ local function applyWarProfiteeringShortages(factions)
                 category = "Trade Crisis",
                 content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
             }
-            server:sendCallback("onCCNewsPublishArticle", article)
+            local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+            if cvn_success and cvn and cvn.publishArticle then
+                cvn.publishArticle(article)
+            else
+                server:sendCallback("onCCNewsPublishArticle", article)
+            end
         end)
     end
 end

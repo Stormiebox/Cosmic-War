@@ -136,6 +136,12 @@ function CosmicWarNews.onSeedNews()
             category = "War Update",
             content = string.format("Diplomatic relations between %s and %s have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, factionB)
         }
-        server:sendCallback("onCCNewsPublishArticle", article)
+        
+        local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+        if cvn_success and cvn and cvn.publishArticle then
+            cvn.publishArticle(article)
+        else
+            server:sendCallback("onCCNewsPublishArticle", article)
+        end
     end
 end

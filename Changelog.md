@@ -1,8 +1,3 @@
-# 2.0.2
-- **Hotfix:** Added server execution guards to `radiochatter.lua` to prevent client-only UI/speech bubbles from executing on the server thread, fixing dedicated server exceptions and crashes.
-
-# 2.0.1
-- **Hotfix:** Removed duplicate base-game translation strings from the mod's localization files to prevent tinygettext collision warnings from spamming the client log.
 # Changelog
 
 All notable changes to **Cosmic War** will be documented in this file.
@@ -10,9 +5,27 @@ All notable changes to **Cosmic War** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+--
+
+## v2.1.0 (CURRENT PROJECT VERSION - NO RELEASE DATE YET!)
+
+- Fully integrated with the Cosmic Vault API framework.
+- Swept codebase for legacy callbacks and implemented safe pcall fallbacks.
+
+### LEGACY LOGS BELOW - KEPT FOR HISTORICAL PURPOSES
+
+# 2.0.2
+
+- **Hotfix:** Added server execution guards to `radiochatter.lua` to prevent client-only UI/speech bubbles from executing on the server thread, fixing dedicated server exceptions and crashes.
+
+# 2.0.1
+
+- **Hotfix:** Removed duplicate base-game translation strings from the mod's localization files to prevent tinygettext collision warnings from spamming the client log.
+
 ## [2.0.0] - 2026-06-07
 
 ### Fixed
+
 - **Engine Bootstrap Compliance:** Removed invalid `initialize()` wrappers from `player/init.lua` and `sector/init.lua`. Avorion expects these to be global execution scripts. This resolves a fatal bug where the core `cosmicwarcontroller.lua` and UI tabs completely failed to load on fresh saves.
 - **Architectural Overhaul (Event Scheduler):** Fixed a massive, silent game-breaking bug where the mod entirely overwrote the vanilla `player/init.lua` and `player/eventscheduler.lua` files. This previously resulted in the total deletion of all vanilla player scripts and disabled all vanilla events (pirate attacks, Xsotan spawns, etc.).
   - The Event Scheduler has been rewritten into a standalone `cw_eventscheduler.lua` module that safely attaches to the player and runs strictly parallel to the vanilla game, guaranteeing that dynamic war flashpoints actually trigger.
@@ -30,6 +43,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Defector/Convoy AI Failure:** Fixed an issue in `cw_breakthrough` and `cw_highvaluedefection` where the friendly AI ships would just sit in space forever instead of jumping away at the end of the mission. The scripts mistakenly assigned a non-existent `ai/jumpout.lua` script to the ships instead of Avorion's native `entity/deletejumped.lua`.
 
 ### Added
+
 - **Functional War Bounties:** The War Bounty system is now fully functional. A new lightweight sector script (`cw_bountypayouts.lua`) tracks player kills and actively cashes in active faction bounties.
   - Sinking a standard ship pays 1x the bounty. Bosses pay 3x. Stations pay 5x!
   - Collecting a bounty clears it to prevent farming, acting as a true "High-Profile Hit".
@@ -45,11 +59,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Expanded Radio Chatter:** Injected 40 brand new, highly thematic background radio chatter lines to civilian, military, and freighter ships. These lines subtly hint at the broader Cosmic ecosystem and developer lore, and have been fully localized into all 7 supported languages.
 
 ### Removed
+
 - **Texture Folder:** All textures were removed and migrated into `Cosmic Vault`.
 
 ## [1.7.0] - 2026-06-04
 
 ### Added
+
 - **Galactic Politics Tab:** Added a new tab to the player window that displays active galactic conflicts, including faction names, war heat, status, and relations.
   - **Player Relation Colors:** Faction names are dynamically color-coded based on the player's personal standing with each faction.
   - **Strategic Tooltips:** Hovering over a conflict now reveals internal Faction Indices, AI Traits (Aggressive, Wealthy, Peaceful, etc.), exact numerical player relations, and active War Bounties.
@@ -63,9 +79,11 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [1.6.0] - 2026-05-30 - In Sync With Cosmic Overhaul v4.0.0 Update
 
 ### Added
+
 - **Localization Expansion:** Added proper translation support for the new Diplomatic Sanctions system messages across all 7 supported languages.
 
 ### Fixed
+
 - **Mission Spawn Crash:** Fixed a critical bug in `cw_resourcesabotage.lua` where a missing enemy faction would cause a silent crash during sector generation.
 - **Phantom Event Crash:** Fixed a critical issue in `eventscheduler.lua` where dynamic events (Fleet Clashes, Arms Deals, etc.) failed to trigger because they were trying to attach to a non-existent vanilla script wrapper (`sectoreventstarter`).
 - **Brittle Rebuild API:** Fixed a silent failure in `rebuildstations.lua` where the script relied on private vanilla variables. It now correctly uses standard C++ bindings to identify controlling factions and properly clamp station rebuilding during active wars.
@@ -73,6 +91,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Engine Payment Crash:** Fixed a silent engine error in `cosmicwardiplomaticsanctions.lua` where the script attempted to pass negative numbers to `Faction:receive()`. It now safely uses `Faction:pay()` to ensure reliable deductions.
 
 ### Added
+
 - **Ecosystem Soft Bridges:** Implemented 4 massive new features designed to work beautifully standalone or synergize with the full Cosmic Series (Overhaul, Starfall, Chronicles).
 - **War Profiteering (Economy Hooks):** At Critical War Heat, military goods naturally bleed out from stations to simulate consumption. Soft bridges to Cosmic Overhaul to create massive profiteering margins and to Cosmic Chronicles for news alerts.
 - **Wreckage Fields:** New dynamic event spawns 4-9 wrecked capital ships to simulate recent fleet clashes. Scavengers can loot these fields for scrap and Cosmic Overhaul Black Boxes.
@@ -80,6 +99,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Elite Headhunters (Mercenary Alignment):** Dropping below -80000 relations with an actively warring faction will dispatch Elite Headhunters against you. Soft-bridges to Cosmic Starfall to dynamically equip them with devastating heavy subsystems.
 
 ### Removed
+
 - **Dead Code:** Removed leftover and commented-out diplomacy loop attachments from `player/init.lua` to keep the player execution context pristine.
 
 ## [1.5.0] - 2026-05-24
@@ -206,6 +226,3 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - This release is a patch-level stability/compatibility update.
 - Versioning remains **1.0.2** (no major or minor feature expansion in this cycle).
-
-
-

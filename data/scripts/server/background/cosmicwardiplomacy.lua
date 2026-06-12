@@ -94,8 +94,15 @@ local function maybeAdjustPair(a, b, random)
 
     if random:test(math.min(0.55, warChance)) then
         local worsen = random:getInt(1000, 4500)
-        local nr = math.max(-100000, rel - worsen)
-        Galaxy():setFactionRelations(a, b, nr)
+        local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+        if cvf_success and cvf and cvf.changeRelations then
+            cvf.changeRelations(a.index, b.index, -worsen)
+        else
+            local nr = math.max(-100000, rel - worsen)
+            Galaxy():setFactionRelations(a, b, nr)
+        end
+        local nr = a:getRelations(b.index) or (rel - worsen)
+        
         didChange = true
 
         local cfg = getCfg()
@@ -107,8 +114,13 @@ local function maybeAdjustPair(a, b, random)
         end
     elseif random:test(math.min(0.40, peaceChance)) then
         local improve = random:getInt(500, 2200)
-        local nr = math.min(100000, rel + improve)
-        Galaxy():setFactionRelations(a, b, nr)
+        local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+        if cvf_success and cvf and cvf.changeRelations then
+            cvf.changeRelations(a.index, b.index, improve)
+        else
+            local nr = math.min(100000, rel + improve)
+            Galaxy():setFactionRelations(a, b, nr)
+        end
         didChange = true
     end
 
@@ -135,11 +147,28 @@ function CosmicWarDiplomacy.update(timeStep)
 
     local cfg = getCfg()
     local steps = math.min(cfg.diplomacyPairSteps or 10, #factions)
-    for _ = 1, steps do
-        local a = factions[random:getInt(1, #factions)]
-        local b = factions[random:getInt(1, #factions)]
-        if a and b and a.index ~= b.index then
-            maybeAdjustPair(a, b, random)
+    
+    local cv_task_success, cv_task = pcall(include, "cosmicvaulttask")
+    if cv_task_success and cv_task and cv_task.RunAsync then
+        cv_task.RunAsync("CosmicWarDiplomacy", function()
+            for i = 1, steps do
+                if i % 10 == 0 and cv_task.Yield then
+                    cv_task.Yield()
+                end
+                local a = factions[random:getInt(1, #factions)]
+                local b = factions[random:getInt(1, #factions)]
+                if a and b and a.index ~= b.index then
+                    maybeAdjustPair(a, b, random)
+                end
+            end
+        end)
+    else
+        for _ = 1, steps do
+            local a = factions[random:getInt(1, #factions)]
+            local b = factions[random:getInt(1, #factions)]
+            if a and b and a.index ~= b.index then
+                maybeAdjustPair(a, b, random)
+            end
         end
     end
 end

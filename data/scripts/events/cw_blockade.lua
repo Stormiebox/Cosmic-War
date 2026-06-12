@@ -52,7 +52,7 @@ function cw_blockade.initialize()
         ship:addScriptOnce("ai/patrol.lua")
     end
 
-    -- If Cosmic Chronicles is installed, broadcast news
+    -- If Cosmic Vault News is installed, broadcast news
     pcall(function()
         local server = Server()
         local article = {
@@ -60,7 +60,12 @@ function cw_blockade.initialize()
             category = "War Update",
             content = attacker.name .. " forces have established a blockade on the outskirts of sector (" .. x .. ":" .. y .. "). All neutral merchants and civilian vessels are advised to steer clear or risk being fired upon."
         }
-        server:sendCallback("onCCNewsPublishArticle", article)
+        local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+        if cvn_success and cvn and cvn.publishArticle then
+            cvn.publishArticle(article)
+        else
+            server:sendCallback("onCCNewsPublishArticle", article)
+        end
     end)
     
     terminate()
