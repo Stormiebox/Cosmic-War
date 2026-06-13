@@ -5,6 +5,9 @@
 ### **The Arsenal Update**
 *The most massive expansion to Cosmic War yet, introducing mercenary enlistment, warbonds, brand new contract missions, horrifying new events like the Eclipse Vanguard, and a completely rebalanced war economy.*
 
+### Bug Fixes & Compliance
+- **Multiplayer Synchronization:** Replaced all instances of `math.random` with Avorion's deterministic `random()` engine to prevent massive multiplayer client/server desyncs when generating loot, stats, and enemies.
+
 ### Additions
 - **Mercenary Enlistment**: Dock at Military Outposts to officially enlist in a faction's war effort as a privateer.
 - **Warbonds**: Purchase Warbonds from Trading Posts that dynamically mature when the geopolitical war state resolves.

@@ -201,7 +201,7 @@ local function applyWarProfiteeringShortages(factions)
                         if good then
                             -- Soft Bridge: We just remove stock. If Cosmic Overhaul is installed,
                             -- its dynamic economy will naturally detect the deficit and amplify prices.
-                            station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, math.random(500, 2000))
+                            station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, random():getInt(500, 2000))
                             didShortage = true
                         end
                     end
