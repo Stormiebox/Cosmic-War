@@ -9,6 +9,9 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## v2.1.0 (CURRENT PROJECT VERSION - NO RELEASE DATE YET!)
 
+### Added
+- **Vault Events API Integration**: Wars are now seamlessly tracked and registered into the Cosmic Vault News framework via `cosmic_war_declaration`.
+
 - Fully integrated with the Cosmic Vault API framework.
 - Swept codebase for legacy callbacks and implemented safe pcall fallbacks.
 
