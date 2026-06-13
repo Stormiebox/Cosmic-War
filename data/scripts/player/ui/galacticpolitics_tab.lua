@@ -351,12 +351,15 @@ function GalacticPoliticsTab.serverFetchData()
                             bountyB = e:getValue("cw_bounty_reward") or 0
                         end
 
+                        local fName = f.name or ("Faction " .. tostring(f.index))
+                        local eName = e.name or ("Faction " .. tostring(e.index))
+                        
                         table.insert(conflicts, {
-                            factionA = f.name or ("Faction " .. tostring(f.index)),
+                            factionA = string.gsub(fName, "%s*/%*.-%*/%s*", ""),
                             factionAIndex = f.index,
                             traitsA = getFactionTraitsSafe(f),
                             bountyA = bountyA,
-                            factionB = e.name or ("Faction " .. tostring(e.index)),
+                            factionB = string.gsub(eName, "%s*/%*.-%*/%s*", ""),
                             factionBIndex = e.index,
                             traitsB = getFactionTraitsSafe(e),
                             bountyB = bountyB,
