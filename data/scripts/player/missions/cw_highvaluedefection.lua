@@ -4,6 +4,11 @@ package.path = package.path .. ";data/scripts/?.lua"
 include("randomext")
 include("structuredmission")
 
+function getUpdateInterval()
+    return 1.0
+end
+
+
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 local Balancing = include("galaxy")

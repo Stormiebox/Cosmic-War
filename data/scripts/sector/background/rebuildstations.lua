@@ -2,6 +2,11 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("cosmicwarconfig")
 
+function getUpdateInterval()
+    return 60.0
+end
+
+
 -- namespace RebuildStations
 
 if onServer() then
