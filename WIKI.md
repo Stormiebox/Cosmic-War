@@ -245,7 +245,30 @@ Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wart
 The command path includes readiness guards (e.g., galaxy API availability checks) for safer early lifecycle behavior.
 </details>
 
-### 🔗 10) MCM Configuration Integration
+### 🚀 10) Dynamic Territory Sieges & AI Boarding
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:**
+
+- `data/scripts/lib/cosmicvaultterritory.lua` (via Cosmic Vault)
+- `data/scripts/events/siegeevent.lua`
+- `data/scripts/entity/ai/trooptransport.lua`
+
+**What it does:**
+Allows factions to actively conquer enemy sectors and permanently expand their borders on the Galaxy Map. By utilizing mathematically abstracted background timers, the server naturally shifts influence without keeping thousands of sectors loaded (avoiding the "Sector Alive" crash trap).
+
+**Gameplay Impact:**
+
+- **Background Conquests:** Contested zones have a hidden siege timer. If time runs out, the station flips ownership mathematically.
+- **Physical Sieges:** If a player enters a contested zone, the engine triggers a Siege Event.
+- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds at close range, they physically board and capture the station!
+- **Dynamic Borders:** Once a station flips ownership, the Galaxy Map influence border naturally expands.
+
+</details>
+
+### 🔗 11) MCM Configuration Integration
 
 <details>
 <summary><b>Click to expand details</b></summary>

@@ -62,6 +62,18 @@ Use the new Galactic Politics UI tab to track the status of all known factions.
 - **Covert Funding:** As a wealthy player, you can secretly fund rebellions or donate credits to a faction's war effort, directly influencing the outcome of the war without firing a shot.
 </details>
 
+## 🚀 Dynamic Territory Expansion
+<details>
+<summary><b>Click to expand</b></summary>
+
+Factions can now actively conquer enemy sectors and permanently expand their borders on the Galaxy Map. 
+
+### ⚙️ Mechanics
+- **Background Conquests:** Contested zones have a hidden siege timer. If time runs out and no player intervenes, the station flips ownership mathematically, expanding the faction's borders naturally.
+- **Physical Sieges:** If a player enters a contested zone, a Siege Event is triggered!
+- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds at close range, they physically board and capture the station!
+</details>
+
 
 ---
 

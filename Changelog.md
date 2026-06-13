@@ -19,6 +19,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Multiplayer Synchronization:** Replaced all instances of `math.random` with Avorion's deterministic `random()` engine to prevent massive multiplayer client/server desyncs when generating loot, stats, and enemies.
 
 ### Additions
+- **Dynamic Territory Expansion:** Factions can now actively capture enemy sectors and shift Galaxy Map borders mathematically in the background without causing Sector Alive performance drain! Conquests are automatically broadcast to the Galactic News Network.
+- **AI Troop Transports:** Massive, heavily shielded AI transports will now spawn during sector sieges and attempt to physically board and capture defending stations.
 - **Mercenary Enlistment**: Dock at Military Outposts to officially enlist in a faction's war effort as a privateer.
 - **Warbonds**: Purchase Warbonds from Trading Posts that dynamically mature when the geopolitical war state resolves.
 - **Abandon Mission Penalties**: Abandoning a War Contract now incurs a massive reputation penalty with the contracting faction.
