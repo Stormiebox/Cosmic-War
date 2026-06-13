@@ -107,10 +107,20 @@ local function maybeAdjustPair(a, b, random)
 
         local cfg = getCfg()
         if nr <= (cfg.rivalryThreshold or -45000) then
-            a:setValue("enemy_faction", b.index)
-            b:setValue("enemy_faction", a.index)
-            a:setValue("cw_target_faction", b.index)
-            b:setValue("cw_target_faction", a.index)
+            local alreadyAtWar = a:getValue("enemy_faction") == b.index
+            if not alreadyAtWar then
+                a:setValue("enemy_faction", b.index)
+                b:setValue("enemy_faction", a.index)
+                a:setValue("cw_target_faction", b.index)
+                b:setValue("cw_target_faction", a.index)
+                
+                -- Broadcast the War via Cosmic Vault Events (7 days duration default)
+                local cve_success, cve = pcall(include, "cosmicvaultevents")
+                if cve_success and cve and cve.startEvent then
+                    cve.startEvent("cw_war_" .. a.index .. "_" .. b.index, 7 * 24 * 3600)
+                    cve.startEvent("cw_war_" .. b.index .. "_" .. a.index, 7 * 24 * 3600)
+                end
+            end
         end
     elseif random:test(math.min(0.40, peaceChance)) then
         local improve = random:getInt(500, 2200)
@@ -122,6 +132,25 @@ local function maybeAdjustPair(a, b, random)
             Galaxy():setFactionRelations(a, b, nr)
         end
         didChange = true
+        
+        local nr = a:getRelations(b.index) or (rel + improve)
+        local cfg = getCfg()
+        if nr > (cfg.rivalryThreshold or -45000) then
+            local wasAtWar = a:getValue("enemy_faction") == b.index
+            if wasAtWar then
+                a:setValue("enemy_faction", nil)
+                b:setValue("enemy_faction", nil)
+                a:setValue("cw_target_faction", nil)
+                b:setValue("cw_target_faction", nil)
+                
+                -- End the war event early if peace is achieved
+                local cve_success, cve = pcall(include, "cosmicvaultevents")
+                if cve_success and cve and cve.endEvent then
+                    cve.endEvent("cw_war_" .. a.index .. "_" .. b.index)
+                    cve.endEvent("cw_war_" .. b.index .. "_" .. a.index)
+                end
+            end
+        end
     end
 
     if didChange then
