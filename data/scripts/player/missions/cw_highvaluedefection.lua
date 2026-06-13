@@ -72,7 +72,7 @@ function initialize(factionIndex)
         }
 
         -- Extremely high base reward due to the heat requirement
-        local baseReward = math.floor(150000 + heat * 150000)
+        local baseReward = math.floor(750000 + heat * 750000)
 
         mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
@@ -215,7 +215,7 @@ function getBulletin(station)
     end
     if heat < 0.8 then return end
 
-    local baseReward = math.floor(150000 + heat * 150000)
+    local baseReward = math.floor(750000 + heat * 750000)
     local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
     local rewardStruct = {
         credits = rewardCredits,
@@ -239,4 +239,20 @@ function getBulletin(station)
             if faction and player then player:sendChatMessage(faction.name, 0, self.msg) end
         ]]
     }
+end
+
+
+-- Added by Cosmic War v3.0.0: Massive reputation penalty on abandoning a War Contract
+local cw_mission_abandon_original = mission.abandon
+mission.abandon = function()
+    if onServer() then
+        local player = Player()
+        local giverIndex = mission.data.custom.giverIndex
+        if giverIndex and giverIndex > 0 then
+            local rep = player:getRelations(giverIndex)
+            player:setRelation(giverIndex, math.max(-100000, rep - 25000))
+            player:sendChatMessage(Faction(giverIndex).name, 1, "You abandoned a critical war contract! Our trust in you is broken.")
+        end
+    end
+    if cw_mission_abandon_original then cw_mission_abandon_original() end
 end

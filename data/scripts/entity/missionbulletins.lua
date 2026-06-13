@@ -22,19 +22,24 @@ function MissionBulletins.getPossibleMissions()
         end
         if heat >= 0.35 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_resourcesabotage.lua", prob = 1.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_deploy_mines.lua", prob = 1.0})
         end
         if heat >= 0.45 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_interception.lua", prob = 1.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_breakthrough.lua", prob = 1.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_propaganda_broadcast.lua", prob = 1.0})
         end
         if heat >= 0.60 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_frontlinesiege.lua", prob = 1.0})
         end
         if heat >= 0.80 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_highvaluedefection.lua", prob = 0.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_assassinate_general.lua", prob = 0.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_supply_line_raid.lua", prob = 0.5})
         end
         if heat >= 1.00 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_decapitationstrike.lua", prob = 0.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_extract_pow.lua", prob = 0.5})
         end
     end
     

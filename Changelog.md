@@ -1,19 +1,30 @@
-# Changelog
+# Cosmic War Changelog
+*Current Version: 3.0.0*
 
-All notable changes to **Cosmic War** will be documented in this file.
+## [v3.0.0] - (CURRENT PROJECT VERSION - NO RELEASE DATE YET!)
+### **The Arsenal Update**
+*The most massive expansion to Cosmic War yet, introducing mercenary enlistment, warbonds, brand new contract missions, horrifying new events like the Eclipse Vanguard, and a completely rebalanced war economy.*
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
---
-
-## v2.1.0 (CURRENT PROJECT VERSION - NO RELEASE DATE YET!)
-
-### Added
+### Additions
+- **Mercenary Enlistment**: Dock at Military Outposts to officially enlist in a faction's war effort as a privateer.
+- **Warbonds**: Purchase Warbonds from Trading Posts that dynamically mature when the geopolitical war state resolves.
+- **Abandon Mission Penalties**: Abandoning a War Contract now incurs a massive reputation penalty with the contracting faction.
+- **Enhanced Payouts**: The base payout of all War Contract missions has been significantly buffed.
+- **5 New War Contracts**:
+  - Assassinate Flag Officer
+  - Supply Line Raid
+  - Propaganda Broadcast
+  - Prisoner of War Extraction
+  - Minefield Deployment
+- **5 New War Zone Events**:
+  - Station Siege Blockades
+  - The Eclipse Vanguard Invasion
+  - Capital Ship Duels
+  - Distress Beacon Traps
+  - Orbital Planetary Bombardment
 - **Vault Events API Integration**: Wars are now seamlessly tracked and registered into the Cosmic Vault News framework via `cosmic_war_declaration`.
-
 - Fully integrated with the Cosmic Vault API framework.
-- Swept codebase for legacy callbacks and implemented safe pcall fallbacks.
+- Swept codebase for legacy callbacks and implemented safe guard fallbacks.
 
 ### LEGACY LOGS BELOW - KEPT FOR HISTORICAL PURPOSES
 

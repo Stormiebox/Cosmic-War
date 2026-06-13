@@ -504,3 +504,10 @@ The current architectural direction is heavily focused on:
 - Resilient lifecycle behavior.
 - Highly configurable war simulation.
 - Stable, predictable coexistence with broader **Cosmic** series mod stacks.
+
+
+## v3.0.0 The Arsenal Update Additions
+- **Mercenary Enlistment**: Dock at Military Outposts to officially enlist in a faction's war effort. You receive double bounties for enemy kills, but the opposing faction instantly turns Hostile.
+- **Dynamic Warbonds**: Purchase Warbonds from Trading Posts. If the war resolves favorably without your allied faction collapsing, your investment matures for a massive 300% payout!
+- **High-Stakes War Contracts**: Added Assassination, Supply Line Raids, Propaganda Broadcasts, POW Extractions, and Minefield Deployments. **Warning**: Abandoning these contracts incurs a massive -25,000 reputation penalty!
+- **Flashpoint Encounters**: Beware of massive Station Sieges, Capital Ship Duels, Distress Beacon Traps, Orbital Planetary Bombardments, and the horrifying, fixed end-game threat: The Eclipse Vanguard.
