@@ -1,5 +1,4 @@
-# Cosmic War - Detailed Features
-*Current Version: v2.0.2*
+# ⚙️ Cosmic War - Detailed Features
 
 Welcome to the **Cosmic War** official wiki! This page contains the full, detailed documentation for the faction-conflict simulation module in the **Cosmic** mod series.
 
@@ -10,7 +9,7 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
 - [Mod Identity & Design Goals](#mod-identity--design-goals)
 - [Architecture Summary](#architecture-summary)
@@ -22,7 +21,7 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 
 ---
 
-## Mod Identity & Design Goals
+## 🧬 Mod Identity & Design Goals
 
 **Primary Focus:** Living, persistent AI faction politics and war-state simulation.
 
@@ -36,7 +35,7 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 
 ---
 
-## Architecture Summary
+## 🏗️ Architecture Summary
 
 The mod utilizes a layered simulation model to bring the galaxy to life:
 
@@ -51,9 +50,9 @@ The mod utilizes a layered simulation model to bring the galaxy to life:
 
 ---
 
-## Full Feature Breakdown
+## ⚙️ Full Feature Breakdown
 
-### 1) War-Oriented AI Faction Seeding
+### ⚔️ 1) War-Oriented AI Faction Seeding
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -78,7 +77,7 @@ Injects and maintains faction-level war metadata for AI factions so behavior tre
 
 </details>
 
-### 2) Sector War-Pressure Controller
+### ⚔️ 2) Sector War-Pressure Controller
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -104,7 +103,7 @@ Runs periodic sector-level scans and applies pressure to selected faction pairs 
 
 </details>
 
-### 3) Persistent Diplomacy Drift
+### 🤝 3) Persistent Diplomacy Drift
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -127,7 +126,7 @@ Without drift, diplomacy can remain too static between discrete scripted events.
 
 </details>
 
-### 4) War News / Broadcast Layer
+### ⚔️ 4) War News / Broadcast Layer
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -184,27 +183,21 @@ Allows conditional de-escalation when hostility recovers and ceasefire chance cr
 
 </details>
 
-### 7) War Bounty Generation
+### ⚔️ 7) War Bounty Generation
 
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-- `data/scripts/server/background/cosmicwarbounties.lua`
-- `data/scripts/sector/cw_bountypayouts.lua`
+**Primary file:** `data/scripts/server/background/cosmicwarbounties.lua`
 
 **What it does:**
-Creates time-bound bounty opportunities linked to active faction rivalries, and actively pays players who assassinate targeted ships.
+Creates time-bound bounty opportunities linked to active faction rivalries.
 
 **Typical Stored Value Pattern:**
 
 - Target faction ID.
 - Reward value.
 - Expiration runtime.
-
-**Functional Payouts:**
-- Actively listens to sector combat via `onDestroyed`.
-- When a player destroys an enemy with an active bounty, the system deposits the reward (scaled 3x for bosses, 5x for stations) into the player's bank, clears the bounty to prevent farming, and broadcasts a "War Bounty Claimed" Galactic News report.
 
 **Gameplay Impact:**
 
@@ -233,7 +226,7 @@ Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wart
 
 </details>
 
-### 9) Admin / Diagnostics Command
+### 🎖️ 9) Admin / Diagnostics Command
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -252,7 +245,7 @@ Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wart
 The command path includes readiness guards (e.g., galaxy API availability checks) for safer early lifecycle behavior.
 </details>
 
-### 10) MCM Configuration Integration
+### 🔗 10) MCM Configuration Integration
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -299,13 +292,7 @@ Recent iterations include:
 
 </details>
 
-### 12) Ecosystem Synergy (Soft Bridges)
-
-Cosmic War adheres to a strict "Standalone but Synergistic" philosophy. It requires nothing but the Cosmic Vault to function, but it includes blind hooks that naturally interface with the rest of the Cosmic Series if installed:
-
-- **War Profiteering (Overhaul + Chronicles):** At Critical War Heat, factions naturally consume their station stocks of Military Goods. If Cosmic Overhaul is installed, this artificial deficit triggers massive Smuggler/Merchant hazard-pay multipliers. Cosmic Chronicles detects the deficit and broadcasts a "Wartime Shortage" news flash.
-- **Wreckage Fields (Overhaul + Chronicles):** Spawns dense capital ship graveyards after high-heat battles. Cosmic Overhaul's Scavenger logic natively detects these as high-value Black Box loot tables, while Chronicles reports the graveyard's discovery.
-- **Elite Headhunters (Starfall):** Angering a warring faction to extreme levels (-80000 relations) spawns Elite Hit-Squads. The script attempts a soft-bridge to Cosmic Starfall to dynamically equip the squad with devastating heavy subsystems. If Starfall isn't present, they spawn as standard vanilla military ships.
+### 🔗 12) Cosmic Overhaul Synergy (Bridge Layer)
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -332,7 +319,7 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 
 </details>
 
-### 13) Dynamic War Contracts (Missions)
+### ⚔️ 13) Dynamic War Contracts (Missions)
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -364,7 +351,7 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 
 </details>
 
-### 14) Dynamic War Events (Flashpoints)
+### ⚔️ 14) Dynamic War Events (Flashpoints)
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -379,7 +366,7 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 - `data/scripts/events/cw_diplomaticsabotage.lua`
 
 **What it does:**
-Injects new spontaneous events via a dedicated background scheduler (cw_eventscheduler.lua). This standalone module runs strictly parallel to vanilla Avorion, guaranteeing that dynamic war flashpoints seamlessly interweave with standard pirate and Xsotan attacks without breaking any core game files. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation. These events also seamlessly bridge into the **Cosmic Vault News API**, broadcasting major flashpoints to all players across the galaxy.
+Injects new spontaneous events into Avorion's global event scheduler. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation.
 
 **Available Events:**
 
@@ -391,7 +378,7 @@ Injects new spontaneous events via a dedicated background scheduler (cw_eventsch
 
 </details>
 
-### 15) Galactic Politics Tab (UI)
+### 🤝 15) Galactic Politics Tab (UI)
 
 <details>
 <summary><b>Click to expand details</b></summary>
@@ -419,38 +406,17 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 
 </details>
 
-### 16) Ambient Radio Chatter
-
-<details>
-<summary><b>Click to expand details</b></summary>
-
-**Primary files:**
-- `data/scripts/sector/background/radiochatter.lua`
-
-**What it does:**
-Injects 40 brand new, highly thematic background radio chatter lines into Avorion's vanilla ambient dialogue pool.
-
-**Key Features:**
-- **Thematic Integration:** Lines are dynamically spoken by General Stations, General Ships, Freighters, and Hostile Ships.
-- **Lore Bridging:** The chatter subtly references core mechanics from the Cosmic mod series (War Heat, Overhauls, Starfalls, Galactic News) and drops easter eggs related to the developer (Stormbox).
-- **Localization:** Fully localized into all 7 supported languages.
-
-**Gameplay Impact:**
-- Makes the galaxy feel vastly more alive and reactive to the political background simulation.
-
-</details>
-
 ---
 
-## Server & Performance Guidelines
+## 🌐 Server & Performance Guidelines
 
-### Multiplayer / Dedicated Server Behavior
+### 🌐 Multiplayer / Dedicated Server Behavior
 
 - Avorion's simulation is server-authoritative. **Cosmic War** logic is predominantly server-side with synchronization-aware behavior implemented where needed.
 - Global background loops (like news, sanctions, and ceasefires) are strictly attached to the `Galaxy()` component to ensure proper headless execution.
 - In mixed mod stacks, maintain consistent configuration and load order. Validate logs at startup to catch any issues early.
 
-### Performance & Safety Notes
+### 🛡️ Performance & Safety Notes
 
 - Interval-driven loops are strictly favored over heavy per-frame (`update()`) logic to maintain server TPS.
 - Defensive nil and callable checks are heavily used in high-risk lifecycle paths.
@@ -474,9 +440,9 @@ Injects 40 brand new, highly thematic background radio chatter lines into Avorio
 
 ---
 
-## Installation & Troubleshooting
+## 🛠️ Installation & Troubleshooting
 
-### Installation
+### 🛠️ Installation
 
 1. Place folder in:
    - **Windows:** `%AppData%\Avorion\mods\`
@@ -485,7 +451,7 @@ Injects 40 brand new, highly thematic background radio chatter lines into Avorio
 3. Enable **Cosmic War** in **Settings -> Mods**.
 4. Restart the game or server.
 
-### Troubleshooting Checklist
+### 🛠️ Troubleshooting Checklist
 
 - [ ] Confirm the mod is active in your Avorion mod settings.
 - [ ] Confirm the **MCM** dependency is enabled and loaded before this mod.
@@ -495,7 +461,7 @@ Injects 40 brand new, highly thematic background radio chatter lines into Avorio
 
 ---
 
-## Development Status
+## 📈 Development Status
 
 **Cosmic War** remains an actively iterated **WIP** with ongoing balancing and long-session validation.
 
@@ -506,8 +472,21 @@ The current architectural direction is heavily focused on:
 - Stable, predictable coexistence with broader **Cosmic** series mod stacks.
 
 
-## v3.0.0 The Arsenal Update Additions
-- **Mercenary Enlistment**: Dock at Military Outposts to officially enlist in a faction's war effort. You receive double bounties for enemy kills, but the opposing faction instantly turns Hostile.
-- **Dynamic Warbonds**: Purchase Warbonds from Trading Posts. If the war resolves favorably without your allied faction collapsing, your investment matures for a massive 300% payout!
-- **High-Stakes War Contracts**: Added Assassination, Supply Line Raids, Propaganda Broadcasts, POW Extractions, and Minefield Deployments. **Warning**: Abandoning these contracts incurs a massive -25,000 reputation penalty!
-- **Flashpoint Encounters**: Beware of massive Station Sieges, Capital Ship Duels, Distress Beacon Traps, Orbital Planetary Bombardments, and the horrifying, fixed end-game threat: The Eclipse Vanguard.
+---
+
+## 🔗 Cosmic Series Integration & Audit 3.0 Updates
+<details>
+<summary><b>Click to expand</b></summary>
+
+During the Cosmic Series Final QA Audit (v3.0+), several massive backend systems were standardized across all mods:
+
+### 📖 Cosmic Codex Integration
+All deep lore, stat blocks, and dynamic recipes have been fully integrated into the in-game **Cosmic Codex**. You no longer need to tab out of the game to read these features; they will natively update and unlock inside your Codex UI as you progress!
+
+### 🔒 Network Safety & Anti-Cheat
+- **Math.Random Fix:** We systematically replaced all unstable Lua `math.random` calls with Avorion's deterministic `random():getInt()` generation sequence. This guarantees 100% synchronization on Multiplayer Dedicated Servers and prevents cascading desyncs during massive fleet spawns.
+- **Callable Validation:** UI and background scripts have been fully hardened. Malicious clients can no longer spoof "free" remote calls; the server actively verifies execution contexts before processing any requests, sealing multiple Arbitrary Code Execution (ACE) vulnerabilities.
+
+### 🛠️ Vanilla Bug Fixes
+- **Scout Mission Fix:** We patched a massive, long-standing vanilla bug where Scout Missions would completely skip and ignore Faction Headquarters sectors because the native dialogue trees were missing the template definition.
+</details>

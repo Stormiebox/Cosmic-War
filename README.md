@@ -1,62 +1,30 @@
-# Cosmic War
-*Current Version: 2.1.0*
+# 🌌 Cosmic War
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+*A complete overhaul to diplomacy, fleet battles, and faction tension.*
 
-**Cosmic War** is the geopolitical conflict layer of the Cosmic series for Avorion.
+## 📖 Overview
+Cosmic War brings life to the political landscape of Avorion. Factions now track 'War Heat' with their neighbors, leading to blockades, skirmishes, and eventual full-scale invasions by massive dreadnought fleets. You can influence these wars through the Galactic Politics tab by funding rebellions or placing bounties.
 
-It focuses on:
-- dynamic faction rivalry escalation,
-- persistent diplomacy drift,
-- war-side effects (news, sanctions, bounties, ceasefires),
-- and configurable long-session faction conflict simulation.
+## ✨ Features
+<details>
+<summary><b>Click to expand features</b></summary>
 
-It is designed to run standalone and to synergize with **Cosmic Overhaul**.
+- **War Heat System:** Factions build tension and declare war dynamically.
+- **Galactic Politics:** New UI tab to track all faction relations and active conflicts.
+- **Mercenary Contracts:** Sign lucrative contracts to defend borders or eliminate targets during active wars.
+- **Invasions:** Fully simulated fleet invasions featuring dreadnoughts and sieges.
+</details>
 
----
+## ⚙️ Requirements
+- Avorion v2.0+
+- Dependencies: **Cosmic Vault, Cosmic Overhaul**
 
-## Full Documentation
-
-For complete feature and architecture details, see:
-
-- **`Cosmic_War_Wiki.md`**
-
----
-
-## Quick Highlights
-
-- **Dynamic Escalation:** Replaces the static vanilla war system with a fluid "War Heat" spectrum.
-- **Deep Economy Impacts:** Wars drain military station stocks (War Profiteering), allowing smugglers to reap massive profits.
-- **Functional War Bounties:** Track, hunt, and destroy targeted faction ships/stations to instantly cash in massive credit bounties and trigger Galactic News broadcasts of your success.
-- **Persistent Flashpoints:** Introduces fleet clashes, wreckage fields, civilian blockades, and elite headhunter hit-squads.
-- **Galactic News Integration:** Broadcasts shifting borders, blockades, and ceasefires natively to the Cosmic Vault News API.
-- **Modular Ecosystem:** Runs 100% standalone, but features seamless "soft-bridges" that naturally hook into Cosmic Overhaul, Cosmic Starfall, and Cosmic Chronicles.
-
----
-
-## Installation
-
-1. Place folder in:
+## 🚀 Installation
+1. Place the folder in:
    - **Windows:** `%AppData%\Avorion\mods\`
    - **Linux:** `~/.avorion/mods/`
-2. Ensure required dependency is installed:
-   - **Mod Configuration Menu (MCM)**
-3. Enable **Cosmic War** in **Settings -> Mods**.
-4. Restart game/server as needed.
+2. Enable **Cosmic War** in **Settings -> Mods**.
+3. Restart Avorion when prompted.
 
----
-
-## Compatibility Snapshot
-
-- Intended to coexist with Cosmic Overhaul.
-- `serverSideOnly = false` (intentional for mixed script-context behavior).
-- For dependency and compatibility specifics, see `modinfo.lua`.
-
----
-
-## Operational Notes
-
-- Use `/cosmicwarstatus` for runtime diagnostics visibility.
-- In large mod stacks, validate load order and check logs during startup.
-- See `Cosmic_War_CHANGELOG.md` for detailed project change history.
-
+## 📚 Documentation
+For detailed mechanics, guides, and lore, please refer to the in-game **Cosmic Codex**, or check the included `WIKI.md` and `PLAYER_GUIDE.md` files.

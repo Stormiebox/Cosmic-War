@@ -1,0 +1,83 @@
+# ⚔️ 🌌 Cosmic War - Detailed Mechanics
+
+Welcome to the **Cosmic War** official player guide! This page covers War Heat, Diplomacy, Mercenary Contracts, and Dreadnought Invasions.
+
+---
+
+## 📑 Table of Contents
+- ⚔️ War Heat System
+- 🎖️ Mercenary Contracts
+- 🛡️ Dreadnought Invasions
+- 🌐 Galactic Politics
+
+---
+
+## ⚔️ War Heat System
+<details>
+<summary><b>Click to expand</b></summary>
+
+Factions are no longer static. They actively build tension with their neighbors.
+
+### ⚙️ Mechanics
+- Every faction has a "War Heat" meter with bordering factions.
+- Border skirmishes, intercepted traders, and differing traits (Aggressive vs Peaceful) passively increase War Heat over time.
+- Once War Heat reaches 100%, a formal Declaration of War is broadcast on the Galactic News Network.
+- Warring factions will actively dispatch fleets to destroy each other's stations and claim territory.
+</details>
+
+## 🎖️ Mercenary Contracts
+<details>
+<summary><b>Click to expand</b></summary>
+
+Profit from the chaos by signing up as a mercenary.
+
+### ⚙️ Mechanics
+- Check the Bulletin Board in any warring faction's territory to find Mercenary Contracts.
+- **Defensive Contracts:** Protect a sector from an incoming invasion fleet.
+- **Offensive Contracts:** Join an invasion fleet and assist in destroying an enemy station.
+- **Assassination:** Hunt down specific enemy commanders behind enemy lines.
+- Completing contracts pays massive bounties and significantly boosts your reputation with the hiring faction (while devastating your reputation with the target).
+</details>
+
+## 🛡️ Dreadnought Invasions
+<details>
+<summary><b>Click to expand</b></summary>
+
+During an active war, factions will launch massive invasion fleets.
+
+### ⚔️ Combat Mechanics
+- Invasions are spearheaded by **Dreadnoughts**, colossal capital ships with massive HP pools and devastating weaponry.
+- Dreadnoughts cannot be destroyed quickly. They possess regenerative shields and heavy armor plating.
+- If an invasion fleet is not stopped, they will systematically destroy every station in the sector, effectively wiping it off the map.
+</details>
+
+## 🌐 Galactic Politics
+<details>
+<summary><b>Click to expand</b></summary>
+
+Use the new Galactic Politics UI tab to track the status of all known factions.
+
+### ⚙️ Features
+- View all active wars, alliances, and War Heat levels.
+- **Covert Funding:** As a wealthy player, you can secretly fund rebellions or donate credits to a faction's war effort, directly influencing the outcome of the war without firing a shot.
+</details>
+
+
+---
+
+## 🔗 Cosmic Series Integration & Audit 3.0 Updates
+<details>
+<summary><b>Click to expand</b></summary>
+
+During the Cosmic Series Final QA Audit (v3.0+), several massive backend systems were standardized across all mods:
+
+### 📖 Cosmic Codex Integration
+All deep lore, stat blocks, and dynamic recipes have been fully integrated into the in-game **Cosmic Codex**. You no longer need to tab out of the game to read these features; they will natively update and unlock inside your Codex UI as you progress!
+
+### 🔒 Network Safety & Anti-Cheat
+- **Math.Random Fix:** We systematically replaced all unstable Lua `math.random` calls with Avorion's deterministic `random():getInt()` generation sequence. This guarantees 100% synchronization on Multiplayer Dedicated Servers and prevents cascading desyncs during massive fleet spawns.
+- **Callable Validation:** UI and background scripts have been fully hardened. Malicious clients can no longer spoof "free" remote calls; the server actively verifies execution contexts before processing any requests, sealing multiple Arbitrary Code Execution (ACE) vulnerabilities.
+
+### 🛠️ Vanilla Bug Fixes
+- **Scout Mission Fix:** We patched a massive, long-standing vanilla bug where Scout Missions would completely skip and ignore Faction Headquarters sectors because the native dialogue trees were missing the template definition.
+</details>
