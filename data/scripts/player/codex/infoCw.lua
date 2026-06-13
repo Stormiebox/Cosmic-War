@@ -1,0 +1,6 @@
+function infoCw_injectToCodex()
+    Player():invokeFunction('ui/cosmiccodex', 'addCategory', 'cw_cat', 'Cosmic War'%_t, 'data/textures/icons/cw_galacticpolitics.png')
+    Player():invokeFunction('ui/cosmiccodex', 'addArticle', 'cw_cat', 'cw_war_heat', 'War Heat'%_t, 'War Heat dynamically measures the tension between two factions. Ranging from 0 to 100%, higher heat triggers massive skirmishes, blockades, and defensive fleets. When Heat reaches 100%, factions will deploy their heaviest dreadnoughts to siege enemy sectors.'%_t, '')
+    Player():invokeFunction('ui/cosmiccodex', 'addArticle', 'cw_cat', 'cw_diplomacy', 'Diplomacy'%_t, 'The Galactic Politics tab provides an intelligence overview of all faction relations, traits, and active wars. You can broker peace treaties, fund rebellions, or place active bounties on rival factions to sway the balance of power across the cosmos.'%_t, '')
+    Player():invokeFunction('ui/cosmiccodex', 'addArticle', 'cw_cat', 'cw_contracts', 'War Contracts'%_t, 'Mercenary contracts appear during high-tension wars. You can sign contracts to defend a faction\'s borders, raid enemy supply lines, or eliminate key targets. Completing these contracts yields massive payouts and exclusive military technologies.'%_t, '')
+end
