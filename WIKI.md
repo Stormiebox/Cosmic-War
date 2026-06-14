@@ -44,6 +44,11 @@ The mod utilizes a layered simulation model to bring the galaxy to life:
 3. **Global Diplomacy Drift:** Keeps galactic politics moving naturally over time.
 4. **War-Side Effects:** Systems like sanctions, bounties, bulletins, and ceasefires create visible, actionable outcomes.
 5. **Cross-Mod Bridges (Optional):** Influences command prediction overlays when combined with other Cosmic mods.
+6. **Dynamic Invasions & Scaling:** Vanilla invasions spawn a static number of small ships. **Cosmic War** introduces advanced mathematical scaling:
+   - **Strength Matching:** Invasions analyze the total combined Omicron and Volume of all defending stations and ships in the sector, dynamically adjusting the invading fleet's size and ship volume to match **100%** of the defending force.
+   - **Siege Dreadnoughts:** Large invasions spawn specialized Dreadnoughts with 10x shield multipliers to survive station point defense.
+   - **Shield Jamming (Surprise Attacks):** Invasions have a 50% chance to deploy Electronic Warfare, instantly locking all defending (including player and alliance) shields to `0` for the first 60 seconds of the assault!
+   - **Cinematic Battlefield HUD:** Entering a contested War Zone attaches a 100% split Red/Blue UI Bar to your screen, visually tracking the siege duration and dramatically broadcasting Sector captures or defenses.
 
 *This architecture produces a cyclical macro behavior pattern:*
 **Tension → War Pressure → Side Effects → Détente Potential → Re-escalation.**

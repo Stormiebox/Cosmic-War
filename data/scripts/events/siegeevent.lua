@@ -3,6 +3,8 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 local ShipGenerator = include("shipgenerator")
 local CosmicVaultTerritory = include("cosmicvaultterritory")
 local SectorGenerator = include("sectorgenerator")
+include("galaxy")
+include("randomext")
 
 local SiegeEvent = {}
 
@@ -18,6 +20,10 @@ function SiegeEvent.initialize()
         if zones[key] then
             -- Sector is contested! Spawn the invasion fleet.
             SiegeEvent.startSiege(zones[key])
+            
+            for _, player in pairs({sector:getPlayers()}) do
+                player:addScriptOnce("data/scripts/player/ui/cw_battlefieldhud.lua")
+            end
         end
     end
 end
@@ -48,6 +54,29 @@ function SiegeEvent.startSiege(zoneData)
     
     sector:broadcastChatMessage(targetStation, ChatMessageType.Warning, "WARNING! Enemy Troop Transports detected entering the sector! Defend the station!"%_T)
 
+    local x, y = sector:getCoordinates()
+    
+    -- Roll for Shield Jammer (50%)
+    local random = Random(Seed(x .. y))
+    local usedJammer = false
+    if random:test(0.5) then
+        usedJammer = true
+        local shipsAndStations = {sector:getEntitiesByType(EntityType.Ship)}
+        for _, s in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+            table.insert(shipsAndStations, s)
+        end
+        for _, ent in pairs(shipsAndStations) do
+            if ent.factionIndex ~= zoneData.invader and ent.factionIndex > 0 then
+                ent:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
+            end
+        end
+    end
+
+    if usedJammer then
+        sector:broadcastChatMessage(invadingFaction.name, ChatMessageType.Warning,
+            "Target locked. Electronic warfare initialized. Suppressing all sector shields."%_T)
+    end
+
     -- Spawn massive Troop Transports
     for i = 1, 3 do
         local volume = 15000 -- Massive corvette/transport size
@@ -65,6 +94,76 @@ function SiegeEvent.startSiege(zoneData)
         end
         
         position = generator:createPositionInSector(15000)
+    end
+    
+    -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
+    local cvScalingSuccess, CosmicVaultScaling = pcall(include, "cosmicvaultscaling")
+    if cvScalingSuccess and CosmicVaultScaling then
+        local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
+        local baseVol = Balancing_GetSectorShipVolume(x, y)
+        
+        local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
+        local numDreadnoughts = math.max(1, spawnParams.count - 3) -- We already spawned 3 transports
+        local volumeMult = spawnParams.volumeMultiplier
+        
+        for i = 1, numDreadnoughts do
+            local dreadnought = ShipGenerator.createMilitaryShip(invadingFaction, generator:createPositionInSector(15000), baseVol * volumeMult)
+            dreadnought.title = "Siege Dreadnought"
+            dreadnought.name = "Invader"
+            ShipAI(dreadnought.index):setAggressive()
+            
+            local dShield = Shield(dreadnought.id)
+            if dShield then
+                dShield.maximum = dShield.maximum * 10
+                dShield.durability = dShield.maximum
+            end
+        end
+    end
+end
+
+function SiegeEvent.getUpdateInterval()
+    return 2.0
+end
+
+function SiegeEvent.updateServer(timeStep)
+    local sector = Sector()
+    local x, y = sector:getCoordinates()
+
+    if CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
+        local zones = CosmicVaultTerritory.getContestedZones()
+        local key = x .. "_" .. y
+        local zone = zones[key]
+
+        if zone then
+            -- Check if there are any invader troop transports left
+            local invadersPresent = false
+            local ships = {sector:getEntitiesByType(EntityType.Ship)}
+            for _, ship in pairs(ships) do
+                if ship.factionIndex == zone.invader and ship:hasScript("trooptransport.lua") then
+                    invadersPresent = true
+                    break
+                end
+            end
+            
+            -- If no transports are left and time hasn't run out yet, the defenders won!
+            if not invadersPresent then
+                -- Remove the zone so it doesn't trigger resolveSiege in the background
+                zones[key] = nil
+                Server():setValue("CosmicVault_ContestedZones", zones)
+                
+                sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_t)
+                
+                for _, player in pairs({sector:getPlayers()}) do
+                    player:invokeFunction("cw_battlefieldhud.lua", "triggerDefenseSuccess")
+                end
+                
+                -- Terminate the event script as the siege is over
+                terminate()
+            end
+        else
+            -- Zone no longer exists (maybe it was conquered)
+            terminate()
+        end
     end
 end
 

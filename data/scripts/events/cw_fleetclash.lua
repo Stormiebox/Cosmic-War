@@ -5,6 +5,7 @@ local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 include("stringutility")
+include("galaxy")
 
 -- namespace CW_FleetClashEvent
 CW_FleetClashEvent = {}
@@ -68,12 +69,44 @@ function CW_FleetClashEvent.spawn()
 
     local generator = SectorGenerator(x, y)
     local numAttackers = math.floor(4 + (heat * 5))
+    local volumeMult = 1.0
+    
+    local cvScalingSuccess, CosmicVaultScaling = pcall(include, "cosmicvaultscaling")
+    if cvScalingSuccess and CosmicVaultScaling then
+        local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(enemyId)
+        local baseVol = Balancing_GetSectorShipVolume(x, y)
+        
+        local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
+        numAttackers = spawnParams.count
+        volumeMult = spawnParams.volumeMultiplier
+    end
+    
+    local random = Random(Seed(x .. y))
+    local usedJammer = false
+    if random:test(0.5) then
+        usedJammer = true
+        local shipsAndStations = {sector:getEntitiesByType(EntityType.Ship)}
+        for _, s in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+            table.insert(shipsAndStations, s)
+        end
+        for _, ent in pairs(shipsAndStations) do
+            if ent.factionIndex ~= enemyId and ent.factionIndex > 0 then
+                ent:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
+            end
+        end
+    end
 
     -- Spawn the invading fleet
     for i = 1, numAttackers do
-        local ship = ShipGenerator.createMilitaryShip(enemyFaction, generator:getPositionInSector())
+        local volume = Balancing_GetSectorShipVolume(x, y) * volumeMult
+        local ship = ShipGenerator.createMilitaryShip(enemyFaction, generator:getPositionInSector(), volume)
         ShipAI(ship.index):setAggressive()
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
+    end
+
+    if usedJammer then
+        sector:broadcastChatMessage(enemyFaction.name, ChatMessageType.Warning,
+            "Target locked. Electronic warfare initialized. Suppressing all sector shields."%_T)
     end
 
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
