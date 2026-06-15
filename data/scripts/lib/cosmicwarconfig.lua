@@ -21,7 +21,7 @@ if ccm then
             {
                 title = "Diplomacy Configurations",
                 options = {
-                    { key = "diplomacyInterval", type = "number", title = "Diplomacy Processing Interval (s)", description = "Time between periodic diplomacy updates.", default = 300, min = 30, max = 3600 },
+                    { key = "diplomacyInterval", type = "number", title = "Diplomacy Processing Interval (s)", description = "Time between periodic diplomacy updates.", default = 1200, min = 30, max = 3600 },
                     { key = "diplomacyPairSteps", type = "number", title = "Diplomatic Pair Process Batch", description = "Number of faction pairs processed per tick.", default = 10, min = 1, max = 100 },
                     { key = "rivalryThreshold", type = "number", title = "Rivalry Relations Threshold", description = "Relation score when factions declare rivalry.", default = -45000, min = -100000, max = 0 },
                 },
@@ -29,10 +29,10 @@ if ccm then
             {
                 title = "News & Event Configurations",
                 options = {
-                    { key = "newsInterval", type = "number", title = "News Dispatch Interval (s)", description = "How often news is dispatched to BBS.", default = 420, min = 60, max = 3600 },
-                    { key = "sanctionsInterval", type = "number", title = "Sanction Dispatch Interval (s)", description = "How often trade sanctions are considered.", default = 600, min = 60, max = 3600 },
-                    { key = "ceasefireInterval", type = "number", title = "Ceasefire Processing Interval (s)", description = "How often ceasefires are checked.", default = 900, min = 60, max = 7200 },
-                    { key = "bountyInterval", type = "number", title = "Bounty Creation Interval (s)", description = "How often war bounties are listed.", default = 600, min = 60, max = 3600 },
+                    { key = "newsInterval", type = "number", title = "News Dispatch Interval (s)", description = "How often news is dispatched to BBS.", default = 1200, min = 60, max = 3600 },
+                    { key = "sanctionsInterval", type = "number", title = "Sanction Dispatch Interval (s)", description = "How often trade sanctions are considered.", default = 1200, min = 60, max = 3600 },
+                    { key = "ceasefireInterval", type = "number", title = "Ceasefire Processing Interval (s)", description = "How often ceasefires are checked.", default = 1200, min = 60, max = 7200 },
+                    { key = "bountyInterval", type = "number", title = "Bounty Creation Interval (s)", description = "How often war bounties are listed.", default = 1200, min = 60, max = 3600 },
                     { key = "sanctionBaseChance", type = "number", title = "Trade Sanction Chance (%)", description = "Base chance to enact sanctions between rivals.", default = 35, min = 0, max = 100 },
                     { key = "ceasefireChance", type = "number", title = "Ceasefire Negotiation Chance (%)", description = "Base chance for war fatigue to trigger a ceasefire.", default = 25, min = 0, max = 100 },
                 },
@@ -54,16 +54,16 @@ local defaults =
     sectorPressureChance = 0.35, -- normalized 0..1
     sectorPressureMinSpacing = 600,
 
-    diplomacyInterval = 300,
+    diplomacyInterval = 1200,
     diplomacyPairSteps = 10,
 
     rivalryThreshold = -45000,
     warBiasFloor = 550,
 
-    newsInterval = 420,
-    sanctionsInterval = 600,
-    ceasefireInterval = 900,
-    bountyInterval = 600,
+    newsInterval = 1200,
+    sanctionsInterval = 1200,
+    ceasefireInterval = 1200,
+    bountyInterval = 1200,
 
     sanctionBaseChance = 0.35, -- normalized 0..1
     ceasefireChance = 0.25,    -- normalized 0..1

@@ -60,6 +60,9 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Shield Jammer now completely ignores stations protected by a Planetary Defense Grid.
 - Removed `pcall` soft-dependencies. Core 5 mods are now hard requirements.
 
+### ⚖️ Balance
+- **Galactic Turn Synchronization:** `diplomacyInterval`, `newsInterval`, `sanctionsInterval`, `ceasefireInterval`, and `bountyInterval` have all been strictly aligned to 1200s (20 minutes). This ensures that major war-heat shifts and background diplomacy execute seamlessly during a synchronized "Galactic Turn" to drastically improve server TPS.
+
 ### 🐛 Bug Fixes & Optimization
 - **Diplomacy Engine Crash:** Fixed `EXCEPTION_ACCESS_VIOLATION` caused by processing relation changes on asynchronous background threads. Diplomacy calculations now run safely synchronously on the main thread.
 - **Cosmic Codex Loading Crash:** Fixed missing global definitions (e.g. `entities`, `rangeType`) in the codex files that prevented the encyclopedia from loading correctly and crashed the UI.
