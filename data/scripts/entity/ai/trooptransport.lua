@@ -66,7 +66,7 @@ function TroopTransport.updateServer(timeStep)
         -- We are close enough, begin boarding!
         TroopTransport.isBoarding = true
         TroopTransport.boardingProgress = TroopTransport.boardingProgress + timeStep
-        
+
         -- Inform player if in sector
         local sector = Sector()
         if TroopTransport.boardingProgress == timeStep then
@@ -85,18 +85,22 @@ end
 function TroopTransport.captureStation(station, newFactionIndex)
     local oldFactionIndex = station.factionIndex
     station.factionIndex = newFactionIndex
-    
+
     local sector = Sector()
     sector:broadcastChatMessage(station, ChatMessageType.Warning, "The station has been captured by enemy forces!"%_T)
-    
+
     local x, y = sector:getCoordinates()
     local sectorName = "\\s(" .. x .. ":" .. y .. ")"
     local factionName = Faction(newFactionIndex) and Faction(newFactionIndex).name or "an Unknown Faction"
 
-    -- In vanilla, the SectorView natively updates its influence when the sector saves/unloads.
-    -- This natively expands the Galaxy Map border.
-    print("[Cosmic War] Station " .. station.name .. " captured by faction " .. tostring(newFactionIndex))
-    
+        -- In vanilla, the SectorView natively updates its influence when the sector saves/unloads.
+        -- This natively expands the Galaxy Map border.
+    -- Forcefully update the global Galaxy Map borders instantly so the players can watch the invasion spread in real time
+    local galaxy = Galaxy()
+    galaxy:setFaction(x, y, newFactionIndex)
+
+    print("[Cosmic War] Station " .. station.name .. " captured by faction " .. tostring(newFactionIndex) .. ". Sector borders updated.")
+
     local CosmicVaultNews = include("cosmicvaultnews")
     if CosmicVaultNews and CosmicVaultNews.publishArticle then
         CosmicVaultNews.publishArticle({
