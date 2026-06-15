@@ -78,7 +78,7 @@ function initialize(factionIndex)
         local baseReward = math.floor(125000 + heat * 250000)
 
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
+            credits = baseReward * Balancing.GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 6000,
             paymentMessage = "Target destroyed. Contract payment transferred."%_T
         }
@@ -179,7 +179,9 @@ function getBulletin(station)
     if heat < 0.45 then return end
 
     local baseReward = math.floor(125000 + heat * 250000)
-    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local giverFaction = Faction(station.factionIndex)
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
         relations = 6000,

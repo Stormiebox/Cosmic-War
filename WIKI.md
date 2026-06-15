@@ -65,20 +65,34 @@ The mod utilizes a layered simulation model to bring the galaxy to life:
 **Primary file:** `data/scripts/server/factions.lua`
 
 **What it does:**
-Injects and maintains faction-level war metadata for AI factions so behavior trends are less random and more identity-driven over time.
+Injects and maintains faction-level war metadata and Custom Traits for AI factions so behavior trends are less random and more identity-driven over time. Factions dynamically analyze their vanilla generation parameters (e.g., `greedy`, `aggressive`) to assign one of 9 distinct Custom Traits.
+
+**The 9 Dynamic Traits:**
+- **Warmonger / Pacifist / Isolationist / Opportunist:** Core stances that heavily influence War Heat buildup and ceasefire likelihood.
+- **Imperialist:** Frequently claims empty sectors and natively constructs new outposts.
+- **Entrenched:** Fortifies existing territory by continuously constructing defensive stations.
+- **Mercantile:** Pays triple (3x) standard rates for all mercenary contracts (Bounties & War Contracts).
+- **Vengeful:** Absolutely refuses to negotiate ceasefires once a war begins.
+- **Xenophobic:** Relations naturally decay with all known factions, guaranteeing eventual unprovoked wars.
+
+**Dormant Trait Revival:**
+Cosmic War officially reactivates 4 unused vanilla traits (`Sadistic/Sympathetic`, `Strict/Forgiving`, `Smart/Dumb`, `Active/Passive`).
+- **Active/Passive:** Dictates how frequently a faction will attempt territory expansions.
+- **Strict/Forgiving:** Modifies their likelihood to accept peace treaties or hold eternal grudges.
+- **Smart/Dumb:** Dictates their strategic intelligence when declaring wars against superior forces.
+- **Sadistic/Sympathetic:** Determines whether they offer bonus payouts—or severe penalties—for mercenaries destroying unarmed civilian ships.
 
 **Typical Stored Values:**
-
 - `cw_enabled`
 - `cw_war_bias`
 - `cw_diplomatic_polarity`
-- Rivalry target helpers used by downstream systems.
+- Trait indices via Cosmic Vault API (`cw_imperialist`, etc.)
 
 **Gameplay Impact:**
-
-- AI factions feel less interchangeable.
+- AI factions have vastly differing, mechanically-backed personalities.
 - Rivalries become more coherent in long campaigns.
 - Better continuity between isolated events and long-term politics.
+- The UI seamlessly renders these traits natively via the `CosmicVaultFaction` API.
 
 </details>
 

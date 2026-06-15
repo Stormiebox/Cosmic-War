@@ -104,11 +104,14 @@ function CosmicWarNews.update(timeStep)
     local pick = conflicts[random:getInt(1, #conflicts)]
     if not pick then return end
 
+    local aStance = pick.a:getValue("cw_diplomatic_stance") or "Balanced"
+    local bStance = pick.b:getValue("cw_diplomatic_stance") or "Balanced"
+
     local templates =
     {
-        "War Bulletin: %1% and %2% relations deteriorated to %3%."%_T,
-        "Conflict Watch: %1% and %2% are entering open hostility. Relations at %3%."%_T,
-        "Strategic Alert: tensions between %1% and %2% reached %3%."%_T,
+        "War Bulletin: %1% [%4%] and %2% [%5%] relations deteriorated to %3%."%_T,
+        "Conflict Watch: %1% [%4%] and %2% [%5%] are entering open hostility. Relations at %3%."%_T,
+        "Strategic Alert: tensions between %1% [%4%] and %2% [%5%] reached %3%."%_T,
     }
 
     local template = templates[random:getInt(1, #templates)] or templates[1]
@@ -117,9 +120,9 @@ function CosmicWarNews.update(timeStep)
     local relStr = tostring(pick.rel)
 
     -- Server-wide chat style bulletin (Deferred Translation using positional C++ varargs)
-    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, template, factionA, factionB, relStr)
+    Server():broadcastChatMessage("Cosmic War"%_T, ChatMessageType.Information, template, factionA, factionB, relStr, aStance, bStance)
 
-    cwlog("War Bulletin: %s and %s relations deteriorated to %s.", factionA, factionB, relStr)
+    cwlog("War Bulletin: %s [%s] and %s [%s] relations deteriorated to %s.", factionA, aStance, factionB, bStance, relStr)
 end
 
 function CosmicWarNews.onSeedNews()
@@ -130,11 +133,13 @@ function CosmicWarNews.onSeedNews()
     for _, pick in pairs(conflicts) do
         local factionA = pick.a.name or ("Faction " .. tostring(pick.a.index))
         local factionB = pick.b.name or ("Faction " .. tostring(pick.b.index))
+        local aStance = pick.a:getValue("cw_diplomatic_stance") or "Balanced"
+        local bStance = pick.b:getValue("cw_diplomatic_stance") or "Balanced"
         
         local article = {
             title = "Active Conflict: " .. factionA,
             category = "War Update",
-            content = string.format("Diplomatic relations between %s and %s have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, factionB)
+            content = string.format("Diplomatic relations between the %s [%s] and the %s [%s] have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, aStance, factionB, bStance)
         }
         
         local cvn_success, cvn = true, include("cosmicvaultnews")

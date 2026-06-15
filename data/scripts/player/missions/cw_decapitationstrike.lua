@@ -75,7 +75,7 @@ function initialize(factionIndex)
         -- Astronomical base reward for a boss fight
         local baseReward = math.floor(2500000 + heat * 5000000)
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
+            credits = baseReward * Balancing.GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 35000,
             paymentMessage =
                 "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_T
@@ -217,7 +217,9 @@ function getBulletin(station)
     if heat < 1 then return end
 
     local baseReward = math.floor(2500000 + heat * 5000000)
-    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local giverFaction = Faction(station.factionIndex)
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
         relations = 35000,

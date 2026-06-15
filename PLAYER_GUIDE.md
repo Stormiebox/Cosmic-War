@@ -6,6 +6,7 @@ Welcome to the **Cosmic War** official player guide! This page covers War Heat, 
 
 ## 📑 Table of Contents
 - ⚔️ War Heat System
+- 🎭 Dynamic Faction Traits
 - 🎖️ Mercenary Contracts
 - 🛡️ Dreadnought Invasions
 - 🌐 Galactic Politics
@@ -23,6 +24,21 @@ Factions are no longer static. They actively build tension with their neighbors.
 - Border skirmishes, intercepted traders, and differing traits (Aggressive vs Peaceful) passively increase War Heat over time.
 - Once War Heat reaches 100%, a formal Declaration of War is broadcast on the Galactic News Network.
 - Warring factions will actively dispatch fleets to destroy each other's stations and claim territory.
+</details>
+
+## 🎭 Dynamic Faction Traits
+<details>
+<summary><b>Click to expand</b></summary>
+
+Factions are no longer generic entities; they now spawn with distinct **Custom Traits** that drastically alter their behavior, diplomacy, and the background simulation! You can view a faction's traits by hovering over them in the Diplomacy UI.
+
+### ⚙️ Mechanics
+- **Warmonger / Pacifist / Isolationist / Opportunist:** Standard behavioral traits that dictate how aggressively they build War Heat or seek ceasefires.
+- **Imperialist:** These factions aggressively expand their borders! You will often see them claiming empty or uncharted sectors and constructing new outposts.
+- **Entrenched:** Rather than expanding outward, these factions heavily fortify their core territory, continuously building dense networks of defensive stations near their home sector.
+- **Vengeful:** Do not anger them! If you or an AI faction go to war with a Vengeful empire, their pride prevents them from accepting ceasefires—wars are fought to the bitter end.
+- **Mercantile:** Profit is paramount. If you sign a Mercenary Contract to fight *for* a Mercantile faction, they will gladly pay you **3x the standard bounty payout** for every enemy ship and station you destroy. Same effect applies to War Contracts!
+- **Xenophobic:** Extremely dangerous. They experience a continuous, severe degradation in relations with all known neighbors, rendering alliances impossible and guaranteeing eventual unprovoked wars.
 </details>
 
 ## 🎖️ Mercenary Contracts
@@ -68,7 +84,7 @@ Use the new Galactic Politics UI tab to track the status of all known factions.
 <details>
 <summary><b>Click to expand</b></summary>
 
-Factions can now actively conquer enemy sectors and permanently expand their borders on the Galaxy Map. 
+Factions can now actively conquer enemy sectors and permanently expand their borders on the Galaxy Map.
 
 ### ⚙️ Mechanics
 - **Background Conquests:** Contested zones have a hidden siege timer. If time runs out and no player intervenes, the station flips ownership mathematically, expanding the faction's borders naturally.

@@ -9,5 +9,6 @@ if onServer() then
         galaxy:addScriptOnce("data/scripts/server/background/cosmicwarbridgeupdate.lua")
         galaxy:addScriptOnce("data/scripts/server/background/cosmicwardiplomacy.lua")
         galaxy:addScriptOnce("data/scripts/server/background/cosmicwarsiege_server.lua")
+        galaxy:addScriptOnce("data/scripts/server/background/cosmicwarexpansion.lua")
     end
 end

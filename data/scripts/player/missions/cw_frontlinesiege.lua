@@ -79,7 +79,7 @@ function initialize(factionIndex)
         -- Massive payout. Scales up to 4x base depending on War Heat
         local baseReward = math.floor(375000 + heat * 1125000)
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
+            credits = baseReward * Balancing.GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 12000,
             paymentMessage = "Target destroyed. Excellent work, commander. Payment transferred."%_T
         }
@@ -219,7 +219,9 @@ function getBulletin(station)
     if heat < 0.6 then return end
 
     local baseReward = math.floor(375000 + heat * 1125000)
-    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local giverFaction = Faction(station.factionIndex)
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
         relations = 12000,

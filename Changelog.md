@@ -18,6 +18,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Cosmic Vault API Framework:** Fully integrated with the Cosmic Vault API framework. Swept codebase for legacy callbacks and implemented safe guard fallbacks.
 
 ### ✨ Added
+- **Formalized Custom Traits System:** Converted the old string-based "Stances" (Warmonger, Pacifist, Isolationist, Opportunist) into a formal custom trait system powered by Cosmic Vault. Traits now display beautifully in the vanilla UI with detailed tooltips!
+- **9 Dynamic Faction Traits:** Added 5 brand new, mechanically active traits alongside the original 4 stances.
+  - **Imperialist:** Background simulation dynamically causes them to rapidly claim empty sectors and build natively-generated outposts.
+  - **Entrenched:** Background simulation dynamically causes them to heavily fortify their core territory, spawning defensive networks.
+  - **Vengeful:** Hooked into the background diplomacy math. Ceasefires are now practically impossible once a war begins.
+  - **Mercantile:** Hooked into mercenary missions. Mercenaries fighting for Mercantile factions receive triple (3x) the base "Bounty" and "War Contract" payouts.
+  - **Xenophobic:** Forces severe continuous relation degradation with all neighbors, rendering alliances impossible and driving them to unprovoked wars.
+- **Dormant Vanilla Trait Activation:** Successfully revived 4 unused vanilla traits (Sadistic/Sympathetic, Strict/Forgiving, Smart/Dumb, Active/Passive) and integrated them directly into the background simulation engine. These traits now actively influence mercenary payouts, expansion rates, and diplomatic war calculations!
 - **Dark Matter Fog Integration**: `siegeevent.lua` now natively interfaces with the Cosmic Vault Weather API. When The Eclipse faction launches a siege, they will instantly blanket the battlefield in Dark Matter Fog, cutting defender sensor and jump ranges in half.
 - `cw_planetary_defense.lua` added to grant sector-wide invincibility to stations.
 - **Cinematic Battlefield HUD:** Active War Zones and Sieges now feature a sleek 100% split Top-Screen Red/Blue bar HUD tracking live siege durations. Displays dramatic border flip text flashes on successful captures or defenses.
@@ -43,6 +51,9 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **AI Troop Transports:** Massive, heavily shielded AI transports will now spawn during sector sieges and attempt to physically board and capture defending stations.
 
 ### ⚙️ Changed & Balanced
+
+- **Mercantile War Contracts:** Updated all War Contracts to also give 3x bonus payout if a `Mercantile` faction is the mission giver.
+- **Diplomacy AI Trait Integration:** Refactored `factions.lua` to intelligently derive all 9 traits from vanilla parameters (e.g. `greedy > 0.7`) during faction generation. Maintains a 30% forceful injection chance to ensure extreme trait variance across the galaxy.
 - **Abandon Mission Penalties:** Abandoning a War Contract now incurs a massive reputation penalty with the contracting faction.
 - **Enhanced Payouts:** The base payout of all War Contract missions has been significantly buffed.
 - Shield Jammer event chance nerfed to 35%.

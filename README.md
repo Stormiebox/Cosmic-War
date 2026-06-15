@@ -10,9 +10,12 @@ Cosmic War brings life to the political landscape of Avorion. Factions now track
 <summary><b>Click to expand features</b></summary>
 
 - **War Heat System:** Factions build tension and declare war dynamically.
+- **Dynamic Faction Traits:** AI factions feature 9 distinct, mechanically active traits (like Imperialist and Vengeful).
+- **Dormant Trait Revival:** 4 previously unused vanilla traits have been activated, bringing new layers of intelligence and behavior to AI factions.
 - **Galactic Politics:** New UI tab to track all faction relations and active conflicts.
 - **Mercenary Contracts:** Sign lucrative contracts to defend borders or eliminate targets during active wars.
-- **Invasions:** Fully simulated fleet invasions featuring dreadnoughts and sieges.
+- **Dynamic Invasions:** Fully simulated fleet invasions featuring mathematical scaling and dreadnoughts.
+- **Territory Expansion:** Factions seamlessly expand their borders natively in the background.
 </details>
 
 ## ⚙️ Requirements

@@ -80,7 +80,7 @@ function initialize(factionIndex)
         local baseReward = math.floor(750000 + heat * 750000)
 
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing.GetSectorRewardFactor(x, y),
+            credits = baseReward * Balancing.GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 18000,
             paymentMessage = "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_T
         }
@@ -221,7 +221,9 @@ function getBulletin(station)
     if heat < 0.8 then return end
 
     local baseReward = math.floor(750000 + heat * 750000)
-    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates())
+    local giverFaction = Faction(station.factionIndex)
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
         relations = 18000,
