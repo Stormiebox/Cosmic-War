@@ -177,27 +177,11 @@ function CosmicWarDiplomacy.update(timeStep)
     local cfg = getCfg()
     local steps = math.min(cfg.diplomacyPairSteps or 10, #factions)
     
-    local cv_task_success, cv_task = pcall(include, "cosmicvaulttask")
-    if cv_task_success and cv_task and cv_task.RunAsync then
-        cv_task.RunAsync("CosmicWarDiplomacy", function()
-            for i = 1, steps do
-                if i % 10 == 0 and cv_task.Yield then
-                    cv_task.Yield()
-                end
-                local a = factions[random:getInt(1, #factions)]
-                local b = factions[random:getInt(1, #factions)]
-                if a and b and a.index ~= b.index then
-                    maybeAdjustPair(a, b, random)
-                end
-            end
-        end)
-    else
-        for _ = 1, steps do
-            local a = factions[random:getInt(1, #factions)]
-            local b = factions[random:getInt(1, #factions)]
-            if a and b and a.index ~= b.index then
-                maybeAdjustPair(a, b, random)
-            end
+    for _ = 1, steps do
+        local a = factions[random:getInt(1, #factions)]
+        local b = factions[random:getInt(1, #factions)]
+        if a and b and a.index ~= b.index then
+            maybeAdjustPair(a, b, random)
         end
     end
 end
