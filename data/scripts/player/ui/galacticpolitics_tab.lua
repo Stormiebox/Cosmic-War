@@ -278,7 +278,7 @@ end
 -- Cosmic War: Computes AI Faction Traits to display in the UI Tooltip. Consider surfacing cw_war_bias and cw_diplomatic_polarity here in the future.
 local function getFactionTraitsSafe(faction)
     local traits = {}
-    if faction.isPlayer then
+    if faction.isPlayer or faction.isAlliance then
         table.insert(traits, "Player Faction")
         return traits
     elseif faction.isAlliance then
