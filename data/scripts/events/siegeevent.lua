@@ -56,10 +56,10 @@ function SiegeEvent.startSiege(zoneData)
 
     local x, y = sector:getCoordinates()
     
-    -- Roll for Shield Jammer (50%)
+    -- Roll for Shield Jammer (35%)
     local random = Random(Seed(x .. y))
     local usedJammer = false
-    if random:test(0.5) then
+    if random:test(0.35) then
         usedJammer = true
         local shipsAndStations = {sector:getEntitiesByType(EntityType.Ship)}
         for _, s in pairs({sector:getEntitiesByType(EntityType.Station)}) do
@@ -67,7 +67,10 @@ function SiegeEvent.startSiege(zoneData)
         end
         for _, ent in pairs(shipsAndStations) do
             if ent.factionIndex ~= zoneData.invader and ent.factionIndex > 0 then
-                ent:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
+                -- Exclude Planetary Defense Generators from Electronic Warfare
+                if not ent:hasScript("cw_planetary_defense.lua") then
+                    ent:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
+                end
             end
         end
     end
@@ -97,7 +100,7 @@ function SiegeEvent.startSiege(zoneData)
     end
     
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
-    local cvScalingSuccess, CosmicVaultScaling = pcall(include, "cosmicvaultscaling")
+    local cvScalingSuccess, CosmicVaultScaling = true, include("cosmicvaultscaling")
     if cvScalingSuccess and CosmicVaultScaling then
         local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
         local baseVol = Balancing_GetSectorShipVolume(x, y)
@@ -118,6 +121,11 @@ function SiegeEvent.startSiege(zoneData)
                 dShield.durability = dShield.maximum
             end
         end
+    end
+    
+    -- Inject Eclipse Weather
+    if invadingFaction.name == "The Eclipse" or invadingFaction:getValue("is_eclipse") then
+        sector:addScriptOnce("data/scripts/sector/cv_weather_controller.lua", "DarkMatterFog", -1)
     end
 end
 
@@ -159,11 +167,49 @@ function SiegeEvent.updateServer(timeStep)
                 
                 -- Terminate the event script as the siege is over
                 terminate()
+            else
+                -- Invaders are still present. Check if defenders lost (no stations left)
+                local defenderStations = 0
+                for _, station in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+                    if station.factionIndex == zone.defender then
+                        defenderStations = defenderStations + 1
+                    end
+                end
+                
+                -- Also check if Planetary Shield Generators are destroyed
+                local planetaryShields = 0
+                for _, station in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+                    if station:hasScript("cw_planetary_defense.lua") then
+                        planetaryShields = planetaryShields + 1
+                    end
+                end
+                
+                if defenderStations == 0 and planetaryShields == 0 then
+                    -- Defenders lost!
+                    local cv_economy_success, cv_economy = true, require("cosmicvaulteconomy")
+                    if cv_economy_success then
+                        -- Losing a sector applies 20 famine score to the defender
+                        cv_economy.addFamineScore(zone.defender, 20)
+                        print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
+                    end
+                    
+                    zones[key] = nil
+                    Server():setValue("CosmicVault_ContestedZones", zones)
+                    terminate()
+                end
             end
         else
             -- Zone no longer exists (maybe it was conquered)
             terminate()
         end
+    end
+end
+
+function SiegeEvent.onRemove()
+    -- Always clear Eclipse weather when the event ends, regardless of outcome
+    local sector = Sector()
+    if sector and sector:hasScript("sector/cv_weather_controller.lua") then
+        sector:removeScript("sector/cv_weather_controller.lua")
     end
 end
 

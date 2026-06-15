@@ -24,7 +24,7 @@ function onEnlistInteraction()
         return
     end
 
-    local cw_success = pcall(include, "cosmicwarbridge")
+    local cw_success = true; include("cosmicwarbridge")
     if cw_success and CosmicWarBridge then
         local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
         if heat < 0.25 then

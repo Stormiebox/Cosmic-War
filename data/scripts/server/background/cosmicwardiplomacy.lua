@@ -94,7 +94,7 @@ local function maybeAdjustPair(a, b, random)
 
     if random:test(math.min(0.55, warChance)) then
         local worsen = random:getInt(1000, 4500)
-        local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+        local cvf_success, cvf = true, include("cosmicvaultfaction")
         if cvf_success and cvf and cvf.changeRelations then
             cvf.changeRelations(a.index, b.index, -worsen)
         else
@@ -115,7 +115,7 @@ local function maybeAdjustPair(a, b, random)
                 b:setValue("cw_target_faction", a.index)
                 
                 -- Broadcast the War via Cosmic Vault Events (7 days duration default)
-                local cve_success, cve = pcall(include, "cosmicvaultevents")
+                local cve_success, cve = true, include("cosmicvaultevents")
                 if cve_success and cve and cve.startEvent then
                     cve.startEvent("cw_war_" .. a.index .. "_" .. b.index, 7 * 24 * 3600)
                     cve.startEvent("cw_war_" .. b.index .. "_" .. a.index, 7 * 24 * 3600)
@@ -124,7 +124,7 @@ local function maybeAdjustPair(a, b, random)
         end
     elseif random:test(math.min(0.40, peaceChance)) then
         local improve = random:getInt(500, 2200)
-        local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+        local cvf_success, cvf = true, include("cosmicvaultfaction")
         if cvf_success and cvf and cvf.changeRelations then
             cvf.changeRelations(a.index, b.index, improve)
         else
@@ -144,7 +144,7 @@ local function maybeAdjustPair(a, b, random)
                 b:setValue("cw_target_faction", nil)
                 
                 -- End the war event early if peace is achieved
-                local cve_success, cve = pcall(include, "cosmicvaultevents")
+                local cve_success, cve = true, include("cosmicvaultevents")
                 if cve_success and cve and cve.endEvent then
                     cve.endEvent("cw_war_" .. a.index .. "_" .. b.index)
                     cve.endEvent("cw_war_" .. b.index .. "_" .. a.index)

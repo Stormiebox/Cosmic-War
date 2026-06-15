@@ -137,7 +137,7 @@ function CosmicWarNews.onSeedNews()
             content = string.format("Diplomatic relations between %s and %s have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, factionB)
         }
         
-        local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+        local cvn_success, cvn = true, include("cosmicvaultnews")
         if cvn_success and cvn and cvn.publishArticle then
             cvn.publishArticle(article)
         else

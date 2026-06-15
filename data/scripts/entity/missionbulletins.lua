@@ -9,7 +9,7 @@ function MissionBulletins.getPossibleMissions()
     local entity = Entity()
     if not entity or not entity.factionIndex then return scripts end
 
-    local cw_success = pcall(include, "cosmicwarbridge")
+    local cw_success = true; include("cosmicwarbridge")
     if cw_success and CosmicWarBridge then
         local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
         

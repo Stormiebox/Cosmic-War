@@ -153,7 +153,7 @@ local function applyWarPressure(a, b, random)
 
     -- Vanilla changeRelations() ignores AI vs AI factions.
     -- We must use the Galaxy API to force the relation change between two AI entities.
-    local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+    local cvf_success, cvf = true, include("cosmicvaultfaction")
     if cvf_success and cvf and cvf.changeRelations then
         cvf.changeRelations(a.index, b.index, delta)
     else
@@ -219,7 +219,7 @@ local function applyWarProfiteeringShortages(factions)
                 category = "Trade Crisis",
                 content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
             }
-            local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+            local cvn_success, cvn = true, include("cosmicvaultnews")
             if cvn_success and cvn and cvn.publishArticle then
                 cvn.publishArticle(article)
             else

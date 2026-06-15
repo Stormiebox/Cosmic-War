@@ -71,7 +71,7 @@ function CW_FleetClashEvent.spawn()
     local numAttackers = math.floor(4 + (heat * 5))
     local volumeMult = 1.0
     
-    local cvScalingSuccess, CosmicVaultScaling = pcall(include, "cosmicvaultscaling")
+    local cvScalingSuccess, CosmicVaultScaling = true, include("cosmicvaultscaling")
     if cvScalingSuccess and CosmicVaultScaling then
         local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(enemyId)
         local baseVol = Balancing_GetSectorShipVolume(x, y)

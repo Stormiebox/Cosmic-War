@@ -17,7 +17,7 @@ Cosmic War brings life to the political landscape of Avorion. Factions now track
 
 ## ⚙️ Requirements
 - Avorion v2.0+
-- Dependencies: **Cosmic Vault, Cosmic Overhaul**
+- Dependencies: **Cosmic Vault, Cosmic Overhaul, Cosmic Chronicles and Cosmic Ascendancy.**
 
 ## 🚀 Installation
 1. Place the folder in:
@@ -28,3 +28,4 @@ Cosmic War brings life to the political landscape of Avorion. Factions now track
 
 ## 📚 Documentation
 For detailed mechanics, guides, and lore, please refer to the in-game **Cosmic Codex**, or check the included `WIKI.md` and `PLAYER_GUIDE.md` files.
+ Features Planetary Defense Grids and highly tuned electronic warfare.

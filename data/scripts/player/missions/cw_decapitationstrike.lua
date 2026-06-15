@@ -171,7 +171,7 @@ function finishAndReward()
         content = "A massive blow to enemy morale! An independent strike force has successfully tracked down and eliminated a heavily guarded " .. (faction and faction.name or "unknown") .. " flagship in sector [" .. x .. ":" .. y .. "].",
         category = "War"
     }
-    local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+    local cvn_success, cvn = true, include("cosmicvaultnews")
     if cvn_success and cvn and cvn.publishArticle then
         cvn.publishArticle(article)
     else
@@ -186,7 +186,7 @@ function finishAndReward()
         local rel = giverFaction:getRelations(enemyFaction.index) or 0
         local targetRel = 0 -- Neutral
         if rel < targetRel then
-            local cvf_success, cvf = pcall(include, "cosmicvaultfaction")
+            local cvf_success, cvf = true, include("cosmicvaultfaction")
             if cvf_success and cvf and cvf.changeRelations then
                 cvf.changeRelations(giverFaction.index, enemyFaction.index, targetRel - rel)
             else

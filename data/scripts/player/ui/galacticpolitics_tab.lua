@@ -310,7 +310,7 @@ function GalacticPoliticsTab.serverFetchData()
     end
 
     local conflicts, uniquePairs = {}, {}
-    local cw_success = pcall(include, "cosmicwarbridge")
+    local cw_success = true; include("cosmicwarbridge")
     local now = server.unpausedRuntime or 0
 
     for _, idx in pairs(factionIndices) do

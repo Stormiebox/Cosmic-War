@@ -29,7 +29,7 @@ end
 function checkWarbondStatus()
     local player = Player()
     
-    local cw_success = pcall(include, "cosmicwarbridge")
+    local cw_success = true; include("cosmicwarbridge")
     if cw_success and CosmicWarBridge then
         for factionIndex, bond in pairs(activeBonds) do
             local heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0

@@ -18,6 +18,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Cosmic Vault API Framework:** Fully integrated with the Cosmic Vault API framework. Swept codebase for legacy callbacks and implemented safe guard fallbacks.
 
 ### ✨ Added
+- **Dark Matter Fog Integration**: `siegeevent.lua` now natively interfaces with the Cosmic Vault Weather API. When The Eclipse faction launches a siege, they will instantly blanket the battlefield in Dark Matter Fog, cutting defender sensor and jump ranges in half.
+- `cw_planetary_defense.lua` added to grant sector-wide invincibility to stations.
 - **Cinematic Battlefield HUD:** Active War Zones and Sieges now feature a sleek 100% split Top-Screen Red/Blue bar HUD tracking live siege durations. Displays dramatic border flip text flashes on successful captures or defenses.
 - **Dynamic Invasion Scaling:** `cw_fleetclash.lua` and `siegeevent.lua` now mathematically calculate the total combined Volume/Omicron of all defending ships and stations, dynamically spawning equivalent fleets to perfectly match (100%) the defender's strength! No more weak vanilla nuisance invasions.
 - **Siege Dreadnoughts & Transports:** Invader Troop Transports now spawn with a `10x` multiplier to base shields. If invading heavily fortified sectors, heavily shielded "Siege Dreadnoughts" will actively spawn to escort them.
@@ -43,6 +45,9 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### ⚙️ Changed & Balanced
 - **Abandon Mission Penalties:** Abandoning a War Contract now incurs a massive reputation penalty with the contracting faction.
 - **Enhanced Payouts:** The base payout of all War Contract missions has been significantly buffed.
+- Shield Jammer event chance nerfed to 35%.
+- Shield Jammer now completely ignores stations protected by a Planetary Defense Grid.
+- Removed `pcall` soft-dependencies. Core 5 mods are now hard requirements.
 
 ### 🐛 Bug Fixes & Optimization
 - **Diplomacy Engine Crash:** Fixed `EXCEPTION_ACCESS_VIOLATION` caused by processing relation changes on asynchronous background threads. Diplomacy calculations now run safely synchronously on the main thread.

@@ -101,3 +101,6 @@ All deep lore, stat blocks, and dynamic recipes have been fully integrated into 
 
 ### Diplomacy Thread Safety
 Background diplomacy threads have been fully synchronized with the main Avorion engine, permanently eliminating `EXCEPTION_ACCESS_VIOLATION` server hangs during massive sector relation updates.
+
+### Breaking Planetary Defenses
+If you see a Planetary Shield Generator during an invasion, destroy it immediately! All other stations are invincible until it falls.

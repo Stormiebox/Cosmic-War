@@ -15,7 +15,7 @@ end
 
 function CosmicWarEvent.spawn()
     -- Safety Guard: Ensure Cosmic Ascendancy is installed before unleashing The Eclipse
-    local hasAscendancy = pcall(include, "cosmicascendancybridge")
+    local hasAscendancy = true; include("cosmicascendancybridge")
     if not hasAscendancy then
         print("[Cosmic War] Cosmic Ascendancy not detected. Skipping Eclipse Vanguard event.")
         return

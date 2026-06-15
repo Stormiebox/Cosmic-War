@@ -524,3 +524,9 @@ All deep lore, stat blocks, and dynamic recipes have been fully integrated into 
 
 ### Diplomacy Thread Safety
 Background diplomacy threads have been fully synchronized with the main Avorion engine, permanently eliminating `EXCEPTION_ACCESS_VIOLATION` server hangs during massive sector relation updates.
+
+## Planetary Defense Grids
+Some sectors possess Planetary Shield Generators. While these generators are active, every other station in the sector is 100% invincible to damage.
+
+## Electronic Warfare
+Invaders have a 35% chance to deploy a Shield Jammer, stripping shields from defenders. Planetary Defenses are immune to this.

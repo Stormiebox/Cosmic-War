@@ -73,7 +73,7 @@ function onDestroyed(destroyedId, destroyerId)
                                 content = string.format("Freelance mercenaries successfully confirmed a high-profile kill on %s forces in sector (%d:%d). %s promptly wired the %d Credits bounty, proving once again that war is a highly profitable business.", 
                                     Faction(victimFactionIndex).name, sx, sy, f.name, finalReward)
                             }
-                            local cvn_success, cvn = pcall(include, "cosmicvaultnews")
+                            local cvn_success, cvn = true, include("cosmicvaultnews")
                             if cvn_success and cvn and cvn.publishArticle then
                                 cvn.publishArticle(article)
                             else
