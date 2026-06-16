@@ -17,7 +17,7 @@ end
 
 function CW_ShieldJammer.updateServer(timeStep)
     duration = duration - timeStep
-    
+
     local entity = Entity()
     if not valid(entity) then
         terminate()
@@ -29,7 +29,7 @@ function CW_ShieldJammer.updateServer(timeStep)
         -- Force shield durability to 0 constantly, preventing regeneration and keeping it vulnerable
         shield.durability = 0
     end
-    
+
     if duration <= 0 then
         -- The jammer duration has expired
         terminate()
@@ -37,5 +37,16 @@ function CW_ShieldJammer.updateServer(timeStep)
 end
 
 -- We can also send client updates if we want to render particles, but for now the mechanical effect is enough.
+
+function getUpdateInterval(...)
+    if CW_ShieldJammer.getUpdateInterval then return CW_ShieldJammer.getUpdateInterval(...) end
+end
+function initialize(...)
+    if CW_ShieldJammer.initialize then return CW_ShieldJammer.initialize(...) end
+end
+function updateServer(...)
+    if CW_ShieldJammer.updateServer then return CW_ShieldJammer.updateServer(...) end
+end
+
 
 return CW_ShieldJammer

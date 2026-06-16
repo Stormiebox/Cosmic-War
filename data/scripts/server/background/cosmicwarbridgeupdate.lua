@@ -60,3 +60,11 @@ function CosmicWarBridgeUpdate.update(timeStep)
         CosmicWarBridge.publishWarHeatSnapshot()
     end
 end
+
+
+function getUpdateInterval(...)
+    if CosmicWarBridgeUpdate.getUpdateInterval then return CosmicWarBridgeUpdate.getUpdateInterval(...) end
+end
+function update(...)
+    if CosmicWarBridgeUpdate.update then return CosmicWarBridgeUpdate.update(...) end
+end

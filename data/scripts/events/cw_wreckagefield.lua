@@ -8,17 +8,17 @@ local cw_wreckagefield = {}
 
 function cw_wreckagefield.initialize()
     if onClient() then return end
-    
+
     local sector = Sector()
     local x, y = sector:getCoordinates()
     local random = Random(Seed(os.time()))
-    
+
     -- Only trigger in populated sectors
     if sector.numFactions == 0 then
         terminate()
         return
     end
-    
+
     local faction = Galaxy():getNearestFaction(x, y)
     if not faction or not faction.isAIFaction then
         terminate()
@@ -28,14 +28,14 @@ function cw_wreckagefield.initialize()
     -- Spawn a massive wreckage field representing a recent major clash
     local generator = SectorGenerator(x, y)
     local numWrecks = random:getInt(4, 9)
-    
+
     for i = 1, numWrecks do
         local matrix = MatrixLookUpPosition(-vec3(random:getFloat(-1, 1), random:getFloat(-1, 1), random:getFloat(-1, 1)), vec3(random:getFloat(-1, 1), random:getFloat(-1, 1), random:getFloat(-1, 1)), vec3(random:getFloat(-2000, 2000), random:getFloat(-2000, 2000), random:getFloat(-2000, 2000)))
-        
+
         -- Spawn broken ships
         generator:createWreckage(faction, matrix)
     end
-    
+
     -- If Cosmic Vault News is installed, broadcast news
     pcall(function()
         local server = Server()
@@ -51,8 +51,13 @@ function cw_wreckagefield.initialize()
             server:sendCallback("onCCNewsPublishArticle", article)
         end
     end)
-    
+
     terminate()
 end
+
+function initialize(...)
+    if cw_wreckagefield.initialize then return cw_wreckagefield.initialize(...) end
+end
+
 
 return cw_wreckagefield

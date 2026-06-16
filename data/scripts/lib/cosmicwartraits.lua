@@ -11,45 +11,45 @@ function CosmicWarTraits.initialize()
         "Highly aggressive and eager to declare war.",
         "Passively decays relations with neutral factions."
     })
-    
+
     cvf.registerCustomTrait("cw_pacifist", "Pacifist", {
         "Despises conflict and strictly avoids unprovoked wars.",
         "Passively improves relations with neighbors."
     })
-    
+
     cvf.registerCustomTrait("cw_isolationist", "Isolationist", {
         "Wants to be left alone.",
         "Refuses to form alliances or expand borders.",
         "Diplomatic shifts are heavily dampened."
     })
-    
+
     cvf.registerCustomTrait("cw_opportunist", "Opportunist", {
         "Profit and power above all else.",
         "Highly likely to betray weak allies or surrender to strong enemies."
     })
-    
+
     cvf.registerCustomTrait("cw_imperialist", "Imperialist", {
         "Driven by a relentless desire to expand.",
         "Rapidly claims empty sectors and builds outposts.",
         "Causes border friction with neighbors."
     })
-    
+
     cvf.registerCustomTrait("cw_entrenched", "Entrenched", {
         "Prioritizes absolute defense of their core territory.",
         "Rarely attacks, but builds massive defensive networks.",
         "Extremely difficult to conquer."
     })
-    
+
     cvf.registerCustomTrait("cw_vengeful", "Vengeful", {
         "Does not easily forgive transgressions.",
         "Ceasefire negotiations are almost impossible once a war begins."
     })
-    
+
     cvf.registerCustomTrait("cw_mercantile", "Mercantile", {
         "Prioritizes profit over military supremacy.",
         "Pays triple (3x) standard rates for mercenary contracts."
     })
-    
+
     cvf.registerCustomTrait("cw_xenophobic", "Xenophobic", {
         "Views all outsiders with extreme prejudice.",
         "Actively hostile to ships entering their space.",
@@ -68,10 +68,10 @@ end
 function CosmicWarTraits.applyTraits(faction)
     if not faction then return end
     local random = Random(Server().seed + faction.index * 101)
-    
+
     -- Strip out old string stances if they exist
     faction:setValue("cw_diplomatic_stance", nil)
-    
+
     local aggressive = faction:getTrait("aggressive") or 0
     local peaceful = faction:getTrait("peaceful") or 0
     local careful = faction:getTrait("careful") or 0
@@ -109,11 +109,11 @@ function CosmicWarTraits.applyTraits(faction)
     if not assignedTrait and random:test(0.30) then
         local roll = random:getInt(1, 9)
         local traitsList = {
-            "cw_warmonger", "cw_pacifist", "cw_isolationist", "cw_opportunist", 
+            "cw_warmonger", "cw_pacifist", "cw_isolationist", "cw_opportunist",
             "cw_imperialist", "cw_entrenched", "cw_vengeful", "cw_mercantile", "cw_xenophobic"
         }
         assignedTrait = traitsList[roll]
-        
+
         -- Override vanilla traits to loosely match the injected trait
         if assignedTrait == "cw_warmonger" then
             setVanillaTraitPair(faction, "aggressive", "peaceful", random:getFloat(0.6, 1.0))
@@ -169,5 +169,10 @@ end
 
 -- Initialize the registry globally immediately upon inclusion
 CosmicWarTraits.initialize()
+
+function initialize(...)
+    if CosmicWarTraits.initialize then return CosmicWarTraits.initialize(...) end
+end
+
 
 return CosmicWarTraits

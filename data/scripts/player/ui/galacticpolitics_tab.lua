@@ -353,7 +353,7 @@ function GalacticPoliticsTab.serverFetchData()
 
                         local fName = f.name or ("Faction " .. tostring(f.index))
                         local eName = e.name or ("Faction " .. tostring(e.index))
-                        
+
                         table.insert(conflicts, {
                             factionA = string.gsub(fName, "%s*/%*.-%*/%s*", ""),
                             factionAIndex = f.index,
@@ -377,3 +377,7 @@ function GalacticPoliticsTab.serverFetchData()
     invokeClientFunction(player, "receiveData", conflicts)
 end
 callable(GalacticPoliticsTab, "serverFetchData")
+
+function initialize(...)
+    if GalacticPoliticsTab.initialize then return GalacticPoliticsTab.initialize(...) end
+end

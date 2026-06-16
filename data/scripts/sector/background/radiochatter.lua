@@ -2,7 +2,7 @@ local cw_old_RadioChatter_initialize = RadioChatter.initialize
 function RadioChatter.initialize(...)
     if cw_old_RadioChatter_initialize then cw_old_RadioChatter_initialize(...) end
     if onServer() then return end
-    
+
     local generalStationChatter = {
         "Did you catch the latest broadcast on the Galactic News network? War tensions are rising in the neighboring sectors."%_t,
         "I swear, these recent overhauls to the hyperdrive systems have made my ship run smoother than ever!"%_t,
@@ -57,10 +57,15 @@ function RadioChatter.initialize(...)
 
     RadioChatter.addStationChatter(generalStationChatter)
     RadioChatter.addShipChatter(generalShipChatter)
-    
+
     for _, line in pairs(freighterChatter) do
         table.insert(RadioChatter.FreighterChatter, line)
     end
-    
+
     RadioChatter.addHostileShipChatter(hostileShipChatter)
+end
+
+
+function initialize(...)
+    if RadioChatter.initialize then return RadioChatter.initialize(...) end
 end

@@ -34,7 +34,7 @@ end
 
 function CW_EventScheduler.initialize()
     if onClient() then return end
-    
+
     -- Initialize timers with a random offset so they don't all trigger at once
     for _, event in pairs(events) do
         event.timer = random():getInt(0, event.schedule)
@@ -43,10 +43,10 @@ end
 
 function CW_EventScheduler.updateServer(timeStep)
     local player = Player()
-    
+
     for _, event in pairs(events) do
         event.timer = event.timer + timeStep
-        
+
         if event.timer >= event.schedule then
             -- Reset timer and roll a new schedule
             event.timer = 0
@@ -57,7 +57,7 @@ function CW_EventScheduler.updateServer(timeStep)
             else
                 event.schedule = random():getInt(120, 180) * 60
             end
-            
+
             -- Spawn event
             local sector = Sector()
             if sector then
@@ -67,5 +67,14 @@ function CW_EventScheduler.updateServer(timeStep)
     end
 end
 
+function getUpdateInterval(...)
+    if CW_EventScheduler.getUpdateInterval then return CW_EventScheduler.getUpdateInterval(...) end
+end
+function initialize(...)
+    if CW_EventScheduler.initialize then return CW_EventScheduler.initialize(...) end
+end
+function updateServer(...)
+    if CW_EventScheduler.updateServer then return CW_EventScheduler.updateServer(...) end
+end
 
-
+return CW_EventScheduler

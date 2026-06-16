@@ -16,11 +16,11 @@ function SiegeEvent.initialize()
     if CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
         local zones = CosmicVaultTerritory.getContestedZones()
         local key = x .. "_" .. y
-        
+
         if zones[key] then
             -- Sector is contested! Spawn the invasion fleet.
             SiegeEvent.startSiege(zones[key])
-            
+
             for _, player in pairs({sector:getPlayers()}) do
                 player:addScriptOnce("data/scripts/player/ui/cw_battlefieldhud.lua")
             end
@@ -31,7 +31,7 @@ end
 function SiegeEvent.startSiege(zoneData)
     local sector = Sector()
     local targetStation = nil
-    
+
     -- Find a valid target station owned by the defender
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     for _, station in pairs(stations) do
@@ -40,7 +40,7 @@ function SiegeEvent.startSiege(zoneData)
             break
         end
     end
-    
+
     if not targetStation then
         print("[Cosmic War] No valid target station found for Siege Event.")
         return
@@ -48,14 +48,14 @@ function SiegeEvent.startSiege(zoneData)
 
     local invadingFaction = Faction(zoneData.invader)
     if not invadingFaction then return end
-    
+
     local generator = SectorGenerator(sector:getCoordinates())
     local position = generator:createPositionInSector(15000) -- Spawn far away
-    
+
     sector:broadcastChatMessage(targetStation, ChatMessageType.Warning, "WARNING! Enemy Troop Transports detected entering the sector! Defend the station!"%_T)
 
     local x, y = sector:getCoordinates()
-    
+
     -- Roll for Shield Jammer (35%)
     local random = Random(Seed(x .. y))
     local usedJammer = false
@@ -88,33 +88,33 @@ function SiegeEvent.startSiege(zoneData)
         transport.name = "Invader"
         transport:addScript("data/scripts/entity/ai/trooptransport.lua")
         transport:invokeFunction("trooptransport.lua", "setTarget", targetStation.id)
-        
+
         -- Give them heavy shields but no weapons (abstracted)
         local shield = Shield(transport.id)
         if shield then
             shield.maximum = shield.maximum * 5 -- 5x shields to survive point defense
             shield.durability = shield.maximum
         end
-        
+
         position = generator:createPositionInSector(15000)
     end
-    
+
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
     local cvScalingSuccess, CosmicVaultScaling = true, include("cosmicvaultscaling")
     if cvScalingSuccess and CosmicVaultScaling then
         local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
         local baseVol = Balancing_GetSectorShipVolume(x, y)
-        
+
         local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
         local numDreadnoughts = math.max(1, spawnParams.count - 3) -- We already spawned 3 transports
         local volumeMult = spawnParams.volumeMultiplier
-        
+
         for i = 1, numDreadnoughts do
             local dreadnought = ShipGenerator.createMilitaryShip(invadingFaction, generator:createPositionInSector(15000), baseVol * volumeMult)
             dreadnought.title = "Siege Dreadnought"
             dreadnought.name = "Invader"
             ShipAI(dreadnought.index):setAggressive()
-            
+
             local dShield = Shield(dreadnought.id)
             if dShield then
                 dShield.maximum = dShield.maximum * 10
@@ -122,7 +122,7 @@ function SiegeEvent.startSiege(zoneData)
             end
         end
     end
-    
+
     -- Inject Eclipse Weather
     if invadingFaction.name == "The Eclipse" or invadingFaction:getValue("is_eclipse") then
         sector:addScriptOnce("data/scripts/sector/cv_weather_controller.lua", "DarkMatterFog", -1)
@@ -152,19 +152,19 @@ function SiegeEvent.updateServer(timeStep)
                     break
                 end
             end
-            
+
             -- If no transports are left and time hasn't run out yet, the defenders won!
             if not invadersPresent then
                 -- Remove the zone so it doesn't trigger resolveSiege in the background
                 zones[key] = nil
                 Server():setValue("CosmicVault_ContestedZones", zones)
-                
+
                 sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_t)
-                
+
                 for _, player in pairs({sector:getPlayers()}) do
                     player:invokeFunction("cw_battlefieldhud.lua", "triggerDefenseSuccess")
                 end
-                
+
                 -- Terminate the event script as the siege is over
                 terminate()
             else
@@ -175,7 +175,7 @@ function SiegeEvent.updateServer(timeStep)
                         defenderStations = defenderStations + 1
                     end
                 end
-                
+
                 -- Also check if Planetary Shield Generators are destroyed
                 local planetaryShields = 0
                 for _, station in pairs({sector:getEntitiesByType(EntityType.Station)}) do
@@ -183,16 +183,16 @@ function SiegeEvent.updateServer(timeStep)
                         planetaryShields = planetaryShields + 1
                     end
                 end
-                
+
                 if defenderStations == 0 and planetaryShields == 0 then
                     -- Defenders lost!
-                    local cv_economy_success, cv_economy = true, require("cosmicvaulteconomy")
+                    local cv_economy_success, cv_economy = true, include("cosmicvaulteconomy")
                     if cv_economy_success then
                         -- Losing a sector applies 20 famine score to the defender
                         cv_economy.addFamineScore(zone.defender, 20)
                         print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
                     end
-                    
+
                     zones[key] = nil
                     Server():setValue("CosmicVault_ContestedZones", zones)
                     terminate()
@@ -212,5 +212,16 @@ function SiegeEvent.onRemove()
         sector:removeScript("sector/cv_weather_controller.lua")
     end
 end
+
+function initialize(...)
+    if SiegeEvent.initialize then return SiegeEvent.initialize(...) end
+end
+function getUpdateInterval(...)
+    if SiegeEvent.getUpdateInterval then return SiegeEvent.getUpdateInterval(...) end
+end
+function updateServer(...)
+    if SiegeEvent.updateServer then return SiegeEvent.updateServer(...) end
+end
+
 
 return SiegeEvent

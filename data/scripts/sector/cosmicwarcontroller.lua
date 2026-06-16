@@ -261,3 +261,14 @@ function CosmicWarController.updateServer(timeStep)
 end
 
 
+
+
+function initialize(...)
+    if CosmicWarController.initialize then return CosmicWarController.initialize(...) end
+end
+function getUpdateInterval(...)
+    if CosmicWarController.getUpdateInterval then return CosmicWarController.getUpdateInterval(...) end
+end
+function updateServer(...)
+    if CosmicWarController.updateServer then return CosmicWarController.updateServer(...) end
+end

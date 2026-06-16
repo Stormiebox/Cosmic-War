@@ -33,3 +33,14 @@ function CosmicWarSiegeServer.onSectorEntered(playerIndex, x, y, sectorChangeTyp
         end
     end
 end
+
+
+function initialize(...)
+    if CosmicWarSiegeServer.initialize then return CosmicWarSiegeServer.initialize(...) end
+end
+function onPlayerLogIn(...)
+    if CosmicWarSiegeServer.onPlayerLogIn then return CosmicWarSiegeServer.onPlayerLogIn(...) end
+end
+function onSectorEntered(...)
+    if CosmicWarSiegeServer.onSectorEntered then return CosmicWarSiegeServer.onSectorEntered(...) end
+end

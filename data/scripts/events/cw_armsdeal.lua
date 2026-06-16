@@ -83,3 +83,10 @@ function CW_ArmsDealEvent.spawn()
     }
     Server():sendCallback("onCCNewsPublishArticle", article)
 end
+
+
+function initialize(...)
+    if CW_ArmsDealEvent.initialize then return CW_ArmsDealEvent.initialize(...) end
+end
+
+return CW_ArmsDealEvent

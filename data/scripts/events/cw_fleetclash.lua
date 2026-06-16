@@ -70,17 +70,17 @@ function CW_FleetClashEvent.spawn()
     local generator = SectorGenerator(x, y)
     local numAttackers = math.floor(4 + (heat * 5))
     local volumeMult = 1.0
-    
+
     local cvScalingSuccess, CosmicVaultScaling = true, include("cosmicvaultscaling")
     if cvScalingSuccess and CosmicVaultScaling then
         local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(enemyId)
         local baseVol = Balancing_GetSectorShipVolume(x, y)
-        
+
         local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
         numAttackers = spawnParams.count
         volumeMult = spawnParams.volumeMultiplier
     end
-    
+
     local random = Random(Seed(x .. y))
     local usedJammer = false
     if random:test(0.5) then
@@ -119,3 +119,10 @@ function CW_FleetClashEvent.spawn()
     }
     Server():sendCallback("onCCNewsPublishArticle", article)
 end
+
+
+function initialize(...)
+    if CW_FleetClashEvent.initialize then return CW_FleetClashEvent.initialize(...) end
+end
+
+return CW_FleetClashEvent

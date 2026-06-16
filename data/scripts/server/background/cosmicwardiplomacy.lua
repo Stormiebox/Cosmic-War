@@ -94,7 +94,7 @@ local function maybeAdjustPair(a, b, random)
     local pcMod = 0
     local aXeno = hasTrait(a, "cw_xenophobic")
     local bXeno = hasTrait(b, "cw_xenophobic")
-    
+
     if aXeno or bXeno then
         wcMod = wcMod + 0.20
         pcMod = pcMod - 1.0 -- Absolute peace blocker
@@ -131,17 +131,17 @@ local function maybeAdjustPair(a, b, random)
             pcMod = pcMod + 0.05 -- Try to surrender or negotiate
         end
     end
-    
+
     if hasTrait(a, "cw_imperialist") or hasTrait(b, "cw_imperialist") then
         wcMod = wcMod + 0.10 -- Border friction
         pcMod = pcMod - 0.05
     end
-    
+
     if hasTrait(a, "cw_entrenched") or hasTrait(b, "cw_entrenched") then
         wcMod = wcMod - 0.08 -- Rarely starts offensive wars
         pcMod = pcMod + 0.05
     end
-    
+
     if hasTrait(a, "cw_mercantile") or hasTrait(b, "cw_mercantile") then
         wcMod = wcMod - 0.10 -- Prefers business
         pcMod = pcMod + 0.10
@@ -162,11 +162,11 @@ local function maybeAdjustPair(a, b, random)
     -- Dormant Vanilla Trait Evaluation (Smart vs Dumb)
     local smartA = a:getTrait("smart") or 0
     local smartB = b:getTrait("smart") or 0
-    
+
     -- Smart factions avoid war if it isn't an absolute necessity
     if smartA > 0.5 or smartB > 0.5 then
         if warChance < 0.4 then
-            wcMod = wcMod - 0.20 
+            wcMod = wcMod - 0.20
         end
     end
     -- Dumb factions are highly volatile and easily provoked
@@ -188,7 +188,7 @@ local function maybeAdjustPair(a, b, random)
             Galaxy():setFactionRelations(a, b, nr)
         end
         local nr = a:getRelations(b.index) or (rel - worsen)
-        
+
         didChange = true
 
         local cfg = getCfg()
@@ -199,7 +199,7 @@ local function maybeAdjustPair(a, b, random)
                 b:setValue("enemy_faction", a.index)
                 a:setValue("cw_target_faction", b.index)
                 b:setValue("cw_target_faction", a.index)
-                
+
                 -- Broadcast the War via Cosmic Vault Events (7 days duration default)
                 if cve and cve.startEvent then
                     cve.startEvent("cw_war_" .. a.index .. "_" .. b.index, 7 * 24 * 3600)
@@ -216,7 +216,7 @@ local function maybeAdjustPair(a, b, random)
             Galaxy():setFactionRelations(a, b, nr)
         end
         didChange = true
-        
+
         local nr = a:getRelations(b.index) or (rel + improve)
         local cfg = getCfg()
         if nr > (cfg.rivalryThreshold or -45000) then
@@ -226,7 +226,7 @@ local function maybeAdjustPair(a, b, random)
                 b:setValue("enemy_faction", nil)
                 a:setValue("cw_target_faction", nil)
                 b:setValue("cw_target_faction", nil)
-                
+
                 -- End the war event early if peace is achieved
                 if cve and cve.endEvent then
                     cve.endEvent("cw_war_" .. a.index .. "_" .. b.index)
@@ -259,7 +259,7 @@ function CosmicWarDiplomacy.update(timeStep)
 
     local cfg = getCfg()
     local steps = math.min(cfg.diplomacyPairSteps or 10, #factions)
-    
+
     for _ = 1, steps do
         local a = factions[random:getInt(1, #factions)]
         local b = factions[random:getInt(1, #factions)]
@@ -268,5 +268,16 @@ function CosmicWarDiplomacy.update(timeStep)
         end
     end
 end
+
+function initialize(...)
+    if CosmicWarDiplomacy.initialize then return CosmicWarDiplomacy.initialize(...) end
+end
+function getUpdateInterval(...)
+    if CosmicWarDiplomacy.getUpdateInterval then return CosmicWarDiplomacy.getUpdateInterval(...) end
+end
+function update(...)
+    if CosmicWarDiplomacy.update then return CosmicWarDiplomacy.update(...) end
+end
+
 
 return CosmicWarDiplomacy

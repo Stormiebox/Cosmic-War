@@ -40,7 +40,7 @@ function initializeAIFaction(faction, baseName, stateFormName)
     local random = Random(seed)
 
     -- 1) Apply Custom Traits (Overrides old stance logic)
-    local cwt_success, cwt = pcall(require, "cosmicwartraits")
+    local cwt_success, cwt = pcall(include, "cosmicwartraits")
     if cwt_success and cwt and cwt.applyTraits then
         cwt.applyTraits(faction)
     end

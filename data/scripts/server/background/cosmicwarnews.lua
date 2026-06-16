@@ -135,13 +135,13 @@ function CosmicWarNews.onSeedNews()
         local factionB = pick.b.name or ("Faction " .. tostring(pick.b.index))
         local aStance = pick.a:getValue("cw_diplomatic_stance") or "Balanced"
         local bStance = pick.b:getValue("cw_diplomatic_stance") or "Balanced"
-        
+
         local article = {
             title = "Active Conflict: " .. factionA,
             category = "War Update",
             content = string.format("Diplomatic relations between the %s [%s] and the %s [%s] have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, aStance, factionB, bStance)
         }
-        
+
         local cvn_success, cvn = true, include("cosmicvaultnews")
         if cvn_success and cvn and cvn.publishArticle then
             cvn.publishArticle(article)
@@ -149,4 +149,15 @@ function CosmicWarNews.onSeedNews()
             server:sendCallback("onCCNewsPublishArticle", article)
         end
     end
+end
+
+
+function initialize(...)
+    if CosmicWarNews.initialize then return CosmicWarNews.initialize(...) end
+end
+function getUpdateInterval(...)
+    if CosmicWarNews.getUpdateInterval then return CosmicWarNews.getUpdateInterval(...) end
+end
+function update(...)
+    if CosmicWarNews.update then return CosmicWarNews.update(...) end
 end

@@ -60,3 +60,7 @@ if onServer() then
         return cw_oldUpdateServer(timeStep)
     end
 end
+
+function updateServer(...)
+    if RebuildStations.updateServer then return RebuildStations.updateServer(...) end
+end

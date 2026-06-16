@@ -18,9 +18,9 @@ function CosmicWarEvent.spawn()
     local x, y = Sector():getCoordinates()
     local attackerFaction = Galaxy():getNearestFaction(x, y)
     local targetStation = Sector():getEntitiesByType(EntityType.Station)
-    
+
     if not targetStation then return end
-    
+
     for i=1, 8 do
         local siegeShip = ShipGenerator.createMilitaryShip(attackerFaction, SectorGenerator(x,y):getPositionInSector())
         siegeShip.title = "Siege Dreadnought"
@@ -28,5 +28,10 @@ function CosmicWarEvent.spawn()
     end
 
 end
+
+function initialize(...)
+    if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
+end
+
 
 return CosmicWarEvent

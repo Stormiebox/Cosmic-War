@@ -8,16 +8,16 @@ local cw_blockade = {}
 
 function cw_blockade.initialize()
     if onClient() then return end
-    
+
     local sector = Sector()
     local x, y = sector:getCoordinates()
-    
+
     -- Only trigger in populated sectors
     if sector.numFactions == 0 then
         terminate()
         return
     end
-    
+
     local defender = Galaxy():getNearestFaction(x, y)
     if not defender or not defender.isAIFaction then
         terminate()
@@ -41,7 +41,7 @@ function cw_blockade.initialize()
     local dir = vec3(random:getFloat(-1, 1), 0, random:getFloat(-1, 1))
     if length(dir) == 0 then dir = vec3(1, 0, 0) end
     dir = normalize(dir)
-    
+
     local distance = 15000 -- spawn near the edge where jump gates usually are
     local center = dir * distance
 
@@ -67,8 +67,13 @@ function cw_blockade.initialize()
             server:sendCallback("onCCNewsPublishArticle", article)
         end
     end)
-    
+
     terminate()
 end
+
+function initialize(...)
+    if cw_blockade.initialize then return cw_blockade.initialize(...) end
+end
+
 
 return cw_blockade

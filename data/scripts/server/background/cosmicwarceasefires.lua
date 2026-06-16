@@ -182,3 +182,11 @@ function CosmicWarCeasefires.update(timeStep)
         end
     end
 end
+
+
+function getUpdateInterval(...)
+    if CosmicWarCeasefires.getUpdateInterval then return CosmicWarCeasefires.getUpdateInterval(...) end
+end
+function update(...)
+    if CosmicWarCeasefires.update then return CosmicWarCeasefires.update(...) end
+end

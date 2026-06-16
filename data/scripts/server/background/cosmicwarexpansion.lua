@@ -34,13 +34,13 @@ end
 
 function CosmicWarExpansion.update(timeStep)
     if not cvt or not cvt.expandToSector then return end
-    
+
     local factions = getActiveFactions()
     for _, faction in pairs(factions) do
-        
+
         local activeTrait = faction:getTrait("active") or 0
         local expansionMultiplier = math.max(0, 1.0 + activeTrait)
-        
+
         -- Imperialist Logic
         if hasTrait(faction, "cw_imperialist") then
             -- 35% chance to expand borders outward, multiplied by active trait
@@ -55,7 +55,7 @@ function CosmicWarExpansion.update(timeStep)
                 end
             end
         end
-        
+
         -- Entrenched Logic
         if hasTrait(faction, "cw_entrenched") then
             -- 20% chance to heavily fortify core territory, multiplied by active trait
@@ -70,8 +70,16 @@ function CosmicWarExpansion.update(timeStep)
                 end
             end
         end
-        
+
     end
 end
+
+function getUpdateInterval(...)
+    if CosmicWarExpansion.getUpdateInterval then return CosmicWarExpansion.getUpdateInterval(...) end
+end
+function update(...)
+    if CosmicWarExpansion.update then return CosmicWarExpansion.update(...) end
+end
+
 
 return CosmicWarExpansion

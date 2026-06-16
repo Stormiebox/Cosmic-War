@@ -88,3 +88,10 @@ function CW_StrandedFlagshipEvent.spawnRepairFleet()
         defender:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     end
 end
+
+
+function initialize(...)
+    if CW_StrandedFlagshipEvent.initialize then return CW_StrandedFlagshipEvent.initialize(...) end
+end
+
+return CW_StrandedFlagshipEvent

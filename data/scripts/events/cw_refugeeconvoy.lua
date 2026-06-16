@@ -59,9 +59,9 @@ function CW_RefugeeConvoyEvent.spawn()
     for i = 1, numTransports do
         local ship = ShipGenerator.createFreighterShip(victimFaction, generator:getPositionInSector())
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
-        
+
         local shield = Shield(ship.index)
-        if shield then 
+        if shield then
             shield.maximum = shield.maximum * 10
             shield.durability = shield.maximum
         end
@@ -70,7 +70,7 @@ function CW_RefugeeConvoyEvent.spawn()
             durability.maximum = durability.maximum * 10
             durability.durability = durability.maximum
         end
-        
+
         table.insert(transports, ship.id)
     end
 
@@ -123,3 +123,10 @@ function CW_RefugeeConvoyEvent.escapeTransports()
     end
     terminate()
 end
+
+
+function initialize(...)
+    if CW_RefugeeConvoyEvent.initialize then return CW_RefugeeConvoyEvent.initialize(...) end
+end
+
+return CW_RefugeeConvoyEvent
