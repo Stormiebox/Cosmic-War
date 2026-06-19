@@ -67,8 +67,8 @@ function CosmicWarCeasefires.update(timeStep)
     local cfg = getCfg()
     local rivalryThreshold = cfg.rivalryThreshold or -45000
 
-    local cv_task_success, cv_task = true, include("cosmicvaulttask")
-    if cv_task_success and cv_task and cv_task.RunAsync then
+    local cv_task = include("cosmicvaulttask")
+    if cv_task and cv_task.RunAsync then
         cv_task.RunAsync("CosmicWarCeasefires", function()
             local eased = 0
             local processedPairs = {}
@@ -98,8 +98,8 @@ function CosmicWarCeasefires.update(timeStep)
                                 local ceasefireChance = cfg.ceasefireChance or 0.25
                                 if rel > rivalryThreshold and random:test(ceasefireChance) then
                                     local gain = random:getInt(2000, 6000)
-                                    local cvf_success, cvf = true, include("cosmicvaultfaction")
-                                    if cvf_success and cvf and cvf.changeRelations then
+                                    local cvf = include("cosmicvaultfaction")
+                                    if cvf and cvf.changeRelations then
                                         cvf.changeRelations(a.index, b.index, gain)
                                     else
                                         local newRel = math.max(-100000, math.min(100000, rel + gain))
@@ -151,8 +151,8 @@ function CosmicWarCeasefires.update(timeStep)
                             local ceasefireChance = cfg.ceasefireChance or 0.25
                             if rel > rivalryThreshold and random:test(ceasefireChance) then
                                 local gain = random:getInt(2000, 6000)
-                                local cvf_success, cvf = true, include("cosmicvaultfaction")
-                                if cvf_success and cvf and cvf.changeRelations then
+                                local cvf = include("cosmicvaultfaction")
+                                if cvf and cvf.changeRelations then
                                     cvf.changeRelations(a.index, b.index, gain)
                                 else
                                     local newRel = math.max(-100000, math.min(100000, rel + gain))

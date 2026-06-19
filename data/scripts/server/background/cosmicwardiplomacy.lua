@@ -278,6 +278,3 @@ end
 function update(...)
     if CosmicWarDiplomacy.update then return CosmicWarDiplomacy.update(...) end
 end
-
-
-return CosmicWarDiplomacy

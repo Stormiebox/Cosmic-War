@@ -60,8 +60,8 @@ function cw_blockade.initialize()
             category = "War Update",
             content = attacker.name .. " forces have established a blockade on the outskirts of sector (" .. x .. ":" .. y .. "). All neutral merchants and civilian vessels are advised to steer clear or risk being fired upon."
         }
-        local cvn_success, cvn = true, include("cosmicvaultnews")
-        if cvn_success and cvn and cvn.publishArticle then
+        local cvn = include("cosmicvaultnews")
+        if cvn and cvn.publishArticle then
             cvn.publishArticle(article)
         else
             server:sendCallback("onCCNewsPublishArticle", article)
@@ -74,6 +74,3 @@ end
 function initialize(...)
     if cw_blockade.initialize then return cw_blockade.initialize(...) end
 end
-
-
-return cw_blockade

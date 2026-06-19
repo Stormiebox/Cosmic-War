@@ -80,6 +80,3 @@ end
 function update(...)
     if CosmicWarExpansion.update then return CosmicWarExpansion.update(...) end
 end
-
-
-return CosmicWarExpansion

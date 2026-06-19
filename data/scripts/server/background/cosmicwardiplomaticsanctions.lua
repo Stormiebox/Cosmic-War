@@ -69,8 +69,8 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
     local cfg = getCfg()
     local threshold = cfg.rivalryThreshold or -45000
 
-    local cv_task_success, cv_task = true, include("cosmicvaulttask")
-    if cv_task_success and cv_task and cv_task.RunAsync then
+    local cv_task = include("cosmicvaulttask")
+    if cv_task and cv_task.RunAsync then
         cv_task.RunAsync("CosmicWarSanctions", function()
             local penalized = 0
             local iters = 0

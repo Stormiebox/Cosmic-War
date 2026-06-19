@@ -47,6 +47,3 @@ end
 function updateServer(...)
     if CW_ShieldJammer.updateServer then return CW_ShieldJammer.updateServer(...) end
 end
-
-
-return CW_ShieldJammer

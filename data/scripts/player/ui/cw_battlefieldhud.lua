@@ -29,8 +29,8 @@ end
 
 function checkZone()
     local x, y = Sector():getCoordinates()
-    local cvt_success, CosmicVaultTerritory = true, include("cosmicvaultterritory")
-    if cvt_success and CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
+    local CosmicVaultTerritory = include("cosmicvaultterritory")
+    if CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
         local zones = CosmicVaultTerritory.getContestedZones()
         local zone = zones[x .. "_" .. y]
         if zone then

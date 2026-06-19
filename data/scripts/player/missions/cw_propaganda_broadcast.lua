@@ -18,6 +18,10 @@ mission.data.title = mission._Name
 mission.data.icon = "data/textures/icons/ShipEscort.png"
 mission.data.autoTrackMission = true
 
+function getUpdateInterval()
+    return 1.0
+end
+
 local cw_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then

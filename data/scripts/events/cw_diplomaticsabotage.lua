@@ -96,5 +96,3 @@ end
 function initialize(...)
     if CW_DiplomaticSabotageEvent.initialize then return CW_DiplomaticSabotageEvent.initialize(...) end
 end
-
-return CW_DiplomaticSabotageEvent

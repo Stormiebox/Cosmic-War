@@ -84,6 +84,3 @@ end
 function initialize(...)
     if cw_headhunters.initialize then return cw_headhunters.initialize(...) end
 end
-
-
-return cw_headhunters

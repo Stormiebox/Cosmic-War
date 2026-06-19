@@ -39,7 +39,13 @@ function DreadnoughtBoss.updateServer(timeStep)
     local bestTarget = nil
     local highestThreat = -1
 
-    for _, entity in pairs({sector:getEntitiesByType(EntityType.Ship), sector:getEntitiesByType(EntityType.Station)}) do
+    local ships = {sector:getEntitiesByType(EntityType.Ship)}
+    local stations = {sector:getEntitiesByType(EntityType.Station)}
+    local allEnemies = {}
+    for _, s in pairs(ships) do table.insert(allEnemies, s) end
+    for _, s in pairs(stations) do table.insert(allEnemies, s) end
+
+    for _, entity in pairs(allEnemies) do
         if ai:isEnemy(entity) then
             local threat = 0
             if entity.isStation then threat = threat + 500 end
@@ -69,6 +75,3 @@ end
 function updateServer(...)
     if DreadnoughtBoss.updateServer then return DreadnoughtBoss.updateServer(...) end
 end
-
-
-return DreadnoughtBoss

@@ -100,8 +100,8 @@ function SiegeEvent.startSiege(zoneData)
     end
 
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
-    local cvScalingSuccess, CosmicVaultScaling = true, include("cosmicvaultscaling")
-    if cvScalingSuccess and CosmicVaultScaling then
+    local CosmicVaultScaling = include("cosmicvaultscaling")
+    if CosmicVaultScaling then
         local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
         local baseVol = Balancing_GetSectorShipVolume(x, y)
 
@@ -186,8 +186,8 @@ function SiegeEvent.updateServer(timeStep)
 
                 if defenderStations == 0 and planetaryShields == 0 then
                     -- Defenders lost!
-                    local cv_economy_success, cv_economy = true, include("cosmicvaulteconomy")
-                    if cv_economy_success then
+                    local cv_economy = include("cosmicvaulteconomy")
+                    if cv_economy then
                         -- Losing a sector applies 20 famine score to the defender
                         cv_economy.addFamineScore(zone.defender, 20)
                         print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
@@ -222,6 +222,3 @@ end
 function updateServer(...)
     if SiegeEvent.updateServer then return SiegeEvent.updateServer(...) end
 end
-
-
-return SiegeEvent

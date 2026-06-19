@@ -86,12 +86,25 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     end
 end
 
+function getUpdateInterval()
+    return 1.0
+end
+
 mission.phases[1].triggers = {
     {
         condition = function()
 
             if onClient() then return false end
-            return atTargetLocation() and mission.data.custom.spawned and (mission.data.custom.minesDeployed or 0) >= 5
+            if not atTargetLocation() then return false end
+            if not mission.data.custom.spawned then return false end
+            
+            mission.data.custom.minesDeployed = (mission.data.custom.minesDeployed or 0) + 1
+            if mission.data.custom.minesDeployed % 10 == 0 then
+                local player = Player()
+                if player then player:sendChatMessage("", 3, "Deploying mine " .. (mission.data.custom.minesDeployed / 10) .. "/5...") end
+            end
+            
+            return mission.data.custom.minesDeployed >= 50
 
         end,
         callback = function()

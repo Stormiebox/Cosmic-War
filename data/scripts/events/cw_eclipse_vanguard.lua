@@ -39,6 +39,3 @@ end
 function initialize(...)
     if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
 end
-
-
-return CosmicWarEvent

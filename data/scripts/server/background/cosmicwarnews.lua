@@ -142,8 +142,8 @@ function CosmicWarNews.onSeedNews()
             content = string.format("Diplomatic relations between the %s [%s] and the %s [%s] have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, aStance, factionB, bStance)
         }
 
-        local cvn_success, cvn = true, include("cosmicvaultnews")
-        if cvn_success and cvn and cvn.publishArticle then
+        local cvn = include("cosmicvaultnews")
+        if cvn and cvn.publishArticle then
             cvn.publishArticle(article)
         else
             server:sendCallback("onCCNewsPublishArticle", article)
@@ -160,4 +160,10 @@ function getUpdateInterval(...)
 end
 function update(...)
     if CosmicWarNews.update then return CosmicWarNews.update(...) end
+end
+
+
+-- Global Event Callbacks
+function onSeedNews(...)
+    if CosmicWarNews.onSeedNews then return CosmicWarNews.onSeedNews(...) end
 end
