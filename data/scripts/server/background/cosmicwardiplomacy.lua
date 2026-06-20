@@ -1,7 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
-include("faction")
+
 include("relations")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
@@ -278,3 +278,5 @@ end
 function update(...)
     if CosmicWarDiplomacy.update then return CosmicWarDiplomacy.update(...) end
 end
+
+return CosmicWarDiplomacy

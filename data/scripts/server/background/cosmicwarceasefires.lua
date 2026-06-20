@@ -190,3 +190,5 @@ end
 function update(...)
     if CosmicWarCeasefires.update then return CosmicWarCeasefires.update(...) end
 end
+
+return CosmicWarCeasefires

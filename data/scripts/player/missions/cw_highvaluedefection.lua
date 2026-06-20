@@ -11,7 +11,7 @@ end
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
-local Balancing = include("galaxy")
+
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 

@@ -75,3 +75,5 @@ end
 function updateServer(...)
     if DreadnoughtBoss.updateServer then return DreadnoughtBoss.updateServer(...) end
 end
+
+return DreadnoughtBoss

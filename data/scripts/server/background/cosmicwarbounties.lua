@@ -134,3 +134,5 @@ end
 function update(...)
     if CosmicWarBounties.update then return CosmicWarBounties.update(...) end
 end
+
+return CosmicWarBounties

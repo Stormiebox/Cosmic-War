@@ -5,7 +5,6 @@ local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 include("stringutility")
-include("galaxy")
 
 -- namespace CW_FleetClashEvent
 CW_FleetClashEvent = {}
@@ -124,3 +123,5 @@ end
 function initialize(...)
     if CW_FleetClashEvent.initialize then return CW_FleetClashEvent.initialize(...) end
 end
+
+return CW_FleetClashEvent

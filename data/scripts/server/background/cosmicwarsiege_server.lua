@@ -44,3 +44,5 @@ end
 function onSectorEntered(...)
     if CosmicWarSiegeServer.onSectorEntered then return CosmicWarSiegeServer.onSectorEntered(...) end
 end
+
+return CosmicWarSiegeServer

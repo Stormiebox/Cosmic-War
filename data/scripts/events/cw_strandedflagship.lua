@@ -93,3 +93,5 @@ end
 function initialize(...)
     if CW_StrandedFlagshipEvent.initialize then return CW_StrandedFlagshipEvent.initialize(...) end
 end
+
+return CW_StrandedFlagshipEvent

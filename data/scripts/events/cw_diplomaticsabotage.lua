@@ -4,7 +4,6 @@ local SectorGenerator = include("SectorGenerator")
 local ShipGenerator = include("shipgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
-include("galaxy")
 include("relations")
 include("stringutility")
 
@@ -96,3 +95,5 @@ end
 function initialize(...)
     if CW_DiplomaticSabotageEvent.initialize then return CW_DiplomaticSabotageEvent.initialize(...) end
 end
+
+return CW_DiplomaticSabotageEvent

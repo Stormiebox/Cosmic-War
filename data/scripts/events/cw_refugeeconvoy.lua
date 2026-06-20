@@ -128,3 +128,5 @@ end
 function initialize(...)
     if CW_RefugeeConvoyEvent.initialize then return CW_RefugeeConvoyEvent.initialize(...) end
 end
+
+return CW_RefugeeConvoyEvent

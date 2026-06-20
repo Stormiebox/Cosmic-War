@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 include("goods")
-include("faction")
+
 include("relations")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
@@ -272,3 +272,5 @@ end
 function updateServer(...)
     if CosmicWarController.updateServer then return CosmicWarController.updateServer(...) end
 end
+
+return CosmicWarController

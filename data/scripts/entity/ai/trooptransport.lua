@@ -119,3 +119,5 @@ end
 function updateServer(...)
     if TroopTransport.updateServer then return TroopTransport.updateServer(...) end
 end
+
+return TroopTransport

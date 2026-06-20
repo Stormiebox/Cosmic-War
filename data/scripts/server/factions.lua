@@ -1,8 +1,8 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
-include("galaxy")
-include("faction")
+
+
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
 

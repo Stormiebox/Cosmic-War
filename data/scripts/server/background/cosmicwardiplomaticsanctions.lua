@@ -160,3 +160,5 @@ end
 function update(...)
     if CosmicWarDiplomaticSanctions.update then return CosmicWarDiplomaticSanctions.update(...) end
 end
+
+return CosmicWarDiplomaticSanctions

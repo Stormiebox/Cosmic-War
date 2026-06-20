@@ -68,3 +68,5 @@ end
 function update(...)
     if CosmicWarBridgeUpdate.update then return CosmicWarBridgeUpdate.update(...) end
 end
+
+return CosmicWarBridgeUpdate

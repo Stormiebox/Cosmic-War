@@ -3,7 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 local ShipGenerator = include("shipgenerator")
 local CosmicVaultTerritory = include("cosmicvaultterritory")
 local SectorGenerator = include("sectorgenerator")
-include("galaxy")
+
 include("randomext")
 
 local SiegeEvent = {}

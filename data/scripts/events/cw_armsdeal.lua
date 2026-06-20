@@ -5,7 +5,6 @@ local ShipGenerator = include("shipgenerator")
 local SectorTurretGenerator = include("sectorturretgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
-include("galaxy")
 include("stringutility")
 
 -- namespace CW_ArmsDealEvent
@@ -88,3 +87,5 @@ end
 function initialize(...)
     if CW_ArmsDealEvent.initialize then return CW_ArmsDealEvent.initialize(...) end
 end
+
+return CW_ArmsDealEvent

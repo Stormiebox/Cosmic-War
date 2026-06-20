@@ -167,3 +167,5 @@ end
 function onSeedNews(...)
     if CosmicWarNews.onSeedNews then return CosmicWarNews.onSeedNews(...) end
 end
+
+return CosmicWarNews

@@ -76,3 +76,5 @@ end
 function updateServer(...)
     if CW_EventScheduler.updateServer then return CW_EventScheduler.updateServer(...) end
 end
+
+return CW_EventScheduler
