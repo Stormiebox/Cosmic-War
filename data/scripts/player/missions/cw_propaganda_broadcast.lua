@@ -171,7 +171,7 @@ mission.abandon = function()
         local giverIndex = mission.data.custom.giverIndex
         if giverIndex and giverIndex > 0 then
             local rep = player:getRelations(giverIndex)
-            player:setRelation(giverIndex, math.max(-100000, rep - 25000))
+            Galaxy():setFactionRelations(Faction(player.index), Faction(giverIndex), math.max(-100000, rep - 25000))
             player:sendChatMessage(Faction(giverIndex).name, 1, "You abandoned a critical war contract! Our trust in you is broken.")
         end
     end

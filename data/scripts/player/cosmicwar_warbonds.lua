@@ -5,10 +5,15 @@ include("utility")
 local activeBonds = {} -- { [factionIndex] = { amount = X } }
 
 function initialize()
-    if onServer() then
-        -- Check every 10 minutes if the war has resolved
-        Timer():create("checkWarbondStatus", 600)
-    end
+    -- Nothing needed here
+end
+
+function getUpdateInterval()
+    return 600 -- Check every 10 minutes if the war has resolved
+end
+
+function updateServer(timeStep)
+    checkWarbondStatus()
 end
 
 function secure()

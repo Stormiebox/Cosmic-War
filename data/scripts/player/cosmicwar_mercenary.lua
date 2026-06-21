@@ -47,7 +47,7 @@ function onShipDestroyed(destroyedId, destroyerId)
             if isCivilian and sadisticTrait < 0 then
                 local playerRelation = player:getRelations(destroyedFactionId)
                 if playerRelation then
-                    player:setRelation(enlistedFactionId, math.max(-100000, player:getRelations(enlistedFactionId) - 5000))
+                    Galaxy():setFactionRelations(Faction(player.index), Faction(enlistedFactionId), math.max(-100000, player:getRelations(enlistedFactionId) - 5000))
                     player:sendChatMessage(enlistedFaction.name, 1, "We do not pay mercenaries to slaughter unarmed civilians! Your standing with us has dropped.")
                 end
                 return -- No bounty payout!
@@ -80,7 +80,7 @@ function onShipDestroyed(destroyedId, destroyerId)
                 local playerRelation = player:getRelations(destroyedFactionId)
                 -- Decrease relations safely with the destroyed faction
                 if playerRelation then
-                    player:setRelation(destroyedFactionId, math.max(-100000, playerRelation - 5000))
+                    Galaxy():setFactionRelations(Faction(player.index), Faction(destroyedFactionId), math.max(-100000, playerRelation - 5000))
                 end
             end
         end

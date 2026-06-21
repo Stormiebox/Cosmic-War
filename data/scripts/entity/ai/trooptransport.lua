@@ -97,7 +97,7 @@ function TroopTransport.captureStation(station, newFactionIndex)
         -- This natively expands the Galaxy Map border.
     -- Forcefully update the global Galaxy Map borders instantly so the players can watch the invasion spread in real time
     local galaxy = Galaxy()
-    galaxy:setFaction(x, y, newFactionIndex)
+    -- galaxy:setFaction(x, y, newFactionIndex) -- Removed: Map borders update natively when stations change hands
 
     print("[Cosmic War] Station " .. station.name .. " captured by faction " .. tostring(newFactionIndex) .. ". Sector borders updated.")
 
