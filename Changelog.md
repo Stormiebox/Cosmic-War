@@ -64,6 +64,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - **Galactic Turn Synchronization:** `diplomacyInterval`, `newsInterval`, `sanctionsInterval`, `ceasefireInterval`, and `bountyInterval` have all been strictly aligned to 1200s (20 minutes). This ensures that major war-heat shifts and background diplomacy execute seamlessly during a synchronized "Galactic Turn" to drastically improve server TPS.
 
 ### 🐛 Bug Fixes & Optimization
+
+- **Fixed:** Fixed a critical architecture flaw where cosmicwartraits.lua exposed a global initialize() wrapper, preventing vanilla server initialization when included.
 - **Fixed:** Fixed multiple API Avorion Indexes across various scripts that could cause C++ attempt to index or attempt to call engine crashes.
   - Corrected stat modifier functions (e.g. modifyBaseMultiplier -> addBaseMultiplier).
   - Corrected entity bias functions (e.g. addMultiplyableFactor -> addMultiplyableBias).

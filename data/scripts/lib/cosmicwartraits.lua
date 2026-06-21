@@ -170,9 +170,5 @@ end
 -- Initialize the registry globally immediately upon inclusion
 CosmicWarTraits.initialize()
 
-function initialize(...)
-    if CosmicWarTraits.initialize then return CosmicWarTraits.initialize(...) end
-end
-
 
 return CosmicWarTraits
