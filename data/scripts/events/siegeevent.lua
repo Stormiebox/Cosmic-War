@@ -50,7 +50,7 @@ function SiegeEvent.startSiege(zoneData)
     if not invadingFaction then return end
 
     local generator = SectorGenerator(sector:getCoordinates())
-    local position = generator:createPositionInSector(15000) -- Spawn far away
+    local position = generator:getPositionInSector(15000) -- Spawn far away
 
     sector:broadcastChatMessage(targetStation, ChatMessageType.Warning, "WARNING! Enemy Troop Transports detected entering the sector! Defend the station!"%_T)
 
@@ -96,7 +96,7 @@ function SiegeEvent.startSiege(zoneData)
             shield.durability = shield.maximum
         end
 
-        position = generator:createPositionInSector(15000)
+        position = generator:getPositionInSector(15000)
     end
 
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
@@ -110,7 +110,7 @@ function SiegeEvent.startSiege(zoneData)
         local volumeMult = spawnParams.volumeMultiplier
 
         for i = 1, numDreadnoughts do
-            local dreadnought = ShipGenerator.createMilitaryShip(invadingFaction, generator:createPositionInSector(15000), baseVol * volumeMult)
+            local dreadnought = ShipGenerator.createMilitaryShip(invadingFaction, generator:getPositionInSector(15000), baseVol * volumeMult)
             dreadnought.title = "Siege Dreadnought"
             dreadnought.name = "Invader"
             ShipAI(dreadnought.index):setAggressive()
