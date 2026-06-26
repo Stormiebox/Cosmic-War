@@ -1,4 +1,4 @@
-include("data/scripts/sector/init.lua")
+
 package.path = package.path .. ";data/scripts/lib/?.lua"
 -- Cosmic War sector hook
 if onServer() then

@@ -1,4 +1,4 @@
-include("data/scripts/galaxy/server.lua")
+
 local CosmicWar_old_init = initialize
 
 function initialize(...)
