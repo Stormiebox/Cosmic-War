@@ -156,8 +156,9 @@ function SiegeEvent.updateServer(timeStep)
             -- If no transports are left and time hasn't run out yet, the defenders won!
             if not invadersPresent then
                 -- Remove the zone so it doesn't trigger resolveSiege in the background
-                zones[key] = nil
-                Server():setValue("CosmicVault_ContestedZones", zones)
+                if CosmicVaultTerritory.removeContestedZone then
+                    CosmicVaultTerritory.removeContestedZone(x, y)
+                end
 
                 sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_t)
 
@@ -193,8 +194,9 @@ function SiegeEvent.updateServer(timeStep)
                         print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
                     end
 
-                    zones[key] = nil
-                    Server():setValue("CosmicVault_ContestedZones", zones)
+                    if CosmicVaultTerritory.removeContestedZone then
+                        CosmicVaultTerritory.removeContestedZone(x, y)
+                    end
                     terminate()
                 end
             end

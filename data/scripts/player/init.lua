@@ -1,3 +1,4 @@
+include("data/scripts/player/init.lua")
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 -- Initialize Cosmic War Custom Traits Registry

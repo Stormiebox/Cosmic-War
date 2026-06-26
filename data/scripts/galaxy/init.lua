@@ -1,3 +1,5 @@
+include("data/scripts/galaxy/init.lua")
+
 if onServer() then
     local galaxy = Galaxy()
     if galaxy then
