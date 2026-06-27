@@ -12,7 +12,8 @@ function cw_blockade.initialize()
     local x, y = sector:getCoordinates()
 
     -- Only trigger in populated sectors
-    if sector.numFactions == 0 then
+    local stations = {sector:getEntitiesByType(EntityType.Station)}
+    if #stations == 0 then
         terminate()
         return
     end

@@ -14,7 +14,8 @@ function cw_wreckagefield.initialize()
     local random = Random(Seed(os.time()))
 
     -- Only trigger in populated sectors
-    if sector.numFactions == 0 then
+    local stations = {sector:getEntitiesByType(EntityType.Station)}
+    if #stations == 0 then
         terminate()
         return
     end
@@ -33,7 +34,7 @@ function cw_wreckagefield.initialize()
         local matrix = MatrixLookUpPosition(-vec3(random:getFloat(-1, 1), random:getFloat(-1, 1), random:getFloat(-1, 1)), vec3(random:getFloat(-1, 1), random:getFloat(-1, 1), random:getFloat(-1, 1)), vec3(random:getFloat(-2000, 2000), random:getFloat(-2000, 2000), random:getFloat(-2000, 2000)))
 
         -- Spawn broken ships
-        generator:createWreckage(faction, matrix)
+        generator:createWreckage(faction, nil, 10, matrix)
     end
 
     -- If Cosmic Vault News is installed, broadcast news
