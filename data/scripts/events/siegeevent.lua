@@ -117,7 +117,7 @@ function SiegeEvent.startSiege(zoneData)
 
             local dShield = Shield(dreadnought.id)
             if dShield then
-                dShield.maximum = dShield.maximum * 10
+                dShield.maximum = dShield.maximum * 5
                 dShield.durability = dShield.maximum
             end
         end

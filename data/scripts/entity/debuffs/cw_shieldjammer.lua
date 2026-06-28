@@ -1,6 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
-local duration = 60.0
+local duration = 20.0
 
 -- namespace CW_ShieldJammer
 CW_ShieldJammer = {}

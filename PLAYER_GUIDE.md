@@ -62,8 +62,8 @@ Profit from the chaos by signing up as a mercenary.
 During an active war, factions will launch massive invasion fleets. These fleets mathematically scale their size to exactly match **100%** of the defensive strength of the target sector!
 
 ### ⚔️ Combat Mechanics
-- **Electronic Warfare (Shield Jammer):** When an invasion drops into a sector, there is a 50% chance they activate an EMP. If you see the yellow warning text, **ALL** defending shields (including yours!) are pinned to 0 durability for 60 seconds. Survive the ambush!
-- **Siege Dreadnoughts:** Invasions are spearheaded by **Dreadnoughts**, colossal capital ships spawned with a massive 10x multiplier to their shields to tank station point-defense arrays.
+- **Electronic Warfare (Shield Jammer):** When an invasion drops into a sector, there is a 50% chance they activate an EMP. If you see the yellow warning text, **ALL** defending shields (including yours!) are pinned to 0 durability for 20 seconds. Survive the ambush!
+- **Siege Dreadnoughts:** Invasions are spearheaded by **Dreadnoughts**, colossal capital ships spawned with a massive 5x multiplier to their shields to tank station point-defense arrays.
 - **Cinematic Battlefield HUD:** While in an actively contested sector, your screen will display a cinematic 100% split Blue/Red progress bar tracking the exact remaining time until the sector flips ownership.
 - Dreadnoughts cannot be destroyed quickly. You will need high Omicron weapons or specialized torpedoes to bring down their boosted shields.
 - If an invasion fleet is not stopped, they will systematically destroy every station in the sector, effectively wiping it off the map.
