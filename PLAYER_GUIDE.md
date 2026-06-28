@@ -10,6 +10,7 @@ Welcome to the **Cosmic War** official player guide! This page covers War Heat, 
 - 🎖️ Mercenary Contracts
 - 🛡️ Dreadnought Invasions
 - 🌐 Galactic Politics
+- 🌌 Cosmic Vault Synergy
 
 ---
 
@@ -120,3 +121,7 @@ Background diplomacy threads have been fully synchronized with the main Avorion 
 
 ### Breaking Planetary Defenses
 If you see a Planetary Shield Generator during an invasion, destroy it immediately! All other stations are invincible until it falls.
+
+## 🌌 Cosmic Vault Synergy
+- **Deep Economy Warfare:** Market collapses and starvation natively trigger desperation invasions via the Cosmic Vault Economy simulation! Factions with 100+ Famine Scores will launch massive assaults on wealthy neighbors to survive.
+- **Weather-Assisted Boarding:** The CosmicVaultWeather API allows players to utilize weather events for sieges. If a DarkMatterFog or IonStorm hits a sector, the defending station's boarding defense multiplier is slashed by 50%!

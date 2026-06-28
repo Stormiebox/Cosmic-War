@@ -14,6 +14,7 @@ local ShipGenerator = include("shipgenerator")
 
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
+local CosmicVaultWeather = include("cosmicvaultweather")
 
 mission._Debug = 0
 mission._Name = "War Contract: Frontline Siege"
@@ -122,6 +123,36 @@ mission.phases[1].updateServer = function(timeStep)
     if mission.data.custom.waveTimer > 150 then
         mission.data.custom.waveTimer = 0
         spawnReinforcements()
+    end
+
+    -- Synergy: Weather-Assisted Boarding Operations
+    mission.data.custom.weatherTimer = (mission.data.custom.weatherTimer or 0) + timeStep
+    if mission.data.custom.weatherTimer > 10 then
+        mission.data.custom.weatherTimer = 0
+        local x, y = Sector():getCoordinates()
+        local weather = nil
+        
+        if CosmicVaultWeather and CosmicVaultWeather.getWeatherAt then
+            weather = CosmicVaultWeather.getWeatherAt(x, y)
+        end
+        
+        local targetStations = {Sector():getEntitiesByScriptValue("cw_siege_target")}
+        for _, station in pairs(targetStations) do
+            local boarding = Boarding(station.index)
+            if boarding then
+                local baseDefense = station:getValue("cw_base_boarding_defense")
+                if not baseDefense then
+                    baseDefense = boarding.defenseMultiplier
+                    station:setValue("cw_base_boarding_defense", baseDefense)
+                end
+                
+                if weather == "IonStorm" or weather == "DarkMatterFog" then
+                    boarding.defenseMultiplier = baseDefense * 0.5
+                else
+                    boarding.defenseMultiplier = baseDefense
+                end
+            end
+        end
     end
 end
 

@@ -123,4 +123,16 @@ function CosmicWarBridge.computeCaptainRiskModifier(captain, factionIndex)
     return riskMult, rewardMult
 end
 
+function CosmicWarBridge.forceDeclareWar(attackerFaction, defenderFaction)
+    if not attackerFaction or not defenderFaction then return end
+    
+    attackerFaction:setValue("enemy_faction", defenderFaction.index)
+    defenderFaction:setValue("enemy_faction", attackerFaction.index)
+    
+    attackerFaction:setValue("cw_war_bias", 1000)
+    defenderFaction:setValue("cw_war_bias", 1000)
+    
+    Galaxy():setFactionRelations(attackerFaction, defenderFaction, -100000)
+end
+
 return CosmicWarBridge
