@@ -125,6 +125,9 @@ function SiegeEvent.startSiege(zoneData)
 
     -- Inject Eclipse Weather
     if invadingFaction.name == "The Eclipse" or invadingFaction:getValue("is_eclipse") then
+        if sector:hasScript("sector/cv_weather_controller.lua") then
+            sector:removeScript("sector/cv_weather_controller.lua")
+        end
         sector:addScriptOnce("data/scripts/sector/cv_weather_controller.lua", "DarkMatterFog", -1)
     end
 end
