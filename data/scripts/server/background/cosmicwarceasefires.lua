@@ -44,9 +44,11 @@ local function getGalaxyFactions(server)
         end
     end
 
+    local FactionEradicationUtility = include("factioneradicationutility")
+
     for _, index in pairs(factionIndices) do
         local faction = Faction(index)
-        if faction then
+        if faction and not FactionEradicationUtility.isFactionEradicated(index) then
             table.insert(factions, faction)
         end
     end

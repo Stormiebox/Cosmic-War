@@ -21,10 +21,12 @@ local function getActiveFactions()
     local server = Server()
     local out = {}
     local factionStr = server:getValue("factions")
+    local FactionEradicationUtility = include("factioneradicationutility")
+
     if type(factionStr) == "string" and factionStr ~= "" then
         for id in string.gmatch(factionStr, "([^,]+)") do
             local f = Faction(tonumber(id))
-            if f and f.isAIFaction and f:getValue("cw_enabled") then
+            if f and f.isAIFaction and f:getValue("cw_enabled") and not FactionEradicationUtility.isFactionEradicated(tonumber(id)) then
                 table.insert(out, f)
             end
         end

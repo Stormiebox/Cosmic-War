@@ -63,9 +63,11 @@ local function getWarFactionCandidates()
         end
     end
 
+    local FactionEradicationUtility = include("factioneradicationutility")
+
     for _, index in pairs(factionIndices) do
         local f = Faction(index)
-        if f and f.isAIFaction and f:getValue("cw_enabled") then
+        if f and f.isAIFaction and f:getValue("cw_enabled") and not FactionEradicationUtility.isFactionEradicated(index) then
             table.insert(out, f)
         end
     end
