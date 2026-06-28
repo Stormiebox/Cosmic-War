@@ -93,10 +93,15 @@ end
 mission.phases[1].triggers = {
     {
         condition = function()
-
             if onClient() then return false end
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
+
+            local targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
+            if #targets == 0 then
+                mission.data.custom.failed = true
+                return true
+            end
 
             mission.data.custom.broadcastTimer = (mission.data.custom.broadcastTimer or 180) - 1
 
@@ -108,11 +113,22 @@ mission.phases[1].triggers = {
             end
 
             return mission.data.custom.broadcastTimer <= 0
-
         end,
         callback = function()
-            reward()
-            accomplish()
+            if mission.data.custom.failed then
+                local giverFaction = Faction(mission.data.custom.giverIndex)
+                if giverFaction then
+                    Player():sendChatMessage(giverFaction.name, 0, "The broadcaster was destroyed! The mission has failed."%_T)
+                end
+                fail()
+            else
+                local targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
+                for _, ship in pairs(targets) do
+                    ship:addScript("entity/deletejumped.lua")
+                end
+                reward()
+                accomplish()
+            end
         end
     }
 }
@@ -126,6 +142,7 @@ function spawnEvent(x, y)
     local broadcaster = ShipGenerator.createFreighterShip(giverFaction, generator:getPositionInSector())
     broadcaster.title = "Propaganda Broadcaster"
     broadcaster:addScript("data/scripts/entity/ai/patrol.lua")
+    broadcaster:setValue("cw_broadcaster", true)
 
     mission.data.custom.broadcastTimer = 180 -- 3 minutes
 

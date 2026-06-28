@@ -89,15 +89,43 @@ end
 mission.phases[1].triggers = {
     {
         condition = function()
-
             if onClient() then return false end
             local targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0
-
         end,
         callback = function()
             reward()
             accomplish()
+        end
+    },
+    {
+        condition = function()
+            if onClient() then return false end
+            if not atTargetLocation() then return false end
+            if not mission.data.custom.spawned then return false end
+
+            mission.data.custom.jumpTimer = (mission.data.custom.jumpTimer or 180) - 1
+
+            if mission.data.custom.jumpTimer == 60 and not mission.data.custom.warned then
+                mission.data.custom.warned = true
+                local giverFaction = Faction(mission.data.custom.giverIndex)
+                if giverFaction then
+                    Player():sendChatMessage(giverFaction.name, 0, "The convoy is spooling their hyperdrives! Stop them!"%_T)
+                end
+            end
+
+            return mission.data.custom.jumpTimer <= 0
+        end,
+        callback = function()
+            local targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
+            for _, ship in pairs(targets) do
+                ship:addScript("entity/deletejumped.lua")
+            end
+            local giverFaction = Faction(mission.data.custom.giverIndex)
+            if giverFaction then
+                Player():sendChatMessage(giverFaction.name, 0, "The convoy escaped! Mission failed."%_T)
+            end
+            fail()
         end
     }
 }
