@@ -116,7 +116,12 @@ function CW_FleetClashEvent.spawn()
         content = "A colossal hostile fleet signature has been detected dropping out of hyperspace in sector [" .. x .. ":" .. y .. "]. The " .. faction.name .. " military has declared a sector-wide state of emergency as they engage the invading " .. enemyFaction.name .. " forces.",
         category = "Conflict"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 end
 
 
@@ -125,3 +130,4 @@ function initialize(...)
 end
 
 return CW_FleetClashEvent
+

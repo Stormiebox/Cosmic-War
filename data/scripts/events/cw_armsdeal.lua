@@ -80,7 +80,12 @@ function CW_ArmsDealEvent.spawn()
         content = "Military forces belonging to the " .. militaryFaction.name .. " have reportedly intercepted an illegal weapons transfer orchestrated by the " .. smugglerFaction.name .. " in sector [" .. x .. ":" .. y .. "]. Heavy fighting is ongoing.",
         category = "Conflict"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 end
 
 
@@ -89,3 +94,4 @@ function initialize(...)
 end
 
 return CW_ArmsDealEvent
+

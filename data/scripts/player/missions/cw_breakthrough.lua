@@ -219,7 +219,12 @@ function finishAndReward(survivors)
         content = "A vital supply convoy belonging to " .. (giverFaction and giverFaction.name or "an unknown faction") .. " successfully broke through enemy lines in sector [" .. x .. ":" .. y .. "] with the help of hired escorts.",
         category = "War"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 
     reward()
     accomplish()

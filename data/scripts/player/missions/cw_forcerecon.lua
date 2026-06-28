@@ -97,7 +97,12 @@ function finishAndReward()
         content = "Military intelligence confirms the total destruction of a fortified " .. (faction and faction.name or "unknown") .. " reconnaissance outpost in sector [" .. x .. ":" .. y .. "] following a surgical strike.",
         category = "War"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 
     reward()
 end

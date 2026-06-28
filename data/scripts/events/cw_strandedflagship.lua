@@ -69,7 +69,12 @@ function CW_StrandedFlagshipEvent.spawn()
         content = "A massive flagship belonging to " .. flagshipFaction.name .. " has suffered critical engine failure and is stranded in sector [" .. x .. ":" .. y .. "]. Rival factions and opportunistic mercenaries are already moving in to capitalize on the vulnerability.",
         category = "Conflict"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 end
 
 function CW_StrandedFlagshipEvent.spawnRepairFleet()
@@ -95,3 +100,4 @@ function initialize(...)
 end
 
 return CW_StrandedFlagshipEvent
+

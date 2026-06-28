@@ -117,7 +117,12 @@ mission.phases[1].triggers = {
                 content = "A violent border patrol clash in sector [" .. x .. ":" .. y .. "] has been decisively ended by independent mercenaries fighting on behalf of " .. (faction and faction.name or "an unknown faction") .. ".",
                 category = "War"
             }
-            Server():sendCallback("onCCNewsPublishArticle", article)
+            local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
             
             reward()
             accomplish()
@@ -189,3 +194,4 @@ mission.abandon = function()
     end
     if cw_mission_abandon_original then cw_mission_abandon_original() end
 end
+

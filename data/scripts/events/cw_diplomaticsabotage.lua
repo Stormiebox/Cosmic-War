@@ -71,7 +71,12 @@ function CW_DiplomaticSabotageEvent.spawn()
         content = "An assassination attempt is currently underway! A diplomatic convoy belonging to " .. envoyFaction.name .. " is under heavy assault by " .. pirateFaction.name .. " forces in sector [" .. x .. ":" .. y .. "].",
         category = "Conflict"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 end
 
 function CW_DiplomaticSabotageEvent.checkSurvival()
@@ -97,3 +102,4 @@ function initialize(...)
 end
 
 return CW_DiplomaticSabotageEvent
+

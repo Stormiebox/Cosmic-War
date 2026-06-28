@@ -204,7 +204,12 @@ function finishAndReward()
         content = "A brutal siege has been broken! Defending " .. (giverFaction and giverFaction.name or "unknown") .. " forces, bolstered by independent commanders, successfully routed the invading fleet.",
         category = "War"
     }
-    Server():sendCallback("onCCNewsPublishArticle", article)
+    local cv_news = include("cosmicvaultnews")
+    if cv_news and cv_news.publishArticle then
+        cv_news.publishArticle(article)
+    else
+        Server():sendCallback("onCCNewsPublishArticle", article)
+    end
 
     reward()
     accomplish()
