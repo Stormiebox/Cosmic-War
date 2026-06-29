@@ -192,8 +192,8 @@ function SiegeEvent.updateServer(timeStep)
                     -- Defenders lost!
                     local cv_economy = include("cosmicvaulteconomy")
                     if cv_economy then
-                        -- Losing a sector applies 20 famine score to the defender
-                        cv_economy.addFamineScore(zone.defender, 20)
+                        -- Losing a sector applies 5 famine score to the defender
+                        cv_economy.addFamineScore(zone.defender, 5)
                         print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
                     end
 
