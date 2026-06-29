@@ -55,7 +55,8 @@ callable(nil, "requestZoneData")
 function receiveZoneData(contested, et, now, dName, iName)
     isContested = contested
     if contested then
-        endTime = et
+        local remaining = et - now
+        endTime = Client().unpausedRuntime + remaining
         defenderName = dName
         invaderName = iName
         
