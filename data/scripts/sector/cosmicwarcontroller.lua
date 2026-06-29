@@ -212,20 +212,46 @@ local function applyWarProfiteeringShortages(factions)
 
     if didShortage then
         -- Soft Bridge to Cosmic Vault News
-        pcall(function()
-            local server = Server()
-            local article = {
-                title = "Wartime Shortage",
-                category = "Trade Crisis",
-                content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
-            }
-            local cvn = include("cosmicvaultnews")
-            if cvn and cvn.publishArticle then
+        local server = Server()
+        local article = {
+            title = "Wartime Shortage",
+            category = "Trade Crisis",
+            content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
+        }
+        local cvn = include("cosmicvaultnews")
+        cvn.publishArticle(article)
+    end
+end
+
+local function applyWeaponizedSubspaceTear(factions, random)
+    local sector = Sector()
+    local x, y = sector:getCoordinates()
+
+    for _, f in pairs(factions) do
+        local heat = f:getValue("cw_war_bias") or 0
+        local enemy = f:getValue("enemy_faction") or 0
+        local rel = 0
+        if enemy > 0 then rel = f:getRelations(enemy) end
+
+        -- If at critical war heat (relations very low, bias high)
+        if rel <= -80000 then
+            -- Cosmic War - Weaponized Subspace Missions
+            if random:test(0.1) then
+                local cvn = include("cosmicvaultnews")
+                local article = {
+                    title = "Weaponized Subspace Tear",
+                    category = "War Crime",
+                    content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
+                }
                 cvn.publishArticle(article)
-            else
-                server:sendCallback("onCCNewsPublishArticle", article)
+
+                -- Add visual Rift thunder
+                sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
+                -- Add localized shield drain specific to Cosmic War (without relying on Ascendancy)
+                sector:addScriptOnce("sector/cw_rift_hazard.lua")
+                break -- Only tear the rift once per sector update
             end
-        end)
+        end
     end
 end
 
@@ -257,6 +283,7 @@ function CosmicWarController.updateServer(timeStep)
 
     applyWarPressure(a, b, random)
     applyWarProfiteeringShortages(factions)
+    applyWeaponizedSubspaceTear(factions, random)
     CosmicWarController._lastEventAt = now
 end
 

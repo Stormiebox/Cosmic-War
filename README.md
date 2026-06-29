@@ -16,6 +16,8 @@ Cosmic War brings life to the political landscape of Avorion. Factions now track
 - **Mercenary Contracts:** Sign lucrative contracts to defend borders or eliminate targets during active wars.
 - **Dynamic Invasions:** Fully simulated fleet invasions featuring mathematical scaling and dreadnoughts.
 - **Territory Expansion:** Factions seamlessly expand their borders natively in the background.
+- **Weaponized Subspace Tears:** At Critical War Heat, warring factions may detonate experimental subspace weapons, tearing the fabric of space and unleashing localized Rift hazards.
+- **War Contracts - Subspace Containment:** When a rift tears in a warzone, factions will issue high-paying War Contracts to secure emerged Ancient Tech platforms and contain the anomaly.
 </details>
 
 ## ⚙️ Requirements

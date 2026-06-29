@@ -94,3 +94,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - [Feature] Added Wartime Propaganda Beacons dynamically spawning after sieges (Cosmic Chronicles synergy).
 - [Balance] Hardcoded Imperialist and Vengeful diplomatic traits onto The Eclipse (Cosmic Ascendancy synergy).
 
+
+## [New] Rift DLC Interoperability
+- **Weaponized Subspace Tears:** At Critical War Heat, warring factions may detonate experimental subspace weapons, tearing the fabric of space and unleashing localized Rift hazards.
+- **War Contracts - Subspace Containment:** When a rift tears in a warzone, factions will issue high-paying War Contracts to secure emerged Ancient Tech platforms and contain the anomaly.
