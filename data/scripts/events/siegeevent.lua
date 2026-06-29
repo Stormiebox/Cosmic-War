@@ -192,8 +192,20 @@ function SiegeEvent.updateServer(timeStep)
                     -- Defenders lost!
                     local cv_economy = include("cosmicvaulteconomy")
                     if cv_economy then
-                        -- Losing a sector applies 5 famine score to the defender
-                        cv_economy.addFamineScore(zone.defender, 5)
+                        local faminePenalty = 5
+                        local CaptainClass = include("captainclass")
+                        for _, dShip in pairs(ships) do
+                            if (dShip.factionIndex == zone.defender or dShip.playerOwned) then
+                                local cap = dShip:getCaptain()
+                                if cap and cap:hasClass(CaptainClass.Commodore) then
+                                    faminePenalty = 2
+                                    break
+                                end
+                            end
+                        end
+
+                        -- Losing a sector applies famine score to the defender
+                        cv_economy.addFamineScore(zone.defender, faminePenalty)
                         print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
                     end
 

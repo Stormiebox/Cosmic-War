@@ -549,3 +549,8 @@ Some sectors possess Planetary Shield Generators. While these generators are act
 
 ## Electronic Warfare
 Invaders have a 35% chance to deploy a Shield Jammer, stripping shields from defenders. Planetary Defenses are immune to this.
+
+## 🌌 Cosmic Vault Synergy
+- **Deep Economy Warfare:** Market collapses and starvation natively trigger desperation invasions via the Cosmic Vault Economy simulation! Factions with 100+ Famine Scores will launch massive assaults on wealthy neighbors to survive.
+- **Weather-Assisted Boarding:** The CosmicVaultWeather API allows players to utilize weather events for sieges. If a DarkMatterFog or IonStorm hits a sector, the defending station's boarding defense multiplier is slashed by 50%!
+- **Commodore Siege Leadership:** If you are defending an allied faction's sector during a siege and ultimately fail, parking a ship with a Commodore captain in the sector will reduce the economic Famine penalty inflicted on the defenders.
