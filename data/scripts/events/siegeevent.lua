@@ -165,6 +165,16 @@ function SiegeEvent.updateServer(timeStep)
 
                 sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_t)
 
+                -- Cosmic War/Chronicles: Wartime Propaganda Beacons
+                if random():test(0.05) then
+                    local generator = SectorGenerator(x, y)
+                    local beacon = generator:createBeacon(generator:getPositionInSector(), Faction(zone.defender), "Wartime Propaganda: The Siege was broken! Glory to the defenders!")
+                    if beacon then
+                        beacon:addScriptOnce("entity/cc_blackbox.lua")
+                        beacon.title = "Wartime Propaganda Beacon"
+                    end
+                end
+
                 for _, player in pairs({sector:getPlayers()}) do
                     player:invokeFunction("cw_battlefieldhud.lua", "triggerDefenseSuccess")
                 end
@@ -207,6 +217,16 @@ function SiegeEvent.updateServer(timeStep)
                         -- Losing a sector applies famine score to the defender
                         cv_economy.addFamineScore(zone.defender, faminePenalty)
                         print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
+                    end
+
+                    -- Cosmic War/Chronicles: Wartime Propaganda Beacons
+                    if random():test(0.05) then
+                        local generator = SectorGenerator(x, y)
+                        local beacon = generator:createBeacon(generator:getPositionInSector(), Faction(zone.invader), "Wartime Propaganda: The sector has fallen! The invaders claim victory!")
+                        if beacon then
+                            beacon:addScriptOnce("entity/cc_blackbox.lua")
+                            beacon.title = "Wartime Propaganda Beacon"
+                        end
                     end
 
                     if CosmicVaultTerritory.removeContestedZone then

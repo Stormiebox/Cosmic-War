@@ -84,8 +84,18 @@ function CosmicWarTraits.applyTraits(faction)
 
     local assignedTrait = nil
 
+    -- Cosmic Ascendancy/War: Ascendancy + War Traits (Inherent Imperialism)
+    if faction.name == "The Eclipse" or faction:getValue("is_eclipse") then
+        assignedTrait = "cw_imperialist"
+        setVanillaTraitPair(faction, "active", "passive", 1.0)
+        setVanillaTraitPair(faction, "strict", "forgiving", 1.0)
+        setVanillaTraitPair(faction, "sadistic", "sympathetic", 1.0)
+        setVanillaTraitPair(faction, "aggressive", "peaceful", 1.0)
+    end
+
     -- Primary extreme evaluation
-    if aggressive > 0.6 and opportunistic > 0.4 then
+    if not assignedTrait then
+        if aggressive > 0.6 and opportunistic > 0.4 then
         assignedTrait = "cw_warmonger"
     elseif peaceful > 0.6 and trusting > 0.4 then
         assignedTrait = "cw_pacifist"
@@ -103,6 +113,7 @@ function CosmicWarTraits.applyTraits(faction)
         assignedTrait = "cw_mercantile"
     elseif mistrustful > 0.8 and careful > 0.2 then
         assignedTrait = "cw_xenophobic"
+    end
     end
 
     -- 30% chance to forcefully inject a specialized trait if generic
@@ -161,9 +172,15 @@ function CosmicWarTraits.applyTraits(faction)
         if assignedTrait ~= "cw_balanced" then
             cvf.setTrait(faction.index, assignedTrait, 1.0)
         end
+        if faction.name == "The Eclipse" or faction:getValue("is_eclipse") then
+            cvf.setTrait(faction.index, "cw_vengeful", 1.0)
+        end
     else
         -- Fallback if Cosmic Vault is missing
         faction:setValue("cosmic_trait_" .. assignedTrait, 1.0)
+        if faction.name == "The Eclipse" or faction:getValue("is_eclipse") then
+            faction:setValue("cosmic_trait_cw_vengeful", 1.0)
+        end
     end
 end
 
