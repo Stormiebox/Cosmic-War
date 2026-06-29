@@ -30,12 +30,11 @@ local function cwlog(msg, ...)
     print("[Cosmic War][Bounties] " .. string.format(msg, ...))
 end
 
-local function getGalaxyFactions(server)
+local function getGalaxyFactionIndices(server)
     if not server or type(server.getValue) ~= "function" then return {} end
 
-    local factions = {}
-    local factionStr = server:getValue("factions")
     local factionIndices = {}
+    local factionStr = server:getValue("factions")
 
     if type(factionStr) == "string" and factionStr ~= "" then
         for id in string.gmatch(factionStr, "([^,]+)") do
@@ -43,14 +42,16 @@ local function getGalaxyFactions(server)
         end
     end
 
+    local FactionEradicationUtility = include("factioneradicationutility")
+    local validIndices = {}
+
     for _, index in pairs(factionIndices) do
-        local faction = Faction(index)
-        if faction then
-            table.insert(factions, faction)
+        if not FactionEradicationUtility.isFactionEradicated(index) then
+            table.insert(validIndices, index)
         end
     end
 
-    return factions
+    return validIndices
 end
 
 function CosmicWarBounties.update(timeStep)
@@ -59,8 +60,8 @@ function CosmicWarBounties.update(timeStep)
     local server = Server()
     if not server then return end
 
-    local factions = getGalaxyFactions(server)
-    if #factions < 2 then return end
+    local factionIndices = getGalaxyFactionIndices(server)
+    if #factionIndices < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 60))
     local cfg = getCfg()
@@ -72,12 +73,13 @@ function CosmicWarBounties.update(timeStep)
             local spawned = 0
             local iters = 0
 
-            for _, f in pairs(factions) do
+            for _, idx in pairs(factionIndices) do
                 iters = iters + 1
                 if iters % 10 == 0 and cv_task.Yield then
                     cv_task.Yield()
                 end
 
+                local f = Faction(idx)
                 if f and f.isAIFaction and f:getValue("cw_enabled") then
                     local enemyIndex = f:getValue("enemy_faction")
                     if enemyIndex and enemyIndex > 0 then
@@ -102,7 +104,8 @@ function CosmicWarBounties.update(timeStep)
         end)
     else
         local spawned = 0
-        for _, f in pairs(factions) do
+        for _, idx in pairs(factionIndices) do
+            local f = Faction(idx)
             if f and f.isAIFaction and f:getValue("cw_enabled") then
                 local enemyIndex = f:getValue("enemy_faction")
                 if enemyIndex and enemyIndex > 0 then

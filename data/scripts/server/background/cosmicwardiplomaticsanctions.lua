@@ -17,12 +17,11 @@ local function getCfg()
     }
 end
 
-local function getGalaxyFactions(server)
+local function getGalaxyFactionIndices(server)
     if not server or type(server.getValue) ~= "function" then return {} end
 
-    local factions = {}
-    local factionStr = server:getValue("factions")
     local factionIndices = {}
+    local factionStr = server:getValue("factions")
 
     if type(factionStr) == "string" and factionStr ~= "" then
         for id in string.gmatch(factionStr, "([^,]+)") do
@@ -30,14 +29,16 @@ local function getGalaxyFactions(server)
         end
     end
 
+    local FactionEradicationUtility = include("factioneradicationutility")
+    local validIndices = {}
+
     for _, index in pairs(factionIndices) do
-        local faction = Faction(index)
-        if faction then
-            table.insert(factions, faction)
+        if not FactionEradicationUtility.isFactionEradicated(index) then
+            table.insert(validIndices, index)
         end
     end
 
-    return factions
+    return validIndices
 end
 
 function CosmicWarDiplomaticSanctions.getUpdateInterval()
@@ -62,8 +63,8 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
     local server = Server()
     if not server then return end
 
-    local factions = getGalaxyFactions(server)
-    if #factions < 2 then return end
+    local factionIndices = getGalaxyFactionIndices(server)
+    if #factionIndices < 2 then return end
 
     local random = Random(server.seed + math.floor(server.unpausedRuntime / 120))
     local cfg = getCfg()
@@ -75,12 +76,13 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
             local penalized = 0
             local iters = 0
 
-            for _, a in pairs(factions) do
+            for _, idx in pairs(factionIndices) do
                 iters = iters + 1
                 if iters % 10 == 0 and cv_task.Yield then
                     cv_task.Yield()
                 end
 
+                local a = Faction(idx)
                 if a and a.isAIFaction and a:getValue("cw_enabled") then
                     local enemy = a:getValue("enemy_faction")
                     if enemy and enemy > 0 then
@@ -117,7 +119,8 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
     else
         local penalized = 0
 
-        for _, a in pairs(factions) do
+        for _, idx in pairs(factionIndices) do
+            local a = Faction(idx)
             if a and a.isAIFaction and a:getValue("cw_enabled") then
                 local enemy = a:getValue("enemy_faction")
                 if enemy and enemy > 0 then
