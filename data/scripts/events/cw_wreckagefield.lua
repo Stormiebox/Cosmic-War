@@ -38,20 +38,13 @@ function cw_wreckagefield.initialize()
     end
 
     -- If Cosmic Vault News is installed, broadcast news
-    pcall(function()
-        local server = Server()
-        local article = {
+    local article = {
             title = "Massive Graveyard Discovered",
             category = "War Casualties",
             content = "Scouts returning from sector (" .. x .. ":" .. y .. ") report finding a dense cluster of capital ship wreckages. Scavengers are already flocking to the area to pick the bones clean."
         }
-        local cvn = include("cosmicvaultnews")
-        if cvn and cvn.publishArticle then
-            cvn.publishArticle(article)
-        else
-            server:sendCallback("onCCNewsPublishArticle", article)
-        end
-    end)
+    local cvn = include("cosmicvaultnews")
+    cvn.publishArticle(article)
 
     terminate()
 end

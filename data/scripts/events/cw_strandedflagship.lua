@@ -70,11 +70,7 @@ function CW_StrandedFlagshipEvent.spawn()
         category = "Conflict"
     }
     local cv_news = include("cosmicvaultnews")
-    if cv_news and cv_news.publishArticle then
-        cv_news.publishArticle(article)
-    else
-        Server():sendCallback("onCCNewsPublishArticle", article)
-    end
+    cv_news.publishArticle(article)
 end
 
 function CW_StrandedFlagshipEvent.spawnRepairFleet()

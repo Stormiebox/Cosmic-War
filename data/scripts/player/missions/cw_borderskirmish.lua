@@ -75,7 +75,7 @@ function initialize(factionIndex)
         local baseReward = math.floor(100000 + heat * 150000)
 
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing.GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 4000,
             paymentMessage = "Patrol eliminated. We will not be intimidated on our own borders. Payment transferred."%_T
         }
@@ -118,11 +118,7 @@ mission.phases[1].triggers = {
                 category = "War"
             }
             local cv_news = include("cosmicvaultnews")
-    if cv_news and cv_news.publishArticle then
-        cv_news.publishArticle(article)
-    else
-        Server():sendCallback("onCCNewsPublishArticle", article)
-    end
+    cv_news.publishArticle(article)
             
             reward()
             accomplish()
@@ -154,7 +150,7 @@ function getBulletin(station)
     local baseReward = math.floor(100000 + heat * 150000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
-    local rewardCredits = baseReward * Balancing.GetSectorRewardFactor(Sector():getCoordinates()) * mult
+    local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
         relations = 4000,

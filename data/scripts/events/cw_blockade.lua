@@ -53,20 +53,13 @@ function cw_blockade.initialize()
     end
 
     -- If Cosmic Vault News is installed, broadcast news
-    pcall(function()
-        local server = Server()
-        local article = {
+    local article = {
             title = "Trade Route Blockaded!",
             category = "War Update",
             content = attacker.name .. " forces have established a blockade on the outskirts of sector (" .. x .. ":" .. y .. "). All neutral merchants and civilian vessels are advised to steer clear or risk being fired upon."
         }
-        local cvn = include("cosmicvaultnews")
-        if cvn and cvn.publishArticle then
-            cvn.publishArticle(article)
-        else
-            server:sendCallback("onCCNewsPublishArticle", article)
-        end
-    end)
+    local cvn = include("cosmicvaultnews")
+    cvn.publishArticle(article)
 
     terminate()
 end
