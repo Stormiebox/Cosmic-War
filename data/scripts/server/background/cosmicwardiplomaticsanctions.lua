@@ -103,7 +103,7 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
                                     local maxLoss = 12000 + math.floor(warBias * 6000)
                                     local loss = random:getInt(minLoss, maxLoss)
 
-                                    a:pay("Diplomatic Sanctions"%_T, loss)
+                                    a:payWithoutNotify("Diplomatic Sanctions", loss)
                                     penalized = penalized + 1
                                 end
                             end
@@ -141,7 +141,7 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
                                 local maxLoss = 12000 + math.floor(warBias * 6000)
                                 local loss = random:getInt(minLoss, maxLoss)
 
-                                a:pay("Diplomatic Sanctions"%_T, loss)
+                                a:payWithoutNotify("Diplomatic Sanctions", loss)
                                 penalized = penalized + 1
                             end
                         end
