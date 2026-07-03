@@ -90,10 +90,9 @@ function SiegeEvent.startSiege(zoneData)
         transport:invokeFunction("trooptransport.lua", "setTarget", targetStation.id)
 
         -- Give them heavy shields but no weapons (abstracted)
-        local shield = Shield(transport.id)
-        if shield then
-            shield.maximum = shield.maximum * 5 -- 5x shields to survive point defense
-            shield.durability = shield.maximum
+        if transport:hasComponent(ComponentType.Shield) then
+            transport.shieldMaximum = transport.shieldMaximum * 5 -- 5x shields to survive point defense
+            transport.shieldDurability = transport.shieldMaximum
         end
 
         position = generator:getPositionInSector(15000)
@@ -115,10 +114,9 @@ function SiegeEvent.startSiege(zoneData)
             dreadnought.name = "Invader"
             ShipAI(dreadnought.index):setAggressive()
 
-            local dShield = Shield(dreadnought.id)
-            if dShield then
-                dShield.maximum = dShield.maximum * 5
-                dShield.durability = dShield.maximum
+            if dreadnought:hasComponent(ComponentType.Shield) then
+                dreadnought.shieldMaximum = dreadnought.shieldMaximum * 5
+                dreadnought.shieldDurability = dreadnought.shieldMaximum
             end
         end
     end

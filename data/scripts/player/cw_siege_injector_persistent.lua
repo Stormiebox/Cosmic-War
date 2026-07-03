@@ -17,11 +17,14 @@ function onSectorEntered(playerIndex, x, y, sectorChangeType)
                 -- Running in player/sector context, so Sector() is 100% legal here
                 local sector = Sector()
                 if sector then
-                    -- Attach the siege event to the sector if it isn't already attached
-                    if not sector:hasScript("events/siegeevent.lua") then
-                        sector:addScript("data/scripts/events/siegeevent.lua")
-                        sector:invokeFunction("events/siegeevent.lua", "initialize")
-                    end
+                    -- Attach the siege event to the sector safely
+                    sector:addScriptOnce("data/scripts/events/siegeevent.lua")
+                    -- Note: addScriptOnce doesn't guarantee the script wasn't already there, 
+                    -- so we invoke initialize just in case it's newly added. Wait, actually, 
+                    -- if it already exists, invoking initialize might reset it. Let's just leave
+                    -- invokeFunction out if addScriptOnce handles it natively, or check manually.
+                    -- Avorion automatically calls initialize() when a script is added.
+
                 end
             end
         end

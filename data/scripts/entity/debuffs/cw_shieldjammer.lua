@@ -24,10 +24,9 @@ function CW_ShieldJammer.updateServer(timeStep)
         return
     end
 
-    local shield = Shield(entity.id)
-    if shield then
+    if entity:hasComponent(ComponentType.Shield) then
         -- Force shield durability to 0 constantly, preventing regeneration and keeping it vulnerable
-        shield.durability = 0
+        entity.shieldDurability = 0
     end
 
     if duration <= 0 then

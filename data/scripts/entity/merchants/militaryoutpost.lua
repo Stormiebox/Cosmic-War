@@ -75,7 +75,7 @@ function enlistPlayer()
     
     if player:hasScript("cosmicwar_mercenary.lua") then return end
     
-    player:addScript("data/scripts/player/cosmicwar_mercenary.lua")
+    player:addScriptOnce("data/scripts/player/cosmicwar_mercenary.lua")
     player:setValue("cw_mercenary_faction", entity.factionIndex)
     
     player:sendChatMessage(entity.name, 0, "Welcome aboard. Your privateer license is active. Hunt down our enemies.")

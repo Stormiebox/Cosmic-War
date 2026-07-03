@@ -64,7 +64,7 @@ function processPurchase(amount)
     player:pay("Warbond Purchase"%_t, amount)
     
     if not player:hasScript("cosmicwar_warbonds.lua") then
-        player:addScript("data/scripts/player/cosmicwar_warbonds.lua")
+        player:addScriptOnce("data/scripts/player/cosmicwar_warbonds.lua")
     end
     
     -- Save the bond data to the player script

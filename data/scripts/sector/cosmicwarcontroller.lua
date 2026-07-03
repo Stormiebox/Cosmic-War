@@ -235,15 +235,61 @@ local function applyWeaponizedSubspaceTear(factions, random)
 
         -- If at critical war heat (relations very low, bias high)
         if rel <= -80000 then
-            -- Cosmic War - Weaponized Subspace Missions
+            -- Synergy: Eclipse Sanitization Protocol (10% chance)
+            local EclipseGenerator = include("eclipsegenerator")
+            if EclipseGenerator and Server():getValue("eclipse_fully_awake") and random:test(0.1) then
+                local cvn = include("cosmicvaultnews")
+                if cvn then
+                    local article = {
+                        title = "Sanitization Protocol",
+                        category = "Eclipse Invasion",
+                        content = "The immense chaos and subspace tearing in sector (" .. x .. ":" .. y .. ") has drawn the attention of the Eclipse. A multiversal sanitization fleet has warped in, forcing all warring factions into a desperate ceasefire!"
+                    }
+                    cvn.publishArticle(article)
+                end
+
+                local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000)))
+                local harbinger = EclipseGenerator.createShip(pos, "obelisk", 2.0, 30)
+                if harbinger then
+                    harbinger:addScriptOnce("ai/aggressiveship.lua")
+                end
+
+                for i = 1, 4 do
+                    local mPos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000)))
+                    local defender = EclipseGenerator.createJuggernaut(mPos)
+                    if defender then
+                        defender:addScriptOnce("ai/aggressiveship.lua")
+                    end
+                end
+
+                -- Ceasefire
+                local enemyFaction = Faction(enemy)
+                if enemyFaction then
+                    local cvf = include("cosmicvaultfaction")
+                    if cvf and cvf.changeRelations then
+                        cvf.changeRelations(f.index, enemy, 40000) -- massive relation boost
+                    else
+                        local newRel = rel + 40000
+                        Galaxy():setFactionRelations(f, enemyFaction, newRel)
+                    end
+                    f:setValue("cw_war_bias", 0)
+                    enemyFaction:setValue("cw_war_bias", 0)
+                end
+                
+                break -- only one intervention per sector update
+            end
+
+            -- Cosmic War - Weaponized Subspace Missions (Normal behavior, 10% chance)
             if random:test(0.1) then
                 local cvn = include("cosmicvaultnews")
-                local article = {
-                    title = "Weaponized Subspace Tear",
-                    category = "War Crime",
-                    content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
-                }
-                cvn.publishArticle(article)
+                if cvn then
+                    local article = {
+                        title = "Weaponized Subspace Tear",
+                        category = "War Crime",
+                        content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
+                    }
+                    cvn.publishArticle(article)
+                end
 
                 -- Add visual Rift thunder
                 sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
