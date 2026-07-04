@@ -81,6 +81,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - Corrected distance checks and serialization methods to match vanilla C++ bindings.
 - **Fixed:** `cw_deploy_mines.lua` trigger condition did not increment the deployment counter, making the contract impossible to complete. Now properly increments and completes after a set time.
 - **Fixed:** `cw_propaganda_broadcast.lua` trigger was evaluating every server tick instead of every second, causing the 3-minute broadcast to complete in under 10 seconds. Added `getUpdateInterval` to correctly pace the mission.
+- **Fixed:** `cw_forcerecon.lua` "Force Recon" mission soft-locking due to a missing station script (`sensorarray.lua`). The mission now correctly generates a Military Outpost as the covert listening post.
 - **Fixed:** `dreadnoughtboss.lua` incorrectly parsed varargs into a table when fetching enemies, resulting in incomplete target lists.
 - **Diplomacy Engine Crash:** Fixed `EXCEPTION_ACCESS_VIOLATION` caused by processing relation changes on asynchronous background threads. Diplomacy calculations now run safely synchronously on the main thread.
 - **Cosmic Codex Loading Crash:** Fixed missing global definitions (e.g. `entities`, `rangeType`) in the codex files that prevented the encyclopedia from loading correctly and crashed the UI.

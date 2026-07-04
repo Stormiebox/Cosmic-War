@@ -93,31 +93,44 @@ function CosmicWarTraits.applyTraits(faction)
         setVanillaTraitPair(faction, "aggressive", "peaceful", 1.0)
     end
 
-    -- Primary extreme evaluation
+    -- Primary Fitness Evaluation
     if not assignedTrait then
-        if aggressive > 0.6 and opportunistic > 0.4 then
-        assignedTrait = "cw_warmonger"
-    elseif peaceful > 0.6 and trusting > 0.4 then
-        assignedTrait = "cw_pacifist"
-    elseif careful > 0.6 and mistrustful > 0.6 then
-        assignedTrait = "cw_isolationist"
-    elseif opportunistic > 0.7 and greedy > 0.5 then
-        assignedTrait = "cw_opportunist"
-    elseif aggressive > 0.4 and greedy > 0.6 then
-        assignedTrait = "cw_imperialist"
-    elseif careful > 0.7 and peaceful > 0.2 then
-        assignedTrait = "cw_entrenched"
-    elseif mistrustful > 0.7 and aggressive > 0.4 then
-        assignedTrait = "cw_vengeful"
-    elseif greedy > 0.7 and peaceful > 0.2 then
-        assignedTrait = "cw_mercantile"
-    elseif mistrustful > 0.8 and careful > 0.2 then
-        assignedTrait = "cw_xenophobic"
-    end
+        local candidates = {}
+        
+        -- Clamp to 0 so negative (contrary) traits don't penalize scores
+        local agg = math.max(0, aggressive)
+        local pac = math.max(0, peaceful)
+        local car = math.max(0, careful)
+        local opp = math.max(0, opportunistic)
+        local gre = math.max(0, greedy)
+        local tru = math.max(0, trusting)
+        local mis = math.max(0, mistrustful)
+        
+        candidates["cw_warmonger"] = (agg * 1.5) + (opp * 1.0)
+        candidates["cw_pacifist"] = (pac * 1.5) + (tru * 1.0)
+        candidates["cw_isolationist"] = (car * 1.2) + (mis * 1.2)
+        candidates["cw_opportunist"] = (opp * 1.5) + (gre * 1.0)
+        candidates["cw_imperialist"] = (agg * 1.2) + (gre * 1.2)
+        candidates["cw_entrenched"] = (car * 1.5) + (pac * 1.0)
+        candidates["cw_vengeful"] = (mis * 1.5) + (agg * 1.0)
+        candidates["cw_mercantile"] = (gre * 1.5) + (pac * 1.0)
+        candidates["cw_xenophobic"] = (mis * 1.6) + (car * 0.8)
+
+        local bestTrait = nil
+        local bestScore = 1.0 -- Must score at least > 1.0 to natively qualify
+
+        for trait, score in pairs(candidates) do
+            if score > bestScore then
+                bestScore = score
+                bestTrait = trait
+            end
+        end
+
+        assignedTrait = bestTrait
     end
 
-    -- 30% chance to forcefully inject a specialized trait if generic
-    if not assignedTrait and random:test(0.30) then
+    -- 40% chance to forcefully inject a specialized trait if generic
+    if not assignedTrait and random:test(0.40) then
         local roll = random:getInt(1, 9)
         local traitsList = {
             "cw_warmonger", "cw_pacifist", "cw_isolationist", "cw_opportunist",

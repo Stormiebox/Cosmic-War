@@ -117,7 +117,7 @@ function buildUI()
     local width = 600
     local height = 40
     local x = (res.x / 2) - (width / 2)
-    local y = 60
+    local y = 95
     
     uiContainer = Hud():createContainer(Rect(x, y, x + width, y + height))
     
@@ -135,6 +135,15 @@ function buildUI()
     timeLabel.color = ColorRGB(1, 1, 1)
     
     uiContainer:hide()
+end
+
+function onResolutionChanged(res)
+    if not uiContainer then return end
+    local width = 600
+    local height = 40
+    local x = (res.x / 2) - (width / 2)
+    local y = 95
+    uiContainer.rect = Rect(x, y, x + width, y + height)
 end
 
 function getUpdateInterval()

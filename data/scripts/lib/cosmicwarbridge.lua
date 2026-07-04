@@ -57,7 +57,13 @@ function CosmicWarBridge.computeWarHeatForFaction(faction)
         pairBonus = 0.2
     end
 
-    local heat = relHeat * 0.6 + bias * 0.2 + pairBonus
+    local server = Server()
+    local famineA = server and (server:getValue("cv_famine_" .. tostring(faction.index)) or 0) or 0
+    local famineB = server and (server:getValue("cv_famine_" .. tostring(enemyFaction.index)) or 0) or 0
+    local maxFamine = math.max(famineA, famineB)
+    local famineHeat = math.min(0.4, maxFamine / 250)
+    
+    local heat = relHeat * 0.6 + bias * 0.2 + pairBonus + famineHeat
     return math.min(1.0, math.max(0.0, heat))
 end
 

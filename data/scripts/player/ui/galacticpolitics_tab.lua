@@ -76,24 +76,25 @@ if onClient() then
         -- Reserve 160px at the bottom of the UI for the Legend/Summary section
         local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - 160)
         politicsList = container:createListBoxEx(listRect)
-        politicsList.columns = 5
+        politicsList.columns = 6
         politicsList.rowHeight = 35
 
         -- Calculate column widths cleanly to account for the scrollbar
         local width = listRect.width - 20
-        politicsList:setColumnWidth(0, width * 0.25)
-        politicsList:setColumnWidth(1, width * 0.25)
+        politicsList:setColumnWidth(0, width * 0.20)
+        politicsList:setColumnWidth(1, width * 0.20)
         politicsList:setColumnWidth(2, width * 0.15)
-        politicsList:setColumnWidth(3, width * 0.20)
+        politicsList:setColumnWidth(3, width * 0.15)
         politicsList:setColumnWidth(4, width * 0.15)
+        politicsList:setColumnWidth(5, width * 0.15)
 
         self.selectedSorting = 3
         self.sortingType = -1
         self.sortingButtons = {}
-        local colWidths = { width * 0.25, width * 0.25, width * 0.15, width * 0.20, width * 0.15 }
-        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Status"%_t, "Relations"%_t}
+        local colWidths = { width * 0.20, width * 0.20, width * 0.15, width * 0.15, width * 0.15, width * 0.15 }
+        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Famine"%_t, "Status"%_t, "Relations"%_t}
         local currentX = margin
-        for i = 1, 5 do
+        for i = 1, 6 do
             local btnRect = Rect(currentX, listRect.lower.y - 25, currentX + colWidths[i] - 2, listRect.lower.y)
             local btn = container:createButton(btnRect, sortingLabels[i], "onSort" .. i)
             btn.hasFrame = false
@@ -112,7 +113,8 @@ if onClient() then
         local legendStr = "Legend:"%_t .. "\n" ..
             " [!] " .. "Active War Bounty (Check Tooltip)"%_t .. "\n" ..
             " " .. "War Heat:"%_t .. " (" .. "Red"%_t .. ") " .. "Critical"%_t .. " | (" .. "Orange"%_t .. ") " .. "High"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Rising"%_t .. " | (" .. "Green"%_t .. ") " .. "Zero"%_t .. "\n" ..
-            " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t
+            " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t .. "\n" ..
+            " " .. "Famine:"%_t .. " (" .. "Green"%_t .. ") " .. "Normal"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Struggling"%_t .. " | (" .. "Red"%_t .. ") " .. "Critical"%_t
         local legendRectInset = Rect(infoSplit.left.lower + vec2(10, 10), infoSplit.left.upper - vec2(10, 10))
         local legendLabel = container:createLabel(legendRectInset, legendStr, 15)
         legendLabel.wordBreak = true
@@ -148,6 +150,7 @@ if onClient() then
     function GalacticPoliticsTab.onSort3() self.updateSorting(3) end
     function GalacticPoliticsTab.onSort4() self.updateSorting(4) end
     function GalacticPoliticsTab.onSort5() self.updateSorting(5) end
+    function GalacticPoliticsTab.onSort6() self.updateSorting(6) end
 
     function GalacticPoliticsTab.updateSorting(newSorting)
         if self.selectedSorting == newSorting then
@@ -161,7 +164,7 @@ if onClient() then
     end
 
     function GalacticPoliticsTab.updateSortingIcons()
-        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Status"%_t, "Relations"%_t}
+        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Famine"%_t, "Status"%_t, "Relations"%_t}
         for ndx, button in ipairs(self.sortingButtons) do
             local label = sortingLabels[ndx]
             if ndx == self.selectedSorting then
@@ -199,8 +202,9 @@ if onClient() then
             if self.selectedSorting == 1 then valA, valB = a.factionA, b.factionA
             elseif self.selectedSorting == 2 then valA, valB = a.factionB, b.factionB
             elseif self.selectedSorting == 3 then valA, valB = a.heat, b.heat
-            elseif self.selectedSorting == 4 then valA, valB = a.status, b.status
-            elseif self.selectedSorting == 5 then valA, valB = a.relation, b.relation
+            elseif self.selectedSorting == 4 then valA, valB = math.max(a.famineA, a.famineB), math.max(b.famineA, b.famineB)
+            elseif self.selectedSorting == 5 then valA, valB = a.status, b.status
+            elseif self.selectedSorting == 6 then valA, valB = a.relation, b.relation
             end
 
             if valA == valB then return false end
@@ -251,23 +255,37 @@ if onClient() then
                 relationText = getRelationDescription(conflict.relation)
             end
 
+            local maxFamine = math.max(conflict.famineA or 0, conflict.famineB or 0)
+            local famineText = "Normal"%_t
+            local famineColor = ColorRGB(0.2, 1.0, 0.2)
+            if maxFamine >= 100 then
+                famineText = "Critical"%_t
+                famineColor = ColorRGB(1.0, 0.2, 0.2)
+            elseif maxFamine >= 50 then
+                famineText = "Struggling"%_t
+                famineColor = ColorRGB(1.0, 1.0, 0.2)
+            end
+
             -- Cosmic War: Populates the row entries. Colors dynamically indicate player relations and overall war heat.
             politicsList:setEntryNoCallback(0, row, nameA, false, false, getRelationColor(relA))
             politicsList:setEntryNoCallback(1, row, nameB, false, false, getRelationColor(relB))
             politicsList:setEntryNoCallback(2, row, tostring(conflict.heat) .. "%", false, false, heatColor)
-            politicsList:setEntryNoCallback(3, row, conflict.status%_t, false, false, heatColor)
-            politicsList:setEntryNoCallback(4, row, relationText, false, false, gray)
+            politicsList:setEntryNoCallback(3, row, famineText, false, false, famineColor)
+            politicsList:setEntryNoCallback(4, row, conflict.status%_t, false, false, heatColor)
+            politicsList:setEntryNoCallback(5, row, relationText, false, false, gray)
 
             local tooltip = "=== " .. nameA .. " ===\n"
             tooltip = tooltip .. "Index: "%_t .. conflict.factionAIndex .. "\n"
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsA) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relA) .. " (" .. math.floor(relA) .. ")\n"
+            if (conflict.famineA or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineA) .. "\n" end
             if conflict.bountyA > 0 then tooltip = tooltip .. "Bounty on Enemy: ¢"%_t .. createMonetaryString(conflict.bountyA) .. "\n" end
 
             tooltip = tooltip .. "\n=== " .. nameB .. " ===\n"
             tooltip = tooltip .. "Index: "%_t .. conflict.factionBIndex .. "\n"
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsB) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relB) .. " (" .. math.floor(relB) .. ")\n"
+            if (conflict.famineB or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineB) .. "\n" end
             if conflict.bountyB > 0 then tooltip = tooltip .. "Bounty on Enemy: ¢"%_t .. createMonetaryString(conflict.bountyB) .. "\n" end
 
             politicsList:setTooltip(row, tooltip)
@@ -354,15 +372,20 @@ function GalacticPoliticsTab.serverFetchData()
                         local fName = f.name or ("Faction " .. tostring(f.index))
                         local eName = e.name or ("Faction " .. tostring(e.index))
 
+                        local famineA = server:getValue("cv_famine_" .. tostring(f.index)) or 0
+                        local famineB = server:getValue("cv_famine_" .. tostring(e.index)) or 0
+
                         table.insert(conflicts, {
                             factionA = string.gsub(fName, "%s*/%*.-%*/%s*", ""),
                             factionAIndex = f.index,
                             traitsA = getFactionTraitsSafe(f),
                             bountyA = bountyA,
+                            famineA = famineA,
                             factionB = string.gsub(eName, "%s*/%*.-%*/%s*", ""),
                             factionBIndex = e.index,
                             traitsB = getFactionTraitsSafe(e),
                             bountyB = bountyB,
+                            famineB = famineB,
                             heat = math.floor(heat * 100),
                             relation = rel,
                             status = status

@@ -66,9 +66,10 @@ function initialize(factionIndex)
 
         mission.data.description = {
             { text = "You accepted a Force Recon contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Locate and scan the Covert Listening Post belonging to ${enemy}."%_T, arguments = { enemy = enemyName } },
+            { text = "Locate the Covert Listening Post belonging to ${enemy}."%_T, arguments = { enemy = enemyName } },
             { text = "Head to sector (${location.x}:${location.y})"%_T,                   bulletPoint = true, fulfilled = false },
-            { text = "Stay within 6km of the Listening Post until the scan completes"%_T, bulletPoint = true, fulfilled = false, visible = false }
+            { text = "Fly within 15km of the Listening Post to establish a passive data link (No active scanner module required)"%_T, bulletPoint = true, fulfilled = false, visible = false },
+            { text = "Data Link Progress: ${percent}%"%_T, arguments = { percent = "0" }, bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = 0
@@ -112,6 +113,7 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     mission.data.description[4].visible = true
+    mission.data.description[5].visible = true
 
     if not mission.data.custom.spawned then
         spawnReconTarget(x, y)
@@ -142,21 +144,27 @@ mission.phases[1].updateServer = function(timeStep)
 
     local dist = distance(craft.translationf, station.translationf)
 
-    -- 600 units is roughly 6km
-    if dist < 600 then
+    -- 1500 units is roughly 15km
+    if dist < 1500 then
         if not mission.data.custom.scanning then
             mission.data.custom.scanning = true
             if giverFaction then
-                Player():sendChatMessage(giverFaction.name, 0,
-                    "You are in range. Establishing data link... Stay close!"%_T)
+                Player():sendChatMessage(giverFaction.name, 3,
+                    "You are in range. Establishing passive data link... Stay within 15km!"%_T)
             end
         end
 
         mission.data.custom.scanTimer = (mission.data.custom.scanTimer or 0) + timeStep
+        local percent = math.floor((mission.data.custom.scanTimer / 45.0) * 100)
+        mission.data.description[5].arguments = { percent = tostring(percent) }
+        sync()
 
         if mission.data.custom.scanTimer > 45 then
             mission.data.custom.finished = true
-            reward()
+            mission.data.description[5].arguments = { percent = "100" }
+            mission.data.description[5].fulfilled = true
+            sync()
+            finishAndReward()
             accomplish()
         end
     else
@@ -164,7 +172,7 @@ mission.phases[1].updateServer = function(timeStep)
             mission.data.custom.scanning = false
             if giverFaction then
                 Player():sendChatMessage(giverFaction.name, 1,
-                    "Data link lost! You are too far away from the station!"%_T)
+                    "Data link lost! You are too far away from the station! Return to 15km range."%_T)
             end
         end
     end
@@ -176,7 +184,7 @@ function spawnReconTarget(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     if not enemyFaction then return end
 
-    local station = generator:createStation(enemyFaction, "data/scripts/entity/merchants/sensorarray.lua")
+    local station = generator:createStation(enemyFaction, "data/scripts/entity/merchants/militaryoutpost.lua")
     station:setTitle("Covert Listening Post"%_T, {})
     station:setValue("cw_recon_target", true)
 
