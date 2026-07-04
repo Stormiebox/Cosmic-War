@@ -119,7 +119,7 @@ mission.phases[1].triggers = {
         callback = function()
             local targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
             for _, ship in pairs(targets) do
-                ship:addScript("entity/deletejumped.lua")
+                ship:addScriptOnce("entity/deletejumped.lua")
             end
             local giverFaction = Faction(mission.data.custom.giverIndex)
             if giverFaction then
@@ -138,7 +138,7 @@ function spawnEvent(x, y)
 
     for i=1, 3 do
         local freighter = ShipGenerator.createFreighterShip(enemyFaction, generator:getPositionInSector())
-        freighter:addScript("data/scripts/entity/ai/patrol.lua")
+        freighter:addScriptOnce("data/scripts/entity/ai/patrol.lua")
         freighter:setValue("cw_raid_target", true)
     end
     for i=1, 2 do

@@ -50,7 +50,7 @@ function CW_StrandedFlagshipEvent.spawn()
     ship:setTitle("Stranded Flagship"%_T, {})
     ship.name = flagshipFaction.name .. " Dreadnought"
     ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
-    ship:addScript("data/scripts/entity/ai/dreadnoughtboss.lua")
+    ship:addScriptOnce("data/scripts/entity/ai/dreadnoughtboss.lua")
 
     -- Cripple the ship
     ship.durability = ship.durability * 0.15

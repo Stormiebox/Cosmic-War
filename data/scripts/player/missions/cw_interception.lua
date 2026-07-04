@@ -149,7 +149,7 @@ mission.phases[1].triggers = {
         callback = function()
             local targets = { Sector():getEntitiesByScriptValue("cw_interception_target") }
             for _, ship in pairs(targets) do
-                ship:addScript("entity/deletejumped.lua")
+                ship:addScriptOnce("entity/deletejumped.lua")
             end
             local giverFaction = Faction(mission.data.custom.giverIndex)
             if giverFaction then

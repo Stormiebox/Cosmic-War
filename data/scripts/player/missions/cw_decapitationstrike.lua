@@ -141,7 +141,7 @@ function spawnFlagship(x, y)
     flagship:setValue("cw_flagship", true)
 
     -- Give it boss properties
-    flagship:addScript("data/scripts/entity/ai/dreadnoughtboss.lua")
+    flagship:addScriptOnce("data/scripts/entity/ai/dreadnoughtboss.lua")
     flagship.damageMultiplier = 3.0
 
     -- Scale Damage and Boarding Defense (Safer than maxDurability since block damage recalculates HP)

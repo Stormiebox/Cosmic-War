@@ -66,20 +66,18 @@ function onDestroyed(destroyedId, destroyerId)
                         local sx, sy = Sector():getCoordinates()
                         
                         -- Dispatch Galactic News event
-                        pcall(function()
-                            local article = {
-                                title = "War Bounty Claimed",
-                                category = "Conflict",
-                                content = string.format("Freelance mercenaries successfully confirmed a high-profile kill on %s forces in sector (%d:%d). %s promptly wired the %d Credits bounty, proving once again that war is a highly profitable business.", 
-                                    Faction(victimFactionIndex).name, sx, sy, f.name, finalReward)
-                            }
-                            local cvn = include("cosmicvaultnews")
-                            if cvn and cvn.publishArticle then
-                                cvn.publishArticle(article)
-                            else
-                                server:sendCallback("onCCNewsPublishArticle", article)
-                            end
-                        end)
+                        local article = {
+                            title = "War Bounty Claimed",
+                            category = "Conflict",
+                            content = string.format("Freelance mercenaries successfully confirmed a high-profile kill on %s forces in sector (%d:%d). %s promptly wired the %d Credits bounty, proving once again that war is a highly profitable business.", 
+                                Faction(victimFactionIndex).name, sx, sy, f.name, finalReward)
+                        }
+                        local cvn = include("cosmicvaultnews")
+                        if cvn and cvn.publishArticle then
+                            cvn.publishArticle(article)
+                        else
+                            server:sendCallback("onCCNewsPublishArticle", article)
+                        end
 
                         break -- Only claim one bounty at a time
                     end

@@ -86,7 +86,7 @@ function SiegeEvent.startSiege(zoneData)
         local transport = ShipGenerator.createFreighterShip(invadingFaction, position, volume)
         transport.title = "Troop Transport"
         transport.name = "Invader"
-        transport:addScript("data/scripts/entity/ai/trooptransport.lua")
+        transport:addScriptOnce("data/scripts/entity/ai/trooptransport.lua")
         transport:invokeFunction("trooptransport.lua", "setTarget", targetStation.id)
 
         -- Give them heavy shields but no weapons (abstracted)

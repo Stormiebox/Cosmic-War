@@ -124,7 +124,7 @@ mission.phases[1].triggers = {
             else
                 local targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
                 for _, ship in pairs(targets) do
-                    ship:addScript("entity/deletejumped.lua")
+                    ship:addScriptOnce("entity/deletejumped.lua")
                 end
                 reward()
                 accomplish()
@@ -141,7 +141,7 @@ function spawnEvent(x, y)
 
     local broadcaster = ShipGenerator.createFreighterShip(giverFaction, generator:getPositionInSector())
     broadcaster.title = "Propaganda Broadcaster"
-    broadcaster:addScript("data/scripts/entity/ai/patrol.lua")
+    broadcaster:addScriptOnce("data/scripts/entity/ai/patrol.lua")
     broadcaster:setValue("cw_broadcaster", true)
 
     mission.data.custom.broadcastTimer = 180 -- 3 minutes

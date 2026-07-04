@@ -15,8 +15,8 @@ end
 function CosmicWarEvent.spawn()
     -- Safety Guard: Ensure Cosmic Ascendancy is installed before unleashing The Eclipse
     local hasAscendancy = true; include("cosmicascendancybridge")
-    if not hasAscendancy then
-        print("[Cosmic War] Cosmic Ascendancy not detected. Skipping Eclipse Vanguard event.")
+    if not hasAscendancy or not Server():getValue("eclipse_fully_awake") then
+        print("[Cosmic War] Cosmic Ascendancy not detected or Eclipse not awoken. Skipping Eclipse Vanguard event.")
         return
     end
 
@@ -27,7 +27,7 @@ function CosmicWarEvent.spawn()
 
     local dreadnought = ShipGenerator.createBossShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
     dreadnought.title = "The Eclipse Vanguard"
-    dreadnought:addScript("data/scripts/entity/ai/patrol.lua")
+    dreadnought:addScriptOnce("data/scripts/entity/ai/patrol.lua")
     dreadnought.damageMultiplier = 500.0 -- Unfair fixed scaling
     dreadnought.shieldMultiplier = 500.0
 

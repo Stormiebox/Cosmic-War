@@ -153,7 +153,7 @@ mission.phases[1].updateServer = function(timeStep)
         mission.data.custom.finished = true
 
         for _, ship in pairs(defectorShips) do
-            ship:addScript("entity/deletejumped.lua")
+            ship:addScriptOnce("entity/deletejumped.lua")
         end
 
         finishAndReward()

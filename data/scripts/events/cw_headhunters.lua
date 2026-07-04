@@ -50,7 +50,7 @@ function cw_headhunters.initialize()
     end
 
     -- Spawn the Headhunter Hit-Squad
-    local random = Random(Seed(os.time()))
+    local random = Random(Seed(Server().unpausedRuntime))
     local dir = vec3(random:getFloat(-1, 1), 0, random:getFloat(-1, 1))
     if length(dir) == 0 then dir = vec3(1, 0, 0) end
     dir = normalize(dir)
@@ -64,12 +64,10 @@ function cw_headhunters.initialize()
         local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix, 3) -- Heavy military
 
         -- Soft Bridge to Cosmic Starfall (Equip heavy subsystems if available)
-        pcall(function()
-            local success, sfAPI = pcall(include, "starfall_subsystems")
-            if success and sfAPI and sfAPI.equipEliteSubsystems then
-                sfAPI.equipEliteSubsystems(ship)
-            end
-        end)
+        local success, sfAPI = pcall(include, "starfall_subsystems")
+        if success and sfAPI and sfAPI.equipEliteSubsystems then
+            sfAPI.equipEliteSubsystems(ship)
+        end
 
         ship.title = "Elite Headhunter"
         ship:addScriptOnce("ai/patrol.lua")

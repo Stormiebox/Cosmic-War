@@ -11,7 +11,7 @@ function cw_wreckagefield.initialize()
 
     local sector = Sector()
     local x, y = sector:getCoordinates()
-    local random = Random(Seed(os.time()))
+    local random = Random(Seed(Server().unpausedRuntime))
 
     -- Only trigger in populated sectors
     local stations = {sector:getEntitiesByType(EntityType.Station)}

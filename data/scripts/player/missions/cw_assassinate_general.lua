@@ -109,7 +109,7 @@ function spawnEvent(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
     local general = ShipGenerator.createMilitaryShip(enemyFaction, generator:getPositionInSector())
-    general:addScript("data/scripts/entity/ai/patrol.lua")
+    general:addScriptOnce("data/scripts/entity/ai/patrol.lua")
     general.title = "Enemy Flag Officer"
     general:setValue("cw_assassination_target", true)
 
