@@ -55,6 +55,15 @@ function processPurchase(amount)
     local player = Player(callingPlayer)
     if not player then return end
     
+    if player:hasScript("cosmicwar_warbonds.lua") then
+        local status, currentBonds = player:invokeFunction("cosmicwar_warbonds.lua", "getBondAmount", Entity().factionIndex)
+        currentBonds = currentBonds or 0
+        if currentBonds + amount > 250000000 then
+            player:sendChatMessage(Entity().name, 1, "We cannot issue you any more warbonds. You have reached the maximum investment cap (250,000,000 Cr)."%_t)
+            return
+        end
+    end
+    
     local canPay, msg = player:canPay(amount)
     if not canPay then
         player:sendChatMessage(Entity().name, 1, msg)
