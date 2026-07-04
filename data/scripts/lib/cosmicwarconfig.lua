@@ -137,9 +137,9 @@ local function build()
     out.enableEconomyBridge = readBool("enableEconomyBridge", defaults.enableEconomyBridge)
     out.enableCaptainBridge = readBool("enableCaptainBridge", defaults.enableCaptainBridge)
 
-    local vaultCfg = (CosmicVaultConfig and CosmicVaultConfig.get and CosmicVaultConfig.get()) or nil
-    if vaultCfg and type(vaultCfg.debugEnabled) == "boolean" then
-        out.debugLogs = vaultCfg.debugEnabled
+    local vaultCfg = CosmicVaultConfig and CosmicVaultConfig.get and CosmicVaultConfig.get() or nil
+    if vaultCfg and type(vaultCfg.debugWar) == "boolean" then
+        out.debugLogs = vaultCfg.debugWar
     else
         out.debugLogs = readBool("debugLogs", defaults.debugLogs)
     end

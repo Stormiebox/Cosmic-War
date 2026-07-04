@@ -59,14 +59,7 @@ function onShipDestroyed(destroyedId, destroyerId)
             if destroyedEntity.isStation then baseBounty = 250000 end
             
             if baseBounty > 0 then
-                -- Check for Mercantile trait
-                local hasMercantile = false
-                if cvf and cvf.getTrait then
-                    hasMercantile = (cvf.getTrait(enlistedFaction.index, "cw_mercantile") or 0) > 0
-                else
-                    hasMercantile = (enlistedFaction:getValue("cosmic_trait_cw_mercantile") or 0) > 0
-                end
-                
+                local hasMercantile = (cvf.getTrait(enlistedFaction.index, "cw_mercantile") or 0) > 0
                 if hasMercantile then
                     baseBounty = baseBounty * 3
                 end

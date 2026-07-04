@@ -1,9 +1,9 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
-local duration = 20.0
-
 -- namespace CW_ShieldJammer
 CW_ShieldJammer = {}
+
+CW_ShieldJammer.duration = 20.0
 
 function CW_ShieldJammer.getUpdateInterval()
     return 0.5
@@ -16,7 +16,7 @@ function CW_ShieldJammer.initialize()
 end
 
 function CW_ShieldJammer.updateServer(timeStep)
-    duration = duration - timeStep
+    CW_ShieldJammer.duration = CW_ShieldJammer.duration - timeStep
 
     local entity = Entity()
     if not valid(entity) then
@@ -29,10 +29,18 @@ function CW_ShieldJammer.updateServer(timeStep)
         entity.shieldDurability = 0
     end
 
-    if duration <= 0 then
+    if CW_ShieldJammer.duration <= 0 then
         -- The jammer duration has expired
         terminate()
     end
+end
+
+function CW_ShieldJammer.secure()
+    return { duration = CW_ShieldJammer.duration }
+end
+
+function CW_ShieldJammer.restore(data)
+    CW_ShieldJammer.duration = data.duration or 20.0
 end
 
 -- We can also send client updates if we want to render particles, but for now the mechanical effect is enough.
@@ -45,6 +53,12 @@ function initialize(...)
 end
 function updateServer(...)
     if CW_ShieldJammer.updateServer then return CW_ShieldJammer.updateServer(...) end
+end
+function secure(...)
+    if CW_ShieldJammer.secure then return CW_ShieldJammer.secure(...) end
+end
+function restore(...)
+    if CW_ShieldJammer.restore then return CW_ShieldJammer.restore(...) end
 end
 
 return CW_ShieldJammer

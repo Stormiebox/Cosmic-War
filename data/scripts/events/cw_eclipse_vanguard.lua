@@ -13,10 +13,10 @@ function CosmicWarEvent.initialize()
 end
 
 function CosmicWarEvent.spawn()
-    -- Safety Guard: Ensure Cosmic Ascendancy is installed before unleashing The Eclipse
-    local hasAscendancy = true; include("cosmicascendancybridge")
-    if not hasAscendancy or not Server():getValue("eclipse_fully_awake") then
-        print("[Cosmic War] Cosmic Ascendancy not detected or Eclipse not awoken. Skipping Eclipse Vanguard event.")
+    -- Safety Guard: Ensure Eclipse is fully awoken
+    include("cosmicascendancybridge")
+    if not Server():getValue("eclipse_fully_awake") then
+        include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Eclipse not awoken. Skipping Eclipse Vanguard event.")
         return
     end
 
@@ -32,7 +32,7 @@ function CosmicWarEvent.spawn()
     dreadnought.shieldMultiplier = 500.0
 
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
-
+    terminate()
 end
 
 function initialize(...)

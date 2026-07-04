@@ -1,12 +1,8 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
 
-include("randomext")
-
 function initialize()
-    if onServer() then
-        deferredCallback(1.0, "updateServer", 1.0)
-    end
+    -- Native Sector initialization
 end
 
 function getUpdateInterval()
@@ -21,11 +17,20 @@ function updateClient(timeStep)
     if soundTimer > soundInterval then
         local craft = Player().craft
         if craft then
-            local position = craft.translationf + random():getDirection() * 10000
+            -- Generate a random direction vector using math.random instead of global random() to prevent client PRNG corruption
+            local rx = (math.random() * 2) - 1
+            local ry = (math.random() * 2) - 1
+            local rz = (math.random() * 2) - 1
+            local dir = normalize(vec3(rx, ry, rz))
+            
+            local position = craft.translationf + dir * 10000
             local sounds = {"distant-thunder1", "distant-thunder2", "distant-thunder3", "distant-thunder4"}
-            play3DSound(randomEntry(sounds), SoundType.Other, position, 200000, 1)
+            local pick = sounds[math.random(1, #sounds)]
+            
+            -- Avorion valid global audio API for client scripts
+            playSound(pick, SoundType.Other, position)
         end
-        soundInterval = random():getFloat(5, 15)
+        soundInterval = 5 + (math.random() * 10)
         soundTimer = 0
     end
 end

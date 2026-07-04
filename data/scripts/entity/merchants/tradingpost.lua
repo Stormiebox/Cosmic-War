@@ -11,13 +11,11 @@ end
 
 function onPurchaseWarbondsInteraction()
     local entity = Entity()
-    local cw_success = true; include("cosmicwarbridge")
-    if cw_success and CosmicWarBridge then
-        local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
-        if heat < 0.25 then
-            ScriptUI():showDialog(makeNoWarDialog())
-            return
-        end
+    local CosmicWarBridge = include("cosmicwarbridge")
+    local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
+    if heat < 0.25 then
+        ScriptUI():showDialog(makeNoWarDialog())
+        return
     end
     
     ScriptUI():showDialog(makeBuyDialog())
@@ -59,14 +57,14 @@ function processPurchase(amount)
         local status, currentBonds = player:invokeFunction("cosmicwar_warbonds.lua", "getBondAmount", Entity().factionIndex)
         currentBonds = currentBonds or 0
         if currentBonds + amount > 250000000 then
-            player:sendChatMessage(Entity().name, 1, "We cannot issue you any more warbonds. You have reached the maximum investment cap (250,000,000 Cr)."%_t)
+            player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "We cannot issue you any more warbonds. You have reached the maximum investment cap (250,000,000 Cr)."%_t)
             return
         end
     end
     
     local canPay, msg = player:canPay(amount)
     if not canPay then
-        player:sendChatMessage(Entity().name, 1, msg)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg)
         return
     end
     
@@ -79,7 +77,7 @@ function processPurchase(amount)
     -- Save the bond data to the player script
     player:invokeFunction("cosmicwar_warbonds.lua", "addBond", Entity().factionIndex, amount)
     
-    player:sendChatMessage(Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature.")
+    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature.")
 end
 callable(nil, "buyStandardBond")
 callable(nil, "buyPremiumBond")

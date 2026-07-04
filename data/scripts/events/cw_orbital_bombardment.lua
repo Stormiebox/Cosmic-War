@@ -25,7 +25,7 @@ function CosmicWarEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Planetary Defense", 0, "Mayday! We are under intense orbital bombardment! Any available ships, please assist!")
-
+    terminate()
 end
 
 function initialize(...)

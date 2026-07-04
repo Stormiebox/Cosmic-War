@@ -9,7 +9,7 @@ include("stringutility")
 
 -- namespace CW_RefugeeConvoyEvent
 CW_RefugeeConvoyEvent = {}
-local transports = {}
+CW_RefugeeConvoyEvent.transports = {}
 
 function CW_RefugeeConvoyEvent.initialize()
     if onClient() then return end
@@ -34,8 +34,7 @@ function CW_RefugeeConvoyEvent.spawn()
         return
     end                                    -- Only spawn in empty/border sectors
 
-    local snapshot = CosmicWarBridge and CosmicWarBridge.getWarHeatSnapshot and CosmicWarBridge.getWarHeatSnapshot() or
-    {}
+    local snapshot = CosmicWarBridge.getWarHeatSnapshot() or {}
     local possibleFactions = {}
     for idx, heat in pairs(snapshot) do
         if heat >= 0.40 then table.insert(possibleFactions, idx) end
@@ -69,7 +68,7 @@ function CW_RefugeeConvoyEvent.spawn()
             ship.durability = ship.maxDurability
         end
 
-        table.insert(transports, ship.id)
+        table.insert(CW_RefugeeConvoyEvent.transports, ship.id)
     end
 
     sector:broadcastChatMessage(victimFaction.name, ChatMessageType.Warning,
@@ -103,7 +102,7 @@ end
 
 function CW_RefugeeConvoyEvent.escapeTransports()
     local survived = 0
-    for _, id in pairs(transports) do
+    for _, id in pairs(CW_RefugeeConvoyEvent.transports) do
         local ship = Sector():getEntity(id)
         if ship then
             survived = survived + 1; Sector():deleteEntityJumped(ship)
@@ -124,8 +123,37 @@ function CW_RefugeeConvoyEvent.escapeTransports()
 end
 
 
+function CW_RefugeeConvoyEvent.secure()
+    local savedTransports = {}
+    for _, id in pairs(CW_RefugeeConvoyEvent.transports) do
+        table.insert(savedTransports, id.string)
+    end
+    return {
+        transports = savedTransports,
+        victimId = CW_RefugeeConvoyEvent.victimId,
+        attackerId = CW_RefugeeConvoyEvent.attackerId
+    }
+end
+
+function CW_RefugeeConvoyEvent.restore(data)
+    CW_RefugeeConvoyEvent.transports = {}
+    if data.transports then
+        for _, idStr in pairs(data.transports) do
+            table.insert(CW_RefugeeConvoyEvent.transports, Uuid(idStr))
+        end
+    end
+    CW_RefugeeConvoyEvent.victimId = data.victimId
+    CW_RefugeeConvoyEvent.attackerId = data.attackerId
+end
+
 function initialize(...)
     if CW_RefugeeConvoyEvent.initialize then return CW_RefugeeConvoyEvent.initialize(...) end
+end
+function secure(...)
+    if CW_RefugeeConvoyEvent.secure then return CW_RefugeeConvoyEvent.secure(...) end
+end
+function restore(...)
+    if CW_RefugeeConvoyEvent.restore then return CW_RefugeeConvoyEvent.restore(...) end
 end
 
 return CW_RefugeeConvoyEvent

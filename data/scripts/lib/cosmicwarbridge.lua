@@ -36,7 +36,7 @@ end
 function CosmicWarBridge.computeWarHeatForFaction(faction)
     if not faction or not faction.isAIFaction then return 0 end
 
-    local cfg = (CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get()) or {}
+    local cfg = CosmicWarConfig.get() or {}
     local threshold = cfg.rivalryThreshold or -45000
 
     local enemy = faction:getValue("enemy_faction") or 0

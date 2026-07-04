@@ -10,7 +10,7 @@ TroopTransport.targetStationId = nil
 TroopTransport.boardingProgress = 0
 TroopTransport.boardingRequired = 60 -- 60 seconds to board
 TroopTransport.isBoarding = false
-
+TroopTransport.boardingMessageSent = false
 function TroopTransport.getUpdateInterval()
     return 1.0
 end
@@ -52,6 +52,7 @@ function TroopTransport.updateServer(timeStep)
     if not valid(target) then
         TroopTransport.targetStationId = nil
         TroopTransport.isBoarding = false
+        TroopTransport.boardingMessageSent = false
         return
     end
 
@@ -62,6 +63,7 @@ function TroopTransport.updateServer(timeStep)
         local ai = ShipAI()
         ai:setFlyLinear(target.translationf, 0, false)
         TroopTransport.isBoarding = false
+        TroopTransport.boardingMessageSent = false
     else
         -- We are close enough, begin boarding!
         TroopTransport.isBoarding = true
@@ -69,7 +71,8 @@ function TroopTransport.updateServer(timeStep)
 
         -- Inform player if in sector
         local sector = Sector()
-        if TroopTransport.boardingProgress == timeStep then
+        if not TroopTransport.boardingMessageSent then
+            TroopTransport.boardingMessageSent = true
             sector:broadcastChatMessage(ship, ChatMessageType.Warning, "Troop Transports have breached the hull of %s! Boarding in progress!"%_T, target.translatedTitle or "a station")
         end
 
@@ -99,16 +102,30 @@ function TroopTransport.captureStation(station, newFactionIndex)
     local galaxy = Galaxy()
     -- galaxy:setFaction(x, y, newFactionIndex) -- Removed: Map borders update natively when stations change hands
 
-    print("[Cosmic War] Station " .. station.name .. " captured by faction " .. tostring(newFactionIndex) .. ". Sector borders updated.")
+    include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Station " .. station.name .. " captured by faction " .. tostring(newFactionIndex) .. ". Sector borders updated.")
 
     local CosmicVaultNews = include("cosmicvaultnews")
-    if CosmicVaultNews and CosmicVaultNews.publishArticle then
-        CosmicVaultNews.publishArticle({
-            title = "Territory Conquered",
-            content = "The sector " .. sectorName .. " has been successfully annexed by " .. factionName .. " via ground assault. The galaxy borders have officially shifted.",
-            category = "War"
-        })
-    end
+    CosmicVaultNews.publishArticle({
+        title = "Territory Conquered",
+        content = "The sector " .. sectorName .. " has been successfully annexed by " .. factionName .. " via ground assault. The galaxy borders have officially shifted.",
+        category = "War"
+    })
+end
+
+function TroopTransport.secure()
+    return {
+        targetStationId = TroopTransport.targetStationId and tostring(TroopTransport.targetStationId) or nil,
+        boardingProgress = TroopTransport.boardingProgress,
+        isBoarding = TroopTransport.isBoarding,
+        boardingMessageSent = TroopTransport.boardingMessageSent
+    }
+end
+
+function TroopTransport.restore(data)
+    TroopTransport.targetStationId = data.targetStationId and Uuid(data.targetStationId) or nil
+    TroopTransport.boardingProgress = data.boardingProgress or 0
+    TroopTransport.isBoarding = data.isBoarding or false
+    TroopTransport.boardingMessageSent = data.boardingMessageSent or false
 end
 
 end
@@ -118,6 +135,12 @@ function getUpdateInterval(...)
 end
 function updateServer(...)
     if TroopTransport.updateServer then return TroopTransport.updateServer(...) end
+end
+function secure(...)
+    if TroopTransport.secure then return TroopTransport.secure(...) end
+end
+function restore(...)
+    if TroopTransport.restore then return TroopTransport.restore(...) end
 end
 
 return TroopTransport

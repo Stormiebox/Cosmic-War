@@ -31,8 +31,7 @@ function CW_ArmsDealEvent.spawn()
         return
     end
 
-    local snapshot = CosmicWarBridge and CosmicWarBridge.getWarHeatSnapshot and CosmicWarBridge.getWarHeatSnapshot() or
-    {}
+    local snapshot = CosmicWarBridge.getWarHeatSnapshot() or {}
     local possibleFactions = {}
     for idx, heat in pairs(snapshot) do
         if heat >= 0.20 then table.insert(possibleFactions, idx) end

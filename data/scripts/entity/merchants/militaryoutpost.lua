@@ -3,7 +3,6 @@ include("utility")
 include("stringutility")
 
 local cw_militaryoutpost_initUI = initUI
-local cw_militaryoutpost_onInteract = onInteract
 
 function initUI()
     if cw_militaryoutpost_initUI then cw_militaryoutpost_initUI() end
@@ -24,13 +23,11 @@ function onEnlistInteraction()
         return
     end
 
-    local cw_success = true; include("cosmicwarbridge")
-    if cw_success and CosmicWarBridge then
-        local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
-        if heat < 0.25 then
-            ScriptUI():showDialog(makeNotAtWarDialog())
-            return
-        end
+    local CosmicWarBridge = include("cosmicwarbridge")
+    local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
+    if heat < 0.25 then
+        ScriptUI():showDialog(makeNotAtWarDialog())
+        return
     end
 
     ScriptUI():showDialog(makeEnlistDialog())

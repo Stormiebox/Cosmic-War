@@ -28,20 +28,22 @@ function onSectorEntered()
 end
 
 function checkZone()
-    local x, y = Sector():getCoordinates()
+    local sector = Sector()
+    if not sector then return end
+    local x, y = sector:getCoordinates()
+    
     local CosmicVaultTerritory = include("cosmicvaultterritory")
-    if CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
-        local zones = CosmicVaultTerritory.getContestedZones()
-        local zone = zones[x .. "_" .. y]
-        if zone then
-            local def = Faction(zone.defender)
-            local inv = Faction(zone.invader)
-            local dName = def and def.name or "Defenders"
-            local iName = inv and inv.name or "Invaders"
-            
-            invokeClientFunction(Player(), "receiveZoneData", true, zone.endTime, Server().unpausedRuntime, dName, iName)
-            return
-        end
+    local zones = CosmicVaultTerritory.getContestedZones()
+    local zone = zones[x .. "_" .. y]
+    
+    if zone then
+        local def = Faction(zone.defender)
+        local inv = Faction(zone.invader)
+        local dName = def and def.name or "Defenders"
+        local iName = inv and inv.name or "Invaders"
+        
+        invokeClientFunction(Player(), "receiveZoneData", true, zone.endTime, Server().unpausedRuntime, dName, iName)
+        return
     end
     invokeClientFunction(Player(), "receiveZoneData", false)
 end
@@ -61,7 +63,6 @@ function receiveZoneData(contested, et, now, dName, iName)
         invaderName = iName
         
         -- Assume 60 mins for a siege unless remaining time indicates otherwise
-        local remaining = et - now
         if remaining > 60 * 60 then
             totalTime = remaining
         else

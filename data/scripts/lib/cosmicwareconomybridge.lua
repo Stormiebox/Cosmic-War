@@ -7,15 +7,12 @@ include("cosmicwarconfig")
 CosmicWarEconomyBridge = CosmicWarEconomyBridge or {}
 
 function CosmicWarEconomyBridge.getTradeProfitMultiplier(factionIndex)
-    local cfg = CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get() or {}
+    local cfg = CosmicWarConfig.get() or {}
     if cfg.enableEconomyBridge == false then
         return 1.0
     end
 
-    local heat = 0
-    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-        heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
-    end
+    local heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
 
     -- modest positive pressure on profit where war heat is high
     local mult = 1.0 + (heat * 0.12)
@@ -25,15 +22,12 @@ function CosmicWarEconomyBridge.getTradeProfitMultiplier(factionIndex)
 end
 
 function CosmicWarEconomyBridge.getTradeRiskMultiplier(factionIndex)
-    local cfg = CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get() or {}
+    local cfg = CosmicWarConfig.get() or {}
     if cfg.enableEconomyBridge == false then
         return 1.0
     end
 
-    local heat = 0
-    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-        heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
-    end
+    local heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
 
     -- stronger risk growth than profit growth
     local mult = 1.0 + (heat * 0.25)

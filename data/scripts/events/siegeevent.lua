@@ -12,18 +12,17 @@ function SiegeEvent.initialize()
     local sector = Sector()
     local x, y = sector:getCoordinates()
 
-    -- Check if this sector is currently contested
-    if CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
-        local zones = CosmicVaultTerritory.getContestedZones()
-        local key = x .. "_" .. y
+    if _restoring then return end
 
-        if zones[key] then
-            -- Sector is contested! Spawn the invasion fleet.
-            SiegeEvent.startSiege(zones[key])
+    local zones = CosmicVaultTerritory.getContestedZones()
+    local key = x .. "_" .. y
 
-            for _, player in pairs({sector:getPlayers()}) do
-                player:addScriptOnce("data/scripts/player/ui/cw_battlefieldhud.lua")
-            end
+    if zones[key] then
+        -- Sector is contested! Spawn the invasion fleet.
+        SiegeEvent.startSiege(zones[key])
+
+        for _, player in pairs({sector:getPlayers()}) do
+            player:addScriptOnce("data/scripts/player/ui/cw_battlefieldhud.lua")
         end
     end
 end
@@ -42,7 +41,7 @@ function SiegeEvent.startSiege(zoneData)
     end
 
     if not targetStation then
-        print("[Cosmic War] No valid target station found for Siege Event.")
+        include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] No valid target station found for Siege Event.")
         return
     end
 
@@ -100,24 +99,22 @@ function SiegeEvent.startSiege(zoneData)
 
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
     local CosmicVaultScaling = include("cosmicvaultscaling")
-    if CosmicVaultScaling then
-        local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
-        local baseVol = Balancing_GetSectorShipVolume(x, y)
+    local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
+    local baseVol = Balancing_GetSectorShipVolume(x, y)
 
-        local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
-        local numDreadnoughts = math.max(1, spawnParams.count - 3) -- We already spawned 3 transports
-        local volumeMult = spawnParams.volumeMultiplier
+    local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
+    local numDreadnoughts = math.max(1, spawnParams.count - 3) -- We already spawned 3 transports
+    local volumeMult = spawnParams.volumeMultiplier
 
-        for i = 1, numDreadnoughts do
-            local dreadnought = ShipGenerator.createMilitaryShip(invadingFaction, generator:getPositionInSector(15000), baseVol * volumeMult)
-            dreadnought.title = "Siege Dreadnought"
-            dreadnought.name = "Invader"
-            ShipAI(dreadnought.index):setAggressive()
+    for i = 1, numDreadnoughts do
+        local dreadnought = ShipGenerator.createMilitaryShip(invadingFaction, generator:getPositionInSector(15000), baseVol * volumeMult)
+        dreadnought.title = "Siege Dreadnought"
+        dreadnought.name = "Invader"
+        ShipAI(dreadnought.index):setAggressive()
 
-            if dreadnought:hasComponent(ComponentType.Shield) then
-                dreadnought.shieldMaximum = dreadnought.shieldMaximum * 5
-                dreadnought.shieldDurability = dreadnought.shieldMaximum
-            end
+        if dreadnought:hasComponent(ComponentType.Shield) then
+            dreadnought.shieldMaximum = dreadnought.shieldMaximum * 5
+            dreadnought.shieldDurability = dreadnought.shieldMaximum
         end
     end
 
@@ -138,12 +135,11 @@ function SiegeEvent.updateServer(timeStep)
     local sector = Sector()
     local x, y = sector:getCoordinates()
 
-    if CosmicVaultTerritory and CosmicVaultTerritory.getContestedZones then
-        local zones = CosmicVaultTerritory.getContestedZones()
-        local key = x .. "_" .. y
-        local zone = zones[key]
+    local zones = CosmicVaultTerritory.getContestedZones()
+    local key = x .. "_" .. y
+    local zone = zones[key]
 
-        if zone then
+    if zone then
             -- Check if there are any invader troop transports left
             local invadersPresent = false
             local ships = {sector:getEntitiesByType(EntityType.Ship)}
@@ -157,9 +153,7 @@ function SiegeEvent.updateServer(timeStep)
             -- If no transports are left and time hasn't run out yet, the defenders won!
             if not invadersPresent then
                 -- Remove the zone so it doesn't trigger resolveSiege in the background
-                if CosmicVaultTerritory.removeContestedZone then
-                    CosmicVaultTerritory.removeContestedZone(x, y)
-                end
+                CosmicVaultTerritory.removeContestedZone(x, y)
 
                 sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_t)
 
@@ -199,9 +193,8 @@ function SiegeEvent.updateServer(timeStep)
                 if defenderStations == 0 and planetaryShields == 0 then
                     -- Defenders lost!
                     local cv_economy = include("cosmicvaulteconomy")
-                    if cv_economy then
-                        local faminePenalty = 5
-                        local CaptainClass = include("captainclass")
+                    local faminePenalty = 5
+                    local CaptainClass = include("captainclass")
                         for _, dShip in pairs(ships) do
                             if (dShip.factionIndex == zone.defender or dShip.playerOwned) then
                                 local cap = dShip:getCaptain()
@@ -212,10 +205,8 @@ function SiegeEvent.updateServer(timeStep)
                             end
                         end
 
-                        -- Losing a sector applies famine score to the defender
-                        cv_economy.addFamineScore(zone.defender, faminePenalty)
-                        print("[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
-                    end
+                    cv_economy.addFamineScore(zone.defender, faminePenalty)
+                    include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
 
                     -- Cosmic War/Chronicles: Wartime Propaganda Beacons
                     if random():test(0.05) then
@@ -227,9 +218,7 @@ function SiegeEvent.updateServer(timeStep)
                         end
                     end
 
-                    if CosmicVaultTerritory.removeContestedZone then
-                        CosmicVaultTerritory.removeContestedZone(x, y)
-                    end
+                    CosmicVaultTerritory.removeContestedZone(x, y)
                     terminate()
                 end
             end
@@ -237,7 +226,6 @@ function SiegeEvent.updateServer(timeStep)
             -- Zone no longer exists (maybe it was conquered)
             terminate()
         end
-    end
 end
 
 function SiegeEvent.onRemove()

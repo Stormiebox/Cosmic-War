@@ -26,7 +26,7 @@ function CosmicWarEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Distress Beacon", 0, "Ha ha! You fell for the oldest trick in the galaxy!")
-
+    terminate()
 end
 
 function initialize(...)

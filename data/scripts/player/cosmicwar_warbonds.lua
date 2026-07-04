@@ -1,6 +1,9 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 include("utility")
 
+local cvf = include("cosmicvaultfaction")
+local CosmicWarBridge = include("cosmicwarbridge")
+
 -- Server-side script attached to players who own Warbonds
 local activeBonds = {} -- { [factionIndex] = { amount = X } }
 
@@ -47,10 +50,8 @@ end
 function checkWarbondStatus()
     local player = Player()
     
-    local cw_success = true; include("cosmicwarbridge")
-    if cw_success and CosmicWarBridge then
-        local server = Server()
-        local now = server.unpausedRuntime
+    local server = Server()
+    local now = server.unpausedRuntime
         
         for factionIndex, bond in pairs(activeBonds) do
             local heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
@@ -65,7 +66,7 @@ function checkWarbondStatus()
                     else
                         local payout = bond.amount * 3 -- 300% payout
                         player:receive("Matured Warbonds Payout", payout)
-                        player:sendChatMessage("Cosmic War Bank", 0, "Your Warbonds for %1% have fully matured following a successful war! Paid out %2% Credits.", faction.name, payout)
+                        player:sendChatMessage("Cosmic War Bank", 0, "Your Warbonds for %1% have fully matured following a successful war! Paid out %2% Credits.", faction.name, createMonetaryString(payout))
                     end
                 else
                     player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into has collapsed completely. Your bonds are now worthless paper.")
@@ -74,5 +75,4 @@ function checkWarbondStatus()
                 activeBonds[factionIndex] = nil
             end
         end
-    end
 end

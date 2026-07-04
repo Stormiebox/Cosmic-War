@@ -1,3 +1,5 @@
+include("data/scripts/sector/factionwar/temporarydefender")
+
 -- namespace TemporaryDefender
 
 if onServer() then

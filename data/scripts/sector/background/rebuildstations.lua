@@ -1,6 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("cosmicwarconfig")
+include("data/scripts/sector/background/rebuildstations")
 
 function getUpdateInterval()
     return 60.0
@@ -44,7 +45,7 @@ if onServer() then
                     if ts and ts > 1 then
                         local server = Server()
                         local runtime = server and server.unpausedRuntime or 0
-                        local cfg = (CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get()) or {}
+                        local cfg = CosmicWarConfig.get() or {}
                         local minSpacing = cfg.sectorPressureMinSpacing or 600
                         local targetTs = runtime + math.floor(minSpacing * 0.5)
 

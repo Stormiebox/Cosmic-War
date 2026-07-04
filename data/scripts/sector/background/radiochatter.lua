@@ -1,3 +1,5 @@
+include("data/scripts/sector/background/radiochatter")
+
 local cw_old_RadioChatter_initialize = RadioChatter.initialize
 function RadioChatter.initialize(...)
     if cw_old_RadioChatter_initialize then cw_old_RadioChatter_initialize(...) end

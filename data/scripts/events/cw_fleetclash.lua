@@ -55,10 +55,7 @@ function CW_FleetClashEvent.spawn()
         return
     end
 
-    local heat = 0
-    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-        heat = CosmicWarBridge.getFactionWarHeat(faction.index) or 0
-    end
+    local heat = CosmicWarBridge.getFactionWarHeat(faction.index) or 0
 
     -- Only trigger massive flashpoints if tensions are extremely high
     if heat < 0.60 then
@@ -71,14 +68,12 @@ function CW_FleetClashEvent.spawn()
     local volumeMult = 1.0
 
     local CosmicVaultScaling = include("cosmicvaultscaling")
-    if CosmicVaultScaling then
-        local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(enemyId)
-        local baseVol = Balancing_GetSectorShipVolume(x, y)
+    local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(enemyId)
+    local baseVol = Balancing_GetSectorShipVolume(x, y)
 
-        local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
-        numAttackers = spawnParams.count
-        volumeMult = spawnParams.volumeMultiplier
-    end
+    local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
+    numAttackers = spawnParams.count
+    volumeMult = spawnParams.volumeMultiplier
 
     local random = Random(Seed(x .. y))
     local usedJammer = false

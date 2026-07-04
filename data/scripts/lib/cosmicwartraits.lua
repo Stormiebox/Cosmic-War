@@ -5,7 +5,7 @@ local cvf = include("cosmicvaultfaction")
 local CosmicWarTraits = {}
 
 function CosmicWarTraits.initialize()
-    if not cvf or not cvf.registerCustomTrait then return end
+    if not cvf then return end
 
     cvf.registerCustomTrait("cw_warmonger", "Warmonger", {
         "Highly aggressive and eager to declare war.",
@@ -180,20 +180,11 @@ function CosmicWarTraits.applyTraits(faction)
         assignedTrait = "cw_balanced"
     end
 
-    -- Save it natively
-    if cvf and cvf.setTrait then
-        if assignedTrait ~= "cw_balanced" then
-            cvf.setTrait(faction.index, assignedTrait, 1.0)
-        end
-        if faction.name == "The Eclipse" or faction:getValue("is_eclipse") then
-            cvf.setTrait(faction.index, "cw_vengeful", 1.0)
-        end
-    else
-        -- Fallback if Cosmic Vault is missing
-        faction:setValue("cosmic_trait_" .. assignedTrait, 1.0)
-        if faction.name == "The Eclipse" or faction:getValue("is_eclipse") then
-            faction:setValue("cosmic_trait_cw_vengeful", 1.0)
-        end
+    if assignedTrait ~= "cw_balanced" then
+        cvf.setTrait(faction.index, assignedTrait, 1.0)
+    end
+    if faction.name == "The Eclipse" or faction:getValue("is_eclipse") then
+        cvf.setTrait(faction.index, "cw_vengeful", 1.0)
     end
 end
 

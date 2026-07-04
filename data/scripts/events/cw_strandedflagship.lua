@@ -30,8 +30,7 @@ function CW_StrandedFlagshipEvent.spawn()
         return
     end
 
-    local snapshot = CosmicWarBridge and CosmicWarBridge.getWarHeatSnapshot and CosmicWarBridge.getWarHeatSnapshot() or
-    {}
+    local snapshot = CosmicWarBridge.getWarHeatSnapshot() or {}
     local possibleFactions = {}
     for idx, heat in pairs(snapshot) do
         if heat >= 0.80 then table.insert(possibleFactions, idx) end
@@ -91,8 +90,26 @@ function CW_StrandedFlagshipEvent.spawnRepairFleet()
 end
 
 
+function CW_StrandedFlagshipEvent.secure()
+    return {
+        flagshipId = CW_StrandedFlagshipEvent.flagshipId and CW_StrandedFlagshipEvent.flagshipId.string or nil,
+        flagshipFactionId = CW_StrandedFlagshipEvent.flagshipFactionId
+    }
+end
+
+function CW_StrandedFlagshipEvent.restore(data)
+    CW_StrandedFlagshipEvent.flagshipId = data.flagshipId and Uuid(data.flagshipId) or nil
+    CW_StrandedFlagshipEvent.flagshipFactionId = data.flagshipFactionId
+end
+
 function initialize(...)
     if CW_StrandedFlagshipEvent.initialize then return CW_StrandedFlagshipEvent.initialize(...) end
+end
+function secure(...)
+    if CW_StrandedFlagshipEvent.secure then return CW_StrandedFlagshipEvent.secure(...) end
+end
+function restore(...)
+    if CW_StrandedFlagshipEvent.restore then return CW_StrandedFlagshipEvent.restore(...) end
 end
 
 return CW_StrandedFlagshipEvent

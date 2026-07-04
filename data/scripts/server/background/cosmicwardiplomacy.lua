@@ -19,11 +19,7 @@ function CosmicWarDiplomacy.initialize()
 end
 
 local function getCfg()
-    if CosmicWarConfig and CosmicWarConfig.get then
-        return CosmicWarConfig.get()
-    end
-
-    return {
+    return CosmicWarConfig.get() or {
         ["diplomacyInterval"] = 300,
         ["diplomacyPairSteps"] = 10,
         ["rivalryThreshold"] = -45000,
@@ -37,14 +33,7 @@ function CosmicWarDiplomacy.getUpdateInterval()
 end
 
 local function cwlog(msg, ...)
-    if CosmicVaultDebug and CosmicVaultDebug.info then
-        CosmicVaultDebug.info("CosmicWar-Diplomacy", msg, ...)
-        return
-    end
-
-    local cfg = getCfg()
-    if not cfg.debugLogs then return end
-    print("[Cosmic War][Diplomacy] " .. msg, ...)
+    CosmicVaultDebug.info("CosmicWar-Diplomacy", msg, ...)
 end
 
 local function getWarFactionCandidates()
@@ -76,10 +65,7 @@ local function getWarFactionCandidates()
 end
 
 local function hasTrait(f, traitId)
-    if cvf and cvf.getTrait then
-        return (cvf.getTrait(f.index, traitId) or 0) > 0
-    end
-    return (f:getValue("cosmic_trait_" .. traitId) or 0) > 0
+    return (cvf.getTrait(f.index, traitId) or 0) > 0
 end
 
 local function maybeAdjustPair(a, b, random)
@@ -183,12 +169,7 @@ local function maybeAdjustPair(a, b, random)
 
     if random:test(math.min(0.75, warChance)) then
         local worsen = random:getInt(1000, 4500)
-        if cvf and cvf.changeRelations then
-            cvf.changeRelations(a.index, b.index, -worsen)
-        else
-            local nr = math.max(-100000, rel - worsen)
-            Galaxy():setFactionRelations(a, b, nr)
-        end
+        cvf.changeRelations(a.index, b.index, -worsen)
         local nr = a:getRelations(b.index) or (rel - worsen)
 
         didChange = true
@@ -203,20 +184,13 @@ local function maybeAdjustPair(a, b, random)
                 b:setValue("cw_target_faction", a.index)
 
                 -- Broadcast the War via Cosmic Vault Events (7 days duration default)
-                if cve and cve.startEvent then
-                    cve.startEvent("cw_war_" .. a.index .. "_" .. b.index, 7 * 24 * 3600)
-                    cve.startEvent("cw_war_" .. b.index .. "_" .. a.index, 7 * 24 * 3600)
-                end
+                cve.startEvent("cw_war_" .. a.index .. "_" .. b.index, 7 * 24 * 3600)
+                cve.startEvent("cw_war_" .. b.index .. "_" .. a.index, 7 * 24 * 3600)
             end
         end
     elseif random:test(math.min(0.40, peaceChance)) then
         local improve = random:getInt(500, 2200)
-        if cvf and cvf.changeRelations then
-            cvf.changeRelations(a.index, b.index, improve)
-        else
-            local nr = math.min(100000, rel + improve)
-            Galaxy():setFactionRelations(a, b, nr)
-        end
+        cvf.changeRelations(a.index, b.index, improve)
         didChange = true
 
         local nr = a:getRelations(b.index) or (rel + improve)
@@ -230,10 +204,8 @@ local function maybeAdjustPair(a, b, random)
                 b:setValue("cw_target_faction", nil)
 
                 -- End the war event early if peace is achieved
-                if cve and cve.endEvent then
-                    cve.endEvent("cw_war_" .. a.index .. "_" .. b.index)
-                    cve.endEvent("cw_war_" .. b.index .. "_" .. a.index)
-                end
+                cve.endEvent("cw_war_" .. a.index .. "_" .. b.index)
+                cve.endEvent("cw_war_" .. b.index .. "_" .. a.index)
             end
         end
     end

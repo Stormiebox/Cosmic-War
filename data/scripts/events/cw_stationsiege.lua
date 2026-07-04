@@ -25,7 +25,7 @@ function CosmicWarEvent.spawn()
         siegeShip.title = "Siege Dreadnought"
         ShipAI(siegeShip.index):setAggressive()
     end
-
+    terminate()
 end
 
 function initialize(...)

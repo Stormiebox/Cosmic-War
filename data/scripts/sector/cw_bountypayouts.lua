@@ -56,7 +56,7 @@ function onDestroyed(destroyedId, destroyerId)
 
                         local finalReward = reward * multiplier
 
-                        killerFaction:receive("Received %1% Credits for confirming a War Bounty."%_T, finalReward)
+                        killerFaction:receive("Confirmed War Bounty"%_T, finalReward)
                         
                         -- Clear the bounty to prevent farming and restrict it to a "High-Profile Hit"
                         f:setValue("cw_bounty_enemy", nil)
@@ -70,14 +70,10 @@ function onDestroyed(destroyedId, destroyerId)
                             title = "War Bounty Claimed",
                             category = "Conflict",
                             content = string.format("Freelance mercenaries successfully confirmed a high-profile kill on %s forces in sector (%d:%d). %s promptly wired the %d Credits bounty, proving once again that war is a highly profitable business.", 
-                                Faction(victimFactionIndex).name, sx, sy, f.name, finalReward)
+                                (Faction(victimFactionIndex) and Faction(victimFactionIndex).name) or "Enemy", sx, sy, f.name or "A Faction", finalReward)
                         }
                         local cvn = include("cosmicvaultnews")
-                        if cvn and cvn.publishArticle then
-                            cvn.publishArticle(article)
-                        else
-                            server:sendCallback("onCCNewsPublishArticle", article)
-                        end
+                        cvn.publishArticle(article)
 
                         break -- Only claim one bounty at a time
                     end

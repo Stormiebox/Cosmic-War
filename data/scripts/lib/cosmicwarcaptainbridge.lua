@@ -9,16 +9,12 @@ CosmicWarCaptainBridge = CosmicWarCaptainBridge or {}
 function CosmicWarCaptainBridge.modifyPredictionByWarHeat(prediction, factionIndex)
     if not prediction then return prediction end
 
-    local cfg = CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get() or {}
+    local cfg = CosmicWarConfig.get() or {}
     if cfg.enableCaptainBridge == false then
         return prediction
     end
 
-    local riskMult = 1.0
-    local rewardMult = 1.0
-    if CosmicWarBridge and CosmicWarBridge.computeCaptainRiskModifier then
-        riskMult, rewardMult = CosmicWarBridge.computeCaptainRiskModifier(nil, factionIndex)
-    end
+    local riskMult, rewardMult = CosmicWarBridge.computeCaptainRiskModifier(nil, factionIndex)
 
     if prediction.attackChance and prediction.attackChance.value then
         prediction.attackChance.value = prediction.attackChance.value * riskMult

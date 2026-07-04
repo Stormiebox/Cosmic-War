@@ -59,10 +59,7 @@ function initialize(factionIndex)
         local enemyFaction = Faction(enemyIndex)
         local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
 
-        local heat = 0
-        if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-            heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
-        end
+        local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
         mission.data.description = {
@@ -210,10 +207,7 @@ end
 
 -- Added by Cosmic War for Avorion 2.0 Compatibility
 function getBulletin(station)
-    local heat = 0
-    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    end
+    local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     if heat < 1 then return end
 
     local baseReward = math.floor(2500000 + heat * 5000000)

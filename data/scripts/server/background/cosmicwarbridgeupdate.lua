@@ -8,7 +8,7 @@ include("randomext")
 CosmicWarBridgeUpdate = {}
 
 function CosmicWarBridgeUpdate.getUpdateInterval()
-    local cfg = (CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get()) or {}
+    local cfg = CosmicWarConfig.get() or {}
     return cfg.diplomacyInterval or 300
 end
 
@@ -56,9 +56,7 @@ function CosmicWarBridgeUpdate.update(timeStep)
     -- Self-heal any factions that are missing Cosmic War metadata
     retrofitMissingFactions()
 
-    if CosmicWarBridge and CosmicWarBridge.publishWarHeatSnapshot then
-        CosmicWarBridge.publishWarHeatSnapshot()
-    end
+    CosmicWarBridge.publishWarHeatSnapshot()
 end
 
 

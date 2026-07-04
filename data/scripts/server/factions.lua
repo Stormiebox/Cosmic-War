@@ -26,7 +26,7 @@ local function cw_debug(msg, ...)
 
     local cfg = CosmicWarConfig and CosmicWarConfig.get and CosmicWarConfig.get() or { debugLogs = false }
     if not cfg.debugLogs then return end
-    print("[Cosmic War] " .. msg, ...)
+    include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] " .. msg, ...)
 end
 
 function initializeAIFaction(faction, baseName, stateFormName)

@@ -15,10 +15,7 @@ function CosmicWarNews.initialize()
 end
 
 local function getCfg()
-    if CosmicWarConfig and CosmicWarConfig.get then
-        return CosmicWarConfig.get()
-    end
-    return { ["debugLogs"] = false }
+    return CosmicWarConfig.get() or { ["debugLogs"] = false }
 end
 
 function CosmicWarNews.getUpdateInterval()
@@ -50,14 +47,7 @@ local function getGalaxyFactions(server)
 end
 
 local function cwlog(msg, ...)
-    if CosmicVaultDebug and CosmicVaultDebug.info then
-        CosmicVaultDebug.info("CosmicWar-News", msg, ...)
-        return
-    end
-
-    local cfg = getCfg()
-    if not cfg.debugLogs then return end
-    print("[Cosmic War][News] " .. msg, ...)
+    CosmicVaultDebug.info("CosmicWar-News", msg, ...)
 end
 
 local function collectHotConflicts(server)
@@ -143,11 +133,7 @@ function CosmicWarNews.onSeedNews()
         }
 
         local cvn = include("cosmicvaultnews")
-        if cvn and cvn.publishArticle then
-            cvn.publishArticle(article)
-        else
-            server:sendCallback("onCCNewsPublishArticle", article)
-        end
+        cvn.publishArticle(article)
     end
 end
 

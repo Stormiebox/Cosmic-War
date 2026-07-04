@@ -25,32 +25,43 @@ function DreadnoughtBoss.initialize()
     ai:setAggressive()
 end
 
+DreadnoughtBoss.retargetTimer = 0
+
 function DreadnoughtBoss.updateServer(timeStep)
     local ship = Entity()
     if not valid(ship) then return end
 
     local ai = ShipAI()
-    if ai.isAttacking then return end -- Already busy
+    
+    -- Increment timer for dynamic aggro swapping
+    DreadnoughtBoss.retargetTimer = (DreadnoughtBoss.retargetTimer or 0) + timeStep
+    
+    -- Only evaluate if we have no target, OR if 15 seconds have passed
+    if ai.isAttacking and DreadnoughtBoss.retargetTimer < 15 then 
+        return 
+    end
+    
+    DreadnoughtBoss.retargetTimer = 0 -- Reset timer
 
     -- Prioritize targeting military ships and stations over weak freighters
     local sector = Sector()
-    local enemies = {sector:getEntitiesByFaction(sector.numPlayers > 0 and sector:getPlayers()[1].index or 0)} -- Generic check
-
     local bestTarget = nil
     local highestThreat = -1
 
-    local ships = {sector:getEntitiesByType(EntityType.Ship)}
+    local allEnemies = {sector:getEntitiesByType(EntityType.Ship)}
     local stations = {sector:getEntitiesByType(EntityType.Station)}
-    local allEnemies = {}
-    for _, s in pairs(ships) do table.insert(allEnemies, s) end
     for _, s in pairs(stations) do table.insert(allEnemies, s) end
 
     for _, entity in pairs(allEnemies) do
-        if ai:isEnemy(entity) then
+        if valid(entity) and ai:isEnemy(entity) then
             local threat = 0
             if entity.isStation then threat = threat + 500 end
             if entity.hasArmedTurrets then threat = threat + 1000 end
             threat = threat + (entity.firePower or 0)
+
+            -- Apply distance penalty so the boss prioritizes targets actively engaging it at close range
+            local dist = distance(ship.translationf, entity.translationf)
+            threat = threat / (1 + (dist / 1500)) -- Halves threat for every 15km (1500 units) of distance
 
             if threat > highestThreat then
                 highestThreat = threat

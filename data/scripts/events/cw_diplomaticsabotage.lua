@@ -31,8 +31,7 @@ function CW_DiplomaticSabotageEvent.spawn()
         return
     end
 
-    local snapshot = CosmicWarBridge and CosmicWarBridge.getWarHeatSnapshot and CosmicWarBridge.getWarHeatSnapshot() or
-    {}
+    local snapshot = CosmicWarBridge.getWarHeatSnapshot() or {}
     local possibleFactions = {}
     for idx, heat in pairs(snapshot) do
         if heat >= 0.20 and heat <= 0.80 then table.insert(possibleFactions, idx) end
@@ -93,8 +92,26 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
 end
 
 
+function CW_DiplomaticSabotageEvent.secure()
+    return {
+        envoyId = CW_DiplomaticSabotageEvent.envoyId and CW_DiplomaticSabotageEvent.envoyId.string or nil,
+        envoyFactionId = CW_DiplomaticSabotageEvent.envoyFactionId
+    }
+end
+
+function CW_DiplomaticSabotageEvent.restore(data)
+    CW_DiplomaticSabotageEvent.envoyId = data.envoyId and Uuid(data.envoyId) or nil
+    CW_DiplomaticSabotageEvent.envoyFactionId = data.envoyFactionId
+end
+
 function initialize(...)
     if CW_DiplomaticSabotageEvent.initialize then return CW_DiplomaticSabotageEvent.initialize(...) end
+end
+function secure(...)
+    if CW_DiplomaticSabotageEvent.secure then return CW_DiplomaticSabotageEvent.secure(...) end
+end
+function restore(...)
+    if CW_DiplomaticSabotageEvent.restore then return CW_DiplomaticSabotageEvent.restore(...) end
 end
 
 return CW_DiplomaticSabotageEvent

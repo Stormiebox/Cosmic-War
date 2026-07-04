@@ -50,10 +50,7 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
-        local heat = 0
-        if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-            heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
-        end
+        local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
         local x, y = Sector():getCoordinates()
@@ -130,11 +127,7 @@ mission.phases[1].updateServer = function(timeStep)
     if mission.data.custom.weatherTimer > 10 then
         mission.data.custom.weatherTimer = 0
         local x, y = Sector():getCoordinates()
-        local weather = nil
-        
-        if CosmicVaultWeather and CosmicVaultWeather.getWeatherAt then
-            weather = CosmicVaultWeather.getWeatherAt(x, y)
-        end
+        local weather = CosmicVaultWeather.getWeatherAt(x, y)
         
         local targetStations = {Sector():getEntitiesByScriptValue("cw_siege_target")}
         for _, station in pairs(targetStations) do
@@ -244,10 +237,7 @@ end
 
 -- Added by Cosmic War for Avorion 2.0 Compatibility
 function getBulletin(station)
-    local heat = 0
-    if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
-        heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    end
+    local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     if heat < 0.6 then return end
 
     local baseReward = math.floor(375000 + heat * 1125000)

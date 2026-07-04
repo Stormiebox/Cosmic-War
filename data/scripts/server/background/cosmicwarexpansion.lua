@@ -11,10 +11,7 @@ function CosmicWarExpansion.getUpdateInterval()
 end
 
 local function hasTrait(f, traitId)
-    if cvf and cvf.getTrait then
-        return (cvf.getTrait(f.index, traitId) or 0) > 0
-    end
-    return (f:getValue("cosmic_trait_" .. traitId) or 0) > 0
+    return (cvf.getTrait(f.index, traitId) or 0) > 0
 end
 
 local function getActiveFactions()
@@ -35,7 +32,6 @@ local function getActiveFactions()
 end
 
 function CosmicWarExpansion.update(timeStep)
-    if not cvt or not cvt.expandToSector then return end
 
     local factions = getActiveFactions()
     for _, faction in pairs(factions) do

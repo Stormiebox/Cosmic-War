@@ -25,7 +25,7 @@ function CosmicWarEvent.spawn()
     dreadB.title = facB.name .. " Dreadnought"
 
     Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!")
-
+    terminate()
 end
 
 function initialize(...)

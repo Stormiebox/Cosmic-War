@@ -18,11 +18,7 @@ function CosmicWarController.initialize()
 end
 
 local function getCfg()
-    if CosmicWarConfig and CosmicWarConfig.get then
-        return CosmicWarConfig.get()
-    end
-
-    return {
+    return CosmicWarConfig.get() or {
         sectorPressureInterval = 180,
         sectorPressureChance = 0.35,
         sectorPressureMinSpacing = 600,
@@ -36,14 +32,7 @@ function CosmicWarController.getUpdateInterval()
 end
 
 local function cwlog(msg, ...)
-    if CosmicVaultDebug and CosmicVaultDebug.info then
-        CosmicVaultDebug.info("CosmicWar-Sector", msg, ...)
-        return
-    end
-
-    local cfg = getCfg()
-    if not cfg.debugLogs then return end
-    print("[Cosmic War][Sector] " .. string.format(msg, ...))
+    CosmicVaultDebug.info("CosmicWar-Sector", msg, ...)
 end
 
 local function getFactionByIndex(index)
@@ -154,12 +143,7 @@ local function applyWarPressure(a, b, random)
     -- Vanilla changeRelations() ignores AI vs AI factions.
     -- We must use the Galaxy API to force the relation change between two AI entities.
     local cvf = include("cosmicvaultfaction")
-    if cvf and cvf.changeRelations then
-        cvf.changeRelations(a.index, b.index, delta)
-    else
-        local newRel = math.max(-100000, math.min(100000, rel + delta))
-        Galaxy():setFactionRelations(a, b, newRel)
-    end
+    cvf.changeRelations(a.index, b.index, delta)
 
     local newRelA = a:getRelations(b.index) or rel
     local newRelB = b:getRelations(a.index) or rel
@@ -178,7 +162,7 @@ local function applyWarPressure(a, b, random)
     )
 end
 
-local function applyWarProfiteeringShortages(factions)
+local function applyWarProfiteeringShortages(factions, random)
     local sector = Sector()
     local x, y = sector:getCoordinates()
     local didShortage = false
@@ -201,7 +185,7 @@ local function applyWarProfiteeringShortages(factions)
                         if good then
                             -- Soft Bridge: We just remove stock. If Cosmic Overhaul is installed,
                             -- its dynamic economy will naturally detect the deficit and amplify prices.
-                            station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, random():getInt(500, 2000))
+                            station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, random:getInt(500, 2000))
                             didShortage = true
                         end
                     end
@@ -237,16 +221,14 @@ local function applyWeaponizedSubspaceTear(factions, random)
         if rel <= -80000 then
             -- Synergy: Eclipse Sanitization Protocol (10% chance)
             local EclipseGenerator = include("eclipsegenerator")
-            if EclipseGenerator and Server():getValue("eclipse_fully_awake") and random:test(0.1) then
+            if Server():getValue("eclipse_fully_awake") and random:test(0.1) then
                 local cvn = include("cosmicvaultnews")
-                if cvn then
-                    local article = {
-                        title = "Sanitization Protocol",
-                        category = "Eclipse Invasion",
-                        content = "The immense chaos and subspace tearing in sector (" .. x .. ":" .. y .. ") has drawn the attention of the Eclipse. A multiversal sanitization fleet has warped in, forcing all warring factions into a desperate ceasefire!"
-                    }
-                    cvn.publishArticle(article)
-                end
+                local article = {
+                    title = "Sanitization Protocol",
+                    category = "Eclipse Invasion",
+                    content = "The immense chaos and subspace tearing in sector (" .. x .. ":" .. y .. ") has drawn the attention of the Eclipse. A multiversal sanitization fleet has warped in, forcing all warring factions into a desperate ceasefire!"
+                }
+                cvn.publishArticle(article)
 
                 local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000)))
                 local harbinger = EclipseGenerator.createShip(pos, "obelisk", 2.0, 30)
@@ -266,12 +248,7 @@ local function applyWeaponizedSubspaceTear(factions, random)
                 local enemyFaction = Faction(enemy)
                 if enemyFaction then
                     local cvf = include("cosmicvaultfaction")
-                    if cvf and cvf.changeRelations then
-                        cvf.changeRelations(f.index, enemy, 40000) -- massive relation boost
-                    else
-                        local newRel = rel + 40000
-                        Galaxy():setFactionRelations(f, enemyFaction, newRel)
-                    end
+                    cvf.changeRelations(f.index, enemy, 40000) -- massive relation boost
                     f:setValue("cw_war_bias", 0)
                     enemyFaction:setValue("cw_war_bias", 0)
                 end
@@ -279,17 +256,14 @@ local function applyWeaponizedSubspaceTear(factions, random)
                 break -- only one intervention per sector update
             end
 
-            -- Cosmic War - Weaponized Subspace Missions (Normal behavior, 10% chance)
             if random:test(0.1) then
                 local cvn = include("cosmicvaultnews")
-                if cvn then
-                    local article = {
-                        title = "Weaponized Subspace Tear",
-                        category = "War Crime",
-                        content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
-                    }
-                    cvn.publishArticle(article)
-                end
+                local article = {
+                    title = "Weaponized Subspace Tear",
+                    category = "War Crime",
+                    content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
+                }
+                cvn.publishArticle(article)
 
                 -- Add visual Rift thunder
                 sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
@@ -328,7 +302,7 @@ function CosmicWarController.updateServer(timeStep)
     if not a or not b then return end
 
     applyWarPressure(a, b, random)
-    applyWarProfiteeringShortages(factions)
+    applyWarProfiteeringShortages(factions, random)
     applyWeaponizedSubspaceTear(factions, random)
     CosmicWarController._lastEventAt = now
 end

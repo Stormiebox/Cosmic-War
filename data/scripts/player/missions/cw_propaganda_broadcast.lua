@@ -58,7 +58,7 @@ function initialize(factionIndex)
             { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false }
         }
 
-        local heat = CosmicWarBridge and CosmicWarBridge.getFactionWarHeat and CosmicWarBridge.getFactionWarHeat(fIndex) or 0
+        local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
         -- Huge buff for v3.0.0
@@ -149,7 +149,7 @@ function spawnEvent(x, y)
 end
 
 function getBulletin(station)
-    local heat = CosmicWarBridge and CosmicWarBridge.getFactionWarHeat and CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     if heat < 0.25 then return end
 
     local baseReward = math.floor(100000 + heat * 150000)
