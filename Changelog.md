@@ -99,3 +99,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [New] Rift DLC Interoperability
 - **Weaponized Subspace Tears:** At Critical War Heat, warring factions may detonate experimental subspace weapons, tearing the fabric of space and unleashing localized Rift hazards.
 - **War Contracts - Subspace Containment:** When a rift tears in a warzone, factions will issue high-paying War Contracts to secure emerged Ancient Tech platforms and contain the anomaly.
+
+### Under The Hood
+- **Hardened Faction Relations:** Migrated over 15 mission/event scripts to use the hardened CosmicVaultFaction.changeRelations() API, removing dangerous math.max fallback logic that could crash the engine on boundary overflows.
+- **Dependency Update:** Now explicitly requires Cosmic Vault library hooks for all faction modifications.
+

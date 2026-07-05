@@ -1,5 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
+local CosmicVaultFaction = include("cosmicvaultfaction")
 
 include("randomext")
 include("structuredmission")
@@ -160,7 +161,7 @@ mission.abandon = function()
         local giverIndex = mission.data.custom.giverIndex
         if giverIndex and giverIndex > 0 then
             local rep = player:getRelations(giverIndex)
-            Galaxy():setFactionRelations(Faction(player.index), Faction(giverIndex), math.max(-100000, rep - 25000))
+            CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
             player:sendChatMessage(Faction(giverIndex).name, 1, "You abandoned a critical war contract! Our trust in you is broken.")
         end
     end

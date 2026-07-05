@@ -138,7 +138,12 @@ function CosmicWarBridge.forceDeclareWar(attackerFaction, defenderFaction)
     attackerFaction:setValue("cw_war_bias", 1000)
     defenderFaction:setValue("cw_war_bias", 1000)
     
-    Galaxy():setFactionRelations(attackerFaction, defenderFaction, -100000)
+    local CosmicVaultFaction = include("cosmicvaultfaction")
+    if CosmicVaultFaction and CosmicVaultFaction.changeRelations then
+        CosmicVaultFaction.changeRelations(attackerFaction.index, defenderFaction.index, -200000)
+    else
+        Galaxy():setFactionRelations(attackerFaction, defenderFaction, -100000)
+    end
 end
 
 return CosmicWarBridge
