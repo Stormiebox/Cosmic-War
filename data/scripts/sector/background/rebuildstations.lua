@@ -1,7 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("cosmicwarconfig")
-include("data/scripts/sector/background/rebuildstations")
 
 function getUpdateInterval()
     return 60.0

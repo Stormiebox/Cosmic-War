@@ -1,4 +1,3 @@
-include("data/scripts/sector/background/radiochatter")
 
 local cw_old_RadioChatter_initialize = RadioChatter.initialize
 function RadioChatter.initialize(...)
