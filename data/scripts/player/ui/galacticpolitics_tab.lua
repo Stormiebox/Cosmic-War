@@ -305,10 +305,10 @@ local function getFactionTraitsSafe(faction)
     end
 
     -- Send pure strings across the network boundary, the client will apply the local %_t translation!
-    if faction:getTrait("aggressive") then table.insert(traits, "Aggressive") end
-    if faction:getTrait("peaceful") then table.insert(traits, "Peaceful") end
-    if faction:getTrait("wealthy") then table.insert(traits, "Wealthy") end
-    if faction:getTrait("poor") then table.insert(traits, "Poor") end
+    if faction:getTrait("aggressive") > 0.5 then table.insert(traits, "Aggressive") end
+    if faction:getTrait("peaceful") > 0.5 then table.insert(traits, "Peaceful") end
+    if faction:getTrait("wealthy") > 0.5 then table.insert(traits, "Wealthy") end
+    if faction:getTrait("poor") > 0.5 then table.insert(traits, "Poor") end
     if #traits == 0 then return {"Unknown"} end
     return traits
 end
@@ -396,6 +396,24 @@ function GalacticPoliticsTab.serverFetchData()
         end
     end
 
+
+    if server:getValue("eclipse_fully_awake") then
+        table.insert(conflicts, 1, {
+            factionA = "The Eclipse",
+            factionAIndex = 0,
+            traitsA = {"Genocidal", "Existential Threat"},
+            bountyA = 0,
+            famineA = 0,
+            factionB = "Galactic Civilizations",
+            factionBIndex = 0,
+            traitsB = {},
+            bountyB = 0,
+            famineB = 0,
+            heat = 100,
+            relation = -100000,
+            status = "Total Eradication"
+        })
+    end
 
     invokeClientFunction(player, "receiveData", conflicts)
 end

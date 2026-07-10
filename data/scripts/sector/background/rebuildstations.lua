@@ -19,6 +19,7 @@ if onServer() then
         if not sector then
             return cw_oldUpdateServer(timeStep)
         end
+        if sector:getValue("eclipse_wiped_graveyard") then return end
 
         -- Optimization tweak:
         -- In active war states only, reduce excessive rebuild throttle by lowering it to a near-term value,
