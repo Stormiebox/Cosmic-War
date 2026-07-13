@@ -233,14 +233,14 @@ local function applyWeaponizedSubspaceTear(factions, random)
                 local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000)))
                 local harbinger = EclipseGenerator.createShip(pos, "obelisk", 2.0, 30)
                 if harbinger then
-                    harbinger:addScriptOnce("ai/aggressiveship.lua")
+                    harbinger:addScriptOnce("ai/patrol.lua")
                 end
 
                 for i = 1, 4 do
                     local mPos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000)))
                     local defender = EclipseGenerator.createJuggernaut(mPos)
                     if defender then
-                        defender:addScriptOnce("ai/aggressiveship.lua")
+                        defender:addScriptOnce("ai/patrol.lua")
                     end
                 end
 
@@ -275,6 +275,45 @@ local function applyWeaponizedSubspaceTear(factions, random)
     end
 end
 
+local function applyWarHazardSpawns(factions, random)
+    local sector = Sector()
+    local x, y = sector:getCoordinates()
+
+    for _, f in pairs(factions) do
+        local enemy = f:getValue("enemy_faction") or 0
+        local rel = 0
+        if enemy > 0 then rel = f:getRelations(enemy) end
+
+        -- If at critical war heat (relations very low)
+        if rel <= -80000 then
+            -- 20% chance to spawn an aggressive strike fleet
+            if random:test(0.20) then
+                local enemyFaction = Faction(enemy)
+                if enemyFaction then
+                    local ShipGenerator = include("shipgenerator")
+                    local numShips = random:getInt(3, 7)
+                    for i = 1, numShips do
+                        local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1500, 1500), 0, random:getInt(-1500, 1500)))
+                        local ship = ShipGenerator.createMilitaryShip(enemyFaction, pos)
+                        if ship then
+                            ship:addScriptOnce("ai/patrol.lua")
+                        end
+                    end
+                    
+                    local cvn = include("cosmicvaultnews")
+                    local article = {
+                        title = "Frontline Siege",
+                        category = "War Heat Escalation",
+                        content = string.format("The intense hostility in sector (%d:%d) has triggered a massive offensive by the %s! A heavy strike fleet has dropped out of hyperspace and is assaulting all targets in sight.", x, y, enemyFaction.name)
+                    }
+                    cvn.publishArticle(article)
+                    break -- Only spawn once per update
+                end
+            end
+        end
+    end
+end
+
 function CosmicWarController.updateServer(timeStep)
     CosmicWarController._tick = (CosmicWarController._tick or 0) + timeStep
 
@@ -304,6 +343,7 @@ function CosmicWarController.updateServer(timeStep)
     applyWarPressure(a, b, random)
     applyWarProfiteeringShortages(factions, random)
     applyWeaponizedSubspaceTear(factions, random)
+    applyWarHazardSpawns(factions, random)
     CosmicWarController._lastEventAt = now
 end
 

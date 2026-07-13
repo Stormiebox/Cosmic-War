@@ -559,7 +559,8 @@ Invaders have a 35% chance to deploy a Shield Jammer, stripping shields from def
 - **Wartime Propaganda Beacons**: There is a 5% chance for a narrative Cosmic Chronicles beacon to dynamically spawn after a siege resolves, immortalizing the battle.
 - **Inherent Imperialism**: The Eclipse (Ascendancy) faction is now hardcoded as Imperialist and Vengeful. They will relentlessly expand their territory and will absolutely never accept ceasefires.
 
-
-## [New] Rift DLC Interoperability
+## [New] Advanced War Heat Scaling & Rift DLC Interoperability
 - **Weaponized Subspace Tears:** At Critical War Heat, warring factions may detonate experimental subspace weapons, tearing the fabric of space and unleashing localized Rift hazards.
+- **Dynamic Frontline Sieges:** When a war reaches its absolute boiling point, factions will proactively spawn massive siege fleets directly into their rival's occupied sectors, creating dynamic combat hazards outside of normal missions.
+- **Alliance PvP Repercussions:** Triggering a diplomatic incident or destroying civilian convoys will permanently damage relations not just for you, but dynamically spread the consequences to your active Player Alliance.
 - **War Contracts - Subspace Containment:** When a rift tears in a warzone, factions will issue high-paying War Contracts to secure emerged Ancient Tech platforms and contain the anomaly.

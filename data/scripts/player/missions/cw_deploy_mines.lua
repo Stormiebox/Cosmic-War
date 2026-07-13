@@ -88,7 +88,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
 end
 
 function getUpdateInterval()
-    return 1.0
+    return 5.0
 end
 
 mission.phases[1].triggers = {

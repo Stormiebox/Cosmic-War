@@ -20,7 +20,7 @@ mission.data.icon = "data/textures/icons/ShipEscort.png"
 mission.data.autoTrackMission = true
 
 function getUpdateInterval()
-    return 1.0
+    return 5.0
 end
 
 local cw_init = initialize

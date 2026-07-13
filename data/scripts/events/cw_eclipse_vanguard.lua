@@ -28,13 +28,27 @@ function CosmicWarEvent.spawn()
     local dreadnought = ShipGenerator.createBossShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
     dreadnought.title = "The Eclipse Vanguard"
     dreadnought:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-    dreadnought.damageMultiplier = 500.0 -- Unfair fixed scaling
+    dreadnought:addMultiplyableBias(StatsBonuses.FireRate, 499.0) -- 500x total
     dreadnought.shieldMultiplier = 500.0
 
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
+    broadcastInvokeClientFunction("showVanguardBanner")
     terminate()
 end
 
+function CosmicWarEvent.showVanguardBanner()
+    if onClient() then
+        local CosmicVaultUI = include("cosmicvaultui")
+        if CosmicVaultUI and CosmicVaultUI.ShowCinematicBanner then
+            CosmicVaultUI.ShowCinematicBanner(Player(), "ECLIPSE VANGUARD INBOUND", ColorRGB(1, 0, 0), "data/sounds/siren.ogg", 5)
+        end
+    end
+end
+callable(CosmicWarEvent, "showVanguardBanner")
+
 function initialize(...)
     if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
+end
+function showVanguardBanner(...)
+    if CosmicWarEvent.showVanguardBanner then return CosmicWarEvent.showVanguardBanner(...) end
 end

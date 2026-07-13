@@ -6,7 +6,7 @@ include("randomext")
 include("structuredmission")
 
 function getUpdateInterval()
-    return 1.0
+    return 5.0
 end
 
 

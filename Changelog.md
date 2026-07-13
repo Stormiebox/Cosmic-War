@@ -12,6 +12,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 *The most massive expansion to Cosmic War yet, introducing mercenary enlistment, warbonds, brand new contract missions, horrifying new events like the Eclipse Vanguard, and a completely rebalanced war economy.*
 
 ### ✨ New Features & 📦 Content Additions
+- [Feature] **War Heat Frontline Sieges:** When a faction's War Heat drops to critical levels (`relations <= -80000`), they will now actively spawn heavy strike fleets (Frontline Sieges) directly into hostile sectors to assault enemy targets dynamically.
+- [Feature] **PvP & Alliance Integration:** Reputation shifts are now actively mirrored onto the player's active Alliance! No more swapping to personal ships to commit war crimes without implicating your alliance. All PvP logic is handled safely through the core `CosmicVaultFaction` API.
 - [Feature] **Dynamic Territory Expansion:** Factions can now actively capture enemy sectors and shift Galaxy Map borders mathematically in the background without causing Sector Alive performance drain! Conquests are automatically broadcast to the Galactic News Network.
 - [Feature] **Cosmic Codex Integration:** The mod now fully supports the Cosmic Codex! Comprehensive lore and mechanical documentation (such as features, UI tools, and dynamic events) are now readable directly in-game from the new Cosmic Codex tab.
 - [Feature] **Deep Economy Warfare:** Introduced `CosmicWarBridge.forceDeclareWar()`, natively bridging the Cosmic Vault Economy simulation with the diplomatic war simulation. Market collapses and starvation can now directly trigger desperation invasions for survival!
@@ -53,6 +55,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - [Balanced] **Eclipse Diplomacy Stances:** Hardcoded Imperialist and Vengeful diplomatic traits onto The Eclipse (Cosmic Ascendancy synergy).
 
 ### 🐛 Bug Fixes & 🛠️ Optimization
+- [Optimized] **Massive Fleet Performance Scaling:** Heavily reduced the background tick frequency (`getUpdateInterval`) of all 6 Cosmic War specific contracts (Frontline Siege, Propaganda, etc.) from checking every 1.0 seconds to 5.0 seconds. This drastically reduces CPU overhead for busy multiplayer servers with huge player fleets.
 - [Optimized] **Performance & TPS Optimization:** Drastically reduced server load during late-game and high-intensity scenarios. Injected a hardcoded `getUpdateInterval` throttle (1.0s to 60.0s) into 5 major mission and background scripts (`cw_breakthrough`, `cw_forcerecon`, `cw_frontlinesiege`, `cw_highvaluedefection`, `rebuildstations`). These scripts previously looped 60 times a second without throttling.
 - [Bugfixed] **Truthiness Logic Stabilized:** Applied strict explicit float comparisons (`> 0.5`) inside `galacticpolitics_tab.lua` to resolve truthiness evaluation bugs that could destabilize the UI when sorting zero-values.
 - [Bugfixed] **Architecture Flaws:** Fixed a critical architecture flaw where `cosmicwartraits.lua` exposed a global `initialize()` wrapper, preventing vanilla server initialization when included.

@@ -6,7 +6,7 @@ include("randomext")
 include("structuredmission")
 
 function getUpdateInterval()
-    return 1.0
+    return 5.0
 end
 
 
@@ -182,7 +182,7 @@ function spawnSiegeTarget(x, y)
     local heat = mission.data.custom.heat or 0
     local hpMult = 1.0 + (heat * 3.0) -- Up to 4x Damage at max heat
 
-    station.damageMultiplier = (station.damageMultiplier or 1.0) * hpMult
+    station:addMultiplyableBias(StatsBonuses.FireRate, hpMult - 1.0)
     
     local boarding = Boarding(station.index)
     if boarding then
