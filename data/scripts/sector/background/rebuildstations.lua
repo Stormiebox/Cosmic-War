@@ -62,6 +62,4 @@ if onServer() then
     end
 end
 
-function updateServer(...)
-    if RebuildStations.updateServer then return RebuildStations.updateServer(...) end
-end
+

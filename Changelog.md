@@ -69,3 +69,5 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - [Bugfixed] **Missing AI Scripts (Ghost AI Bug):** Fixed a critical issue where Flagships generated during *Stranded Flagship* and *Decapitation Strike* events were assigned a missing vanilla script (`story/boss.lua`). They now properly inject the new `ai/dreadnoughtboss.lua` behavior script.
 - [Bugfixed] **Multiplayer Synchronization:** Replaced all instances of `math.random` with Avorion's deterministic `random()` engine (including `cw_militaryoutpost.lua`) to prevent massive multiplayer client/server desyncs when generating loot, stats, and enemies.
 - [Bugfixed] **UI Polish:** Faction names will no longer display raw translator comments (e.g., `/* faction name */`) inside the Galactic Politics tab.
+
+- [Bugfixed] **VFS Compliance:** Stripped redundant global wrapper functions from namespaced scripts to prevent silent double-execution logic loops and engine crashes.

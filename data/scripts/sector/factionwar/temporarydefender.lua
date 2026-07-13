@@ -16,8 +16,3 @@ if onServer() then
         end
     end
 end
-
-
-function initialize(...)
-    if TemporaryDefender.initialize then return TemporaryDefender.initialize(...) end
-end
