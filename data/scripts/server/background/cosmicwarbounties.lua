@@ -57,40 +57,31 @@ function CosmicWarBounties.update(timeStep)
     local cfg = getCfg()
     local rivalryThreshold = cfg.rivalryThreshold or -45000
 
-    local cv_task = include("cosmicvaulttask")
-    cv_task.RunAsync("CosmicWarBounties", function()
-        local spawned = 0
-        local iters = 0
+    local spawned = 0
 
-        for _, idx in pairs(factionIndices) do
-            iters = iters + 1
-            if iters % 10 == 0 and cv_task.Yield then
-                cv_task.Yield()
-            end
-
-            local f = Faction(idx)
-            if f and f.isAIFaction and f:getValue("cw_enabled") then
-                local enemyIndex = f:getValue("enemy_faction")
-                if enemyIndex and enemyIndex > 0 then
-                    local e = Faction(enemyIndex)
-                    if e and e.isAIFaction then
-                        local rel = f:getRelations(e.index) or 0
-                        if rel <= rivalryThreshold and random:test(0.30) then
-                            local bounty = random:getInt(15000, 65000)
-                            f:setValue("cw_bounty_enemy", e.index)
-                            f:setValue("cw_bounty_reward", bounty)
-                            f:setValue("cw_bounty_expires", server.unpausedRuntime + random:getInt(1800, 5400))
-                            spawned = spawned + 1
-                        end
+    for _, idx in pairs(factionIndices) do
+        local f = Faction(idx)
+        if f and f.isAIFaction and f:getValue("cw_enabled") then
+            local enemyIndex = f:getValue("enemy_faction")
+            if enemyIndex and enemyIndex > 0 then
+                local e = Faction(enemyIndex)
+                if e and e.isAIFaction then
+                    local rel = f:getRelations(e.index) or 0
+                    if rel <= rivalryThreshold and random:test(0.30) then
+                        local bounty = random:getInt(15000, 65000)
+                        f:setValue("cw_bounty_enemy", e.index)
+                        f:setValue("cw_bounty_reward", bounty)
+                        f:setValue("cw_bounty_expires", server.unpausedRuntime + random:getInt(1800, 5400))
+                        spawned = spawned + 1
                     end
                 end
             end
         end
+    end
 
-        if spawned > 0 then
-            cwlog("Refreshed %i active war bounties.", spawned)
-        end
-    end)
+    if spawned > 0 then
+        cwlog("Refreshed %i active war bounties.", spawned)
+    end
 end
 
 
