@@ -30,7 +30,7 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 1. **Active Politics:** Make galaxy politics feel dynamic and alive instead of static.
 2. **Sustained Cycles:** Produce meaningful war and cooling cycles over long campaign sessions via scripts properly attached to the global `Galaxy` loop.
 3. **Player Visibility:** Surface war-state consequences directly to players via news broadcasts, bounties, and sanctions pressure.
-4. **Configurability:** Remain highly configurable and server-operator friendly through the Mod Configuration Menu (MCM).
+4. **Configurability:** Remain highly configurable and server-operator friendly through the Cosmic Configuration Menu.
 5. **Safe Compatibility:** Preserve ecosystem compatibility by favoring non-invasive wrappers and safety guards over hard overwrites.
 
 ---
@@ -287,34 +287,6 @@ Allows factions to actively conquer enemy sectors and permanently expand their b
 
 </details>
 
-### 🔗 11) MCM Configuration Integration
-
-<details>
-<summary><b>Click to expand details</b></summary>
-
-**Primary files:**
-
-- `modconfig.lua`
-- `data/scripts/lib/cosmicwarconfig.lua`
-- `modinfo.lua`
-
-**Dependency:**
-Requires the **Mod Configuration Menu (MCM)**.
-
-**Config Groups Currently Exposed:**
-
-- **War Pressure:** `sectorPressureInterval`, `sectorPressureChance`, `sectorPressureMinSpacing`
-- **Diplomacy:** `diplomacyInterval`, `diplomacyPairSteps`, `rivalryThreshold`
-- **Diagnostics:** `debugLogs`
-
-**Config Handling Notes:**
-
-- Numeric values are clamped to safe ranges.
-- Percent slider values are normalized for simulation use.
-- Config bridge returns defaults if MCM/config context is unavailable.
-
-</details>
-
 ### 11) Stability Hardening
 
 <details>
@@ -462,7 +434,7 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 
 - Interval-driven loops are strictly favored over heavy per-frame (`update()`) logic to maintain server TPS.
 - Defensive nil and callable checks are heavily used in high-risk lifecycle paths.
-- Debug logging is toggleable via the MCM config to reduce noise and overhead in live production environments.
+- Debug logging is toggleable via the CCM config to reduce noise and overhead in live production environments.
 
 ---
 
@@ -471,7 +443,7 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 ### Required Mods
 
 - Avorion
-- **Mod Configuration Menu (MCM)**
+- Cosmic Series (Overhaul, Chornicles & Ascendancy)
 - **Cosmic Vault** (Provides the underlying faction index API and shared data contracts).
 
 ### Compatibility Intent
@@ -489,14 +461,14 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 1. Place folder in:
    - **Windows:** `%AppData%\Avorion\mods\`
    - **Linux:** `~/.avorion/mods/`
-2. Ensure **Mod Configuration Menu (MCM)** is installed and enabled.
+2. Install all Cosmic Series Mods (Vault, Overhaul, Chronicles & Ascendancy)
 3. Enable **Cosmic War** in **Settings -> Mods**.
 4. Restart the game or server.
 
 ### 🛠️ Troubleshooting Checklist
 
 - [ ] Confirm the mod is active in your Avorion mod settings.
-- [ ] Confirm the **MCM** dependency is enabled and loaded before this mod.
+- [ ] Confirm All Cosmic Series mods except Cosmic Starfall are installed.
 - [ ] Review the latest client/server logs for any early startup warnings.
 - [ ] Validate your load order if running in a heavily modified stack.
 - [ ] Use `/cosmicwarstatus` in-game for quick operational diagnostics.
