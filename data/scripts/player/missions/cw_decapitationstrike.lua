@@ -46,6 +46,11 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        if enemyIndex and enemyIndex > 0 then
+            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
+            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
+        end
+
         local x, y = Sector():getCoordinates()
         local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
         local targetX, targetY = MissionUT.getSector(x, y, 4, 15, false, false, false, false, insideBarrier)
@@ -221,7 +226,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Decapitation Strike"%_T,
-        description = "The enemy Flagship has entered the sector. This is our chance to end the war."%_T,
+        description = "The enemy Flagship has entered the sector. This is our chance to end the war.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_decapitationstrike.lua",

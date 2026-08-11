@@ -51,6 +51,11 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        if enemyIndex and enemyIndex > 0 then
+            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
+            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
+        end
+
         local x, y = Sector():getCoordinates()
         local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
         local targetX, targetY = MissionUT.getSector(x, y, 2, 8, false, false, false, false, insideBarrier)
@@ -210,7 +215,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Force Recon"%_T,
-        description = "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel."%_T,
+        description = "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_forcerecon.lua",

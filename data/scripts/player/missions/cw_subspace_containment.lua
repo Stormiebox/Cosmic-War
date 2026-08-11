@@ -35,6 +35,11 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        if enemyIndex and enemyIndex > 0 then
+            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
+            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
+        end
+
         local x, y = Sector():getCoordinates()
         local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
         if not targetX or not targetY then terminate() return end
@@ -105,7 +110,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Subspace Containment"%_T,
-        description = "Our experimental hyperspace weapons have torn a rift in sector (${location.x}:${location.y}). Ancient structures have emerged. Destroy them and secure the zone."%_T,
+        description = "Our experimental hyperspace weapons have torn a rift in sector (${location.x}:${location.y}). Ancient structures have emerged. Destroy them and secure the zone.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_subspace_containment.lua",

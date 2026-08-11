@@ -43,6 +43,11 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        if enemyIndex and enemyIndex > 0 then
+            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
+            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
+        end
+
         local x, y = Sector():getCoordinates()
         local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
         if not targetX or not targetY then terminate() return end
@@ -137,7 +142,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Assassinate Flag Officer"%_T,
-        description = "An enemy Flag Officer is traveling through sector (${location.x}:${location.y}). Hunt them down and eliminate them to sever their command structure."%_T,
+        description = "An enemy Flag Officer is traveling through sector (${location.x}:${location.y}). Hunt them down and eliminate them to sever their command structure.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_assassinate_general.lua",

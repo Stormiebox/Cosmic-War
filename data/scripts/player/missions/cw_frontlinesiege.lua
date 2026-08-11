@@ -51,6 +51,11 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        if enemyIndex and enemyIndex > 0 then
+            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
+            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
+        end
+
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
@@ -253,7 +258,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Frontline Siege"%_T,
-        description = "The enemy has established a Forward Operating Base. We need it destroyed."%_T,
+        description = "The enemy has established a Forward Operating Base. We need it destroyed.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_frontlinesiege.lua",

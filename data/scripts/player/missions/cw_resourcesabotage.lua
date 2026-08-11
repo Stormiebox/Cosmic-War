@@ -46,6 +46,11 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        if enemyIndex and enemyIndex > 0 then
+            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
+            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
+        end
+
         local x, y = Sector():getCoordinates()
         local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
         local targetX, targetY = MissionUT.getSector(x, y, 3, 12, false, false, false, false, insideBarrier)
@@ -156,7 +161,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Resource Sabotage"%_T,
-        description = "A hostile mining operation is extracting resources in contested space. Put an end to it."%_T,
+        description = "A hostile mining operation is extracting resources in contested space. Put an end to it.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_resourcesabotage.lua",

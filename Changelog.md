@@ -7,6 +7,10 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.2]
+### 🐛 Bug Fixes & 🛠️ Optimization
+- [Bugfixed] **War Contract Diplomacy Exploit:** Fixed a major exploit where players with "Excellent" standing could accept War Contracts against a faction, fly into the sector, and destroy the mission targets without retaliation. Accepting *any* of the 14 War Contracts is now explicitly treated as an act of war: it will instantly plummet your reputation with the target faction by `-200,000`, forcing an immediate hostile state. A high-priority UI warning and in-game chat notification have been added to prevent players from accidentally declaring war.
+
 ## [v3.0.1]
 ### 🐛 Bug Fixes & 🛠️ Optimization
 - [Bugfixed] **Instance Crash:** Fixed a critical bug causing single-player instances and dedicated servers to crash via `EXCEPTION_ACCESS_VIOLATION`. The `CosmicVaultTask.RunAsync` coroutine wrapper was improperly used inside background war simulation scripts (`cosmicwarceasefires.lua`, `cosmicwardiplomaticsanctions.lua`, `cosmicwarbounties.lua`) without a pumping mechanism, causing dangling threads to violate memory boundaries when garbage collected. These have been rewritten to execute safely and synchronously.
