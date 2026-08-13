@@ -9,12 +9,12 @@ include("cosmicvaultdebug")
 CosmicWarCeasefires = {}
 
 local function getCfg()
-    return CosmicWarConfig.get() or { debugLogs = false, rivalryThreshold = -45000, ceasefireInterval = 900, ceasefireChance = 0.25 }
+    return CosmicWarConfig.get() or { debugLogs = false, rivalryThreshold = -45000, ceasefireInterval = 600, ceasefireChance = 0.25 }
 end
 
 function CosmicWarCeasefires.getUpdateInterval()
     local cfg = getCfg()
-    return cfg.ceasefireInterval or 900 -- every 15 minutes
+    return cfg.ceasefireInterval or 600 -- every 10 minutes
 end
 
 local function cwlog(msg, ...)

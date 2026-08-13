@@ -7,19 +7,37 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.3]
+
+### 🐛Bug Fixes, ⚖️Balancing and ⚙️Adjustments
+
+- [Bugfixed] **Event Scheduler Desync:** Fixed an issue where spontaneous event timers (Fleet Clashes, Refugee Convoys, etc.) were reliant on server tick accumulation, which caused timers to stall or desync when the server lagged. Event timers now utilize persistent, absolute `Player().playtime` stamps to ensure flawless timer continuation and pacing even across server restarts and lag spikes.
+- [Bugfixed] **Siege Weather Memory Leak:** Fixed a critical issue where the dynamic Eclipse weather applied during Sieges was never properly cleared when the event concluded because the script's `onRemove` callback was not exposed to the engine API. Siege Weather now correctly dissipates when the event ends, preventing massive visual bloat and sector bloat.
+- [Bugfixed] **Eclipse Vanguard Shield Bug:** Fixed a syntax error where the Vanguard Boss was assigned a non-existent `shieldMultiplier` property instead of correctly multiplying its actual `shieldMaxDurability`, leaving it vulnerable. Also reduced its FireRate multiplier from 500x down to a safer 50x to prevent massive server-side packet spam and simulation freezing.
+- [Balancing] **Siege Troop Transports:** Troop Transport boarding timers now scale dynamically with the defending station's max durability. Instead of a flat 60 seconds to board, transports now require an additional 1 second per 100,000 HP of the station's hull (capped at 5 minutes), giving defenders realistic time windows to defend massive fortified citadels before they are annexed.
+- [Balancing] **Dynamic War Economy Scaling:** Freelance Mercenary Payouts and High-Profile War Bounties are no longer flat rates! Both systems have been completely rebalanced to scale exponentially based on the faction's distance to the Galactic Core. Fighting for an Outer Rim faction will still yield standard rates, but shedding blood for inner-core empires will yield massive payouts scaling up to **26x** the base rate.
+- [Changed] **Living Galaxy Simulation Rates:** The default CCM configuration values governing background simulations (Diplomacy, Ceasefires, Bounties, News, Trade Sanctions) have been heavily rebalanced. Previously, the simulation evaluated only 10 faction pairs every 20 minutes, which resulted in a stagnant galaxy where wars rarely broke out organically. The new default intervals have been lowered to **5-10 minutes**, and the default faction pairing batch has been increased to **50**. *Note: These are just the new out-of-the-box defaults to provide a truly living, breathing galaxy; players can still freely adjust these timers themselves via the CCM menu!*
+
 ## [v3.0.2]
+
 ### 🐛 Bug Fixes & 🛠️ Optimization
+
 - [Bugfixed] **War Contract Diplomacy Exploit:** Fixed a major exploit where players with "Excellent" standing could accept War Contracts against a faction, fly into the sector, and destroy the mission targets without retaliation. Accepting *any* of the 14 War Contracts is now explicitly treated as an act of war: it will instantly plummet your reputation with the target faction by `-200,000`, forcing an immediate hostile state. A high-priority UI warning and in-game chat notification have been added to prevent players from accidentally declaring war.
 
 ## [v3.0.1]
+
 ### 🐛 Bug Fixes & 🛠️ Optimization
+
 - [Bugfixed] **Instance Crash:** Fixed a critical bug causing single-player instances and dedicated servers to crash via `EXCEPTION_ACCESS_VIOLATION`. The `CosmicVaultTask.RunAsync` coroutine wrapper was improperly used inside background war simulation scripts (`cosmicwarceasefires.lua`, `cosmicwardiplomaticsanctions.lua`, `cosmicwarbounties.lua`) without a pumping mechanism, causing dangling threads to violate memory boundaries when garbage collected. These have been rewritten to execute safely and synchronously.
 
-## [v3.0.0] - UNRELEASED WORKSHOP VERSION (PROJECT UNDER DEVELOPMENT)
+## [v3.0.0]
+
 ### **The Arsenal Update**
+
 *The most massive expansion to Cosmic War yet, introducing mercenary enlistment, warbonds, brand new contract missions, horrifying new events like the Eclipse Vanguard, and a completely rebalanced war economy.*
 
 ### ✨ New Features & 📦 Content Additions
+
 - [Feature] **War Heat Frontline Sieges:** When a faction's War Heat drops to critical levels (`relations <= -80000`), they will now actively spawn heavy strike fleets (Frontline Sieges) directly into hostile sectors to assault enemy targets dynamically.
 - [Feature] **PvP & Alliance Integration:** Reputation shifts are now actively mirrored onto the player's active Alliance! No more swapping to personal ships to commit war crimes without implicating your alliance. All PvP logic is handled safely through the core `CosmicVaultFaction` API.
 - [Feature] **Dynamic Territory Expansion:** Factions can now actively capture enemy sectors and shift Galaxy Map borders mathematically in the background without causing Sector Alive performance drain! Conquests are automatically broadcast to the Galactic News Network.
@@ -47,6 +65,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - [Content] **War Contracts - Subspace Containment:** When a rift tears in a warzone, factions will issue high-paying War Contracts to secure emerged Ancient Tech platforms and contain the anomaly.
 
 ### ⚙️ Changed & ⚖️ Balanced
+
 - [Changed] **Centralized Radio Chatter:** Neutralized the `radiochatter.lua` script inside Cosmic War. All custom ambient lore and war chatter lines have been seamlessly migrated and centralized within the Cosmic Chronicles mod to prevent duplicate hooks and improve integration.
 - [Changed] **Diplomacy AI Trait Integration:** Refactored `factions.lua` to intelligently derive all 9 traits from vanilla parameters (e.g. `greedy > 0.7`) during faction generation. Maintains a 30% forceful injection chance to ensure extreme trait variance across the galaxy.
 - [Changed] **Core Dependencies:** Removed `pcall` soft-dependencies. Core 5 mods are now hard requirements.
@@ -63,6 +82,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - [Balanced] **Eclipse Diplomacy Stances:** Hardcoded Imperialist and Vengeful diplomatic traits onto The Eclipse (Cosmic Ascendancy synergy).
 
 ### 🐛 Bug Fixes & 🛠️ Optimization
+
 - [Optimized] **Massive Fleet Performance Scaling:** Heavily reduced the background tick frequency (`getUpdateInterval`) of all 6 Cosmic War specific contracts (Frontline Siege, Propaganda, etc.) from checking every 1.0 seconds to 5.0 seconds. This drastically reduces CPU overhead for busy multiplayer servers with huge player fleets.
 - [Optimized] **Performance & TPS Optimization:** Drastically reduced server load during late-game and high-intensity scenarios. Injected a hardcoded `getUpdateInterval` throttle (1.0s to 60.0s) into 5 major mission and background scripts (`cw_breakthrough`, `cw_forcerecon`, `cw_frontlinesiege`, `cw_highvaluedefection`, `rebuildstations`). These scripts previously looped 60 times a second without throttling.
 - [Bugfixed] **Truthiness Logic Stabilized:** Applied strict explicit float comparisons (`> 0.5`) inside `galacticpolitics_tab.lua` to resolve truthiness evaluation bugs that could destabilize the UI when sorting zero-values.

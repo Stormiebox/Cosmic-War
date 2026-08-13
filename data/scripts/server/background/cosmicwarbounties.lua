@@ -68,7 +68,16 @@ function CosmicWarBounties.update(timeStep)
                 if e and e.isAIFaction then
                     local rel = f:getRelations(e.index) or 0
                     if rel <= rivalryThreshold and random:test(0.30) then
-                        local bounty = random:getInt(15000, 65000)
+                        local hx, hy = f:getHomeSectorCoordinates()
+                        local dist = 500
+                        if hx and hy then
+                            dist = math.sqrt(hx * hx + hy * hy)
+                        end
+                        -- Scale from 1.0 (edge) up to 25.0+ (core)
+                        local distFactor = math.max(1, (500 - dist) / 20)
+                        local scale = 1.0 + (distFactor * distFactor * 0.1)
+                        local bounty = math.floor(random:getInt(25000, 85000) * scale)
+                        
                         f:setValue("cw_bounty_enemy", e.index)
                         f:setValue("cw_bounty_reward", bounty)
                         f:setValue("cw_bounty_expires", server.unpausedRuntime + random:getInt(1800, 5400))

@@ -50,7 +50,7 @@ function onDestroyed(destroyedId, destroyerId)
                         local multiplier = 1
                         if victim.type == EntityType.Station then
                             multiplier = 5
-                        elseif victim.isBoss or victim.title == "Battleship"%_t then
+                        elseif victim.isBoss or string.match(tostring(victim.title), "Battleship") then
                             multiplier = 3
                         end
 

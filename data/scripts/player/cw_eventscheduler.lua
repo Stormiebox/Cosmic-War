@@ -23,10 +23,11 @@ function CW_EventScheduler.initialize()
     if onClient() then return end
 
     -- Initialize timers with a random offset so they don't all trigger at once
+    local now = Player().playtime
     for _, event in pairs(events) do
         if event.schedule == 0 then
             event.schedule = random():getInt(event.min, event.max) * 60
-            event.timer = random():getInt(0, event.schedule)
+            event.timer = now + random():getInt(0, event.schedule)
         end
     end
 end
@@ -55,13 +56,12 @@ function CW_EventScheduler.restore(data)
 end
 
 function CW_EventScheduler.updateServer(timeStep)
+    local now = Player().playtime
     for _, event in pairs(events) do
-        event.timer = event.timer + timeStep
-
-        if event.timer >= event.schedule then
+        if now >= event.timer then
             -- Reset timer and roll a new schedule
-            event.timer = 0
             event.schedule = random():getInt(event.min, event.max) * 60
+            event.timer = now + event.schedule
 
             -- Spawn event
             local sector = Sector()

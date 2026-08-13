@@ -282,7 +282,7 @@ Allows factions to actively conquer enemy sectors and permanently expand their b
 
 - **Background Conquests:** Contested zones have a hidden siege timer. If time runs out, the station flips ownership mathematically.
 - **Physical Sieges:** If a player enters a contested zone, the engine triggers a Siege Event.
-- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds at close range, they physically board and capture the station!
+- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds (scaling up to 5 minutes based on the station's hull HP) at close range, they physically board and capture the station!
 - **Dynamic Borders:** Once a station flips ownership, the Galaxy Map influence border naturally expands.
 
 </details>

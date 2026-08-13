@@ -66,6 +66,10 @@ function TroopTransport.updateServer(timeStep)
         TroopTransport.boardingMessageSent = false
     else
         -- We are close enough, begin boarding!
+        if TroopTransport.boardingRequired == 60 and target.maxDurability then
+            TroopTransport.boardingRequired = math.min(300, 60 + (target.maxDurability / 100000))
+        end
+
         TroopTransport.isBoarding = true
         TroopTransport.boardingProgress = TroopTransport.boardingProgress + timeStep
 
@@ -116,6 +120,7 @@ function TroopTransport.secure()
     return {
         targetStationId = TroopTransport.targetStationId and tostring(TroopTransport.targetStationId) or nil,
         boardingProgress = TroopTransport.boardingProgress,
+        boardingRequired = TroopTransport.boardingRequired,
         isBoarding = TroopTransport.isBoarding,
         boardingMessageSent = TroopTransport.boardingMessageSent
     }
@@ -124,6 +129,7 @@ end
 function TroopTransport.restore(data)
     TroopTransport.targetStationId = data.targetStationId and Uuid(data.targetStationId) or nil
     TroopTransport.boardingProgress = data.boardingProgress or 0
+    TroopTransport.boardingRequired = data.boardingRequired or 60
     TroopTransport.isBoarding = data.isBoarding or false
     TroopTransport.boardingMessageSent = data.boardingMessageSent or false
 end

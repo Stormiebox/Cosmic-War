@@ -245,3 +245,6 @@ end
 function updateServer(...)
     if SiegeEvent.updateServer then return SiegeEvent.updateServer(...) end
 end
+function onRemove(...)
+    if SiegeEvent.onRemove then return SiegeEvent.onRemove(...) end
+end

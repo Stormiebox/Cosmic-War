@@ -59,6 +59,11 @@ function onShipDestroyed(destroyedId, destroyerId)
             if destroyedEntity.isStation then baseBounty = 250000 end
             
             if baseBounty > 0 then
+                local sx, sy = Sector():getCoordinates()
+                local dist = math.sqrt(sx * sx + sy * sy)
+                local distFactor = math.max(0, (500 - dist) / 50)
+                local scale = 1.0 + (distFactor * 2.5) -- Up to ~26x at the core
+                baseBounty = math.floor(baseBounty * scale)
                 local hasMercantile = (cvf.getTrait(enlistedFaction.index, "cw_mercantile") or 0) > 0
                 if hasMercantile then
                     baseBounty = baseBounty * 3

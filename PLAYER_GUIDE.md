@@ -90,7 +90,7 @@ Factions can now actively conquer enemy sectors and permanently expand their bor
 ### ⚙️ Mechanics
 - **Background Conquests:** Contested zones have a hidden siege timer. If time runs out and no player intervenes, the station flips ownership mathematically, expanding the faction's borders naturally.
 - **Physical Sieges:** If a player enters a contested zone, a Siege Event is triggered!
-- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds at close range, they physically board and capture the station!
+- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds (scaling up to 5 minutes based on the station's hull HP) at close range, they physically board and capture the station!
 </details>
 
 

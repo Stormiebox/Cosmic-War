@@ -28,8 +28,12 @@ function CosmicWarEvent.spawn()
     local dreadnought = ShipGenerator.createBossShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
     dreadnought.title = "The Eclipse Vanguard"
     dreadnought:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-    dreadnought:addMultiplyableBias(StatsBonuses.FireRate, 499.0) -- 500x total
-    dreadnought.shieldMultiplier = 500.0
+    dreadnought:addMultiplyableBias(StatsBonuses.FireRate, 49.0) -- 50x total
+
+    if dreadnought:hasComponent(ComponentType.Shield) then
+        dreadnought.shieldMaxDurability = dreadnought.shieldMaxDurability * 50.0
+        dreadnought.shieldDurability = dreadnought.shieldMaxDurability
+    end
 
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
     broadcastInvokeClientFunction("showVanguardBanner")

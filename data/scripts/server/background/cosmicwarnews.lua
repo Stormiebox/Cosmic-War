@@ -20,7 +20,7 @@ end
 
 function CosmicWarNews.getUpdateInterval()
     local cfg = getCfg()
-    return cfg.newsInterval or 420 -- every 7 minutes
+    return cfg.newsInterval or 600 -- every 10 minutes
 end
 
 local function getGalaxyFactions(server)

@@ -21,7 +21,7 @@ end
 local function getCfg()
     return CosmicWarConfig.get() or {
         ["diplomacyInterval"] = 300,
-        ["diplomacyPairSteps"] = 10,
+        ["diplomacyPairSteps"] = 50,
         ["rivalryThreshold"] = -45000,
         ["debugLogs"] = false
     }
