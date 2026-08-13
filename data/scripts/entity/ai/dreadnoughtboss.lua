@@ -37,7 +37,7 @@ function DreadnoughtBoss.updateServer(timeStep)
     DreadnoughtBoss.retargetTimer = (DreadnoughtBoss.retargetTimer or 0) + timeStep
     
     -- Only evaluate if we have no target, OR if 15 seconds have passed
-    if ai.isAttacking and DreadnoughtBoss.retargetTimer < 15 then 
+    if ai.isAttackingSomething and DreadnoughtBoss.retargetTimer < 15 then 
         return 
     end
     

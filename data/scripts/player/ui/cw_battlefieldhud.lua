@@ -42,7 +42,7 @@ function checkZone()
         local dName = def and def.name or "Defenders"
         local iName = inv and inv.name or "Invaders"
         
-        invokeClientFunction(Player(), "receiveZoneData", true, zone.endTime, Server().unpausedRuntime, dName, iName)
+        invokeClientFunction(Player(), "receiveZoneData", true, zone.endTime, Server().unpausedRuntime, dName, iName, zone.startTime)
         return
     end
     invokeClientFunction(Player(), "receiveZoneData", false)
@@ -54,7 +54,7 @@ function requestZoneData()
 end
 callable(nil, "requestZoneData")
 
-function receiveZoneData(contested, et, now, dName, iName)
+function receiveZoneData(contested, et, now, dName, iName, st)
     isContested = contested
     if contested then
         local remaining = et - now
@@ -62,11 +62,11 @@ function receiveZoneData(contested, et, now, dName, iName)
         defenderName = dName
         invaderName = iName
         
-        -- Assume 60 mins for a siege unless remaining time indicates otherwise
-        if remaining > 60 * 60 then
-            totalTime = remaining
+        -- Exact calculation based on recorded start time
+        if st and et > st then
+            totalTime = et - st
         else
-            totalTime = 60 * 60
+            totalTime = 60 * 60 -- Fallback if st is missing
         end
         
         if uiContainer then uiContainer:show() end

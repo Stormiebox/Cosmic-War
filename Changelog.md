@@ -7,6 +7,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.4]
+
+### 🐛 Bug Fixes & 🛠️ Optimization
+
+- [Bugfixed] **Dreadnought Boss Target Errors:** Fixed a critical server log spam and stutter issue where the Dreadnought Boss (`dreadnoughtboss.lua`) was attempting to check the AI property `isAttacking` instead of the correct native API `isAttackingSomething`. This resulted in the boss repeatedly failing to evaluate targets properly during an attack and throwing errors twice per second.
+- [Optimized] **Battlefield HUD Sync:** The Cinematic Battlefield HUD now accurately reads absolute `startTime` data provided by the newly updated Cosmic Vault API. This guarantees flawlessly synchronized visual siege progression for players who jump into a contested sector mid-siege, removing the previous visual glitch where the bar would mistakenly assume the siege had just begun.
+
 ## [v3.0.3]
 
 ### 🐛Bug Fixes, ⚖️Balancing and ⚙️Adjustments
