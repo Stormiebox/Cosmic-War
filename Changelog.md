@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.5]
+
+### 🐛 Bug Fixes & 🛠️ Optimization
+
+- [Bugfixed] **API Property Integrity:** Fixed a script-breaking error during the Refugee Convoy (`cw_refugeeconvoy.lua`) and Siege (`siegeevent.lua`) events where scripts were improperly assigning a read-only `maxDurability` property and a non-existent `shieldMaximum` property on ships, causing fatal exceptions. Hull scaling has been corrected to use the officially supported `maxDurabilityFactor` API under the `Durability` component, and shield scaling correctly utilizes `shieldMaxDurability`.
+
 ## [v3.0.4]
 
 ### 🐛 Bug Fixes & 🛠️ Optimization

@@ -90,8 +90,8 @@ function SiegeEvent.startSiege(zoneData)
 
         -- Give them heavy shields but no weapons (abstracted)
         if transport:hasComponent(ComponentType.Shield) then
-            transport.shieldMaximum = transport.shieldMaximum * 5 -- 5x shields to survive point defense
-            transport.shieldDurability = transport.shieldMaximum
+            transport.shieldMaxDurability = transport.shieldMaxDurability * 5 -- 5x shields to survive point defense
+            transport.shieldDurability = transport.shieldMaxDurability
         end
 
         position = generator:getPositionInSector(15000)
@@ -113,8 +113,8 @@ function SiegeEvent.startSiege(zoneData)
         ShipAI(dreadnought.index):setAggressive()
 
         if dreadnought:hasComponent(ComponentType.Shield) then
-            dreadnought.shieldMaximum = dreadnought.shieldMaximum * 5
-            dreadnought.shieldDurability = dreadnought.shieldMaximum
+            dreadnought.shieldMaxDurability = dreadnought.shieldMaxDurability * 5
+            dreadnought.shieldDurability = dreadnought.shieldMaxDurability
         end
     end
 

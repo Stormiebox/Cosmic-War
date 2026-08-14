@@ -60,11 +60,11 @@ function CW_RefugeeConvoyEvent.spawn()
         ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
         if ship:hasComponent(ComponentType.Shield) then
-            ship.shieldMaximum = ship.shieldMaximum * 10
-            ship.shieldDurability = ship.shieldMaximum
+            ship.shieldMaxDurability = ship.shieldMaxDurability * 10
+            ship.shieldDurability = ship.shieldMaxDurability
         end
         if ship:hasComponent(ComponentType.Durability) then
-            ship.maxDurability = ship.maxDurability * 10
+            Durability(ship.index).maxDurabilityFactor = Durability(ship.index).maxDurabilityFactor * 10
             ship.durability = ship.maxDurability
         end
 
