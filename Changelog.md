@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.6]
+
+### 🐛 Bug Fixes
+
+- [Bugfix] **Bounty Payout Crash:** Fixed a critical server crash in `cw_bountypayouts.lua` when attempting to award bounties for destroying boss entities. The script incorrectly referenced an `isBoss` property on the entity object directly instead of using the API-compliant `entity:getValue("is_boss")` method.
+
 ## [v3.0.5]
 
 ### 🐛 Bug Fixes & 🛠️ Optimization
