@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("randomext")
 
-local SectorGenerator = include("sectorgenerator")
+local SectorGenerator = include("SectorGenerator")
 
 local cw_wreckagefield = {}
 

@@ -7,6 +7,11 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.7]
+
+### 🐛 Bug Fixes
+- [Bugfix] **Linux Case Sensitivity:** Fixed a critical crash on Linux dedicated servers where `cw_wreckagefield.lua` and `siegeevent.lua` incorrectly requested a lowercase `include("sectorgenerator")` instead of the strictly capitalized vanilla path.
+
 ## [v3.0.6]
 
 ### 🐛 Bug Fixes
