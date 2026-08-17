@@ -1,4 +1,5 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
+include("stringutility")
 
 function initialize()
     if onServer() then
@@ -82,3 +83,4 @@ function onDestroyed(destroyedId, destroyerId)
         end
     end
 end
+
