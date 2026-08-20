@@ -7,6 +7,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.8]
+### Changed
+- Nerfed Shield Jammer (Electronic Warfare) event deployment chance from 35% to 10% during Sieges, and from 50% to 15% during Fleet Clashes.
+- Nerfed Shield Jammer debuff duration from 20 seconds to 10 seconds.
+### Fixed
+- Corrected a critical namespace bug inside `cw_shieldjammer.lua` that completely blocked the Avorion engine from triggering the script's `terminate()` routine, leading to shields permanently remaining at 0 for the remainder of the instance.
+
 ## [v3.0.7]
 
 ### 🐛 Bug Fixes

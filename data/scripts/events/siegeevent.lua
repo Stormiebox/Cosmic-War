@@ -58,7 +58,7 @@ function SiegeEvent.startSiege(zoneData)
     -- Roll for Shield Jammer (35%)
     local random = Random(Seed(x .. y))
     local usedJammer = false
-    if random:test(0.35) then
+    if random:test(0.10) then
         usedJammer = true
         local shipsAndStations = {sector:getEntitiesByType(EntityType.Ship)}
         for _, s in pairs({sector:getEntitiesByType(EntityType.Station)}) do

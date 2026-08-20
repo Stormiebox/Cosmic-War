@@ -3,7 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 -- namespace CW_ShieldJammer
 CW_ShieldJammer = {}
 
-CW_ShieldJammer.duration = 20.0
+CW_ShieldJammer.duration = 10.0
 
 function CW_ShieldJammer.getUpdateInterval()
     return 0.5
@@ -40,25 +40,9 @@ function CW_ShieldJammer.secure()
 end
 
 function CW_ShieldJammer.restore(data)
-    CW_ShieldJammer.duration = data.duration or 20.0
+    CW_ShieldJammer.duration = data.duration or 10.0
 end
 
 -- We can also send client updates if we want to render particles, but for now the mechanical effect is enough.
-
-function getUpdateInterval(...)
-    if CW_ShieldJammer.getUpdateInterval then return CW_ShieldJammer.getUpdateInterval(...) end
-end
-function initialize(...)
-    if CW_ShieldJammer.initialize then return CW_ShieldJammer.initialize(...) end
-end
-function updateServer(...)
-    if CW_ShieldJammer.updateServer then return CW_ShieldJammer.updateServer(...) end
-end
-function secure(...)
-    if CW_ShieldJammer.secure then return CW_ShieldJammer.secure(...) end
-end
-function restore(...)
-    if CW_ShieldJammer.restore then return CW_ShieldJammer.restore(...) end
-end
 
 return CW_ShieldJammer

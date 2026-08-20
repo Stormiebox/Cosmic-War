@@ -77,7 +77,7 @@ function CW_FleetClashEvent.spawn()
 
     local random = Random(Seed(x .. y))
     local usedJammer = false
-    if random:test(0.5) then
+    if random:test(0.15) then
         usedJammer = true
         local shipsAndStations = {sector:getEntitiesByType(EntityType.Ship)}
         for _, s in pairs({sector:getEntitiesByType(EntityType.Station)}) do
