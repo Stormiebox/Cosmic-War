@@ -60,11 +60,6 @@ function CosmicWarBridgeUpdate.update(timeStep)
 end
 
 
-function getUpdateInterval(...)
-    if CosmicWarBridgeUpdate.getUpdateInterval then return CosmicWarBridgeUpdate.getUpdateInterval(...) end
-end
-function update(...)
-    if CosmicWarBridgeUpdate.update then return CosmicWarBridgeUpdate.update(...) end
-end
+
 
 return CosmicWarBridgeUpdate

@@ -19,11 +19,6 @@ function CosmicWarSiegeServer.onPlayerLogIn(playerIndex)
 end
 
 
-function initialize(...)
-    if CosmicWarSiegeServer.initialize then return CosmicWarSiegeServer.initialize(...) end
-end
-function onPlayerLogIn(...)
-    if CosmicWarSiegeServer.onPlayerLogIn then return CosmicWarSiegeServer.onPlayerLogIn(...) end
-end
+
 
 return CosmicWarSiegeServer

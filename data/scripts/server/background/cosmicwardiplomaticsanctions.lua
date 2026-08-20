@@ -99,11 +99,6 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
 end
 
 
-function getUpdateInterval(...)
-    if CosmicWarDiplomaticSanctions.getUpdateInterval then return CosmicWarDiplomaticSanctions.getUpdateInterval(...) end
-end
-function update(...)
-    if CosmicWarDiplomaticSanctions.update then return CosmicWarDiplomaticSanctions.update(...) end
-end
+
 
 return CosmicWarDiplomaticSanctions

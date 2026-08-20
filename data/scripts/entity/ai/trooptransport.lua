@@ -136,17 +136,6 @@ end
 
 end
 
-function getUpdateInterval(...)
-    if TroopTransport.getUpdateInterval then return TroopTransport.getUpdateInterval(...) end
-end
-function updateServer(...)
-    if TroopTransport.updateServer then return TroopTransport.updateServer(...) end
-end
-function secure(...)
-    if TroopTransport.secure then return TroopTransport.secure(...) end
-end
-function restore(...)
-    if TroopTransport.restore then return TroopTransport.restore(...) end
-end
+
 
 return TroopTransport

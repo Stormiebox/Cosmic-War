@@ -77,14 +77,6 @@ end
 
 end
 
-function getUpdateInterval(...)
-    if DreadnoughtBoss.getUpdateInterval then return DreadnoughtBoss.getUpdateInterval(...) end
-end
-function initialize(...)
-    if DreadnoughtBoss.initialize then return DreadnoughtBoss.initialize(...) end
-end
-function updateServer(...)
-    if DreadnoughtBoss.updateServer then return DreadnoughtBoss.updateServer(...) end
-end
+
 
 return DreadnoughtBoss

@@ -94,11 +94,6 @@ function CosmicWarBounties.update(timeStep)
 end
 
 
-function getUpdateInterval(...)
-    if CosmicWarBounties.getUpdateInterval then return CosmicWarBounties.getUpdateInterval(...) end
-end
-function update(...)
-    if CosmicWarBounties.update then return CosmicWarBounties.update(...) end
-end
+
 
 return CosmicWarBounties

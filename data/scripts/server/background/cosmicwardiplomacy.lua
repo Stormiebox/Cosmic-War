@@ -243,14 +243,6 @@ function CosmicWarDiplomacy.update(timeStep)
     end
 end
 
-function initialize(...)
-    if CosmicWarDiplomacy.initialize then return CosmicWarDiplomacy.initialize(...) end
-end
-function getUpdateInterval(...)
-    if CosmicWarDiplomacy.getUpdateInterval then return CosmicWarDiplomacy.getUpdateInterval(...) end
-end
-function update(...)
-    if CosmicWarDiplomacy.update then return CosmicWarDiplomacy.update(...) end
-end
+
 
 return CosmicWarDiplomacy

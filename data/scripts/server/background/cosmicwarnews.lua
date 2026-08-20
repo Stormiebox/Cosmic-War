@@ -137,21 +137,4 @@ function CosmicWarNews.onSeedNews()
     end
 end
 
-
-function initialize(...)
-    if CosmicWarNews.initialize then return CosmicWarNews.initialize(...) end
-end
-function getUpdateInterval(...)
-    if CosmicWarNews.getUpdateInterval then return CosmicWarNews.getUpdateInterval(...) end
-end
-function update(...)
-    if CosmicWarNews.update then return CosmicWarNews.update(...) end
-end
-
-
--- Global Event Callbacks
-function onSeedNews(...)
-    if CosmicWarNews.onSeedNews then return CosmicWarNews.onSeedNews(...) end
-end
-
 return CosmicWarNews

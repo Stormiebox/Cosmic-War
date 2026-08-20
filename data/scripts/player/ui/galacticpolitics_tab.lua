@@ -419,8 +419,6 @@ function GalacticPoliticsTab.serverFetchData()
 end
 callable(GalacticPoliticsTab, "serverFetchData")
 
-function initialize(...)
-    if GalacticPoliticsTab.initialize then return GalacticPoliticsTab.initialize(...) end
-end
+
 
 return GalacticPoliticsTab

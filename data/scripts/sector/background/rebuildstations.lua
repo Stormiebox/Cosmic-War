@@ -2,13 +2,14 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("cosmicwarconfig")
 
-function getUpdateInterval()
-    return 60.0
-end
+
 
 
 -- namespace RebuildStations
 
+function RebuildStations.getUpdateInterval()
+    return 60.0
+end
 if onServer() then
     local cw_oldUpdateServer = RebuildStations.updateServer
 

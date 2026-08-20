@@ -72,10 +72,6 @@ function CW_EventScheduler.updateServer(timeStep)
     end
 end
 
-function getUpdateInterval(...) return CW_EventScheduler.getUpdateInterval(...) end
-function initialize(...) return CW_EventScheduler.initialize(...) end
-function updateServer(...) return CW_EventScheduler.updateServer(...) end
-function secure(...) return CW_EventScheduler.secure(...) end
-function restore(...) return CW_EventScheduler.restore(...) end
+
 
 return CW_EventScheduler

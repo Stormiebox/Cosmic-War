@@ -7,6 +7,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.10]
+
+### Fixed & Refactored
+
+- **Architecture Audit & Cleanup (Part 2)**: This update is a follow-up to the v3.0.9 release, catching 13 background and entity scripts that were missed during the initial audit.
+- **Event Routing Desync Fix**: Widespread architectural violation resolved. Previously, scripts like `cosmicwardiplomacy.lua`, `cosmicwarnews.lua`, and `cosmicwarcontroller.lua` were defining global wrappers for standard engine callbacks (`initialize`, `updateServer`, `getUpdateInterval`), which shadowed the native namespace hooks and caused catastrophic event routing failures under the hood. All illegal global wrappers have been permanently stripped. These scripts now natively bind to the Avorion engine via their official module namespaces as intended.
+- **Namespace Injection Compliance**: Repositioned `getUpdateInterval` within `rebuildstations.lua` to be properly encapsulated inside its module namespace, ensuring correct VFS overwrite behavior.
+
 ## [v3.0.9]
 
 ### Fixed
