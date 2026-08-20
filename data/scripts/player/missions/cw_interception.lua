@@ -124,7 +124,19 @@ mission.phases[1].triggers = {
             if not mission.data.custom.spawned then return false end
 
             -- Check if all ships spawned with our custom tracker are destroyed
-            local targets = { Sector():getEntitiesByScriptValue("cw_interception_target") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_interception_target") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             return #targets == 0
         end,
         callback = function()
@@ -150,7 +162,19 @@ mission.phases[1].triggers = {
             return mission.data.custom.jumpTimer <= 0
         end,
         callback = function()
-            local targets = { Sector():getEntitiesByScriptValue("cw_interception_target") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_interception_target") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             for _, ship in pairs(targets) do
                 ship:addScriptOnce("entity/deletejumped.lua")
             end

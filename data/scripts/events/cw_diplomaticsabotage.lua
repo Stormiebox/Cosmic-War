@@ -91,7 +91,6 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
     terminate()
 end
 
-
 function CW_DiplomaticSabotageEvent.secure()
     return {
         envoyId = CW_DiplomaticSabotageEvent.envoyId and CW_DiplomaticSabotageEvent.envoyId.string or nil,
@@ -104,15 +103,4 @@ function CW_DiplomaticSabotageEvent.restore(data)
     CW_DiplomaticSabotageEvent.envoyFactionId = data.envoyFactionId
 end
 
-function initialize(...)
-    if CW_DiplomaticSabotageEvent.initialize then return CW_DiplomaticSabotageEvent.initialize(...) end
-end
-function secure(...)
-    if CW_DiplomaticSabotageEvent.secure then return CW_DiplomaticSabotageEvent.secure(...) end
-end
-function restore(...)
-    if CW_DiplomaticSabotageEvent.restore then return CW_DiplomaticSabotageEvent.restore(...) end
-end
-
 return CW_DiplomaticSabotageEvent
-

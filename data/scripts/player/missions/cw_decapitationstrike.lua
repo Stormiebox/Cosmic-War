@@ -122,7 +122,19 @@ mission.phases[1].triggers = {
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
 
-            local targets = { Sector():getEntitiesByScriptValue("cw_flagship") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_flagship") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             return #targets == 0
         end,
         callback = function()

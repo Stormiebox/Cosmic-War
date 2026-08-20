@@ -4,6 +4,7 @@ package.path = package.path .. ";data/scripts/?.lua"
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
+-- namespace CosmicWarEvent
 local CosmicWarEvent = {}
 
 function CosmicWarEvent.initialize()
@@ -49,10 +50,3 @@ function CosmicWarEvent.showVanguardBanner()
     end
 end
 callable(CosmicWarEvent, "showVanguardBanner")
-
-function initialize(...)
-    if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
-end
-function showVanguardBanner(...)
-    if CosmicWarEvent.showVanguardBanner then return CosmicWarEvent.showVanguardBanner(...) end
-end

@@ -115,10 +115,4 @@ function CW_FleetClashEvent.spawn()
     cv_news.publishArticle(article)
 end
 
-
-function initialize(...)
-    if CW_FleetClashEvent.initialize then return CW_FleetClashEvent.initialize(...) end
-end
-
 return CW_FleetClashEvent
-

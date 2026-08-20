@@ -96,7 +96,19 @@ mission.phases[1].triggers = {
     {
         condition = function()
             if onClient() then return false end
-            local targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0
         end,
         callback = function()
@@ -123,7 +135,19 @@ mission.phases[1].triggers = {
             return mission.data.custom.jumpTimer <= 0
         end,
         callback = function()
-            local targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             for _, ship in pairs(targets) do
                 ship:addScriptOnce("entity/deletejumped.lua")
             end

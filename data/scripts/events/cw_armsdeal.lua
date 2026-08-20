@@ -83,10 +83,4 @@ function CW_ArmsDealEvent.spawn()
     cv_news.publishArticle(article)
 end
 
-
-function initialize(...)
-    if CW_ArmsDealEvent.initialize then return CW_ArmsDealEvent.initialize(...) end
-end
-
 return CW_ArmsDealEvent
-

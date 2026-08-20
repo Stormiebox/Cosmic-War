@@ -7,16 +7,29 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.9]
+
+### Fixed
+
+- Fixed a massive oversight affecting almost all War Contract missions where destroyed target ships were still being counted as "alive" because the game engine preserved their tracking tags on the resulting wreckages. The tracking scripts now explicitly verify if the entities are living Ships or Stations, allowing missions to finally complete successfully!
+- **Silent Event Failures**: Fixed a major engine-level bug where 5 major events (Fleet Clash, Arms Deal, Diplomatic Sabotage, Refugee Convoy, and Stranded Flagship) would trigger their notification but fail to spawn any ships. Global wrappers for delayed engine callbacks have been correctly injected, restoring these events to full functionality.
+- **RPC Desync**: Corrected a namespace architecture violation in `cw_eclipse_vanguard.lua` where an RPC client-call was being bound to a local table without an engine-level namespace declaration. The script is now properly namespaced, ensuring the cinematic banner triggers correctly on the client side without silent UI failures.
+
 ## [v3.0.8]
+
 ### Changed
+
 - Nerfed Shield Jammer (Electronic Warfare) event deployment chance from 35% to 10% during Sieges, and from 50% to 15% during Fleet Clashes.
 - Nerfed Shield Jammer debuff duration from 20 seconds to 10 seconds.
+
 ### Fixed
+
 - Corrected a critical namespace bug inside `cw_shieldjammer.lua` that completely blocked the Avorion engine from triggering the script's `terminate()` routine, leading to shields permanently remaining at 0 for the remainder of the instance.
 
 ## [v3.0.7]
 
 ### 🐛 Bug Fixes
+
 - [Bugfix] **Linux Case Sensitivity:** Fixed a critical crash on Linux dedicated servers where `cw_wreckagefield.lua` and `siegeevent.lua` incorrectly requested a lowercase `include("sectorgenerator")` instead of the strictly capitalized vanilla path.
 
 ## [v3.0.6]

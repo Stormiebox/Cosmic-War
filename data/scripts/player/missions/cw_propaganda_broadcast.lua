@@ -103,7 +103,19 @@ mission.phases[1].triggers = {
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
 
-            local targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             if #targets == 0 then
                 mission.data.custom.failed = true
                 return true
@@ -128,7 +140,19 @@ mission.phases[1].triggers = {
                 end
                 fail()
             else
-                local targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
+                local _raw_targets = { Sector():getEntitiesByScriptValue("cw_broadcaster") }
+
+                local targets = {}
+
+                for _, _t in pairs(_raw_targets) do
+
+                    if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                        table.insert(targets, _t)
+
+                    end
+
+                end
                 for _, ship in pairs(targets) do
                     ship:addScriptOnce("entity/deletejumped.lua")
                 end

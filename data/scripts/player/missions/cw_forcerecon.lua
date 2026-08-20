@@ -130,7 +130,19 @@ mission.phases[1].updateServer = function(timeStep)
 
     local giverFaction = Faction(mission.data.custom.giverIndex)
 
-    local targets = { Sector():getEntitiesByScriptValue("cw_recon_target") }
+    local _raw_targets = { Sector():getEntitiesByScriptValue("cw_recon_target") }
+
+    local targets = {}
+
+    for _, _t in pairs(_raw_targets) do
+
+        if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+            table.insert(targets, _t)
+
+        end
+
+    end
     local station = targets[1]
 
     if not station then

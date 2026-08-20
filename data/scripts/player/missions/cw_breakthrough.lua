@@ -127,7 +127,19 @@ mission.phases[1].updateServer = function(timeStep)
     if not atTargetLocation() or not mission.data.custom.spawned then return end
     if mission.data.custom.finished then return end
 
-    local convoyShips = { Sector():getEntitiesByScriptValue("cw_convoy") }
+    local _raw_convoyShips = { Sector():getEntitiesByScriptValue("cw_convoy") }
+
+    local convoyShips = {}
+
+    for _, _t in pairs(_raw_convoyShips) do
+
+        if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+            table.insert(convoyShips, _t)
+
+        end
+
+    end
 
     if #convoyShips == 0 then
         local giverFaction = Faction(mission.data.custom.giverIndex)

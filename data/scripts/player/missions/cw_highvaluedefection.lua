@@ -126,7 +126,19 @@ mission.phases[1].updateServer = function(timeStep)
     if not atTargetLocation() or not mission.data.custom.spawned then return end
     if mission.data.custom.finished then return end
 
-    local defectorShips = { Sector():getEntitiesByScriptValue("cw_defector") }
+    local _raw_defectorShips = { Sector():getEntitiesByScriptValue("cw_defector") }
+
+    local defectorShips = {}
+
+    for _, _t in pairs(_raw_defectorShips) do
+
+        if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+            table.insert(defectorShips, _t)
+
+        end
+
+    end
 
     if #defectorShips == 0 then
         local giverFaction = Faction(mission.data.custom.giverIndex)

@@ -122,7 +122,6 @@ function CW_RefugeeConvoyEvent.escapeTransports()
     terminate()
 end
 
-
 function CW_RefugeeConvoyEvent.secure()
     local savedTransports = {}
     for _, id in pairs(CW_RefugeeConvoyEvent.transports) do
@@ -146,15 +145,4 @@ function CW_RefugeeConvoyEvent.restore(data)
     CW_RefugeeConvoyEvent.attackerId = data.attackerId
 end
 
-function initialize(...)
-    if CW_RefugeeConvoyEvent.initialize then return CW_RefugeeConvoyEvent.initialize(...) end
-end
-function secure(...)
-    if CW_RefugeeConvoyEvent.secure then return CW_RefugeeConvoyEvent.secure(...) end
-end
-function restore(...)
-    if CW_RefugeeConvoyEvent.restore then return CW_RefugeeConvoyEvent.restore(...) end
-end
-
 return CW_RefugeeConvoyEvent
-

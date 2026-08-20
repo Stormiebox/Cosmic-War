@@ -135,7 +135,19 @@ mission.phases[1].updateServer = function(timeStep)
         local x, y = Sector():getCoordinates()
         local weather = CosmicVaultWeather.getWeatherAt(x, y)
         
-        local targetStations = {Sector():getEntitiesByScriptValue("cw_siege_target")}
+        local _raw_targetStations = { Sector():getEntitiesByScriptValue("cw_siege_target") }
+
+        local targetStations = {}
+
+        for _, _t in pairs(_raw_targetStations) do
+
+            if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                table.insert(targetStations, _t)
+
+            end
+
+        end
         for _, station in pairs(targetStations) do
             local boarding = Boarding(station.index)
             if boarding then
@@ -162,7 +174,19 @@ mission.phases[1].triggers = {
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
 
-            local targets = { Sector():getEntitiesByScriptValue("cw_siege_target") }
+            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_siege_target") }
+
+            local targets = {}
+
+            for _, _t in pairs(_raw_targets) do
+
+                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+
+                    table.insert(targets, _t)
+
+                end
+
+            end
             return #targets == 0
         end,
         callback = function()
