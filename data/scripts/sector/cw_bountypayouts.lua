@@ -50,9 +50,9 @@ function onDestroyed(destroyedId, destroyerId)
                         -- Scale reward by target significance
                         local multiplier = 1
                         if victim.type == EntityType.Station then
-                            multiplier = 5
-                        elseif victim:getValue("is_boss") or string.match(tostring(victim.title), "Battleship") then
                             multiplier = 3
+                        elseif victim:getValue("is_boss") or string.match(tostring(victim.title), "Battleship") then
+                            multiplier = 2
                         end
 
                         local finalReward = reward * multiplier

@@ -296,7 +296,7 @@ end
 -- Cosmic War: Computes AI Faction Traits to display in the UI Tooltip. Consider surfacing cw_war_bias and cw_diplomatic_polarity here in the future.
 local function getFactionTraitsSafe(faction)
     local traits = {}
-    if faction.isPlayer or faction.isAlliance then
+    if faction.isPlayer then
         table.insert(traits, "Player Faction")
         return traits
     elseif faction.isAlliance then
@@ -338,8 +338,8 @@ function GalacticPoliticsTab.serverFetchData()
             if enemyIdx > 0 then
                 local e = Faction(enemyIdx)
                 -- Bulletproof: Ensure the enemy faction actually exists.
-                -- Player and Alliance conflicts are safely swept up if the AI explicitly targeted them!
-                if e and (e.isAIFaction or e.isAlliance or e.isPlayer) then
+                -- Only tracking NPC Factions and Player Alliances to prevent multiplayer UI bloat!
+                if e and (e.isAIFaction or e.isAlliance) then
                     local left, right = math.min(f.index, e.index), math.max(f.index, e.index)
                     local key = tostring(left) .. ":" .. tostring(right)
 

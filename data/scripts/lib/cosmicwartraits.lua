@@ -47,7 +47,7 @@ function CosmicWarTraits.initialize()
 
     cvf.registerCustomTrait("cw_mercantile", "Mercantile", {
         "Prioritizes profit over military supremacy.",
-        "Pays triple (3x) standard rates for mercenary contracts."
+        "Pays 50% extra for mercenary contracts."
     })
 
     cvf.registerCustomTrait("cw_xenophobic", "Xenophobic", {

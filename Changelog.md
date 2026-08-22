@@ -7,6 +7,16 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.11]
+
+### Fixed, Changed & Balanced
+- [Bugfix] **Alliance UI Cosmetic Fix**: Fixed a minor logic flaw in `galacticpolitics_tab.lua` where Player Alliances were incorrectly labeled as "Player Factions" in the diplomacy tooltips.
+- [Changed] **Multiplayer UI Bloat Reduction**: The Galactic Politics conflict tracker will no longer display single-player factions to prevent the UI from becoming unreadable on heavily populated multiplayer servers. The tracker now exclusively tracks NPC Factions and Player Alliances.
+- [Balance] **Mercenary Payout Nerf**: Heavily reduced the base payout for destroying ships (from 25,000 to 10,000) and stations (from 250,000 to 100,000) while enlisted as a mercenary to prevent game-breaking wealth generation at the galactic core.
+- [Balance] **Hybrid Captain Scaling (Synergy)**: Enlisted ship payouts now scale dynamically based on the commanding Captain's Tier and Level, directly synergizing with the overarching Cosmic scaling logic!
+- [Balance] **Mercantile Trait Nerf**: Reduced the payout multiplier of Mercantile factions from 3x (300%) down to 1.5x (150%).
+- [Balance] **High-Profile Bounty Nerf**: Reduced the completion multiplier for confirming high-profile bounties on Stations (from 5x to 3x) and Bosses/Battleships (from 3x to 2x).
+
 ## [v3.0.10]
 
 ### Fixed & Refactored
