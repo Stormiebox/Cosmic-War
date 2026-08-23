@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.0.12]
+
+### 🪲 Bug Fixes
+- [Bugfix] **Fire Rate API Error:** Fixed a core mathematical error across multiple missions (Eclipse Vanguard, Decapitation Strike, Frontline Siege) where extreme `FireRate` multipliers were being accidentally applied as flat additive numbers instead of percentages, preventing those bosses from properly scaling their weapon attack speeds.
+- [Bugfix] **Volatile Shield API Error:** Discovered and fixed a critical bug in `cw_eclipse_vanguard.lua`, `cw_refugeeconvoy.lua`, and `siegeevent.lua` where the `shieldMaxDurability` property was manually modified to boost boss shields. Due to engine architecture, this caused the shields to instantly wipe themselves to 0 upon taking any block damage. They have been swapped to the stable `addBaseMultiplier` API.
+
 ## [v3.0.11]
 
 ### Fixed, Changed & Balanced

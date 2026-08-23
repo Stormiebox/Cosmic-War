@@ -161,7 +161,7 @@ function spawnFlagship(x, y)
     local heat = mission.data.custom.heat or 1.0
     local hpMult = math.max(4.0, 8.0 * heat)
 
-    flagship:addMultiplyableBias(StatsBonuses.FireRate, 3.0 * (hpMult / 2.0) - 1.0)
+    flagship:addBaseMultiplier(StatsBonuses.FireRate, 3.0 * (hpMult / 2.0) - 1.0)
     
     local boarding = Boarding(flagship.index)
     if boarding then
