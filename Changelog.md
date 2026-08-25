@@ -7,6 +7,11 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.1.1]
+
+### 🪲 Bug Fixes
+- [Bugfix] **Convoi Distress Signal API Error:** Fixed a critical server crash in `convoidistresssignal.lua` where `getMissionLocation()` was improperly called on the server environment. It has been safely bypassed by reading the global target coordinates, restoring the distress call event back to full functionality.
+
 ## [v3.1.0]
 
 ### ⭐ Features
