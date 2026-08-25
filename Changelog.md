@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.1.2]
+
+### 🪲 Bug Fixes
+- [Bugfix] **Infinite Subspace Tear:** Fixed an oversight where the experimental Subspace Tear (Rift Hazard) generated during a War Crime event lacked a termination condition. It would permanently drain shields in the sector until manually deleted. The hazard now correctly dissipates once the primary target structure is destroyed and the anomaly is contained!
+- [Bugfix] **Hazard Target Detection:** Fixed a logic oversight in `cw_rift_hazard.lua` where the hazard only scanned for Entities typed as Stations. It will now properly detect and deal damage to "Protection Platforms" (typed as Ships).
+
 ## [v3.1.1]
 
 ### 🪲 Bug Fixes

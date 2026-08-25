@@ -38,6 +38,30 @@ end
 function updateServer(timeStep)
     -- Drain shields by 5% every 2 seconds for ALL ships in the tear
     local sector = Sector()
+    local hasTarget = false
+    local stations = {sector:getEntitiesByType(EntityType.Station)}
+    for _, entity in pairs(stations) do
+        if entity:getValue("cw_mission_target") then
+            hasTarget = true
+            break
+        end
+    end
+    if not hasTarget then
+        local ships = {sector:getEntitiesByType(EntityType.Ship)}
+        for _, entity in pairs(ships) do
+            if entity:getValue("cw_mission_target") then
+                hasTarget = true
+                break
+            end
+        end
+    end
+    
+    -- Terminate hazard if the target is destroyed or removed
+    if not hasTarget then
+        terminate()
+        return
+    end
+
     local entities = {sector:getEntitiesByType(EntityType.Ship)}
     for _, entity in pairs(entities) do
         -- Protect the Ancient Tech target structure (if it somehow has shields)
