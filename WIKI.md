@@ -420,6 +420,24 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 
 </details>
 
+### 🆘 7) War Casualties & Events
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**What it does:**
+Injects immersive background events related to the ongoing galactic conflict, making the universe feel alive and reacting to the violence around you.
+
+**Key Features:**
+- **Refugee Convoys:** Civilian ships fleeing warzones will occasionally hail you in deep space. Donating supplies or credits grants massive reputation boosts. They also have a 25% chance to upload the exact coordinates of a massive hidden resource stash directly to your galaxy map.
+- **Distress Beacons:** Wreckages of destroyed ships may broadcast an active distress signal. Interacting with the beacon to download logs and "Answer the Call" triggers a dynamic rescue (or ambush) scenario. Be warned: If you simply salvage the wreck without answering the beacon, it will permanently lock out the interaction!
+
+**Gameplay Impact:**
+- Provides dynamic, narrative-driven events outside of standard missions.
+- Offers alternative, peaceful routes to gain massive faction standing via charity.
+
+</details>
+
 ---
 
 ## 🌐 Server & Performance Guidelines

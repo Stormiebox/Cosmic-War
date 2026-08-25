@@ -96,6 +96,19 @@ Factions can now actively conquer enemy sectors and permanently expand their bor
 
 ---
 
+## 🆘 War Casualties & Events
+<details>
+<summary><b>Click to expand</b></summary>
+
+Wars don't just affect stations and dreadnoughts; they displace civilians and create hazardous zones. You will encounter the fallout of these conflicts while exploring.
+
+### ⚙️ Events
+- **Refugee Convoys:** Fleeing the violence, civilian convoys will occasionally hail you in deep space. If you choose to donate supplies or credits to their cause, you will gain significant reputation. There is also a 25% chance they will tip you off to a massive hidden stash of resources!
+- **Distress Beacons:** You may stumble across the wreckage of military or civilian ships broadcasting a distress signal. You can interact with the beacon to download logs and "Answer the Call" to trigger a rescue (or ambush) scenario. Be warned: If you simply salvage the wreck without answering the beacon, it will permanently lock out the interaction!
+</details>
+
+---
+
 ## 🔗 Cosmic Series Integration & Audit 3.0 Updates
 <details>
 <summary><b>Click to expand</b></summary>

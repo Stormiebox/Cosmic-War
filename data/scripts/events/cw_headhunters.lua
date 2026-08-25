@@ -49,33 +49,10 @@ function cw_headhunters.initialize()
         return
     end
 
-    -- Spawn the Headhunter Hit-Squad
-    local random = Random(Seed(Server().unpausedRuntime))
-    local dir = vec3(random:getFloat(-1, 1), 0, random:getFloat(-1, 1))
-    if length(dir) == 0 then dir = vec3(1, 0, 0) end
-    dir = normalize(dir)
-
-    local distance = 3000
-    local center = dir * distance
-
-    for i = 1, random:getInt(2, 4) do
-        local pos = center + vec3(random:getFloat(-200, 200), random:getFloat(-200, 200), random:getFloat(-200, 200))
-        local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
-        local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix, 3) -- Heavy military
-
-        -- Soft Bridge to Cosmic Starfall (Equip heavy subsystems if available)
-        local success, sfAPI = pcall(include, "starfall_subsystems")
-        if success and sfAPI and sfAPI.equipEliteSubsystems then
-            sfAPI.equipEliteSubsystems(ship)
-        end
-
-        ship.title = "Elite Headhunter"
-        ship:addScriptOnce("ai/patrol.lua")
-        ship:addScriptOnce("data/scripts/entity/enemy.lua")
-    end
-
-    player:sendChatMessage("Alert", 2, "Warning: Incoming elite headhunter fleet from " .. bestEnemy.name .. "!")
-
+    -- Defer ambush until the player jumps to a new sector
+    player:setValue("cw_pending_ambush", bestEnemy.index)
+    
+    -- Terminate this script, the scheduler will handle the ambush on sector entry
     terminate()
 end
 

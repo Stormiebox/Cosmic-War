@@ -116,6 +116,11 @@ function CW_RefugeeConvoyEvent.escapeTransports()
         if faction then
             for _, player in pairs({Sector():getPlayers()}) do
                 changeRelations(player, faction, survived * 2500, RelationChangeType.General)
+                
+                -- Cosmic Vault Buff System: Grant "Hero of the People" buff
+                player:addScriptOnce("cosmicvaultbuffs.lua")
+                player:invokeFunction("cosmicvaultbuffs.lua", "addBuff", "Hero of the People", 3600, {tradePriceModifier = 0.10})
+                player:sendChatMessage("System", ChatMessageType.Information, "You have received the 'Hero of the People' buff for 1 hour! (+10% Trade Prices at allied stations)"%_T)
             end
         end
     end

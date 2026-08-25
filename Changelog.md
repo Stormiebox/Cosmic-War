@@ -7,6 +7,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.1.0]
+
+### ⭐ Features
+- **Distress Call Escalation:** If you ignore an NPC distress call for too long, there is a chance the attackers will establish a permanent Pirate Forward Operating Base (FOB) in that sector, turning it into a hazard zone!
+- **Bounty Hunter Ambush:** If you gain terrible reputation with a military faction during wartime, they might dispatch a small elite bounty hunter squad to ambush you directly in hyperspace upon entering a new sector!
+- **Refugee Convoy Gratefulness:** Successfully escorting a refugee convoy to safety now grants a 1-hour minor buff called "Hero of the People", granting +10% trade prices at that faction's stations.
+- **Galactic Politics Sabotage:** *(Requires Cosmic Overhaul)* You can now pay a 5,000,000 Credits bribe to the Smuggler's Market to intentionally lower the relationship between two random NPC factions, sparking proxy wars!
+
 ## [v3.0.12]
 
 ### 🪲 Bug Fixes
