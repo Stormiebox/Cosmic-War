@@ -125,6 +125,25 @@ function spawnEvent(x, y)
 
     mission.data.custom.minesDeployed = 0
 
+    local player = Player()
+    if player then
+        player:sendChatMessage("", 3, "Minefield deployment initiated. Remain in the sector for 250 seconds until all 5 mine clusters are armed.")
+    end
+
+    local enemyIndex = mission.data.custom.enemyIndex
+    if enemyIndex and enemyIndex > 0 then
+        local enemyFaction = Faction(enemyIndex)
+        if enemyFaction then
+            local generator = SectorGenerator(x, y)
+            for i = 1, 3 do
+                local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
+                ship:addScript("ai/patrol.lua")
+            end
+            if player then
+                player:sendChatMessage(enemyFaction.name, 1, "Hostile incursion detected! Intercepting minelaying operation!")
+            end
+        end
+    end
 end
 
 function getBulletin(station)
@@ -143,7 +162,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Deploy Minefield"%_T,
-        description = "Travel to the contested sector at (${location.x}:${location.y}) and deploy 5 tactical mines to deny enemy movement.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
+        description = "Travel to a contested sector and deploy 5 tactical mines to deny enemy movement.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_deploy_mines.lua",

@@ -194,7 +194,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Supply Line Raid"%_T,
-        description = "An enemy logistics convoy is vulnerable in sector (${location.x}:${location.y}). Destroy the freighters before they warp out.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
+        description = "An enemy logistics convoy is vulnerable in a nearby sector. Destroy the freighters before they warp out.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_supply_line_raid.lua",

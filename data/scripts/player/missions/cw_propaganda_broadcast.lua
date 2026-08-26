@@ -194,7 +194,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Propaganda Broadcast"%_T,
-        description = "Escort our broadcasting ship to sector (${location.x}:${location.y}) and defend it while it transmits demoralizing propaganda to the enemy.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
+        description = "Escort our broadcasting ship to a contested sector and defend it while it transmits demoralizing propaganda to the enemy.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_propaganda_broadcast.lua",

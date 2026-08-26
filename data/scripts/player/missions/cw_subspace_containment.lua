@@ -110,7 +110,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Subspace Containment"%_T,
-        description = "Our experimental hyperspace weapons have torn a rift in sector (${location.x}:${location.y}). Ancient structures have emerged. Destroy them and secure the zone.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
+        description = "Our experimental hyperspace weapons have torn a rift in a nearby sector. Ancient structures have emerged. Destroy them and secure the zone.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Extreme"%_T,
         reward = "¢${reward}"%_T,
         script = "data/scripts/player/missions/cw_subspace_containment.lua",

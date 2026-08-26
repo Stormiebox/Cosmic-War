@@ -7,6 +7,16 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.2.0]
+
+### 🛠️ Architecture & Optimization
+- [Optimized] **Progressive Materialization:** Completely overhauled the `cw_siege_injector_persistent.lua` API. When background sieges are mathematically won by a faction, they no longer force the server to physically load the sector into memory to flip the station ownership (which caused massive server stutters). 
+- [Feature] **Lazy Loading API:** Siege victories are now queued mathematically. When a player jumps into the conquered sector, the game seamlessly intercepts the loading screen and instantly hands the sector over to the victor. Zero stutter!
+
+### 🚀 Mission Enhancements
+- [Enhanced] **Deploy Minefield:** Improved the "Deploy Minefield" War Contract when jumping into an empty target sector. The mission now immediately spawns a hostile interceptor wave and provides explicit on-screen timer instructions (250s) to keep players engaged while the minefield deploys.
+- [Polish] **Bulletin Board:** Fixed an ugly formatting issue across all War Contracts where the bulletin board would display unresolved `(${location.x}:${location.y})` variables instead of generic flavor text before the mission was accepted.
+
 ## [v3.1.2]
 
 ### 🪲 Bug Fixes
