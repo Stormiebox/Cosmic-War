@@ -8,7 +8,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 
-local SectorGenerator = include("SectorGenerator")
+local SectorGenerator = include("sectorgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -88,13 +88,16 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     if not mission.data.custom.spawned then
         spawnEvent(x, y)
         mission.data.custom.spawned = true
+        table.insert(mission.data.description, { text = "Enemies Remaining: 5/5"%_T, bulletPoint = true, fulfilled = false, visible = true })
     end
+    sync()
 end
 
 mission.phases[1].triggers = {
     {
         condition = function()
             if onClient() then return false end
+            if not atTargetLocation() or not mission.data.custom.spawned then return false end
             local _raw_targets = { Sector():getEntitiesByScriptValue("cw_hunter_killer_target") }
             local targets = {}
             for _, _t in pairs(_raw_targets) do
@@ -102,7 +105,17 @@ mission.phases[1].triggers = {
                     table.insert(targets, _t)
                 end
             end
-            return atTargetLocation() and mission.data.custom.spawned and #targets == 0
+            
+            if mission.data.custom.lastTargetCount ~= #targets then
+                mission.data.custom.lastTargetCount = #targets
+                mission.data.description[4].text = "Enemies Remaining: ${count}/5"%_T % {count = #targets}
+                if #targets == 0 then
+                    mission.data.description[4].fulfilled = true
+                end
+                sync()
+            end
+            
+            return #targets == 0
         end,
         callback = function()
             reward()
@@ -118,11 +131,21 @@ function spawnEvent(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     local position = generator:getPositionInSector()
 
-    for i=1, 5 do
+    -- Heavy Leader
+    local leaderVolume = Balancing_GetSectorShipVolume(Sector():getCoordinates()) * Balancing_GetShipVolumeDeviation() * 5.0
+    local leader = ShipGenerator.createMilitaryShip(enemyFaction, position, leaderVolume)
+    leader:setValue("cw_hunter_killer_target", true)
+    leader:addScriptOnce("data/scripts/entity/ai/patrol.lua")
+    leader.title = "Elite Strike Force Leader"
+    ShipAI(leader.index):setAggressive()
+
+    -- Escorts
+    for i=1, 4 do
+        local position = generator:getPositionInSector()
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, position)
         ship:setValue("cw_hunter_killer_target", true)
         ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-        ship.title = "Elite Strike Force"
+        ship.title = "Elite Strike Force Escort"
         
         local ai = ShipAI(ship.index)
         ai:setAggressive()

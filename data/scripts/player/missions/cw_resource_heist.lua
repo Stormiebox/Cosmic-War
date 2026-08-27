@@ -7,7 +7,7 @@ include("structuredmission")
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
-local SectorGenerator = include("SectorGenerator")
+local SectorGenerator = include("sectorgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -112,6 +112,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
             bulletPoint = true,
             fulfilled = false
         })
+        sync()
     end
 end
 
@@ -156,12 +157,23 @@ function spawnEvent(x, y)
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     
+    -- Spawn resource asteroid field
+    generator:createAsteroidField(0.15)
+    
     -- Spawn cargo ships to loot
-    for i=1, 4 do
+    for i=1, 2 do
         local position = generator:getPositionInSector()
-        local ship = ShipGenerator.createFreighter(enemyFaction, position)
+        local ship = ShipGenerator.createFreighterShip(enemyFaction, position)
         ship.title = "Resource Transport"
         ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
+    end
+    
+    -- Spawn mining ships
+    for i=1, 2 do
+        local position = generator:getPositionInSector()
+        local ship = ShipGenerator.createMiningShip(enemyFaction, position)
+        ship.title = "Deep Space Miner"
+        ship:addScriptOnce("data/scripts/entity/ai/mine.lua")
     end
     
     -- Spawn defenders

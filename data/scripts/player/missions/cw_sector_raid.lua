@@ -30,7 +30,8 @@ local function findEnemySectorWithStations(startX, startY, enemyIndex)
         -- We want regular sectors, not offgrid, not blocked
         if regular and not offgrid and not blocked then
             -- We want sectors controlled by the enemy
-            if galaxy:getControllingFaction(coord.x, coord.y) == enemyIndex then
+            local controllingFaction = galaxy:getControllingFaction(coord.x, coord.y)
+            if controllingFaction and controllingFaction.index == enemyIndex then
                 specs:initialize(coord.x, coord.y, serverSeed)
                 if specs.generationTemplate then
                     local contents = specs.generationTemplate.contents(coord.x, coord.y)
@@ -115,6 +116,7 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     mission.data.description[4].visible = true
+    sync()
     
     if onServer() then
         if not mission.data.custom.initialStationCount then
