@@ -7,10 +7,17 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.3.0] - Under Development
+
+### 💡 Planned Features & War Contracts
+- [Planned] **Sector Raid:** "Go to {hostile faction sector} and wipe out {either military ships, civil ships, or installations}". A straightforward bounty contract.
+- [Planned] **Hunter Killer:** "Hunt down enemy fleet causing problems." Either utilize Avorion's "Lazy Loading" to target new ships when you enter a sector, OR trigger the contract only when a sector is actively under attack.
+- [Planned] **Resource Heist:** "Go to {hostile sector}, and steal their resources." Example: Harvest 7,500 Trinium, 10,000 Xanion, 2,500 Naonite from enemy territory.
+
 ## [v3.2.0]
 
 ### 🛠️ Architecture & Optimization
-- [Optimized] **Progressive Materialization:** Completely overhauled the `cw_siege_injector_persistent.lua` API. When background sieges are mathematically won by a faction, they no longer force the server to physically load the sector into memory to flip the station ownership (which caused massive server stutters). 
+- [Optimized] **Progressive Materialization:** Completely overhauled the `cw_siege_injector_persistent.lua` API. When background sieges are mathematically won by a faction, they no longer force the server to physically load the sector into memory to flip the station ownership (which caused massive server stutters).
 - [Feature] **Lazy Loading API:** Siege victories are now queued mathematically. When a player jumps into the conquered sector, the game seamlessly intercepts the loading screen and instantly hands the sector over to the victor. Zero stutter!
 
 ### 🚀 Mission Enhancements
