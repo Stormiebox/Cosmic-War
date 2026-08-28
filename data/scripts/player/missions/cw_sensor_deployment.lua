@@ -135,7 +135,7 @@ mission.phases[1].triggers = {
             local craft = player.craft
             if not craft then return false end
             
-            if craft.translation.length <= 500 then
+            if length(craft.translationf) <= 500 then
                 local x, y = Sector():getCoordinates()
                 local key = "deployed_" .. tostring(x) .. "_" .. tostring(y)
                 if not mission.data.custom[key] then

@@ -12,12 +12,6 @@ include("cosmicvaultdebug")
 
 local cw_old_initializeAIFaction = initializeAIFaction
 
-local function cw_clamp(v, minV, maxV)
-    if v < minV then return minV end
-    if v > maxV then return maxV end
-    return v
-end
-
 local function cw_debug(msg, ...)
     if CosmicVaultDebug and CosmicVaultDebug.info then
         CosmicVaultDebug.info("CosmicWar-Factions", msg, ...)
@@ -35,9 +29,6 @@ function initializeAIFaction(faction, baseName, stateFormName)
     end
 
     if not faction then return end
-
-    local seed = Server().seed + faction.index * 101 + 17
-    local random = Random(seed)
 
     -- 1) Apply Custom Traits (Overrides old stance logic)
     local cwt = include("cosmicwartraits")

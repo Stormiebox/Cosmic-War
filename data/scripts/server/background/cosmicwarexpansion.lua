@@ -4,7 +4,8 @@ local cvf = include("cosmicvaultfaction")
 local cvt = include("cosmicvaultterritory")
 include("randomext")
 
-local CosmicWarExpansion = {}
+-- namespace CosmicWarExpansion
+CosmicWarExpansion = {}
 
 function CosmicWarExpansion.getUpdateInterval()
     return 15 * 60 -- Run every 15 minutes
@@ -72,9 +73,3 @@ function CosmicWarExpansion.update(timeStep)
     end
 end
 
-function getUpdateInterval(...)
-    if CosmicWarExpansion.getUpdateInterval then return CosmicWarExpansion.getUpdateInterval(...) end
-end
-function update(...)
-    if CosmicWarExpansion.update then return CosmicWarExpansion.update(...) end
-end

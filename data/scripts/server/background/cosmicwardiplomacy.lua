@@ -10,7 +10,7 @@ local cvf = include("cosmicvaultfaction")
 local cve = include("cosmicvaultevents")
 
 -- namespace CosmicWarDiplomacy
-local CosmicWarDiplomacy = {}
+CosmicWarDiplomacy = {}
 
 function CosmicWarDiplomacy.initialize()
     if onServer() then

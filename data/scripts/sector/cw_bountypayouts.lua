@@ -12,7 +12,9 @@ function onPlayerEntered(playerIndex)
     local player = Player(playerIndex)
     if not player then return end
     
-    local sOwner = Sector().factionIndex
+    local x, y = Sector():getCoordinates()
+    local sOwnerFaction = Galaxy():getControllingFaction(x, y)
+    local sOwner = sOwnerFaction and sOwnerFaction.index or 0
     if not sOwner or sOwner <= 0 then return end
     
     local server = Server()

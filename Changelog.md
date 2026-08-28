@@ -7,6 +7,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.3.1]
+
+### 🪲 Bug Fixes
+- [Bugfix] **Bounty Payout Sector Crash:** Fixed a critical server crash triggered by an invalid sector object property when a player enters a sector where an active bounty is placed on the controlling faction.
+- [Bugfix] **Sensor Deployment Contract:** Fixed a script error in the Sensor Deployment war contract that prevented the mission from correctly validating the player's distance when deploying the stealth buoy.
+- [Bugfix] **Background Script Architecture:** Corrected namespace declarations and wrapper bindings across multiple background simulation scripts (Diplomacy, Expansion) that were previously preventing them from executing properly.
+- [Bugfix] **Script Optimization:** Cleaned up dead code and unused variables in faction generation scripts to streamline processing.
+
 ## [v3.3.0] War Contracts & Bounties Expansion
 
 ### 🚀 War Contracts Expansion
