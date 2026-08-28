@@ -12,11 +12,11 @@ local SectorGenerator = include("sectorgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
-mission._Name = "War Contract: Hunter Killer"
+mission._Name = "War Contract: Sensor Deployment"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/ShipBounty.png"
+mission.data.icon = "data/textures/icons/ShipRecon.png"
 mission.data.autoTrackMission = true
 
 local cw_init = initialize
@@ -49,26 +49,54 @@ function initialize(factionIndex)
         end
 
         local x, y = Sector():getCoordinates()
-        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
-        if not targetX or not targetY then terminate() return end
+        
+        local targets = {}
+        for i = 1, 3 do
+            local tx, ty
+            local valid = false
+            for attempt = 1, 50 do
+                tx, ty = MissionUT.getSector(x, y, 2, 12, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
+                if tx and ty then
+                    local isDuplicate = false
+                    for _, t in pairs(targets) do
+                        if t.x == tx and t.y == ty then
+                            isDuplicate = true
+                            break
+                        end
+                    end
+                    if not isDuplicate then
+                        valid = true
+                        break
+                    end
+                end
+            end
+            if valid then
+                table.insert(targets, {x = tx, y = ty})
+            end
+        end
 
-        mission.data.location = { x = targetX, y = targetY }
+        if #targets < 3 then terminate() return end
+
+        mission.data.custom.targets = targets
+        mission.data.custom.deployedCount = 0
+        mission.data.location = { x = targets[1].x, y = targets[1].y }
 
         mission.data.description = {
             { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "An elite enemy strike force is operating in sector (${location.x}:${location.y}). Hunt down the squadron and destroy them."%_T, arguments = { location = mission.data.location } },
-            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false }
+            { text = "Deploy deep-space sensor buoys in 3 enemy sectors to monitor their fleet movements."%_T },
+            { text = "Head to sector (${location.x}:${location.y})"%_T, arguments = { location = mission.data.location }, bulletPoint = true, fulfilled = false },
+            { text = "Deploy the buoy at the exact center (0, 0, 0). (Fly within 500m)"%_T, bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
-        local baseReward = math.floor(125000 + heat * 150000)
+        local baseReward = math.floor(100000 + heat * 125000)
 
         mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 10000,
-            paymentMessage = "Contract fulfilled. Payment transferred."%_T
+            paymentMessage = "All sensors deployed. We are receiving the telemetry now. Payment transferred."%_T
         }
 
         cw_init(factionIndex)
@@ -85,10 +113,13 @@ mission.phases[1].showUpdateOnEnd = true
 
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
-    if not mission.data.custom.spawned then
+    mission.data.description[4].visible = true
+    
+    local custom = mission.data.custom
+    local key = "spawned_" .. tostring(x) .. "_" .. tostring(y)
+    if not custom[key] then
         spawnEvent(x, y)
-        mission.data.custom.spawned = true
-        table.insert(mission.data.description, { text = "Enemies Remaining: 5/5"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        custom[key] = true
     end
     sync()
 end
@@ -97,29 +128,51 @@ mission.phases[1].triggers = {
     {
         condition = function()
             if onClient() then return false end
-            if not atTargetLocation() or not mission.data.custom.spawned then return false end
-            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_hunter_killer_target") }
-            local targets = {}
-            for _, _t in pairs(_raw_targets) do
-                if _t.type == EntityType.Ship then
-                    table.insert(targets, _t)
+            if not atTargetLocation() then return false end
+            
+            local player = Player()
+            if not player then return false end
+            local craft = player.craft
+            if not craft then return false end
+            
+            if craft.translation.length <= 500 then
+                local x, y = Sector():getCoordinates()
+                local key = "deployed_" .. tostring(x) .. "_" .. tostring(y)
+                if not mission.data.custom[key] then
+                    mission.data.custom[key] = true
+                    return true
                 end
             end
             
-            if mission.data.custom.lastTargetCount ~= #targets then
-                mission.data.custom.lastTargetCount = #targets
-                mission.data.description[4].text = "Enemies Remaining: ${count}/5"%_T % {count = #targets}
-                if #targets == 0 then
-                    mission.data.description[4].fulfilled = true
-                end
-                sync()
-            end
-            
-            return #targets == 0
+            return false
         end,
         callback = function()
-            reward()
-            accomplish()
+            local x, y = Sector():getCoordinates()
+            local generator = SectorGenerator(x, y)
+            local faction = Faction(mission.data.custom.giverIndex)
+            
+            local buoy = generator:createStation(faction, nil)
+            buoy.title = "Deep-Space Sensor Buoy"%_T
+            
+            local player = Player()
+            if player then
+                player:sendChatMessage(faction.name, 0, "Sensor buoy deployed successfully."%_T)
+            end
+            
+            mission.data.custom.deployedCount = mission.data.custom.deployedCount + 1
+            if mission.data.custom.deployedCount >= 3 then
+                mission.data.description[4].fulfilled = true
+                sync()
+                reward()
+                accomplish()
+            else
+                local nextTarget = mission.data.custom.targets[mission.data.custom.deployedCount + 1]
+                mission.data.location = {x = nextTarget.x, y = nextTarget.y}
+                mission.data.description[3].arguments = { location = mission.data.location }
+                mission.data.description[3].fulfilled = false
+                mission.data.description[4].visible = false
+                sync()
+            end
         end
     }
 }
@@ -129,23 +182,13 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    local position = generator:getPositionInSector()
-
-    -- Heavy Leader
-    local leaderVolume = Balancing_GetSectorShipVolume(Sector():getCoordinates()) * Balancing_GetShipVolumeDeviation() * 5.0
-    local leader = ShipGenerator.createMilitaryShip(enemyFaction, position, leaderVolume)
-    leader:setValue("cw_hunter_killer_target", true)
-    leader:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-    leader.title = "Elite Strike Force Leader"%_T
-    ShipAI(leader.index):setAggressive()
-
-    -- Escorts
-    for i=1, 4 do
-        local position = generator:getPositionInSector()
+    
+    -- Spawn some defenders near the center
+    for i=1, 3 do
+        local position = MatrixLookUpPosition(-vec3(0,1,0), vec3(1,0,0), vec3(math.random(-2000, 2000), math.random(-2000, 2000), math.random(-2000, 2000)))
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, position)
-        ship:setValue("cw_hunter_killer_target", true)
         ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-        ship.title = "Elite Strike Force Escort"%_T
+        ship.title = "Sector Patrol"%_T
         
         local ai = ShipAI(ship.index)
         ai:setAggressive()
@@ -154,28 +197,28 @@ end
 
 function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    if heat < 0.60 then return end
+    if heat < 0.15 then return end
 
-    local baseReward = math.floor(125000 + heat * 150000)
+    local baseReward = math.floor(100000 + heat * 125000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
         relations = 10000,
-        paymentMessage = "Contract fulfilled. Payment transferred."%_T
+        paymentMessage = "All sensors deployed. We are receiving the telemetry now. Payment transferred."%_T
     }
 
     return {
-        brief = "War Contract: Hunter Killer"%_T,
-        description = "An elite enemy squadron has been disrupting our operations in a nearby sector. We need you to hunt them down and eliminate them.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Hard"%_T,
+        brief = "War Contract: Sensor Deployment"%_T,
+        description = "We need greater visibility into enemy territory. We are contracting you to jump into 3 specific hostile sectors and drop stealth sensor buoys at their exact center coordinates (0, 0, 0). Expect heavy resistance.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
+        difficulty = "Medium"%_T,
         reward = "¢${reward}"%_T,
-        script = "data/scripts/player/missions/cw_hunter_killer.lua",
-        icon = "data/textures/icons/ShipBounty.png",
+        script = "data/scripts/player/missions/cw_sensor_deployment.lua",
+        icon = "data/textures/icons/ShipRecon.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Find that squadron and make sure they don't return. Dismissed."%_T,
+        msg = "Get those sensors in place, pilot. Dismissed."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)

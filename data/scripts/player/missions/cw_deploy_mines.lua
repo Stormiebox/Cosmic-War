@@ -107,7 +107,7 @@ mission.phases[1].triggers = {
             mission.data.custom.minesDeployed = (mission.data.custom.minesDeployed or 0) + 1
             if mission.data.custom.minesDeployed % 10 == 0 then
                 local player = Player()
-                if player then player:sendChatMessage("", 3, "Deploying mine " .. (mission.data.custom.minesDeployed / 10) .. "/5...") end
+                if player then player:sendChatMessage("", 3, "Deploying mine ${num}/5..."%_T % {num = (mission.data.custom.minesDeployed / 10)}) end
             end
             
             return mission.data.custom.minesDeployed >= 50
@@ -127,7 +127,7 @@ function spawnEvent(x, y)
 
     local player = Player()
     if player then
-        player:sendChatMessage("", 3, "Minefield deployment initiated. Remain in the sector for 250 seconds until all 5 mine clusters are armed.")
+        player:sendChatMessage("", 3, "Minefield deployment initiated. Remain in the sector for 250 seconds until all 5 mine clusters are armed."%_T)
     end
 
     local enemyIndex = mission.data.custom.enemyIndex
@@ -140,7 +140,7 @@ function spawnEvent(x, y)
                 ship:addScript("ai/patrol.lua")
             end
             if player then
-                player:sendChatMessage(enemyFaction.name, 1, "Hostile incursion detected! Intercepting minelaying operation!")
+                player:sendChatMessage(enemyFaction.name, 1, "Hostile incursion detected! Intercepting minelaying operation!"%_T)
             end
         end
     end
@@ -187,7 +187,9 @@ mission.abandon = function()
         if giverIndex and giverIndex > 0 then
             local rep = player:getRelations(giverIndex)
             CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
-            player:sendChatMessage(Faction(giverIndex).name, 1, "You abandoned a critical war contract! Our trust in you is broken.")
+            local giverFaction = Faction(giverIndex)
+            local giverName = giverFaction and giverFaction.name or "Unknown"%_T
+            player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
         end
     end
     if cw_mission_abandon_original then cw_mission_abandon_original() end

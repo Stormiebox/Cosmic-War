@@ -170,7 +170,7 @@ function spawnEvent(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
 
     local broadcaster = ShipGenerator.createFreighterShip(giverFaction, generator:getPositionInSector())
-    broadcaster.title = "Propaganda Broadcaster"
+    broadcaster.title = "Propaganda Broadcaster"%_T
     broadcaster:addScriptOnce("data/scripts/entity/ai/patrol.lua")
     broadcaster:setValue("cw_broadcaster", true)
 
@@ -219,8 +219,11 @@ mission.abandon = function()
         if giverIndex and giverIndex > 0 then
             local rep = player:getRelations(giverIndex)
             CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
-            player:sendChatMessage(Faction(giverIndex).name, 1, "You abandoned a critical war contract! Our trust in you is broken.")
+            local giverFaction = Faction(giverIndex)
+            local giverName = giverFaction and giverFaction.name or "Unknown"%_T
+            player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
         end
     end
     if cw_mission_abandon_original then cw_mission_abandon_original() end
 end
+

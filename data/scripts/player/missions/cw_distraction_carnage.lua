@@ -7,15 +7,16 @@ include("structuredmission")
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
+
 local SectorGenerator = include("sectorgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
-mission._Name = "War Contract: Resource Heist"
+mission._Name = "War Contract: Distraction Carnage"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/ResourceSteal.png"
+mission.data.icon = "data/textures/icons/ShipCombat.png"
 mission.data.autoTrackMission = true
 
 local cw_init = initialize
@@ -42,51 +43,36 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
-        local x, y = Sector():getCoordinates()
-        mission.data.custom.giverCoords = {x = x, y = y}
-
         if enemyIndex and enemyIndex > 0 then
             CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
             Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
         end
 
+        local x, y = Sector():getCoordinates()
         local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
         if not targetX or not targetY then terminate() return end
 
         mission.data.location = { x = targetX, y = targetY }
-        
-        local d = length(vec2(targetX, targetY))
-        local matType = MaterialType.Iron
-        if d < 430 then matType = MaterialType.Titanium end
-        if d < 350 then matType = MaterialType.Naonite end
-        if d < 275 then matType = MaterialType.Trinium end
-        if d < 150 then matType = MaterialType.Xanion end
-        if d < 75 then matType = MaterialType.Ogonite end
-        if d < 50 then matType = MaterialType.Avorion end
-        
-        local requiredMaterial = Material(matType)
-        local materialAmount = math.random(5000, 15000)
-        
-        mission.data.custom.materialType = matType
-        mission.data.custom.materialName = requiredMaterial.name
-        mission.data.custom.materialAmount = materialAmount
 
         mission.data.description = {
             { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "We need you to disrupt enemy supply lines. Travel to sector (${location.x}:${location.y}), acquire ${amount} ${material}, and return here."%_T, arguments = { location = mission.data.location, amount = materialAmount, material = requiredMaterial.name } },
+            { text = "We need you to cause a massive distraction in sector (${location.x}:${location.y}). Survive the enemy reinforcements."%_T, arguments = { location = mission.data.location } },
             { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false }
         }
 
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
-        local baseReward = math.floor(100000 + heat * 125000)
+        local baseReward = math.floor(175000 + heat * 200000)
 
         mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
-            relations = 10000,
-            paymentMessage = "Contract fulfilled. Payment transferred."%_T
+            relations = 12000,
+            paymentMessage = "Distraction successful. Our fleets have moved undetected. Payment transferred."%_T
         }
+        
+        mission.data.custom.timeRemaining = 300
+        mission.data.custom.spawnTimer = 0
 
         cw_init(factionIndex)
     else
@@ -105,14 +91,31 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     if not mission.data.custom.spawned then
         spawnEvent(x, y)
         mission.data.custom.spawned = true
-        
-        table.insert(mission.data.description, {
-            text = "Return to sector (${x}:${y}) with ${amount} ${material}"%_T,
-            arguments = { x = mission.data.custom.giverCoords.x, y = mission.data.custom.giverCoords.y, amount = mission.data.custom.materialAmount, material = mission.data.custom.materialName },
-            bulletPoint = true,
-            fulfilled = false
-        })
+        table.insert(mission.data.description, { text = "Survive the ambush: 5:00"%_T, bulletPoint = true, fulfilled = false, visible = true })
+    end
+    sync()
+end
+
+mission.phases[1].updateServer = function(timeStep)
+    if not atTargetLocation() or not mission.data.custom.spawned then return end
+
+    local custom = mission.data.custom
+    custom.timeRemaining = math.max(0, custom.timeRemaining - timeStep)
+    custom.spawnTimer = custom.spawnTimer + timeStep
+
+    local minutes = math.floor(custom.timeRemaining / 60)
+    local seconds = math.floor(custom.timeRemaining % 60)
+    local timeString = string.format("%d:%02d", minutes, seconds)
+    
+    if math.floor(custom.timeRemaining) ~= custom.lastTimeSec then
+        custom.lastTimeSec = math.floor(custom.timeRemaining)
+        mission.data.description[4].text = "Survive the ambush: ${time}"%_T % {time = timeString}
         sync()
+    end
+
+    if custom.spawnTimer >= 30 then
+        custom.spawnTimer = 0
+        spawnReinforcements()
     end
 end
 
@@ -120,31 +123,11 @@ mission.phases[1].triggers = {
     {
         condition = function()
             if onClient() then return false end
-            if not mission.data.custom.spawned then return false end
-            
-            local player = Player()
-            local giverCoords = mission.data.custom.giverCoords
-            local matType = mission.data.custom.materialType
-            local requiredAmount = mission.data.custom.materialAmount
-            
-            local resources = {player:getResources()}
-            local current = resources[matType + 1] or 0
-            
-            local x, y = Sector():getCoordinates()
-            
-            if x == giverCoords.x and y == giverCoords.y and current >= requiredAmount then
-                return true
-            end
-            
-            return false
+            return mission.data.custom.timeRemaining and mission.data.custom.timeRemaining <= 0 and atTargetLocation()
         end,
         callback = function()
-            local player = Player()
-            local matType = mission.data.custom.materialType
-            local requiredAmount = mission.data.custom.materialAmount
-            
-            player:payResource("Resource Heist complete", Material(matType), requiredAmount)
-            
+            mission.data.description[4].fulfilled = true
+            sync()
             reward()
             accomplish()
         end
@@ -153,61 +136,57 @@ mission.phases[1].triggers = {
 
 function spawnEvent(x, y)
     if onClient() then return end
+    -- Initial spawn
+    spawnReinforcements()
+end
 
+function spawnReinforcements()
+    if onClient() then return end
+    
+    local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    
-    -- Spawn resource asteroid field
-    generator:createAsteroidField(0.15)
-    
-    -- Spawn cargo ships to loot
-    for i=1, 2 do
-        local position = generator:getPositionInSector()
-        local ship = ShipGenerator.createFreighterShip(enemyFaction, position)
-        ship.title = "Resource Transport"%_T
-        ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-    end
-    
-    -- Spawn mining ships
-    for i=1, 2 do
-        local position = generator:getPositionInSector()
-        local ship = ShipGenerator.createMiningShip(enemyFaction, position)
-        ship.title = "Deep Space Miner"%_T
-        ship:addScriptOnce("data/scripts/entity/ai/mine.lua")
-    end
-    
-    -- Spawn defenders
+
     for i=1, 3 do
         local position = generator:getPositionInSector()
-        local ship = ShipGenerator.createDefender(enemyFaction, position)
-        ShipAI(ship.index):setAggressive()
+        local ship = ShipGenerator.createMilitaryShip(enemyFaction, position)
+        ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
+        ship.title = "Response Fleet"%_T
+        
+        local ai = ShipAI(ship.index)
+        ai:setAggressive()
+    end
+    
+    local player = Player()
+    if player then
+        player:sendChatMessage(enemyFaction.name, 1, "Hostile vessel detected in our space! All units, intercept!"%_T)
     end
 end
 
 function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    if heat < 0.35 then return end
+    if heat < 0.60 then return end
 
-    local baseReward = math.floor(100000 + heat * 125000)
+    local baseReward = math.floor(175000 + heat * 200000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
-        relations = 10000,
-        paymentMessage = "Contract fulfilled. Payment transferred."%_T
+        relations = 12000,
+        paymentMessage = "Distraction successful. Our fleets have moved undetected. Payment transferred."%_T
     }
 
     return {
-        brief = "War Contract: Resource Heist"%_T,
-        description = "Enemy logistics rely heavily on a nearby sector. We want you to go in there, disrupt their operations, and return with a haul of their resources. You can mine them from the sector or take them from destroyed transports.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
+        brief = "War Contract: Distraction Carnage"%_T,
+        description = "We need to move a massive invasion fleet completely undetected. To pull this off, we need you to jump into a heavily fortified enemy sector and cause as much chaos as possible to draw all their reinforcements to your location. Survive for 5 minutes.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
         difficulty = "Hard"%_T,
         reward = "¢${reward}"%_T,
-        script = "data/scripts/player/missions/cw_resource_heist.lua",
-        icon = "data/textures/icons/ResourceSteal.png",
+        script = "data/scripts/player/missions/cw_distraction_carnage.lua",
+        icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Bring those resources back to us. Dismissed."%_T,
+        msg = "Make it loud. Survive until we signal the all-clear. Dismissed."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)

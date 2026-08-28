@@ -7,12 +7,32 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
-## [v3.3.0] - Under Development
+## [v3.3.0] War Contracts & Bounties Expansion
 
-### 💡 Planned Features & War Contracts
-- [Planned] **Sector Raid:** "Go to {hostile faction sector} and wipe out {either military ships, civil ships, or installations}". A straightforward bounty contract.
-- [Planned] **Hunter Killer:** "Hunt down enemy fleet causing problems." Either utilize Avorion's "Lazy Loading" to target new ships when you enter a sector, OR trigger the contract only when a sector is actively under attack.
-- [Planned] **Resource Heist:** "Go to {hostile sector}, and steal their resources." Example: Harvest 7,500 Trinium, 10,000 Xanion, 2,500 Naonite from enemy territory.
+### 🚀 War Contracts Expansion
+
+- [New] **Sector Raid:** Wipe out key hostile infrastructure or civilian vessels deep in enemy territory.
+- [New] **Hunter Killer:** Hunt down a specialized enemy fleet causing problems for the allied faction.
+- [New] **Resource Heist:** Infiltrate a hostile sector and forcefully harvest a massive amount of valuable resources.
+- [New] **Distraction Carnage:** Draw massive enemy fleets to your location and survive a grueling 5-minute ambush.
+- [New] **Black Box Retrieval:** Locate the wreckage of a destroyed prototype flagship deep in enemy space and extract its black box data before salvage crews strip it.
+- [New] **Blockade Runner:** Break through a heavily fortified blockade to deliver emergency supplies to a covert listening post.
+- [New] **Champion Duel:** Answer the call of an arrogant enemy commander and face off against a massively scaled Champion in a 1-on-1 duel.
+- [New] **Sensor Deployment:** Sneak into the dead center of 3 distinct hostile sectors to deploy stealth sensor buoys.
+
+### 💰 War Bounty Revamp
+
+- [New] **Bounty Licenses:** The passive global war bounty system has been entirely overhauled into an interactive "Bounty License" mechanic.
+- [New] **Per-Kill Payouts:** After securing your first kill against a faction with a global bounty, you will receive a 45-minute active Bounty License.
+- [New] **Hunting Quotas:** You can now hunt and destroy up to 15 military targets under a single license. The license explicitly warns you every 5 minutes before expiration.
+- [New] **Dynamic Reward Scaling:** The base credit reward scales strictly by distance from the core. Destroying standard military ships pays out the base reward, Dreadnoughts and Bosses pay out 5x, and Stations pay out 10x!
+- [Update] **Civilian Immunity:** You can no longer farm bounties by destroying defenseless mining, trading, or civil transport ships. Only military and infrastructure targets yield payouts.
+- [Update] **Galactic Politics UI:** The `[!]` tag has been replaced with `[BOUNTY]`. Hover tooltips now accurately display the "Per-Kill" value rather than a flat lump-sum.
+- [Update] **HUD Alerts:** Jumping into an enemy sector that currently has an active global bounty will instantly push a text alert to your HUD, notifying you that the sector is an active warzone with high payouts.
+
+### 🪲 Bug Fixes
+
+- [Bugfix] **Small Tweaks & Fixes:** Various small bugfixes and tweaks across various War Contracts to ensure multiplayer and alliance compatibility.
 
 ## [v3.2.0]
 

@@ -202,26 +202,28 @@ Allows conditional de-escalation when hostility recovers and ceasefire chance cr
 
 </details>
 
-### ⚔️ 7) War Bounty Generation
+### ⚔️ 7) War Bounty Generation (Bounty Licenses)
 
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary file:** `data/scripts/server/background/cosmicwarbounties.lua`
+**Primary files:** 
+- `data/scripts/server/background/cosmicwarbounties.lua`
+- `data/scripts/sector/cw_bountypayouts.lua`
+- `data/scripts/player/background/cw_bounty_tracker.lua`
 
 **What it does:**
-Creates time-bound bounty opportunities linked to active faction rivalries.
+Transforms the global geopolitical state into highly interactive hunting licenses. When a faction has an active global bounty against their enemy, destroying your first valid military target (Ship, Station, Boss) automatically provisions a **Bounty License** to the player or alliance.
 
-**Typical Stored Value Pattern:**
-
-- Target faction ID.
-- Reward value.
-- Expiration runtime.
+**Mechanics:**
+- **Hunting Quota:** The license tracks progress (e.g. 0/15) across all sectors.
+- **Expiration:** You have a strict time limit (45 minutes) to complete the quota, with HUD notifications every 5 minutes.
+- **Dynamic Payouts:** Base rewards scale based on distance from the core. Standard military ships pay out 1x, Dreadnoughts and Bosses pay out 5x, and Stations pay out 10x.
+- **Civilian Immunity:** Bounties only trigger on military targets; defenseless mining and cargo ships are ignored.
 
 **Gameplay Impact:**
-
-- Gives players direct incentives to engage with active wars.
-- Converts geopolitical state into mission-like opportunities.
+- Gives players direct, massive incentives to participate in active wars.
+- Provides engaging, on-screen progression metrics (HUD alerts, UI trackers) rather than passive, invisible logic.
 
 </details>
 
@@ -356,13 +358,13 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 
 **Available Contracts:**
 
-- **War Heat > 0.15:** *Force Recon* (Scout a hostile listening post).
+- **War Heat > 0.15:** *Force Recon* (Scout a hostile listening post) & *Sensor Deployment* (Sneak into the dead center of 3 hostile sectors).
 - **War Heat > 0.25:** *Border Skirmish* (Eliminate an enemy border patrol).
-- **War Heat > 0.35:** *Resource Sabotage* (Destroy an enemy mining operation).
-- **War Heat > 0.45:** *Interception* (Destroy enemy supply convoy) & *Breakthrough* (Defend allied supply convoy).
-- **War Heat > 0.60:** *Frontline Siege* (Assault a dynamically scaled enemy Forward Operating Base).
-- **War Heat > 0.80:** *High-Value Extraction* (Holdout survival while an enemy defector charges their hyperdrive).
-- **War Heat = 1.00:** *Decapitation Strike* (Ultra-hard Flagship Boss. Destroying it forces an immediate ceasefire).
+- **War Heat > 0.35:** *Resource Sabotage* (Destroy an enemy mining operation), *Resource Heist* (Infiltrate and steal large quantities of resources), & *Deploy Minefield* (Deploy and defend a minefield).
+- **War Heat > 0.45:** *Interception* (Destroy enemy supply convoy), *Breakthrough* (Defend allied supply convoy), *Sector Raid* (Wipe out enemy infrastructure), *Black Box Retrieval* (Extract data from a destroyed prototype), & *Propaganda Broadcast* (Hack comms array).
+- **War Heat > 0.60:** *Frontline Siege* (Assault a dynamically scaled enemy FOB), *Hunter Killer* (Hunt a specialized fleet), & *Distraction Carnage* (Survive a massive 5-minute ambush).
+- **War Heat > 0.80:** *High-Value Extraction* (Holdout survival for defector), *Assassinate General* (Kill a high-ranking target), *Supply Line Raid* (Destroy logistics hubs), & *Blockade Runner* (Deliver supplies through a heavy blockade).
+- **War Heat = 1.00:** *Decapitation Strike* (Ultra-hard Flagship Boss), *Extract POW* (Rescue prisoners from a heavily guarded facility), & *Champion Duel* (1-on-1 duel with a scaled boss).
 
 </details>
 

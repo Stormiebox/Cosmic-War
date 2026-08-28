@@ -111,7 +111,7 @@ if onClient() then
         local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.45)
 
         local legendStr = "Legend:"%_t .. "\n" ..
-            " [!] " .. "Active War Bounty (Check Tooltip)"%_t .. "\n" ..
+            " [BOUNTY] " .. "Active War Bounty License (Check Tooltip)"%_t .. "\n" ..
             " " .. "War Heat:"%_t .. " (" .. "Red"%_t .. ") " .. "Critical"%_t .. " | (" .. "Orange"%_t .. ") " .. "High"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Rising"%_t .. " | (" .. "Green"%_t .. ") " .. "Zero"%_t .. "\n" ..
             " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t .. "\n" ..
             " " .. "Famine:"%_t .. " (" .. "Green"%_t .. ") " .. "Normal"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Struggling"%_t .. " | (" .. "Red"%_t .. ") " .. "Critical"%_t
@@ -245,10 +245,10 @@ if onClient() then
             local relB = player:getRelations(conflict.factionBIndex) or 0
 
             local nameA = conflict.factionA or "Unknown Faction"%_t
-            if conflict.bountyA > 0 then nameA = nameA .. " [!]" end
+            if conflict.bountyA > 0 then nameA = nameA .. " [BOUNTY]" end
 
             local nameB = conflict.factionB or "Unknown Faction"%_t
-            if conflict.bountyB > 0 then nameB = nameB .. " [!]" end
+            if conflict.bountyB > 0 then nameB = nameB .. " [BOUNTY]" end
 
             local relationText = tostring(conflict.relation)
             if self.numericCheck and not self.numericCheck.checked then
@@ -279,14 +279,14 @@ if onClient() then
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsA) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relA) .. " (" .. math.floor(relA) .. ")\n"
             if (conflict.famineA or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineA) .. "\n" end
-            if conflict.bountyA > 0 then tooltip = tooltip .. "Bounty on Enemy: ¢"%_t .. createMonetaryString(conflict.bountyA) .. "\n" end
+            if conflict.bountyA > 0 then tooltip = tooltip .. "Bounty License (Per Kill): ¢"%_t .. createMonetaryString(conflict.bountyA) .. " (Max 15 Kills)\n" end
 
             tooltip = tooltip .. "\n=== " .. nameB .. " ===\n"
             tooltip = tooltip .. "Index: "%_t .. conflict.factionBIndex .. "\n"
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsB) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relB) .. " (" .. math.floor(relB) .. ")\n"
             if (conflict.famineB or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineB) .. "\n" end
-            if conflict.bountyB > 0 then tooltip = tooltip .. "Bounty on Enemy: ¢"%_t .. createMonetaryString(conflict.bountyB) .. "\n" end
+            if conflict.bountyB > 0 then tooltip = tooltip .. "Bounty License (Per Kill): ¢"%_t .. createMonetaryString(conflict.bountyB) .. " (Max 15 Kills)\n" end
 
             politicsList:setTooltip(row, tooltip)
         end

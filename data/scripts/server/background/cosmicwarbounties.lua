@@ -76,7 +76,7 @@ function CosmicWarBounties.update(timeStep)
                         -- Scale from 1.0 (edge) up to 25.0+ (core)
                         local distFactor = math.max(1, (500 - dist) / 20)
                         local scale = 1.0 + (distFactor * distFactor * 0.1)
-                        local bounty = math.floor(random:getInt(25000, 85000) * scale)
+                        local bounty = math.floor(random:getInt(3000, 8500) * scale)
                         
                         f:setValue("cw_bounty_enemy", e.index)
                         f:setValue("cw_bounty_reward", bounty)

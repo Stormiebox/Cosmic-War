@@ -134,9 +134,11 @@ Profit from the chaos by signing up as a mercenary.
 
 ### ⚙️ Mechanics
 - Check the Bulletin Board in any warring faction's territory to find Mercenary Contracts.
-- **Defensive Contracts:** Protect a sector from an incoming invasion fleet.
-- **Offensive Contracts:** Join an invasion fleet and assist in destroying an enemy station.
-- **Assassination:** Hunt down specific enemy commanders behind enemy lines.
+- **Defensive Contracts:** Protect a sector from an incoming invasion fleet, or break through blockades to deliver supplies (Blockade Runner).
+- **Offensive Contracts:** Join an invasion fleet to destroy an enemy station, or wipe out infrastructure (Sector Raid).
+- **Special Operations:** Locate destroyed flagships for data (Black Box Retrieval), deploy stealth buoys (Sensor Deployment), or draw enemy fleets into a massive 5-minute ambush (Distraction Carnage).
+- **Resource Ops:** Steal massive quantities of resources from enemy territory (Resource Heist) or destroy enemy mining operations (Resource Sabotage).
+- **Assassination & Duels:** Hunt down specific enemy commanders (Hunter Killer), or answer the call for a 1-on-1 duel with an arrogant scaled Champion (Champion Duel).
 - Completing contracts pays massive bounties and significantly boosts your reputation with the hiring faction (while devastating your reputation with the target).
 </details>
 
@@ -162,6 +164,7 @@ Use the new Galactic Politics UI tab to track the status of all known factions.
 
 ### ⚙️ Features
 - View all active wars, alliances, and War Heat levels.
+- **Bounty Licenses:** Factions actively offering a Bounty License against their enemies will have a `[BOUNTY]` tag next to their name. Hovering over it will reveal the exact per-kill credit reward for destroying enemy military assets. Destroying your first target activates a 45-minute hunting license for up to 15 kills!
 - **Covert Funding:** As a wealthy player, you can secretly fund rebellions or donate credits to a faction's war effort, directly influencing the outcome of the war without firing a shot.
 </details>
 

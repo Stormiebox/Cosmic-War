@@ -128,7 +128,7 @@ function spawnEvent(x, y)
 
     local general = ShipGenerator.createMilitaryShip(enemyFaction, generator:getPositionInSector())
     general:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-    general.title = "Enemy Flag Officer"
+    general.title = "Enemy Flag Officer"%_T
     general:setValue("cw_assassination_target", true)
 
     for i=1, 4 do
@@ -179,8 +179,11 @@ mission.abandon = function()
         if giverIndex and giverIndex > 0 then
             local rep = player:getRelations(giverIndex)
             CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
-            player:sendChatMessage(Faction(giverIndex).name, 1, "You abandoned a critical war contract! Our trust in you is broken.")
+            local giverFaction = Faction(giverIndex)
+            local giverName = giverFaction and giverFaction.name or "Unknown"%_T
+            player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
         end
     end
     if cw_mission_abandon_original then cw_mission_abandon_original() end
 end
+

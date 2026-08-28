@@ -16,6 +16,7 @@ function MissionBulletins.getPossibleMissions()
         -- The probabilities are roughly matched to vanilla standard missions
         if heat >= 0.15 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_forcerecon.lua", prob = 2.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_sensor_deployment.lua", prob = 1.5})
         end
         if heat >= 0.25 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_borderskirmish.lua", prob = 2.0})
@@ -30,19 +31,23 @@ function MissionBulletins.getPossibleMissions()
             table.insert(scripts, {path = "data/scripts/player/missions/cw_interception.lua", prob = 1.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_breakthrough.lua", prob = 1.0})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_propaganda_broadcast.lua", prob = 1.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_black_box_retrieval.lua", prob = 1.0})
         end
         if heat >= 0.60 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_hunter_killer.lua", prob = 1.0})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_frontlinesiege.lua", prob = 1.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_distraction_carnage.lua", prob = 1.0})
         end
         if heat >= 0.80 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_highvaluedefection.lua", prob = 0.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_assassinate_general.lua", prob = 0.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_supply_line_raid.lua", prob = 0.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_blockade_runner.lua", prob = 0.5})
         end
         if heat >= 1.00 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_decapitationstrike.lua", prob = 0.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_extract_pow.lua", prob = 0.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_champion_duel.lua", prob = 0.5})
         end
     end
     
