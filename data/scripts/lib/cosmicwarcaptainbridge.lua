@@ -3,7 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("cosmicwarbridge")
 include("cosmicwarconfig")
 
--- namespace CosmicWarCaptainBridge
+
 CosmicWarCaptainBridge = CosmicWarCaptainBridge or {}
 
 function CosmicWarCaptainBridge.modifyPredictionByWarHeat(prediction, factionIndex)
@@ -35,3 +35,4 @@ function CosmicWarCaptainBridge.modifyPredictionByWarHeat(prediction, factionInd
 end
 
 return CosmicWarCaptainBridge
+

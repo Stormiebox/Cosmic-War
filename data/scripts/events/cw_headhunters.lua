@@ -4,9 +4,10 @@ include("randomext")
 
 local ShipGenerator = include("shipgenerator")
 
-local cw_headhunters = {}
+-- namespace CW_HeadhuntersEvent
+CW_HeadhuntersEvent = {}
 
-function cw_headhunters.initialize()
+function CW_HeadhuntersEvent.initialize()
     if onClient() then return end
 
     local sector = Sector()
@@ -15,6 +16,7 @@ function cw_headhunters.initialize()
 
     -- Only trigger if the player is present
     if not player then
+        Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
@@ -22,6 +24,7 @@ function cw_headhunters.initialize()
     local server = Server()
     local factionStr = server:getValue("factions")
     if type(factionStr) ~= "string" or factionStr == "" then
+        Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
@@ -45,17 +48,15 @@ function cw_headhunters.initialize()
     end
 
     if not bestEnemy then
+        Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
 
     -- Defer ambush until the player jumps to a new sector
     player:setValue("cw_pending_ambush", bestEnemy.index)
-    
-    -- Terminate this script, the scheduler will handle the ambush on sector entry
-    terminate()
-end
 
-function initialize(...)
-    if cw_headhunters.initialize then return cw_headhunters.initialize(...) end
+    -- Terminate this script, the scheduler will handle the ambush on sector entry
+    Sector():removeScript("events/cw_headhunters.lua")
+    terminate()
 end

@@ -352,4 +352,3 @@ end
 
 
 
-return CosmicWarController

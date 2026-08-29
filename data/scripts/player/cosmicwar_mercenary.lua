@@ -4,13 +4,16 @@ local cvf = include("cosmicvaultfaction")
 
 -- Server-side script attached to players who enlist as a mercenary
 
-function initialize()
+-- namespace CW_Mercenary
+CW_Mercenary = CW_Mercenary or {}
+
+function CW_Mercenary.initialize()
     if onServer() then
         Player():registerCallback("onShipDestroyed", "onShipDestroyed")
     end
 end
 
-function onShipDestroyed(destroyedId, destroyerId)
+function CW_Mercenary.onShipDestroyed(destroyedId, destroyerId)
     if not destroyerId then return end
     
     local player = Player()

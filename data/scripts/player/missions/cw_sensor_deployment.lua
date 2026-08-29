@@ -183,9 +183,13 @@ function spawnEvent(x, y)
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
     
+    -- Spawn Navigation Beacon at 0,0,0
+    local beacon = generator:createBeacon(Matrix(), nil, "Deploy Sensor Buoy Here"%_T)
+    beacon:setValue("cw_buoy_target", true)
+    
     -- Spawn some defenders near the center
     for i=1, 3 do
-        local position = MatrixLookUpPosition(-vec3(0,1,0), vec3(1,0,0), vec3(math.random(-2000, 2000), math.random(-2000, 2000), math.random(-2000, 2000)))
+        local position = MatrixLookUpPosition(-vec3(0,1,0), vec3(1,0,0), vec3(random():getInt(-2000, 2000), random():getInt(-2000, 2000), random():getInt(-2000, 2000)))
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, position)
         ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
         ship.title = "Sector Patrol"%_T

@@ -139,7 +139,7 @@ function spawnEvent(x, y)
             "Finally, a challenger! Let us see if you bleed as easily as the rest of your fleet."%_T,
             "So, the cowards hired you to do their dirty work. Let me show you what true power looks like."%_T
         }
-        local msg = messages[math.random(1, #messages)]
+        local msg = messages[random():getInt(1, #messages)]
         player:sendChatMessage(champion.name, 0, msg)
     end
 end

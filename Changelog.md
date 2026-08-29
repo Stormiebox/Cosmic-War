@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.3.2]
+
+### 🪲 Bug Fixes
+- [Bugfix] **Frontline Siege Contract:** Fixed a bug where the mission would soft-lock and fail to complete if the target Forward Operating Base (FOB) was boarded/captured rather than explicitly destroyed, or if wreckage data lingered in the engine.
+- [Bugfix] **Sensor Deployment Contract:** Added a physical HUD navigation beacon at the center of the sector `(0, 0, 0)` so players know exactly where to deploy the stealth buoy, resolving confusion caused by the lack of a coordinate grid.
+
 ## [v3.3.1]
 
 ### 🪲 Bug Fixes

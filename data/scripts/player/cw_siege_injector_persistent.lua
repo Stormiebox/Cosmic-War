@@ -1,13 +1,16 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 local CosmicVaultTerritory = include("cosmicvaultterritory")
 
-function initialize()
+-- namespace CW_SiegeInjectorPersistent
+CW_SiegeInjectorPersistent = CW_SiegeInjectorPersistent or {}
+
+function CW_SiegeInjectorPersistent.initialize()
     if onServer() then
         Player():registerCallback("onSectorEntered", "onSectorEntered")
     end
 end
 
-function onSectorEntered(playerIndex, x, y, sectorChangeType)
+function CW_SiegeInjectorPersistent.onSectorEntered(playerIndex, x, y, sectorChangeType)
     if onServer() then
         -- PROGRESSIVE MATERIALIZATION (Lag Fix)
         -- Check if this sector was mathematically conquered in the background

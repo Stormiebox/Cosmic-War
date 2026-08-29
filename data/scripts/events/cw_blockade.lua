@@ -3,9 +3,10 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("randomext")
 local ShipGenerator = include("shipgenerator")
 
-local cw_blockade = {}
+-- namespace CW_BlockadeEvent
+CW_BlockadeEvent = {}
 
-function cw_blockade.initialize()
+function CW_BlockadeEvent.initialize()
     if onClient() then return end
 
     local sector = Sector()
@@ -14,24 +15,28 @@ function cw_blockade.initialize()
     -- Only trigger in populated sectors
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     if #stations == 0 then
+        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
 
     local defender = Galaxy():getNearestFaction(x, y)
     if not defender or not defender.isAIFaction then
+        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
 
     local enemyIndex = defender:getValue("enemy_faction") or 0
     if enemyIndex == 0 then
+        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
 
     local attacker = Faction(enemyIndex)
     if not attacker then
+        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
@@ -61,9 +66,6 @@ function cw_blockade.initialize()
     local cvn = include("cosmicvaultnews")
     cvn.publishArticle(article)
 
+    Sector():removeScript("events/cw_blockade.lua")
     terminate()
-end
-
-function initialize(...)
-    if cw_blockade.initialize then return cw_blockade.initialize(...) end
 end

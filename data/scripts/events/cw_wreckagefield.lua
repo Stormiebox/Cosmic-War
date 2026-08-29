@@ -4,9 +4,10 @@ include("randomext")
 
 local SectorGenerator = include("SectorGenerator")
 
-local cw_wreckagefield = {}
+-- namespace CW_WreckagefieldEvent
+CW_WreckagefieldEvent = {}
 
-function cw_wreckagefield.initialize()
+function CW_WreckagefieldEvent.initialize()
     if onClient() then return end
 
     local sector = Sector()
@@ -16,12 +17,14 @@ function cw_wreckagefield.initialize()
     -- Only trigger in populated sectors
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     if #stations == 0 then
+        Sector():removeScript("events/cw_wreckagefield.lua")
         terminate()
         return
     end
 
     local faction = Galaxy():getNearestFaction(x, y)
     if not faction or not faction.isAIFaction then
+        Sector():removeScript("events/cw_wreckagefield.lua")
         terminate()
         return
     end
@@ -46,9 +49,7 @@ function cw_wreckagefield.initialize()
     local cvn = include("cosmicvaultnews")
     cvn.publishArticle(article)
 
+    Sector():removeScript("events/cw_wreckagefield.lua")
     terminate()
 end
 
-function initialize(...)
-    if cw_wreckagefield.initialize then return cw_wreckagefield.initialize(...) end
-end

@@ -4,16 +4,18 @@ package.path = package.path .. ";data/scripts/?.lua"
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
--- namespace CosmicWarEvent
-local CosmicWarEvent = {}
+-- namespace CW_EclipseVanguardEvent
+CW_EclipseVanguardEvent = {}
 
-function CosmicWarEvent.initialize()
-    if onServer() then
-        CosmicWarEvent.spawn()
-    end
+function CW_EclipseVanguardEvent.initialize()
+    if onClient() then return end
+    if not _restoring then deferredCallback(2.0, "spawn") end
+    deferredCallback(15 * 60, "finalize")
 end
 
-function CosmicWarEvent.spawn()
+function CW_EclipseVanguardEvent.finalize() terminate() end
+
+function CW_EclipseVanguardEvent.spawn()
     -- Safety Guard: Ensure Eclipse is fully awoken
     include("cosmicascendancybridge")
     if not Server():getValue("eclipse_fully_awake") then
@@ -38,6 +40,7 @@ function CosmicWarEvent.spawn()
 
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
     broadcastInvokeClientFunction("showVanguardBanner")
+    Sector():removeScript("events/cw_eclipse_vanguard.lua")
     terminate()
 end
 

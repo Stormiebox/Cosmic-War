@@ -170,4 +170,3 @@ end
 
 
 
-return CW_EventScheduler

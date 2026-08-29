@@ -45,4 +45,3 @@ end
 
 -- We can also send client updates if we want to render particles, but for now the mechanical effect is enough.
 
-return CW_ShieldJammer

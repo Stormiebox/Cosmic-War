@@ -84,6 +84,9 @@ function TroopTransport.updateServer(timeStep)
             -- Boarding complete!
             TroopTransport.captureStation(target, ship.factionIndex)
             -- Self destruct the transport after successful boarding
+            local pos = ship.translationf
+            local radius = ship.radius or 50
+            broadcastInvokeClientFunction("spawnExplosion", pos, radius)
             ship:destroy(ship.id)
         end
     end
@@ -138,4 +141,9 @@ end
 
 
 
-return TroopTransport
+
+function spawnExplosion(pos, radius)
+    if onServer() then return end
+    Sector():createExplosion(pos, radius, false)
+end
+

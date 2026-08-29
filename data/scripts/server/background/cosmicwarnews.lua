@@ -137,4 +137,3 @@ function CosmicWarNews.onSeedNews()
     end
 end
 
-return CosmicWarNews

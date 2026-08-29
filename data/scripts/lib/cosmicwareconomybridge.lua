@@ -3,7 +3,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("cosmicwarbridge")
 include("cosmicwarconfig")
 
--- namespace CosmicWarEconomyBridge
+
 CosmicWarEconomyBridge = CosmicWarEconomyBridge or {}
 
 function CosmicWarEconomyBridge.getTradeProfitMultiplier(factionIndex)
@@ -37,3 +37,4 @@ function CosmicWarEconomyBridge.getTradeRiskMultiplier(factionIndex)
 end
 
 return CosmicWarEconomyBridge
+

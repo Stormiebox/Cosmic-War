@@ -245,4 +245,3 @@ end
 
 
 
-return CosmicWarDiplomacy

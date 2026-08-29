@@ -4,15 +4,16 @@ package.path = package.path .. ";data/scripts/?.lua"
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
-local CosmicWarEvent = {}
+-- namespace CW_OrbitalBombardmentEvent
+CW_OrbitalBombardmentEvent = {}
 
-function CosmicWarEvent.initialize()
+function CW_OrbitalBombardmentEvent.initialize()
     if onServer() then
-        CosmicWarEvent.spawn()
+        CW_OrbitalBombardmentEvent.spawn()
     end
 end
 
-function CosmicWarEvent.spawn()
+function CW_OrbitalBombardmentEvent.spawn()
 
     local x, y = Sector():getCoordinates()
     local attackerFaction = Galaxy():getNearestFaction(x + 15, y + 15)
@@ -25,9 +26,7 @@ function CosmicWarEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Planetary Defense", 0, "Mayday! We are under intense orbital bombardment! Any available ships, please assist!")
+    Sector():removeScript("events/cw_orbital_bombardment.lua")
     terminate()
 end
 
-function initialize(...)
-    if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
-end

@@ -180,7 +180,7 @@ mission.phases[1].triggers = {
 
             for _, _t in pairs(_raw_targets) do
 
-                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+                if valid(_t) and (_t.type == EntityType.Ship or _t.type == EntityType.Station) and _t.factionIndex == mission.data.custom.enemyIndex and _t.durability > 0 then
 
                     table.insert(targets, _t)
 

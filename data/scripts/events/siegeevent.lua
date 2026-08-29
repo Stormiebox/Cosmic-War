@@ -172,6 +172,7 @@ function SiegeEvent.updateServer(timeStep)
                 end
 
                 -- Terminate the event script as the siege is over
+                Sector():removeScript("events/siegeevent.lua")
                 terminate()
             else
                 -- Invaders are still present. Check if defenders lost (no stations left)
@@ -219,11 +220,13 @@ function SiegeEvent.updateServer(timeStep)
                     end
 
                     CosmicVaultTerritory.removeContestedZone(x, y)
+                    Sector():removeScript("events/siegeevent.lua")
                     terminate()
                 end
             end
         else
             -- Zone no longer exists (maybe it was conquered)
+            Sector():removeScript("events/siegeevent.lua")
             terminate()
         end
 end
@@ -236,15 +239,4 @@ function SiegeEvent.onRemove()
     end
 end
 
-function initialize(...)
-    if SiegeEvent.initialize then return SiegeEvent.initialize(...) end
-end
-function getUpdateInterval(...)
-    if SiegeEvent.getUpdateInterval then return SiegeEvent.getUpdateInterval(...) end
-end
-function updateServer(...)
-    if SiegeEvent.updateServer then return SiegeEvent.updateServer(...) end
-end
-function onRemove(...)
-    if SiegeEvent.onRemove then return SiegeEvent.onRemove(...) end
-end
+

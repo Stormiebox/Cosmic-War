@@ -2,26 +2,26 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("utility")
 include("stringutility")
 
-local cw_tradingpost_initUI = initUI
+local cw_tradingpost_initUI = TradingPost.initUI
 
-function initUI()
+function TradingPost.initUI()
     if cw_tradingpost_initUI then cw_tradingpost_initUI() end
     ScriptUI():registerInteraction("Purchase Warbonds"%_t, "onPurchaseWarbondsInteraction")
 end
 
-function onPurchaseWarbondsInteraction()
+function TradingPost.onPurchaseWarbondsInteraction()
     local entity = Entity()
     local CosmicWarBridge = include("cosmicwarbridge")
     local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
     if heat < 0.25 then
-        ScriptUI():showDialog(makeNoWarDialog())
+        ScriptUI():showDialog(TradingPost.makeNoWarDialog())
         return
     end
     
-    ScriptUI():showDialog(makeBuyDialog())
+    ScriptUI():showDialog(TradingPost.makeBuyDialog())
 end
 
-function makeBuyDialog()
+function TradingPost.makeBuyDialog()
     local dialog = {}
     dialog.text = "Our economy is strained by the current war effort. We are issuing high-yield Warbonds to independent captains to fund our military campaigns. If our faction successfully resolves this conflict in our favor, your investment will mature at 300% value. If we lose... your bonds become worthless."%_t
     dialog.answers = {
@@ -32,24 +32,24 @@ function makeBuyDialog()
     return dialog
 end
 
-function makeNoWarDialog()
+function TradingPost.makeNoWarDialog()
     local dialog = {}
     dialog.text = "We are currently experiencing an era of peace. We are not issuing any military warbonds at this time."%_t
     dialog.answers = {{answer = "Understood."%_t}}
     return dialog
 end
 
-function buyStandardBond()
+function TradingPost.buyStandardBond()
     if onClient() then invokeServerFunction("buyStandardBond") return end
-    processPurchase(10000000)
+    TradingPost.processPurchase(10000000)
 end
 
-function buyPremiumBond()
+function TradingPost.buyPremiumBond()
     if onClient() then invokeServerFunction("buyPremiumBond") return end
-    processPurchase(50000000)
+    TradingPost.processPurchase(50000000)
 end
 
-function processPurchase(amount)
+function TradingPost.processPurchase(amount)
     local player = Player(callingPlayer)
     if not player then return end
     
@@ -79,5 +79,5 @@ function processPurchase(amount)
     
     player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature.")
 end
-callable(nil, "buyStandardBond")
-callable(nil, "buyPremiumBond")
+callable(TradingPost, "buyStandardBond")
+callable(TradingPost, "buyPremiumBond")

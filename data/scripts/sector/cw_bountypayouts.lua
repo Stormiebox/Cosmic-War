@@ -1,14 +1,17 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 include("stringutility")
 
-function initialize()
+-- namespace CW_BountyPayouts
+CW_BountyPayouts = CW_BountyPayouts or {}
+
+function CW_BountyPayouts.initialize()
     if onServer() then
         Sector():registerCallback("onDestroyed", "onDestroyed")
         Sector():registerCallback("onPlayerEntered", "onPlayerEntered")
     end
 end
 
-function onPlayerEntered(playerIndex)
+function CW_BountyPayouts.onPlayerEntered(playerIndex)
     local player = Player(playerIndex)
     if not player then return end
     
@@ -43,7 +46,7 @@ function onPlayerEntered(playerIndex)
     end
 end
 
-function onDestroyed(destroyedId, destroyerId)
+function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
     local victim = Sector():getEntity(destroyedId)
     if not victim then return end
 

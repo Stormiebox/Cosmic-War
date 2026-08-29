@@ -65,7 +65,7 @@ function initialize(factionIndex)
         if d < 50 then matType = MaterialType.Avorion end
         
         local requiredMaterial = Material(matType)
-        local materialAmount = math.random(5000, 15000)
+        local materialAmount = random():getInt(5000, 15000)
         
         mission.data.custom.materialType = matType
         mission.data.custom.materialName = requiredMaterial.name

@@ -7,27 +7,30 @@ local CosmicWarBridge = include("cosmicwarbridge")
 -- Server-side script attached to players who own Warbonds
 local activeBonds = {} -- { [factionIndex] = { amount = X } }
 
-function initialize()
+-- namespace CW_Warbonds
+CW_Warbonds = CW_Warbonds or {}
+
+function CW_Warbonds.initialize()
     -- Nothing needed here
 end
 
-function getUpdateInterval()
+function CW_Warbonds.getUpdateInterval()
     return 600 -- Check every 10 minutes if the war has resolved
 end
 
-function updateServer(timeStep)
-    checkWarbondStatus()
+function CW_Warbonds.updateServer(timeStep)
+    CW_Warbonds.checkWarbondStatus()
 end
 
-function secure()
+function CW_Warbonds.secure()
     return {activeBonds = activeBonds}
 end
 
-function restore(data)
+function CW_Warbonds.restore(data)
     activeBonds = data.activeBonds or {}
 end
 
-function addBond(factionIndex, amount)
+function CW_Warbonds.addBond(factionIndex, amount)
     if not activeBonds[factionIndex] then
         local server = Server()
         local initialFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
@@ -40,14 +43,14 @@ function addBond(factionIndex, amount)
     activeBonds[factionIndex].amount = activeBonds[factionIndex].amount + amount
 end
 
-function getBondAmount(factionIndex)
+function CW_Warbonds.getBondAmount(factionIndex)
     if activeBonds[factionIndex] then
         return activeBonds[factionIndex].amount
     end
     return 0
 end
 
-function checkWarbondStatus()
+function CW_Warbonds.checkWarbondStatus()
     local player = Player()
     
     local server = Server()

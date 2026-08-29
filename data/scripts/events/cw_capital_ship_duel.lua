@@ -4,15 +4,16 @@ package.path = package.path .. ";data/scripts/?.lua"
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
-local CosmicWarEvent = {}
+-- namespace CW_CapitalShipDuelEvent
+CW_CapitalShipDuelEvent = {}
 
-function CosmicWarEvent.initialize()
+function CW_CapitalShipDuelEvent.initialize()
     if onServer() then
-        CosmicWarEvent.spawn()
+        CW_CapitalShipDuelEvent.spawn()
     end
 end
 
-function CosmicWarEvent.spawn()
+function CW_CapitalShipDuelEvent.spawn()
 
     local x, y = Sector():getCoordinates()
     local facA = Galaxy():getNearestFaction(x + 10, y + 10)
@@ -25,9 +26,6 @@ function CosmicWarEvent.spawn()
     dreadB.title = facB.name .. " Dreadnought"
 
     Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!")
+    Sector():removeScript("events/cw_capital_ship_duel.lua")
     terminate()
-end
-
-function initialize(...)
-    if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
 end

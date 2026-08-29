@@ -4,15 +4,16 @@ package.path = package.path .. ";data/scripts/?.lua"
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
-local CosmicWarEvent = {}
+-- namespace CW_DistressBeaconTrapEvent
+CW_DistressBeaconTrapEvent = {}
 
-function CosmicWarEvent.initialize()
+function CW_DistressBeaconTrapEvent.initialize()
     if onServer() then
-        CosmicWarEvent.spawn()
+        CW_DistressBeaconTrapEvent.spawn()
     end
 end
 
-function CosmicWarEvent.spawn()
+function CW_DistressBeaconTrapEvent.spawn()
 
     local x, y = Sector():getCoordinates()
     local pirateFaction = Galaxy():getPirateFaction(Balancing_GetPirateLevel(x,y))
@@ -26,9 +27,6 @@ function CosmicWarEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Distress Beacon", 0, "Ha ha! You fell for the oldest trick in the galaxy!")
+    Sector():removeScript("events/cw_distress_beacon_trap.lua")
     terminate()
-end
-
-function initialize(...)
-    if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
 end

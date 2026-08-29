@@ -421,4 +421,3 @@ callable(GalacticPoliticsTab, "serverFetchData")
 
 
 
-return GalacticPoliticsTab

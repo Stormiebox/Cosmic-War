@@ -4,15 +4,16 @@ package.path = package.path .. ";data/scripts/?.lua"
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
-local CosmicWarEvent = {}
+-- namespace CW_StationsiegeEvent
+CW_StationsiegeEvent = {}
 
-function CosmicWarEvent.initialize()
+function CW_StationsiegeEvent.initialize()
     if onServer() then
-        CosmicWarEvent.spawn()
+        CW_StationsiegeEvent.spawn()
     end
 end
 
-function CosmicWarEvent.spawn()
+function CW_StationsiegeEvent.spawn()
 
     local x, y = Sector():getCoordinates()
     local attackerFaction = Galaxy():getNearestFaction(x, y)
@@ -25,9 +26,6 @@ function CosmicWarEvent.spawn()
         siegeShip.title = "Siege Dreadnought"
         ShipAI(siegeShip.index):setAggressive()
     end
+    Sector():removeScript("events/cw_stationsiege.lua")
     terminate()
-end
-
-function initialize(...)
-    if CosmicWarEvent.initialize then return CosmicWarEvent.initialize(...) end
 end

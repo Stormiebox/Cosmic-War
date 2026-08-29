@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("cosmicwarconfig")
 
--- namespace CosmicWarBridge
+
 CosmicWarBridge = CosmicWarBridge or {}
 
 local function safeRelations(a, bIndex)
@@ -147,3 +147,4 @@ function CosmicWarBridge.forceDeclareWar(attackerFaction, defenderFaction)
 end
 
 return CosmicWarBridge
+
