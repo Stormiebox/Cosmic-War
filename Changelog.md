@@ -7,21 +7,29 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
-## [v3.3.3]
+## [v3.3.4]
 
 ### 🪲 Bug Fixes
+
+- [Bugfix] **Warbond Purchase Server Crash (`cosmicwarbridge.lua:97`):** Fixed a fatal `attempt to call global 'Server' (a nil value)` error triggered when a player interacted with the "Purchase Warbonds" option at a Trading Post. The `CosmicWarBridge.getWarHeatSnapshot()` function was calling `Server()` unconditionally, which returns `nil` in all client-side execution contexts. Added an `if not onServer() then return {}, 0 end` guard at the top of the function to make it safe when evaluated on the client.
+- [Bugfix] **Warbond Dialog Flow Rearchitected (`tradingpost.lua`):** The underlying architectural issue was that `TradingPost.onPurchaseWarbondsInteraction()` — a `ScriptUI` interaction callback which always executes on the client — was directly calling `CosmicWarBridge.getFactionWarHeat()` to determine which dialog to show. Any bridge function that transitively calls `Server()` will crash in this context. Reworked the flow to use the correct Avorion client/server RPC pattern: the interaction handler now dispatches `invokeServerFunction("requestWarbondDialog")`, the server evaluates war heat and dispatches `invokeClientFunction(player, "showWarbondDialog", showBuy)`, and the client-side callback calls `ScriptUI():showDialog()` with the correct dialog. Both new RPC functions are registered with `callable(TradingPost, ...)`.
+
+### 🪲 Bug Fixes
+
 - [Bugfix] **Bounty Payout Server Crash:** Fixed a severe runtime error in the sector thread where destroying a bounty target would crash the background simulation. The script incorrectly attempted to execute `hasScript()` directly on the base Faction class instead of casting it to a Player or Alliance entity. Bounties will now correctly attach the tracker script and pay out their rewards without crashing.
 - [Bugfix] **Dynamic War Event Crashes:** Fixed a critical structural vulnerability affecting multiple dynamic events (`cw_armsdeal.lua`, `cw_blockade.lua`, `cw_strandedflagship.lua`, `cw_distress_beacon_trap.lua`, `cw_diplomaticsabotage.lua`, `cw_refugeeconvoy.lua`). Missing `galaxy.lua` includes for `Balancing_GetPirateLevel` and unprotected dereferencing of missing/destroyed Faction objects were causing immediate SIGSEGV/thread crashes when these events attempted to spawn in the background.
 
 ## [v3.3.2]
 
 ### 🪲 Bug Fixes
+
 - [Bugfix] **Frontline Siege Contract:** Fixed a bug where the mission would soft-lock and fail to complete if the target Forward Operating Base (FOB) was boarded/captured rather than explicitly destroyed, or if wreckage data lingered in the engine.
 - [Bugfix] **Sensor Deployment Contract:** Added a physical HUD navigation beacon at the center of the sector `(0, 0, 0)` so players know exactly where to deploy the stealth buoy, resolving confusion caused by the lack of a coordinate grid.
 
 ## [v3.3.1]
 
 ### 🪲 Bug Fixes
+
 - [Bugfix] **Bounty Payout Sector Crash:** Fixed a critical server crash triggered by an invalid sector object property when a player enters a sector where an active bounty is placed on the controlling faction.
 - [Bugfix] **Sensor Deployment Contract:** Fixed a script error in the Sensor Deployment war contract that prevented the mission from correctly validating the player's distance when deploying the stealth buoy.
 - [Bugfix] **Background Script Architecture:** Corrected namespace declarations and wrapper bindings across multiple background simulation scripts (Diplomacy, Expansion) that were previously preventing them from executing properly.
@@ -57,27 +65,32 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [v3.2.0]
 
 ### 🛠️ Architecture & Optimization
+
 - [Optimized] **Progressive Materialization:** Completely overhauled the `cw_siege_injector_persistent.lua` API. When background sieges are mathematically won by a faction, they no longer force the server to physically load the sector into memory to flip the station ownership (which caused massive server stutters).
 - [Feature] **Lazy Loading API:** Siege victories are now queued mathematically. When a player jumps into the conquered sector, the game seamlessly intercepts the loading screen and instantly hands the sector over to the victor. Zero stutter!
 
 ### 🚀 Mission Enhancements
+
 - [Enhanced] **Deploy Minefield:** Improved the "Deploy Minefield" War Contract when jumping into an empty target sector. The mission now immediately spawns a hostile interceptor wave and provides explicit on-screen timer instructions (250s) to keep players engaged while the minefield deploys.
 - [Polish] **Bulletin Board:** Fixed an ugly formatting issue across all War Contracts where the bulletin board would display unresolved `(${location.x}:${location.y})` variables instead of generic flavor text before the mission was accepted.
 
 ## [v3.1.2]
 
 ### 🪲 Bug Fixes
+
 - [Bugfix] **Infinite Subspace Tear:** Fixed an oversight where the experimental Subspace Tear (Rift Hazard) generated during a War Crime event lacked a termination condition. It would permanently drain shields in the sector until manually deleted. The hazard now correctly dissipates once the primary target structure is destroyed and the anomaly is contained!
 - [Bugfix] **Hazard Target Detection:** Fixed a logic oversight in `cw_rift_hazard.lua` where the hazard only scanned for Entities typed as Stations. It will now properly detect and deal damage to "Protection Platforms" (typed as Ships).
 
 ## [v3.1.1]
 
 ### 🪲 Bug Fixes
+
 - [Bugfix] **Convoi Distress Signal API Error:** Fixed a critical server crash in `convoidistresssignal.lua` where `getMissionLocation()` was improperly called on the server environment. It has been safely bypassed by reading the global target coordinates, restoring the distress call event back to full functionality.
 
 ## [v3.1.0]
 
 ### ⭐ Features
+
 - **Distress Call Escalation:** If you ignore an NPC distress call for too long, there is a chance the attackers will establish a permanent Pirate Forward Operating Base (FOB) in that sector, turning it into a hazard zone!
 - **Bounty Hunter Ambush:** If you gain terrible reputation with a military faction during wartime, they might dispatch a small elite bounty hunter squad to ambush you directly in hyperspace upon entering a new sector!
 - **Refugee Convoy Gratefulness:** Successfully escorting a refugee convoy to safety now grants a 1-hour minor buff called "Hero of the People", granting +10% trade prices at that faction's stations.
@@ -86,12 +99,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ## [v3.0.12]
 
 ### 🪲 Bug Fixes
+
 - [Bugfix] **Fire Rate API Error:** Fixed a core mathematical error across multiple missions (Eclipse Vanguard, Decapitation Strike, Frontline Siege) where extreme `FireRate` multipliers were being accidentally applied as flat additive numbers instead of percentages, preventing those bosses from properly scaling their weapon attack speeds.
 - [Bugfix] **Volatile Shield API Error:** Discovered and fixed a critical bug in `cw_eclipse_vanguard.lua`, `cw_refugeeconvoy.lua`, and `siegeevent.lua` where the `shieldMaxDurability` property was manually modified to boost boss shields. Due to engine architecture, this caused the shields to instantly wipe themselves to 0 upon taking any block damage. They have been swapped to the stable `addBaseMultiplier` API.
 
 ## [v3.0.11]
 
 ### Fixed, Changed & Balanced
+
 - [Bugfix] **Alliance UI Cosmetic Fix**: Fixed a minor logic flaw in `galacticpolitics_tab.lua` where Player Alliances were incorrectly labeled as "Player Factions" in the diplomacy tooltips.
 - [Changed] **Multiplayer UI Bloat Reduction**: The Galactic Politics conflict tracker will no longer display single-player factions to prevent the UI from becoming unreadable on heavily populated multiplayer servers. The tracker now exclusively tracks NPC Factions and Player Alliances.
 - [Balance] **Mercenary Payout Nerf**: Heavily reduced the base payout for destroying ships (from 25,000 to 10,000) and stations (from 250,000 to 100,000) while enlisted as a mercenary to prevent game-breaking wealth generation at the galactic core.

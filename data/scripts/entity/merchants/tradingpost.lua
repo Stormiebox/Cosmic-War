@@ -10,15 +10,25 @@ function TradingPost.initUI()
 end
 
 function TradingPost.onPurchaseWarbondsInteraction()
+    -- Heat must be evaluated server-side; Server() is not available in UI context.
+    invokeServerFunction("requestWarbondDialog")
+end
+
+function TradingPost.requestWarbondDialog()
+    if onClient() then invokeServerFunction("requestWarbondDialog") return end
     local entity = Entity()
     local CosmicWarBridge = include("cosmicwarbridge")
     local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
-    if heat < 0.25 then
+    local showBuy = heat >= 0.25
+    invokeClientFunction(Player(callingPlayer), "showWarbondDialog", showBuy)
+end
+
+function TradingPost.showWarbondDialog(showBuy)
+    if showBuy then
+        ScriptUI():showDialog(TradingPost.makeBuyDialog())
+    else
         ScriptUI():showDialog(TradingPost.makeNoWarDialog())
-        return
     end
-    
-    ScriptUI():showDialog(TradingPost.makeBuyDialog())
 end
 
 function TradingPost.makeBuyDialog()
@@ -81,3 +91,5 @@ function TradingPost.processPurchase(amount)
 end
 callable(TradingPost, "buyStandardBond")
 callable(TradingPost, "buyPremiumBond")
+callable(TradingPost, "requestWarbondDialog")
+callable(TradingPost, "showWarbondDialog")

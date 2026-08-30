@@ -94,6 +94,7 @@ function CosmicWarBridge.publishWarHeatSnapshot()
 end
 
 function CosmicWarBridge.getWarHeatSnapshot()
+    if not onServer() then return {}, 0 end
     local server = Server()
     if not server then return {}, 0 end
 
