@@ -45,6 +45,11 @@ function CW_StrandedFlagshipEvent.spawn()
     end
     CW_StrandedFlagshipEvent.flagshipFactionId = possibleFactions[random():getInt(1, #possibleFactions)]
     local flagshipFaction = Faction(CW_StrandedFlagshipEvent.flagshipFactionId)
+    if not flagshipFaction then
+        Sector():removeScript("events/cw_strandedflagship.lua")
+        terminate()
+        return
+    end
 
     local generator = SectorGenerator(x, y)
     local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:getPositionInSector(), 25.0) -- Volume factor x25
@@ -81,6 +86,7 @@ function CW_StrandedFlagshipEvent.spawnRepairFleet()
     if not ship then return end -- Player already secured the kill
 
     local faction = Faction(CW_StrandedFlagshipEvent.flagshipFactionId)
+    if not faction then return end
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,
         "This is the repair fleet! We have arrived at the Flagship's location. Hostiles detected! Engage immediately!"%_T)
 

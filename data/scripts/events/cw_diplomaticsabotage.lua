@@ -6,6 +6,7 @@ local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 include("relations")
 include("stringutility")
+include("galaxy")
 
 -- namespace CW_DiplomaticSabotageEvent
 CW_DiplomaticSabotageEvent = {}
@@ -47,6 +48,12 @@ function CW_DiplomaticSabotageEvent.spawn()
     CW_DiplomaticSabotageEvent.envoyFactionId = possibleFactions[random():getInt(1, #possibleFactions)]
     local envoyFaction = Faction(CW_DiplomaticSabotageEvent.envoyFactionId)
     local pirateFaction = Galaxy():getPirateFaction(Balancing_GetPirateLevel(x, y))
+
+    if not envoyFaction or not pirateFaction then
+        Sector():removeScript("events/cw_diplomaticsabotage.lua")
+        terminate()
+        return
+    end
 
     local generator = SectorGenerator(x, y)
     local envoy = ShipGenerator.createFreighterShip(envoyFaction, generator:getPositionInSector())

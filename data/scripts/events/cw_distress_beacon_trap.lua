@@ -3,6 +3,7 @@ package.path = package.path .. ";data/scripts/?.lua"
 
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
+include("galaxy")
 
 -- namespace CW_DistressBeaconTrapEvent
 CW_DistressBeaconTrapEvent = {}

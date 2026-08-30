@@ -70,7 +70,14 @@ function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
     if not killerFaction then return end
 
     -- Only players or player alliances can claim bounties
-    if not killerFaction.isPlayer and not killerFaction.isAlliance then return end
+    local killer
+    if killerFaction.isPlayer then
+        killer = Player(killerFaction.index)
+    elseif killerFaction.isAlliance then
+        killer = Alliance(killerFaction.index)
+    else
+        return
+    end
 
     local server = Server()
     if not server then return end
@@ -104,17 +111,17 @@ function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
                         
                         local scriptPath = "data/scripts/player/background/cw_bounty_tracker.lua"
                         
-                        if not killerFaction:hasScript(scriptPath) then
-                            killerFaction:addScriptOnce(scriptPath, fIndex, victimFactionIndex)
+                        if not killer:hasScript(scriptPath) then
+                            killer:addScriptOnce(scriptPath, fIndex, victimFactionIndex)
                         end
                         
-                        local targetIdx = killerFaction:invokeFunction(scriptPath, "getTargetFaction")
+                        local targetIdx = killer:invokeFunction(scriptPath, "getTargetFaction")
                         if targetIdx == victimFactionIndex then
-                            killerFaction:invokeFunction(scriptPath, "registerKill", finalReward)
+                            killer:invokeFunction(scriptPath, "registerKill", finalReward)
                         else
                             -- Player is already tracking a DIFFERENT bounty and cannot accept this one right now.
-                            if killerFaction.isPlayer then
-                                Player(killerFaction.index):sendChatMessage("Bounty Network"%_T, 1, "You cannot collect this bounty while another Bounty License is active."%_T)
+                            if killer.isPlayer then
+                                killer:sendChatMessage("Bounty Network"%_T, 1, "You cannot collect this bounty while another Bounty License is active."%_T)
                             end
                         end
                         

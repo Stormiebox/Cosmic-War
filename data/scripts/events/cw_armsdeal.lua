@@ -6,6 +6,7 @@ local SectorTurretGenerator = include("sectorturretgenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 include("stringutility")
+include("galaxy")
 
 -- namespace CW_ArmsDealEvent
 CW_ArmsDealEvent = {}
@@ -46,6 +47,12 @@ function CW_ArmsDealEvent.spawn()
     end
     local militaryFaction = Faction(possibleFactions[random():getInt(1, #possibleFactions)])
     local smugglerFaction = Galaxy():getPirateFaction(Balancing_GetPirateLevel(x, y))
+
+    if not militaryFaction or not smugglerFaction then
+        Sector():removeScript("events/cw_armsdeal.lua")
+        terminate()
+        return
+    end
 
     local generator = SectorGenerator(x, y)
 

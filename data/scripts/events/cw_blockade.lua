@@ -54,7 +54,9 @@ function CW_BlockadeEvent.initialize()
         local pos = center + vec3(random:getFloat(-500, 500), random:getFloat(-500, 500), random:getFloat(-500, 500))
         local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
         local ship = ShipGenerator.createMilitaryShip(attacker, matrix, random:getInt(1, 3)) -- 1: defender, 2: attacker, 3: heavy
-        ship:addScriptOnce("ai/patrol.lua")
+        if ship then
+            ship:addScriptOnce("ai/patrol.lua")
+        end
     end
 
     -- If Cosmic Vault News is installed, broadcast news

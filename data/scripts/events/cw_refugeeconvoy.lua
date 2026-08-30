@@ -50,6 +50,11 @@ function CW_RefugeeConvoyEvent.spawn()
     end
     CW_RefugeeConvoyEvent.victimId = possibleFactions[random():getInt(1, #possibleFactions)]
     local victimFaction = Faction(CW_RefugeeConvoyEvent.victimId)
+    if not victimFaction then
+        Sector():removeScript("events/cw_refugeeconvoy.lua")
+        terminate()
+        return
+    end
     CW_RefugeeConvoyEvent.attackerId = victimFaction:getValue("enemy_faction")
 
     if not CW_RefugeeConvoyEvent.attackerId or CW_RefugeeConvoyEvent.attackerId <= 0 then
@@ -114,11 +119,11 @@ function CW_RefugeeConvoyEvent.escapeTransports()
         end
     end
     if survived > 0 then
-        Sector():broadcastChatMessage(Faction(CW_RefugeeConvoyEvent.victimId).name, ChatMessageType.Information,
-            "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_T)
-
         local faction = Faction(CW_RefugeeConvoyEvent.victimId)
         if faction then
+            Sector():broadcastChatMessage(faction.name, ChatMessageType.Information,
+                "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_T)
+
             for _, player in pairs({Sector():getPlayers()}) do
                 changeRelations(player, faction, survived * 2500, RelationChangeType.General)
                 

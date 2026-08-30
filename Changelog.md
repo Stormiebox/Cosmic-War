@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.3.3]
+
+### 🪲 Bug Fixes
+- [Bugfix] **Bounty Payout Server Crash:** Fixed a severe runtime error in the sector thread where destroying a bounty target would crash the background simulation. The script incorrectly attempted to execute `hasScript()` directly on the base Faction class instead of casting it to a Player or Alliance entity. Bounties will now correctly attach the tracker script and pay out their rewards without crashing.
+- [Bugfix] **Dynamic War Event Crashes:** Fixed a critical structural vulnerability affecting multiple dynamic events (`cw_armsdeal.lua`, `cw_blockade.lua`, `cw_strandedflagship.lua`, `cw_distress_beacon_trap.lua`, `cw_diplomaticsabotage.lua`, `cw_refugeeconvoy.lua`). Missing `galaxy.lua` includes for `Balancing_GetPirateLevel` and unprotected dereferencing of missing/destroyed Faction objects were causing immediate SIGSEGV/thread crashes when these events attempted to spawn in the background.
+
 ## [v3.3.2]
 
 ### 🪲 Bug Fixes
