@@ -94,6 +94,15 @@ function CosmicWarCeasefires.update(timeStep)
                                 b:setValue("cw_target_faction", 0)
                             end
 
+                            local cv_news = include("cosmicvaultnews")
+                            if cv_news and cv_news.publishArticle then
+                                cv_news.publishArticle({
+                                    title = "Ceasefire Reached Between " .. tostring(a.name) .. " and " .. tostring(b.name),
+                                    content = "After a prolonged period of hostility, diplomatic channels between " .. tostring(a.name) .. " and " .. tostring(b.name) .. " have thawed enough for both sides to formally stand down. Border patrols report a marked decrease in skirmishes, though analysts caution the peace remains fragile.",
+                                    category = "Politics"
+                                })
+                            end
+
                             eased = eased + 1
                         end
                     end

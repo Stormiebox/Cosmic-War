@@ -86,6 +86,23 @@ function registerKill(reward)
         
         if kills >= maxKills then
             sendBountyMessage(0, "Bounty License Complete! Contract fulfilled."%_T)
+
+            -- Report the completed contract to the Galactic News Network -- the bounty's
+            -- posting is already public knowledge (see cw_newsgenerator's "MOST WANTED"
+            -- articles and the Galactic Politics tab), so closing the loop when someone
+            -- actually collects it is a natural, low-noise addition (one article per
+            -- completed License, not per kill).
+            local targetFaction = Faction(targetIndex)
+            local targetName = targetFaction and targetFaction.name or "an enemy faction"%_T
+            local cv_news = include("cosmicvaultnews")
+            if cv_news and cv_news.publishArticle then
+                cv_news.publishArticle({
+                    title = "Bounty Collected: " .. tostring(f.name) .. " Claims the Reward",
+                    content = tostring(f.name) .. " has successfully fulfilled a War Bounty License against " .. tostring(targetName) .. ", destroying " .. tostring(maxKills) .. " confirmed military targets to claim the full reward. The contract is now closed.",
+                    category = "Bounty Board"
+                })
+            end
+
             terminate()
         end
     end
