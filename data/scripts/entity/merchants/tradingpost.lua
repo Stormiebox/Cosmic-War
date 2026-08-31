@@ -79,15 +79,25 @@ function TradingPost.processPurchase(amount)
     end
     
     player:pay("Warbond Purchase"%_t, amount)
-    
+
     if not player:hasScript("cosmicwar_warbonds.lua") then
+        -- addScriptOnce is deferred (like removeScript), so the script is not actually attached
+        -- yet this tick. Calling invokeFunction("addBond", ...) immediately below would silently
+        -- miss it on a player's very first Warbond purchase, dropping the payment with no bond
+        -- ever recorded. Push the credit to the next tick instead of round-tripping same-tick.
         player:addScriptOnce("data/scripts/player/cosmicwar_warbonds.lua")
+        deferredCallback(0.1, "deferredAddBond", player.index, Entity().factionIndex, amount)
+    else
+        player:invokeFunction("cosmicwar_warbonds.lua", "addBond", Entity().factionIndex, amount)
     end
-    
-    -- Save the bond data to the player script
-    player:invokeFunction("cosmicwar_warbonds.lua", "addBond", Entity().factionIndex, amount)
-    
+
     player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature.")
+end
+
+function TradingPost.deferredAddBond(playerIndex, factionIndex, amount)
+    local player = Player(playerIndex)
+    if not player then return end
+    player:invokeFunction("cosmicwar_warbonds.lua", "addBond", factionIndex, amount)
 end
 callable(TradingPost, "buyStandardBond")
 callable(TradingPost, "buyPremiumBond")

@@ -17,6 +17,8 @@ end
 
 local function getActiveFactions()
     local server = Server()
+    if not server or type(server.getValue) ~= "function" then return {} end
+
     local out = {}
     local factionStr = server:getValue("factions")
     local FactionEradicationUtility = include("factioneradicationutility")
@@ -33,6 +35,7 @@ local function getActiveFactions()
 end
 
 function CosmicWarExpansion.update(timeStep)
+    if not onServer() then return end
 
     local factions = getActiveFactions()
     for _, faction in pairs(factions) do

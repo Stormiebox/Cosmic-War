@@ -168,7 +168,6 @@ local function applyWarProfiteeringShortages(factions, random)
     local didShortage = false
 
     for _, f in pairs(factions) do
-        local heat = f:getValue("cw_war_bias") or 0
         local enemy = f:getValue("enemy_faction") or 0
         local rel = 0
         if enemy > 0 then rel = f:getRelations(enemy) end
@@ -206,7 +205,6 @@ local function applyWarProfiteeringShortages(factions, random)
 
     if didShortage then
         -- Soft Bridge to Cosmic Vault News
-        local server = Server()
         local article = {
             title = "Wartime Shortage",
             category = "Trade Crisis",
@@ -222,7 +220,6 @@ local function applyWeaponizedSubspaceTear(factions, random)
     local x, y = sector:getCoordinates()
 
     for _, f in pairs(factions) do
-        local heat = f:getValue("cw_war_bias") or 0
         local enemy = f:getValue("enemy_faction") or 0
         local rel = 0
         if enemy > 0 then rel = f:getRelations(enemy) end

@@ -125,7 +125,7 @@ function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
                             else
                                 -- Player is already tracking a DIFFERENT bounty and cannot accept this one right now.
                                 if killer.isPlayer then
-                                    killer:sendChatMessage("Bounty Network"%_T, 1, "You cannot collect this bounty while another Bounty License is active."%_T)
+                                    killer:sendChatMessage("Bounty Network"%_T, 1, "You cannot collect this bounty while another Bounty License is active. Use /cosmicwarbounties to check your current License."%_T)
                                 end
                             end
                         end

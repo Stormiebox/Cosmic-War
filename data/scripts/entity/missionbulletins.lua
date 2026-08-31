@@ -9,8 +9,8 @@ function MissionBulletins.getPossibleMissions()
     local entity = Entity()
     if not entity or not entity.factionIndex then return scripts end
 
-    local cw_success = true; include("cosmicwarbridge")
-    if cw_success and CosmicWarBridge then
+    include("cosmicwarbridge")
+    if CosmicWarBridge then
         local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
         
         -- The probabilities are roughly matched to vanilla standard missions

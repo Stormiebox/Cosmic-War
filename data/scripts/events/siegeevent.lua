@@ -162,7 +162,7 @@ function SiegeEvent.updateServer(timeStep)
                     local generator = SectorGenerator(x, y)
                     local beacon = generator:createBeacon(generator:getPositionInSector(), Faction(zone.defender), "Wartime Propaganda: The Siege was broken! Glory to the defenders!")
                     if beacon then
-                        beacon:addScriptOnce("entity/cc_blackbox.lua")
+                        beacon:addScriptOnce("data/scripts/entity/cc_blackbox.lua")
                         beacon.title = "Wartime Propaganda Beacon"
                     end
                 end
@@ -213,7 +213,7 @@ function SiegeEvent.updateServer(timeStep)
                         local generator = SectorGenerator(x, y)
                         local beacon = generator:createBeacon(generator:getPositionInSector(), Faction(zone.invader), "Wartime Propaganda: The sector has fallen! The invaders claim victory!")
                         if beacon then
-                            beacon:addScriptOnce("entity/cc_blackbox.lua")
+                            beacon:addScriptOnce("data/scripts/entity/cc_blackbox.lua")
                             beacon.title = "Wartime Propaganda Beacon"
                         end
                     end

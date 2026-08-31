@@ -14,11 +14,18 @@ if onServer() then
 
 function DreadnoughtBoss.initialize()
     local ship = Entity()
-    -- Render the vanilla Boss Health Bar across the entire sector!
-    ship:addScriptOnce("data/scripts/sector/story/bosshealthbar.lua")
+    -- Render the vanilla Boss Health Bar across the entire sector! This is attached to the
+    -- Sector, not the ship (addScriptOnce resolves against the calling target's own default
+    -- script folder, so this must be the real vanilla sector/story/bigaihealthbar.lua, not a
+    -- "bosshealthbar.lua" file that exists nowhere on disk).
+    -- Note: vanilla's BigAIHealthBar only tracks ships tagged with "bigaibehaviour.lua", which
+    -- this custom boss AI does not attach, so the bar will not pick up this ship as-is; wiring
+    -- that up fully needs a dedicated health-bar script outside this file's scope.
+    Sector():addScriptOnce("data/scripts/sector/story/bigaihealthbar.lua")
 
-    -- Make them immune to boarding
-    ship.boardable = false
+    -- Make them immune to boarding. "boardable" lives on the Boarding component, not directly
+    -- on Entity -- ship.boardable is not a real property and would silently no-op.
+    Boarding(ship).boardable = false
 
     -- Setup AI
     local ai = ShipAI()
@@ -56,7 +63,7 @@ function DreadnoughtBoss.updateServer(timeStep)
         if valid(entity) and ai:isEnemy(entity) then
             local threat = 0
             if entity.isStation then threat = threat + 500 end
-            if entity.hasArmedTurrets then threat = threat + 1000 end
+            if entity:getNumArmedTurrets() > 0 then threat = threat + 1000 end
             threat = threat + (entity.firePower or 0)
 
             -- Apply distance penalty so the boss prioritizes targets actively engaging it at close range

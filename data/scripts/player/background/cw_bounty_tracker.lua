@@ -68,6 +68,13 @@ function getTargetFaction()
     return targetIndex
 end
 
+-- Returns plain scalars only (matching every other invokeFunction() call site in this
+-- mod) rather than a table, since invokeFunction's documented argument marshaling only
+-- guarantees numbers/strings/nil and there is no confirmed table-safe path.
+function getStatus()
+    return giverIndex, targetIndex, kills, maxKills, math.max(0, math.ceil(timeRemaining))
+end
+
 function registerKill(reward)
     if not onServer() then return end
     

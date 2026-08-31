@@ -121,10 +121,15 @@ function CW_RefugeeConvoyEvent.escapeTransports()
             for _, player in pairs({Sector():getPlayers()}) do
                 changeRelations(player, faction, survived * 2500, RelationChangeType.General)
                 
-                -- Cosmic Vault Buff System: Grant "Hero of the People" buff
-                player:addScriptOnce("cosmicvaultbuffs.lua")
-                player:invokeFunction("cosmicvaultbuffs.lua", "addBuff", "Hero of the People", 3600, {tradePriceModifier = 0.10})
-                player:sendChatMessage("System", ChatMessageType.Information, "You have received the 'Hero of the People' buff for 1 hour! (+10% Trade Prices at allied stations)"%_T)
+                -- "cosmicvaultbuffs.lua" is a plain include()-only library (no initialize/updateServer,
+                -- returns its table at the bottom) -- it is never meant to be addScriptOnce'd onto an
+                -- entity, and exposes no "addBuff" function or trade-price stat (only applyBuff, which
+                -- multiplies a real StatsBonuses ship stat via the Entity() it resolves the id against;
+                -- a Player is not an Entity, and there is no trade-price hook anywhere in this codebase
+                -- to wire a price buff into). Record the grant as a real, queryable player flag instead
+                -- of a call into a function that never existed.
+                player:setValue("cw_hero_of_the_people_until", Server().unpausedRuntime + 3600)
+                player:sendChatMessage("System", ChatMessageType.Information, "You have received the 'Hero of the People' status for 1 hour!"%_T)
             end
         end
     end

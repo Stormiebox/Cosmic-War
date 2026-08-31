@@ -69,7 +69,7 @@ function CW_Warbonds.checkWarbondStatus()
                     else
                         local payout = bond.amount * 3 -- 300% payout
                         player:receive("Matured Warbonds Payout", payout)
-                        player:sendChatMessage("Cosmic War Bank", 0, "Your Warbonds for %1% have fully matured following a successful war! Paid out %2% Credits.", faction.name, createMonetaryString(payout))
+                        player:sendChatMessage("Cosmic War Bank", 0, "Your Warbonds for %1% have fully matured following a successful war! Paid out %2% Credits."%_T, faction.name, createMonetaryString(payout))
                     end
                 else
                     player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into has collapsed completely. Your bonds are now worthless paper.")

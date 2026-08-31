@@ -1,8 +1,18 @@
-[i]Version 3.3.4[/i]
+[i]Version 3.4.0[/i]
 [hr][/hr]
-[h1]v.3.3.4 🐛MASSIVE BUGFIX UPDATE!🐛[/h1]
+[h1]v3.4.0 ⭐ BOUNTY COMMAND, UI OVERHAUL & MASSIVE BUGFIX UPDATE ⭐[/h1]
 [hr][/hr]
-[i]This hotfix addresses many issues reported![/i]
+[i]New tools for tracking War Bounties, a decluttered Galactic Politics tab, and a big wave of bugfixes![/i]
+
+[b]⭐ NEW FEATURES[/b]
+[list]
+[*]⭐ [b]New Command: /cosmicwarbounties:[/b] Type this in chat to instantly see your active War Bounty License (who you're hunting, kills so far, time left) and a ranked list of every War Bounty currently active across the galaxy — no more digging through the Politics tab just to check your status!
+[*]⭐ [b]Galactic Politics Tab Overhaul:[/b] Cleaned up the tab's layout so the filter, relation-toggle and refresh controls no longer crowd the title bar. Bounties now get their own dedicated column instead of a small text tag, and your own active License is now shown right at the top of the tab so you always know what you're hunting.
+[*]⭐ [b]Clearer Bounty Rejection Message:[/b] If you try to collect a bounty while a different License is already active, the game now reminds you to use /cosmicwarbounties to check what you're currently tracking.
+[/list]
+
+[b]🪲BUGFIXES[/b]
+[list]
 [*]🐛 [b]Warbond Purchase Server Crash:[/b] Fixed a fatal `attempt to call global 'Server' (a nil value)` error triggered when a player interacted with the "Purchase Warbonds" option at a Trading Post.
 [*]🐛 [b]Warbond Dialog Flow Rearchitected:[/b] The underlying architectural issue was that a UI interaction callback which always executes on the client — was directly calling a script to determine which dialog to show. Any bridge function that transitively calls [i]Server()[/i] will crash in this context. Reworked the flow to use the correct Avorion client/server RPC pattern.
 [*]🐛 [b]Bounty Payout Failing on First Kill:[/b] Fixed an issue where destroying the very first enemy target under a new War Bounty License would fail to pay out and incorrectly tell you that you already had a License active, even when you didn't. Bounty rewards are now credited immediately when the License activates, so your first kill always counts.
@@ -28,6 +38,18 @@
 [*]🐛 [b]Miniature/Undersized Ships in Several Dynamic Events:[/b] Fixed a sizing bug causing some enemy ships spawned by Blockade, Stranded Flagship, and other dynamic events to come out far smaller than intended.
 [*]🐛 [b]Rare Crashes in Capital Ship Duel, Orbital Bombardment, Diplomatic Sabotage, and Station Siege Events:[/b] Fixed a handful of edge-case crashes that could occur when these events triggered in unclaimed space.
 [*]🐛 [b]Enemy Ships Spawning Over 100km Away During Sieges:[/b] Fixed a bug causing invasion fleets to occasionally spawn nearly twice as far from the action as intended during sector sieges.
+[*]🐛 [b]Dynamic War Events Almost Never Firing:[/b] Fixed a targeting bug that was silently preventing all 8 timer-based background events (Fleet Clash, Refugee Convoy, Stranded Flagship, Arms Deal, Wreckage Field, Headhunters, Blockade, Diplomatic Sabotage) from actually spawning. Also fixed a guaranteed crash when responding to a Distress Call by ignoring it (spawning the enemy Forward Operating Base).
+[*]🐛 [b]Matured Warbond Payout Message Showing Garbled Text:[/b] Fixed the "your Warbonds have matured" chat message showing raw placeholder text instead of the faction name and payout amount.
+[*]🐛 [b]First Warbond Purchase Could Be Lost:[/b] Fixed a bug where buying your very first Warbond for a faction could take your credits but fail to actually record the bond, meaning it would never mature or pay out.
+[*]🐛 [b]"Hero of the People" Reward Doing Nothing:[/b] The trade-price bonus promised after helping a Refugee Convoy escape was never actually implemented under the hood and could throw an error. It's now a clean, working status effect with an honest description.
+[*]🐛 [b]Dreadnought Boss Health Bar & Boarding Immunity Broken:[/b] Fixed the sector-wide boss health bar failing to display and Dreadnought bosses not actually being immune to boarding as intended.
+[*]🐛 [b]Dreadnought Boss Target Priority Bug:[/b] Fixed bosses not properly prioritizing heavily-armed targets when choosing who to attack.
+[*]🐛 [b]Wartime Propaganda Beacons Missing Their Effect:[/b] Fixed the post-siege propaganda beacons spawning without their intended black-box data effect.
+[*]🐛 [b]Rare Client Crash During Territorial Expansion:[/b] Fixed a potential crash tied to the background territory expansion simulation.
+[*]🐛 [b]Temporary War Defenders Never Cleaning Up:[/b] Fixed a bug preventing temporary faction-war defender ships from despawning after players left the sector, which could slowly clutter sectors over time.
+[*]🐛 [b]Territory Flips Could Target the Wrong Sector:[/b] Fixed a rare bug where a pending background territory conquest could apply to the wrong sector if two sectors shared similar coordinates.
+[*]🐛 [b]Subspace Containment Could Soft-Lock After a Restart:[/b] Fixed a bug where this War Contract could stop being completable if the server restarted or you relogged while it was active.
+[/list]
 
 [i]Version 3.3.3[/i]
 [hr][/hr]

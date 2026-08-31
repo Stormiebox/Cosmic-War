@@ -8,7 +8,7 @@ if onServer() then
         local entity = Entity()
         if entity then
             -- Cleanup temporary war defenders once players leave to avoid sector bloat.
-            entity:addScriptOnce("entity/deleteonplayersleft.lua")
+            entity:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
         end
 
         if cw_oldInitialize then

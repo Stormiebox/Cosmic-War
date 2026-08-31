@@ -98,7 +98,7 @@ Use the new Galactic Politics UI tab to track the status of all known factions.
 ### ⚙️ Features
 
 - View all active wars, alliances, and War Heat levels.
-- **Bounty Licenses:** Factions actively offering a Bounty License against their enemies will have a `[BOUNTY]` tag next to their name. Hovering over it will reveal the exact per-kill credit reward for destroying enemy military assets. Destroying your first target activates a 45-minute hunting license for up to 15 kills!
+- **Bounty Licenses:** Factions actively offering a Bounty License against their enemies show it in a dedicated Bounty column. Hovering over a row reveals the exact per-kill credit reward for destroying enemy military assets. Destroying your first target activates a 45-minute hunting license for up to 15 kills! Your own License's progress is shown right in the tab header, or check it anywhere with the `/cosmicwarbounties` chat command.
 - **Covert Funding:** As a wealthy player, you can secretly fund rebellions or donate credits to a faction's war effort, directly influencing the outcome of the war without firing a shot.
 
 </details>

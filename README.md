@@ -26,7 +26,7 @@ Players are not just bystanders—you can actively influence these conflicts! Fu
 
 ### 💰 Mercenary Operations
 - **Galactic Politics UI:** A new, highly detailed UI tab to track all active conflicts, ceasefires, and faction relations galaxy-wide.
-- **Bounty Licenses:** Factions actively offering a Bounty License against their enemies will have a `[BOUNTY]` tag in the UI. Taking down your first target activates a time-sensitive 45-minute hunting license for massive payouts!
+- **Bounty Licenses:** Factions actively offering a Bounty License against their enemies show it in a dedicated Bounty column in the UI (or via the `/cosmicwarbounties` chat command). Taking down your first target activates a time-sensitive 45-minute hunting license for massive payouts!
 - **Dynamic War Contracts:** Over 20 entirely new mercenary missions dynamically injected into Bulletin Boards based on the sector's current War Heat (e.g., *Force Recon*, *Resource Heist*, *Blockade Runner*, *Distraction Carnage*, *Decapitation Strike*).
 
 ### 🚀 Dynamic Galaxy Expansion
@@ -67,3 +67,4 @@ Players are not just bystanders—you can actively influence these conflicts! Fu
 - **In-Game Lore:** All deep lore, stat blocks, and dynamic features are fully integrated into the in-game **Cosmic Codex**. You do not need to tab out to learn!
 - **Offline Guides:** Check the included `WIKI.md` and `PLAYER_GUIDE.md` files in the mod folder for a complete breakdown of mechanics, scaling equations, and background systems.
 - **Diagnostics:** Server Operators can use the `/cosmicwarstatus` command in chat to view live diagnostic health and activity readouts of the background simulation.
+- **Bounty Board:** Any player can use the `/cosmicwarbounties` command in chat to check their active Bounty License and see the full galaxy-wide bounty board without opening the UI.

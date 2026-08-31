@@ -221,7 +221,6 @@ mission.abandon = function()
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex
         if giverIndex and giverIndex > 0 then
-            local rep = player:getRelations(giverIndex)
             CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
             local giverFaction = Faction(giverIndex)
             local giverName = giverFaction and giverFaction.name or "Unknown"%_T

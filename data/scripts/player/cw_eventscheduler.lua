@@ -6,14 +6,14 @@ include("stringutility")
 CW_EventScheduler = {}
 
 local events = {
-    { min = 120, max = 180, script = "events/cw_fleetclash.lua", timer = 0, schedule = 0 },
-    { min = 120, max = 180, script = "events/cw_refugeeconvoy.lua", timer = 0, schedule = 0 },
-    { min = 180, max = 240, script = "events/cw_strandedflagship.lua", timer = 0, schedule = 0 },
-    { min = 90,  max = 150, script = "events/cw_armsdeal.lua", timer = 0, schedule = 0 },
-    { min = 100, max = 160, script = "events/cw_wreckagefield.lua", timer = 0, schedule = 0 },
-    { min = 60,  max = 120, script = "events/cw_headhunters.lua", timer = 0, schedule = 0 },
-    { min = 100, max = 160, script = "events/cw_blockade.lua", timer = 0, schedule = 0 },
-    { min = 120, max = 180, script = "events/cw_diplomaticsabotage.lua", timer = 0, schedule = 0 }
+    { min = 120, max = 180, script = "data/scripts/events/cw_fleetclash.lua", timer = 0, schedule = 0 },
+    { min = 120, max = 180, script = "data/scripts/events/cw_refugeeconvoy.lua", timer = 0, schedule = 0 },
+    { min = 180, max = 240, script = "data/scripts/events/cw_strandedflagship.lua", timer = 0, schedule = 0 },
+    { min = 90,  max = 150, script = "data/scripts/events/cw_armsdeal.lua", timer = 0, schedule = 0 },
+    { min = 100, max = 160, script = "data/scripts/events/cw_wreckagefield.lua", timer = 0, schedule = 0 },
+    { min = 60,  max = 120, script = "data/scripts/events/cw_headhunters.lua", timer = 0, schedule = 0 },
+    { min = 100, max = 160, script = "data/scripts/events/cw_blockade.lua", timer = 0, schedule = 0 },
+    { min = 120, max = 180, script = "data/scripts/events/cw_diplomaticsabotage.lua", timer = 0, schedule = 0 }
 }
 
 function CW_EventScheduler.getUpdateInterval()
@@ -72,7 +72,7 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
                 ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
             end
             
-            local station = ShipGenerator.createShipyard(faction, generator:getPositionInSector())
+            local station = generator:createShipyard(faction)
             if station then
                 station.title = "Forward Operating Base"%_T
                 station:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
@@ -121,7 +121,6 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
 
                 ship.title = "Elite Headhunter"
                 ship:addScriptOnce("ai/patrol.lua")
-                ship:addScriptOnce("data/scripts/entity/enemy.lua")
             end
 
             player:sendChatMessage("Alert", ChatMessageType.Warning, "Warning: Incoming elite headhunter fleet from " .. bestEnemy.name .. "!"%_T)

@@ -8,6 +8,8 @@ GalacticPoliticsTab = {}
 local self = GalacticPoliticsTab
 local politicsList
 
+local BOUNTY_TRACKER_SCRIPT = "data/scripts/player/background/cw_bounty_tracker.lua"
+
 if onClient() then
     -- Pre-allocate helper functions to prevent memory churn during UI refreshes
     local function getRelationColor(rel)
@@ -37,6 +39,13 @@ if onClient() then
         return str
     end
 
+    local function formatTimeRemaining(seconds)
+        seconds = math.max(0, math.floor(seconds or 0))
+        local mins = math.floor(seconds / 60)
+        local secs = seconds % 60
+        return string.format("%dm %02ds", mins, secs)
+    end
+
     function GalacticPoliticsTab.initialize()
         local playerWindow = PlayerWindow()
 
@@ -52,56 +61,68 @@ if onClient() then
     end
 
     function GalacticPoliticsTab.buildWindow(container)
-        local hsplit = UIHorizontalSplitter(Rect(container.size), 5, 5, 0.1)
+        -- Reserve a taller top strip (2 rows: title/license status, then filter controls)
+        -- so controls never have to fight the title for the same horizontal space.
+        local hsplit = UIHorizontalSplitter(Rect(container.size), 5, 5, 0.14)
         local margin = 10
+        local topWidth = hsplit.top.width
+        local topHeight = hsplit.top.height
 
-        local refreshButton = container:createButton(
-            Rect(hsplit.top.width - 150, 5, hsplit.top.width, hsplit.top.height - 25), "Refresh"%_t, "clientFetchData")
-        refreshButton.icon = "data/textures/icons/cw_refresh.png"
-        refreshButton.tooltip = "Refresh Galactic Intelligence"%_t
+        local row1Bottom = topHeight * 0.5
+        local row2Top = topHeight * 0.5 + 4
+        local row2Bottom = topHeight - 4
 
-        self.numericCheck = container:createCheckBox(Rect(hsplit.top.width - 320, 5, hsplit.top.width - 160, hsplit.top.height - 25), "Numeric Relations"%_t, "onNumericCheckChanged")
-        self.numericCheck.checked = false
-        self.numericCheck.tooltip = "Toggle between numeric and descriptive relation values."%_t
+        -- Row 1: title (left) + this player's own Bounty License status (right half)
+        container:createLabel(Rect(margin, 2, margin + 320, row1Bottom), "Active Galactic Conflicts"%_t, 20)
 
-        self.filterComboBox = container:createValueComboBox(Rect(hsplit.top.width - 530, 6, hsplit.top.width - 330, hsplit.top.height - 28), "onFilterChanged")
+        self.licenseLabel = container:createLabel(Rect(topWidth * 0.42, 2, topWidth - margin, row1Bottom), "", 15)
+        self.licenseLabel:setTopLeftAligned()
+
+        -- Row 2: filter, numeric toggle and refresh, laid out left-to-right with fixed
+        -- spacing instead of width-relative right offsets, so nothing overlaps regardless
+        -- of the player window's actual size.
+        self.filterComboBox = container:createValueComboBox(Rect(margin, row2Top, margin + 230, row2Bottom), "onFilterChanged")
         self.filterComboBox:addEntry("All", "All"%_t)
         self.filterComboBox:addEntry("Active Conflicts", "Active Conflicts"%_t)
         self.filterComboBox:addEntry("Ceasefires Only", "Ceasefires Only"%_t)
         self.filterComboBox:addEntry("Active Bounties", "Active Bounties"%_t)
         self.filterComboBox.tooltip = "Filter Conflicts"%_t
 
-        container:createLabel(Rect(margin, 5, margin + 300, hsplit.top.height - 25), "Active Galactic Conflicts"%_t, 20)
+        self.numericCheck = container:createCheckBox(Rect(margin + 245, row2Top, margin + 465, row2Bottom), "Numeric Relations"%_t, "onNumericCheckChanged")
+        self.numericCheck.checked = false
+        self.numericCheck.tooltip = "Toggle between numeric and descriptive relation values."%_t
+
+        local refreshButton = container:createButton(Rect(margin + 480, row2Top, margin + 620, row2Bottom), "Refresh"%_t, "clientFetchData")
+        refreshButton.icon = "data/textures/icons/cw_refresh.png"
+        refreshButton.tooltip = "Refresh Galactic Intelligence"%_t
 
         -- Reserve 160px at the bottom of the UI for the Legend/Summary section
         local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - 160)
         politicsList = container:createListBoxEx(listRect)
-        politicsList.columns = 6
+        politicsList.columns = 7
         politicsList.rowHeight = 35
 
         -- Calculate column widths cleanly to account for the scrollbar
         local width = listRect.width - 20
-        politicsList:setColumnWidth(0, width * 0.20)
-        politicsList:setColumnWidth(1, width * 0.20)
-        politicsList:setColumnWidth(2, width * 0.15)
-        politicsList:setColumnWidth(3, width * 0.15)
-        politicsList:setColumnWidth(4, width * 0.15)
-        politicsList:setColumnWidth(5, width * 0.15)
+        local colFractions = { 0.18, 0.18, 0.12, 0.12, 0.12, 0.14, 0.14 }
+        for i = 0, 6 do
+            politicsList:setColumnWidth(i, width * colFractions[i + 1])
+        end
 
-        self.selectedSorting = 3
+        self.selectedSorting = 4
         self.sortingType = -1
         self.sortingButtons = {}
-        local colWidths = { width * 0.20, width * 0.20, width * 0.15, width * 0.15, width * 0.15, width * 0.15 }
-        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Famine"%_t, "Status"%_t, "Relations"%_t}
+        local sortingLabels = self.getSortingLabels()
         local currentX = margin
-        for i = 1, 6 do
-            local btnRect = Rect(currentX, listRect.lower.y - 25, currentX + colWidths[i] - 2, listRect.lower.y)
+        for i = 1, 7 do
+            local colWidth = width * colFractions[i]
+            local btnRect = Rect(currentX, listRect.lower.y - 25, currentX + colWidth - 2, listRect.lower.y)
             local btn = container:createButton(btnRect, sortingLabels[i], "onSort" .. i)
             btn.hasFrame = false
             btn.textSize = 14
             btn.tooltip = "Sort by "%_t .. sortingLabels[i]
             table.insert(self.sortingButtons, btn)
-            currentX = currentX + colWidths[i]
+            currentX = currentX + colWidth
         end
         self.updateSortingIcons()
 
@@ -111,7 +132,7 @@ if onClient() then
         local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.45)
 
         local legendStr = "Legend:"%_t .. "\n" ..
-            " [BOUNTY] " .. "Active War Bounty License (Check Tooltip)"%_t .. "\n" ..
+            " " .. "Bounty column:"%_t .. " " .. "Shows the higher of either side's active War Bounty reward. Hover a row for full details."%_t .. "\n" ..
             " " .. "War Heat:"%_t .. " (" .. "Red"%_t .. ") " .. "Critical"%_t .. " | (" .. "Orange"%_t .. ") " .. "High"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Rising"%_t .. " | (" .. "Green"%_t .. ") " .. "Zero"%_t .. "\n" ..
             " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t .. "\n" ..
             " " .. "Famine:"%_t .. " (" .. "Green"%_t .. ") " .. "Normal"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Struggling"%_t .. " | (" .. "Red"%_t .. ") " .. "Critical"%_t
@@ -122,11 +143,16 @@ if onClient() then
 
         local summaryStr = "Cosmic War Simulation:"%_t .. "\n" ..
             "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."%_t .. "\n\n" ..
-            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."%_t
+            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."%_t .. "\n\n" ..
+            "Tip: Use /cosmicwarbounties in chat for a quick text summary of your License and the bounty board."%_t
         local summaryRectInset = Rect(infoSplit.right.lower + vec2(10, 10), infoSplit.right.upper - vec2(10, 10))
         local summaryLabel = container:createLabel(summaryRectInset, summaryStr, 15)
         summaryLabel.wordBreak = true
         summaryLabel:setTopLeftAligned()
+    end
+
+    function GalacticPoliticsTab.getSortingLabels()
+        return {"Faction A"%_t, "Faction B"%_t, "Bounty"%_t, "War Heat"%_t, "Famine"%_t, "Status"%_t, "Relations"%_t}
     end
 
     function GalacticPoliticsTab.clientFetchData()
@@ -135,7 +161,9 @@ if onClient() then
 
     function GalacticPoliticsTab.onNumericCheckChanged()
         if self.lastData then
-            GalacticPoliticsTab.receiveData(self.lastData)
+            -- self.lastData is already the unwrapped conflicts array (see receiveData);
+            -- just re-render from cache instead of re-fetching from the server.
+            self.applyFiltersAndSort()
         else
             GalacticPoliticsTab.clientFetchData()
         end
@@ -151,6 +179,7 @@ if onClient() then
     function GalacticPoliticsTab.onSort4() self.updateSorting(4) end
     function GalacticPoliticsTab.onSort5() self.updateSorting(5) end
     function GalacticPoliticsTab.onSort6() self.updateSorting(6) end
+    function GalacticPoliticsTab.onSort7() self.updateSorting(7) end
 
     function GalacticPoliticsTab.updateSorting(newSorting)
         if self.selectedSorting == newSorting then
@@ -164,7 +193,7 @@ if onClient() then
     end
 
     function GalacticPoliticsTab.updateSortingIcons()
-        local sortingLabels = {"Faction A"%_t, "Faction B"%_t, "War Heat"%_t, "Famine"%_t, "Status"%_t, "Relations"%_t}
+        local sortingLabels = self.getSortingLabels()
         for ndx, button in ipairs(self.sortingButtons) do
             local label = sortingLabels[ndx]
             if ndx == self.selectedSorting then
@@ -177,6 +206,21 @@ if onClient() then
                 button.caption = label
             end
             button.icon = ""
+        end
+    end
+
+    function GalacticPoliticsTab.updateLicenseStatus()
+        if not self.licenseLabel then return end
+
+        local license = self.myLicense
+        if license then
+            self.licenseLabel.caption = "Your License: "%_t .. license.giverName .. " vs "%_t .. license.targetName ..
+                " -- " .. tostring(license.kills) .. "/" .. tostring(license.maxKills) .. " "%_t .. "kills"%_t ..
+                ", " .. formatTimeRemaining(license.timeRemaining) .. " "%_t .. "remaining"%_t
+            self.licenseLabel.color = ColorRGB(1.0, 0.85, 0.3)
+        else
+            self.licenseLabel.caption = "Your License: "%_t .. "None active"%_t
+            self.licenseLabel.color = ColorRGB(0.6, 0.6, 0.6)
         end
     end
 
@@ -202,10 +246,11 @@ if onClient() then
             local valA, valB
             if self.selectedSorting == 1 then valA, valB = a.factionA, b.factionA
             elseif self.selectedSorting == 2 then valA, valB = a.factionB, b.factionB
-            elseif self.selectedSorting == 3 then valA, valB = a.heat, b.heat
-            elseif self.selectedSorting == 4 then valA, valB = math.max(a.famineA, a.famineB), math.max(b.famineA, b.famineB)
-            elseif self.selectedSorting == 5 then valA, valB = a.status, b.status
-            elseif self.selectedSorting == 6 then valA, valB = a.relation, b.relation
+            elseif self.selectedSorting == 3 then valA, valB = math.max(a.bountyA, a.bountyB), math.max(b.bountyA, b.bountyB)
+            elseif self.selectedSorting == 4 then valA, valB = a.heat, b.heat
+            elseif self.selectedSorting == 5 then valA, valB = math.max(a.famineA, a.famineB), math.max(b.famineA, b.famineB)
+            elseif self.selectedSorting == 6 then valA, valB = a.status, b.status
+            elseif self.selectedSorting == 7 then valA, valB = a.relation, b.relation
             end
 
             if valA == valB then return false end
@@ -222,7 +267,9 @@ if onClient() then
     function GalacticPoliticsTab.receiveData(data)
         if not politicsList then return end
         if type(data) ~= "table" then return end
-        self.lastData = data
+        self.lastData = data.conflicts or {}
+        self.myLicense = data.myLicense
+        self.updateLicenseStatus()
         self.applyFiltersAndSort()
     end
 
@@ -230,6 +277,7 @@ if onClient() then
         politicsList:clear()
         local white = ColorRGB(1, 1, 1)
         local gray = ColorRGB(0.8, 0.8, 0.8)
+        local gold = ColorRGB(1.0, 0.85, 0.3)
 
         local player = Player()
         for index, conflict in ipairs(self.displayedConflicts) do
@@ -246,10 +294,7 @@ if onClient() then
             local relB = player:getRelations(conflict.factionBIndex) or 0
 
             local nameA = conflict.factionA or "Unknown Faction"%_t
-            if conflict.bountyA > 0 then nameA = nameA .. " [BOUNTY]" end
-
             local nameB = conflict.factionB or "Unknown Faction"%_t
-            if conflict.bountyB > 0 then nameB = nameB .. " [BOUNTY]" end
 
             local relationText = tostring(conflict.relation)
             if self.numericCheck and not self.numericCheck.checked then
@@ -267,13 +312,22 @@ if onClient() then
                 famineColor = ColorRGB(1.0, 1.0, 0.2)
             end
 
+            local bountyMax = math.max(conflict.bountyA or 0, conflict.bountyB or 0)
+            local bountyText = "-"
+            local bountyColor = gray
+            if bountyMax > 0 then
+                bountyText = createMonetaryString(bountyMax)
+                bountyColor = gold
+            end
+
             -- Cosmic War: Populates the row entries. Colors dynamically indicate player relations and overall war heat.
             politicsList:setEntryNoCallback(0, row, nameA, false, false, getRelationColor(relA))
             politicsList:setEntryNoCallback(1, row, nameB, false, false, getRelationColor(relB))
-            politicsList:setEntryNoCallback(2, row, tostring(conflict.heat) .. "%", false, false, heatColor)
-            politicsList:setEntryNoCallback(3, row, famineText, false, false, famineColor)
-            politicsList:setEntryNoCallback(4, row, conflict.status%_t, false, false, heatColor)
-            politicsList:setEntryNoCallback(5, row, relationText, false, false, gray)
+            politicsList:setEntryNoCallback(2, row, bountyText, false, false, bountyColor)
+            politicsList:setEntryNoCallback(3, row, tostring(conflict.heat) .. "%", false, false, heatColor)
+            politicsList:setEntryNoCallback(4, row, famineText, false, false, famineColor)
+            politicsList:setEntryNoCallback(5, row, conflict.status%_t, false, false, heatColor)
+            politicsList:setEntryNoCallback(6, row, relationText, false, false, gray)
 
             local tooltip = "=== " .. nameA .. " ===\n"
             tooltip = tooltip .. "Index: "%_t .. conflict.factionAIndex .. "\n"
@@ -312,6 +366,38 @@ local function getFactionTraitsSafe(faction)
     if faction:getTrait("poor") > 0.5 then table.insert(traits, "Poor") end
     if #traits == 0 then return {"Unknown"} end
     return traits
+end
+
+-- Checks both the calling player's own faction and (if applicable) their alliance for an
+-- active License, since cw_bountypayouts.lua attaches the tracker to whichever of the two
+-- actually owns the killing blow (see CW_BountyPayouts.onDestroyed).
+local function getMyLicense(player)
+    if not player then return nil end
+
+    local holders = { player }
+    if player.allianceIndex and player.allianceIndex > 0 then
+        local alliance = Alliance(player.allianceIndex)
+        if alliance then table.insert(holders, alliance) end
+    end
+
+    for _, holder in pairs(holders) do
+        if holder:hasScript(BOUNTY_TRACKER_SCRIPT) then
+            local invokeStatus, giverIdx, targetIdx, kills, maxKills, timeRemaining = holder:invokeFunction(BOUNTY_TRACKER_SCRIPT, "getStatus")
+            if invokeStatus == 0 then
+                local giver = Faction(giverIdx)
+                local target = Faction(targetIdx)
+                return {
+                    giverName = giver and giver.name or ("Faction " .. tostring(giverIdx)),
+                    targetName = target and target.name or ("Faction " .. tostring(targetIdx)),
+                    kills = kills or 0,
+                    maxKills = maxKills or 15,
+                    timeRemaining = timeRemaining or 0,
+                }
+            end
+        end
+    end
+
+    return nil
 end
 
 function GalacticPoliticsTab.serverFetchData()
@@ -416,9 +502,6 @@ function GalacticPoliticsTab.serverFetchData()
         })
     end
 
-    invokeClientFunction(player, "receiveData", conflicts)
+    invokeClientFunction(player, "receiveData", {conflicts = conflicts, myLicense = getMyLicense(player)})
 end
 callable(GalacticPoliticsTab, "serverFetchData")
-
-
-

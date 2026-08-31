@@ -66,43 +66,56 @@ function initialize(factionIndex)
             }
         end
 
-        mission.globalPhase.noBossEncountersTargetSector = true
-        mission.globalPhase.noPlayerEventsTargetSector = true
-
-        mission.phases[1] = {
-            onTargetLocationEntered = function(x, y)
-                mission.data.description[3].fulfilled = true
-                mission.data.description[4] = { text = "Destroy the Ancient Protection Platform."%_T, bulletPoint = true, fulfilled = false }
-
-                -- onTargetLocationEntered fires on both client and server; entity creation
-                -- must only ever happen on the server, and only once per mission.
-                if onClient() then return end
-                if mission.data.custom.spawned then return end
-                mission.data.custom.spawned = true
-
-                local sector = Sector()
-                -- Add rift hazards
-                sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
-                local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(0,0,0)))
-                platform:setValue("cw_mission_target", true)
-                mission.data.custom.targetId = platform.id.string
-
-                sector:broadcastChatMessage(giverFaction.name, 3, "The subspace anomaly has pulled an Ancient Protection Platform into normal space. Destroy it so we can harvest the data!"%_t)
-            end,
-            onTargetLocationLeft = function(x, y)
-                mission.data.description[3].fulfilled = false
-                mission.data.description[4] = nil
-            end,
-            onEntityDestroyed = function(id, lastDamageInflictor)
-                if onClient() then return end
-                if mission.data.custom.targetId and id.string == mission.data.custom.targetId then
-                    finishAndReward()
-                end
-            end
-        }
+        cw_init(factionIndex)
+    else
+        cw_init(factionIndex)
     end
-    if cw_init then cw_init() end
 end
+
+mission.globalPhase.noBossEncountersTargetSector = true
+mission.globalPhase.noPlayerEventsTargetSector = true
+
+-- mission.phases[1] must be defined unconditionally at module scope (matching every
+-- sibling mission file): structuredmission.lua reads mission.phases[1] on BOTH client
+-- and server, and again on every restore(). Defining it only inside the server/"not
+-- restoring" branch of initialize() (as this file previously did) left mission.phases[1]
+-- as the framework's empty default table on the client, and permanently empty on the
+-- server too after any save/reload or player relog while the mission was active --
+-- silently breaking onEntityDestroyed and soft-locking the contract.
+mission.phases[1] = {
+    onTargetLocationEntered = function(x, y)
+        mission.data.description[3].fulfilled = true
+        mission.data.description[4] = { text = "Destroy the Ancient Protection Platform."%_T, bulletPoint = true, fulfilled = false }
+
+        -- onTargetLocationEntered fires on both client and server; entity creation
+        -- must only ever happen on the server, and only once per mission.
+        if onClient() then return end
+        if mission.data.custom.spawned then return end
+        mission.data.custom.spawned = true
+
+        local sector = Sector()
+        -- Add rift hazards
+        sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
+        local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(0,0,0)))
+        platform:setValue("cw_mission_target", true)
+        mission.data.custom.targetId = platform.id.string
+
+        local giverFaction = Faction(mission.data.custom.giverIndex)
+        if giverFaction then
+            sector:broadcastChatMessage(giverFaction.name, 3, "The subspace anomaly has pulled an Ancient Protection Platform into normal space. Destroy it so we can harvest the data!"%_T)
+        end
+    end,
+    onTargetLocationLeft = function(x, y)
+        mission.data.description[3].fulfilled = false
+        mission.data.description[4] = nil
+    end,
+    onEntityDestroyed = function(id, lastDamageInflictor)
+        if onClient() then return end
+        if mission.data.custom.targetId and id.string == mission.data.custom.targetId then
+            finishAndReward()
+        end
+    end
+}
 
 function finishAndReward()
     if onClient() then return end
@@ -158,7 +171,6 @@ mission.abandon = function()
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex
         if giverIndex and giverIndex > 0 then
-            local rep = player:getRelations(giverIndex)
             CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
             local giverFaction = Faction(giverIndex)
             local giverName = giverFaction and giverFaction.name or "Unknown"%_T

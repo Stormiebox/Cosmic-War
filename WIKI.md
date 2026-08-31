@@ -221,6 +221,8 @@ Transforms the global geopolitical state into highly interactive hunting license
 - **Expiration:** You have a strict time limit (45 minutes) to complete the quota, with HUD notifications every 5 minutes.
 - **Dynamic Payouts:** Base rewards scale based on distance from the core. Standard military ships pay out 1x, Dreadnoughts and Bosses pay out 5x, and Stations pay out 10x.
 - **Civilian Immunity:** Bounties only trigger on military targets; defenseless mining and cargo ships are ignored.
+- **One License At A Time:** A player (or their alliance) can only hold one active License at once — it's a single hunting contract, not a stack of them. Killing a target under a *different* faction's bounty while yours is still active will not switch you over to it; finish or wait out your current License first.
+- **Checking Your License:** Use `/cosmicwarbounties` in chat, or open the **Galactic Politics** tab, to see your License's target, kill progress and time remaining, plus the full board of currently active bounties galaxy-wide.
 
 **Gameplay Impact:**
 
@@ -266,6 +268,23 @@ Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wart
 
 **Stability Hardening:**
 The command path includes readiness guards (e.g., galaxy API availability checks) for safer early lifecycle behavior.
+</details>
+
+### 💰 9b) Bounty Board Command
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/commands/cosmicwarbounties.lua`
+
+**Command:** `/cosmicwarbounties`
+
+**What it provides:**
+
+- A quick chat-only summary of your own active Bounty License (target faction, kills/quota, time remaining), or a note that none is active.
+- A ranked list (highest reward first) of every currently active War Bounty galaxy-wide, with the offering faction, target faction, reward per kill, and time until it expires.
+
+Useful for players who don't want to open the Galactic Politics tab just to check whether they still have an active License, or which factions are currently paying out the most.
 </details>
 
 ### 🚀 10) Dynamic Territory Sieges & AI Boarding
@@ -412,14 +431,16 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 
 **Key Features:**
 
+- **Your License At A Glance:** The header shows your own active Bounty License (target, kills, time remaining) right next to the tab title, refreshed alongside everything else — no more digging through chat history to remember what you're hunting.
 - **Active Conflict Tracking:** Displays a real-time, sortable list of all active AI wars, skirmishes, and ceasefires across the galaxy.
-- **Interactive Column Sorting:** Click on any column header (Faction A, Faction B, War Heat, Status, Relations) to instantly sort the intelligence data ascending or descending.
+- **Dedicated Bounty Column:** Active War Bounties get their own sortable column showing the credit reward at a glance, instead of being crammed into the faction name text.
+- **Interactive Column Sorting:** Click on any column header (Faction A, Faction B, Bounty, War Heat, Famine, Status, Relations) to instantly sort the intelligence data ascending or descending.
 - **Strategic Filtering:** Use the dropdown menu to filter the list by "All", "Active Conflicts", "Ceasefires Only", or factions with "Active Bounties".
 - **Immersive Relation Toggle:** A checkbox allows players to switch between raw numeric relation values and immersive diplomatic descriptors (e.g., "Allied", "Confrontational", "All-Out War").
 - **Strategic Tooltips:** Hovering over any conflict reveals deep intelligence, including internal Faction Indices, AI Traits (Aggressive, Peaceful, Wealthy, etc.), exact numerical player relations, and the exact credit payout of active War Bounties.
-- **Bounty Indicators:** Factions with active bounties placed against them display a clear `[!]` indicator next to their name.
 - **Color-Coded Standing:** Faction names are dynamically colored based on your personal reputation with them, allowing you to instantly spot when your allies are under attack.
-- **Legend & Summary:** A clean bottom panel explains the color-coding system and provides a brief summary of how the Cosmic War simulation operates in the background.
+- **Decluttered Layout:** Filter, relation toggle and refresh controls now live on their own row below the title instead of being crammed into the same strip, so nothing overlaps regardless of window size.
+- **Legend & Summary:** A clean bottom panel explains the color-coding system and provides a brief summary of how the Cosmic War simulation operates in the background — including a pointer to the `/cosmicwarbounties` chat command for a quick text-only view.
 
 **Gameplay Impact:**
 
@@ -500,6 +521,7 @@ Injects immersive background events related to the ongoing galactic conflict, ma
 - [ ] Review the latest client/server logs for any early startup warnings.
 - [ ] Validate your load order if running in a heavily modified stack.
 - [ ] Use `/cosmicwarstatus` in-game for quick operational diagnostics.
+- [ ] Use `/cosmicwarbounties` in-game to check your active Bounty License and the galaxy-wide bounty board.
 
 ---
 
