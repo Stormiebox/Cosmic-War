@@ -17,7 +17,6 @@ function CW_HeadhuntersEvent.initialize()
     -- player, so pull the present players explicitly rather than calling Player().
     local players = {sector:getPlayers()}
     if #players == 0 then
-        Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
@@ -26,7 +25,6 @@ function CW_HeadhuntersEvent.initialize()
     local server = Server()
     local factionStr = server:getValue("factions")
     if type(factionStr) ~= "string" or factionStr == "" then
-        Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
@@ -50,7 +48,6 @@ function CW_HeadhuntersEvent.initialize()
     end
 
     if not bestEnemy then
-        Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
@@ -59,6 +56,5 @@ function CW_HeadhuntersEvent.initialize()
     player:setValue("cw_pending_ambush", bestEnemy.index)
 
     -- Terminate this script, the scheduler will handle the ambush on sector entry
-    Sector():removeScript("events/cw_headhunters.lua")
     terminate()
 end

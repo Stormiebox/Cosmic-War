@@ -17,14 +17,12 @@ function CW_WreckagefieldEvent.initialize()
     -- Only trigger in populated sectors
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     if #stations == 0 then
-        Sector():removeScript("events/cw_wreckagefield.lua")
         terminate()
         return
     end
 
     local faction = Galaxy():getNearestFaction(x, y)
     if not faction or not faction.isAIFaction then
-        Sector():removeScript("events/cw_wreckagefield.lua")
         terminate()
         return
     end
@@ -49,7 +47,6 @@ function CW_WreckagefieldEvent.initialize()
     local cvn = include("cosmicvaultnews")
     cvn.publishArticle(article)
 
-    Sector():removeScript("events/cw_wreckagefield.lua")
     terminate()
 end
 

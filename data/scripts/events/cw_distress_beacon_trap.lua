@@ -28,6 +28,5 @@ function CW_DistressBeaconTrapEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Distress Beacon", 0, "Ha ha! You fell for the oldest trick in the galaxy!")
-    Sector():removeScript("events/cw_distress_beacon_trap.lua")
     terminate()
 end

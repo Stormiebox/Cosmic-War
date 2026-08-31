@@ -20,14 +20,12 @@ function CW_StrandedFlagshipEvent.finalize() terminate() end
 function CW_StrandedFlagshipEvent.spawn()
     local sector = Sector()
     if sector:getValue("neutral_zone") then
-        Sector():removeScript("events/cw_strandedflagship.lua")
         terminate()
         return
     end
     local x, y = sector:getCoordinates()
     local faction = Galaxy():getControllingFaction(x, y)
     if faction then
-        Sector():removeScript("events/cw_strandedflagship.lua")
         terminate()
         return
     end
@@ -39,14 +37,12 @@ function CW_StrandedFlagshipEvent.spawn()
     end
 
     if #possibleFactions == 0 then
-        Sector():removeScript("events/cw_strandedflagship.lua")
         terminate()
         return
     end
     CW_StrandedFlagshipEvent.flagshipFactionId = possibleFactions[random():getInt(1, #possibleFactions)]
     local flagshipFaction = Faction(CW_StrandedFlagshipEvent.flagshipFactionId)
     if not flagshipFaction then
-        Sector():removeScript("events/cw_strandedflagship.lua")
         terminate()
         return
     end

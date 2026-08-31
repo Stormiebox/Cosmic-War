@@ -1,4 +1,5 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
+include("stringutility")
 
 local giverIndex = 0
 local targetIndex = 0

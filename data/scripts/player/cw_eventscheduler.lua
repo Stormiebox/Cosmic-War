@@ -1,5 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 include("randomext")
+include("stringutility")
 
 -- namespace CW_EventScheduler
 CW_EventScheduler = {}

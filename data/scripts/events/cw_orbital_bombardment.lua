@@ -20,7 +20,6 @@ function CW_OrbitalBombardmentEvent.spawn()
 
     -- The offset sector can land in no man's land, where getNearestFaction returns nil.
     if not attackerFaction then
-        Sector():removeScript("events/cw_orbital_bombardment.lua")
         terminate()
         return
     end
@@ -33,7 +32,6 @@ function CW_OrbitalBombardmentEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Planetary Defense", 0, "Mayday! We are under intense orbital bombardment! Any available ships, please assist!")
-    Sector():removeScript("events/cw_orbital_bombardment.lua")
     terminate()
 end
 

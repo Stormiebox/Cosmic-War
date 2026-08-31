@@ -20,7 +20,6 @@ function CW_StationsiegeEvent.spawn()
     local targetStation = Sector():getEntitiesByType(EntityType.Station)
 
     if not targetStation or not attackerFaction then
-        Sector():removeScript("events/cw_stationsiege.lua")
         terminate()
         return
     end
@@ -30,6 +29,5 @@ function CW_StationsiegeEvent.spawn()
         siegeShip.title = "Siege Dreadnought"
         ShipAI(siegeShip.index):setAggressive()
     end
-    Sector():removeScript("events/cw_stationsiege.lua")
     terminate()
 end

@@ -20,7 +20,6 @@ function CW_EclipseVanguardEvent.spawn()
     include("cosmicascendancybridge")
     if not Server():getValue("eclipse_fully_awake") then
         include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Eclipse not awoken. Skipping Eclipse Vanguard event.")
-        Sector():removeScript("events/cw_eclipse_vanguard.lua")
         terminate()
         return
     end
@@ -42,7 +41,6 @@ function CW_EclipseVanguardEvent.spawn()
 
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
     broadcastInvokeClientFunction("showVanguardBanner")
-    Sector():removeScript("events/cw_eclipse_vanguard.lua")
     terminate()
 end
 

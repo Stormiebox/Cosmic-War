@@ -22,14 +22,12 @@ function CW_DiplomaticSabotageEvent.finalize() terminate() end
 function CW_DiplomaticSabotageEvent.spawn()
     local sector = Sector()
     if sector:getValue("neutral_zone") then
-        Sector():removeScript("events/cw_diplomaticsabotage.lua")
         terminate()
         return
     end
     local x, y = sector:getCoordinates()
     local faction = Galaxy():getControllingFaction(x, y)
     if faction then
-        Sector():removeScript("events/cw_diplomaticsabotage.lua")
         terminate()
         return
     end
@@ -41,7 +39,6 @@ function CW_DiplomaticSabotageEvent.spawn()
     end
 
     if #possibleFactions == 0 then
-        Sector():removeScript("events/cw_diplomaticsabotage.lua")
         terminate()
         return
     end
@@ -50,7 +47,6 @@ function CW_DiplomaticSabotageEvent.spawn()
     local pirateFaction = Galaxy():getPirateFaction(Balancing_GetPirateLevel(x, y))
 
     if not envoyFaction or not pirateFaction then
-        Sector():removeScript("events/cw_diplomaticsabotage.lua")
         terminate()
         return
     end
@@ -98,7 +94,6 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
         end
         Sector():deleteEntityJumped(envoy)
     end
-    Sector():removeScript("events/cw_diplomaticsabotage.lua")
     terminate()
 end
 

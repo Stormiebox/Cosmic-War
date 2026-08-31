@@ -22,7 +22,6 @@ function CW_CapitalShipDuelEvent.spawn()
     -- Either lookup can land in no man's land and return nil; bail out cleanly instead of
     -- indexing a nil faction below.
     if not facA or not facB then
-        Sector():removeScript("events/cw_capital_ship_duel.lua")
         terminate()
         return
     end
@@ -34,6 +33,5 @@ function CW_CapitalShipDuelEvent.spawn()
     dreadB.title = facB.name .. " Dreadnought"
 
     Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!")
-    Sector():removeScript("events/cw_capital_ship_duel.lua")
     terminate()
 end

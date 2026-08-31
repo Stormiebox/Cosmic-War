@@ -22,7 +22,6 @@ function CW_FleetClashEvent.initialize()
 end
 
 function CW_FleetClashEvent.finalize()
-    Sector():removeScript("events/cw_fleetclash.lua")
     terminate()
 end
 
@@ -31,7 +30,6 @@ function CW_FleetClashEvent.spawn()
 
     -- Do not start wars in neutral zones or sanctuaries
     if sector:getValue("neutral_zone") then
-        Sector():removeScript("events/cw_fleetclash.lua")
         terminate()
         return
     end
@@ -41,21 +39,18 @@ function CW_FleetClashEvent.spawn()
 
     -- Only trigger if the player jumped into AI Faction territory
     if not faction or not faction.isAIFaction then
-        Sector():removeScript("events/cw_fleetclash.lua")
         terminate()
         return
     end
 
     local enemyId = faction:getValue("enemy_faction")
     if not enemyId or enemyId <= 0 then
-        Sector():removeScript("events/cw_fleetclash.lua")
         terminate()
         return
     end
 
     local enemyFaction = Faction(enemyId)
     if not enemyFaction then
-        Sector():removeScript("events/cw_fleetclash.lua")
         terminate()
         return
     end
@@ -64,7 +59,6 @@ function CW_FleetClashEvent.spawn()
 
     -- Only trigger massive flashpoints if tensions are extremely high
     if heat < 0.60 then
-        Sector():removeScript("events/cw_fleetclash.lua")
         terminate()
         return
     end

@@ -15,28 +15,24 @@ function CW_BlockadeEvent.initialize()
     -- Only trigger in populated sectors
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     if #stations == 0 then
-        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
 
     local defender = Galaxy():getNearestFaction(x, y)
     if not defender or not defender.isAIFaction then
-        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
 
     local enemyIndex = defender:getValue("enemy_faction") or 0
     if enemyIndex == 0 then
-        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
 
     local attacker = Faction(enemyIndex)
     if not attacker then
-        Sector():removeScript("events/cw_blockade.lua")
         terminate()
         return
     end
@@ -68,6 +64,5 @@ function CW_BlockadeEvent.initialize()
     local cvn = include("cosmicvaultnews")
     cvn.publishArticle(article)
 
-    Sector():removeScript("events/cw_blockade.lua")
     terminate()
 end

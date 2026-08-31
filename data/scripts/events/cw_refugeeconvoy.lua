@@ -18,21 +18,18 @@ function CW_RefugeeConvoyEvent.initialize()
 end
 
 function CW_RefugeeConvoyEvent.finalize()
-    Sector():removeScript("events/cw_refugeeconvoy.lua")
     terminate()
 end
 
 function CW_RefugeeConvoyEvent.spawn()
     local sector = Sector()
     if sector:getValue("neutral_zone") then
-        Sector():removeScript("events/cw_refugeeconvoy.lua")
         terminate()
         return
     end
     local x, y = sector:getCoordinates()
     local faction = Galaxy():getControllingFaction(x, y)
     if faction then
-        Sector():removeScript("events/cw_refugeeconvoy.lua")
         terminate()
         return
     end                                    -- Only spawn in empty/border sectors
@@ -44,21 +41,18 @@ function CW_RefugeeConvoyEvent.spawn()
     end
 
     if #possibleFactions == 0 then
-        Sector():removeScript("events/cw_refugeeconvoy.lua")
         terminate()
         return
     end
     CW_RefugeeConvoyEvent.victimId = possibleFactions[random():getInt(1, #possibleFactions)]
     local victimFaction = Faction(CW_RefugeeConvoyEvent.victimId)
     if not victimFaction then
-        Sector():removeScript("events/cw_refugeeconvoy.lua")
         terminate()
         return
     end
     CW_RefugeeConvoyEvent.attackerId = victimFaction:getValue("enemy_faction")
 
     if not CW_RefugeeConvoyEvent.attackerId or CW_RefugeeConvoyEvent.attackerId <= 0 then
-        Sector():removeScript("events/cw_refugeeconvoy.lua")
         terminate()
         return
     end
@@ -134,7 +128,6 @@ function CW_RefugeeConvoyEvent.escapeTransports()
             end
         end
     end
-    Sector():removeScript("events/cw_refugeeconvoy.lua")
     terminate()
 end
 
