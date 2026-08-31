@@ -153,14 +153,16 @@ mission.phases[1].updateServer = function(timeStep)
             if boarding then
                 local baseDefense = station:getValue("cw_base_boarding_defense")
                 if not baseDefense then
-                    baseDefense = boarding.defenseMultiplier
+                    -- Boarding has no "defenseMultiplier" property (see Boarding.lua stub);
+                    -- the real scalable field is "defenseLevel".
+                    baseDefense = boarding.defenseLevel
                     station:setValue("cw_base_boarding_defense", baseDefense)
                 end
-                
+
                 if weather == "IonStorm" or weather == "DarkMatterFog" then
-                    boarding.defenseMultiplier = baseDefense * 0.5
+                    boarding.defenseLevel = baseDefense * 0.5
                 else
-                    boarding.defenseMultiplier = baseDefense
+                    boarding.defenseLevel = baseDefense
                 end
             end
         end
@@ -215,7 +217,9 @@ function spawnSiegeTarget(x, y)
     
     local boarding = Boarding(station.index)
     if boarding then
-        boarding.defenseMultiplier = boarding.defenseMultiplier * hpMult
+        -- Boarding has no "defenseMultiplier" property (see Boarding.lua stub); the real
+        -- scalable field is "defenseLevel". Guard against a 0 base value so the boost applies.
+        boarding.defenseLevel = math.max(boarding.defenseLevel, 1.0) * hpMult
     end
 
     -- Spawn Initial defenders
@@ -281,10 +285,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Frontline Siege"%_T,
-        description = "The enemy has established a Forward Operating Base. We need it destroyed.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Frontline Siege"%_t,
+        description = "The enemy has established a Forward Operating Base. We need it destroyed.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_frontlinesiege.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

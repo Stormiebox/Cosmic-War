@@ -87,11 +87,11 @@ end
 function CW_DiplomaticSabotageEvent.checkSurvival()
     local envoy = Sector():getEntity(CW_DiplomaticSabotageEvent.envoyId)
     if envoy then
-        Sector():broadcastChatMessage(Faction(CW_DiplomaticSabotageEvent.envoyFactionId).name, ChatMessageType.Information,
-            "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_T)
-
         local faction = Faction(CW_DiplomaticSabotageEvent.envoyFactionId)
         if faction then
+            Sector():broadcastChatMessage(faction.name, ChatMessageType.Information,
+                "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_T)
+
             for _, player in pairs({Sector():getPlayers()}) do
                 changeRelations(player, faction, 15000, RelationChangeType.General)
             end

@@ -19,6 +19,14 @@ function CW_CapitalShipDuelEvent.spawn()
     local facA = Galaxy():getNearestFaction(x + 10, y + 10)
     local facB = Galaxy():getNearestFaction(x - 10, y - 10)
 
+    -- Either lookup can land in no man's land and return nil; bail out cleanly instead of
+    -- indexing a nil faction below.
+    if not facA or not facB then
+        Sector():removeScript("events/cw_capital_ship_duel.lua")
+        terminate()
+        return
+    end
+
     local dreadA = ShipGenerator.createMilitaryShip(facA, SectorGenerator(x,y):getPositionInSector())
     dreadA.title = facA.name .. " Dreadnought"
 

@@ -24,12 +24,19 @@ function sendBountyMessage(msgType, text, ...)
     end
 end
 
-function initialize(giver, target)
+function initialize(giver, target, firstReward)
     giverIndex = giver or 0
     targetIndex = target or 0
-    
+
     if onServer() then
         sendBountyMessage(0, "War Bounty License Activated! You have 45 minutes to destroy up to 15 military targets of the enemy faction."%_T)
+
+        -- addScriptOnce is deferred, so the caller can't invokeFunction("registerKill")
+        -- back into us within the same tick it attaches this script. The first kill's
+        -- reward is passed straight through here instead.
+        if firstReward and firstReward > 0 then
+            registerKill(firstReward)
+        end
     end
 end
 
@@ -52,7 +59,7 @@ function update(timeStep)
     if lastNotificationTime - timeRemaining >= 300 then
         lastNotificationTime = lastNotificationTime - 300
         local mins = math.ceil(timeRemaining / 60)
-        sendBountyMessage(0, "Bounty License: %d minutes remaining."%_T, mins)
+        sendBountyMessage(0, "Bounty License: %1% minutes remaining."%_T, mins)
     end
 end
 
@@ -67,7 +74,7 @@ function registerKill(reward)
     local f = Faction()
     if f then
         f:receive("Confirmed War Bounty"%_T, reward)
-        sendBountyMessage(0, "Bounty target destroyed! [%d/%d] (+%d Cr)"%_T, kills, maxKills, reward)
+        sendBountyMessage(0, "Bounty target destroyed! [%1%/%2%] (+%3% Cr)"%_T, kills, maxKills, reward)
         
         if kills >= maxKills then
             sendBountyMessage(0, "Bounty License Complete! Contract fulfilled."%_T)

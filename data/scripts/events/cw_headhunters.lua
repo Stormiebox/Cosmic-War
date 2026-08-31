@@ -12,14 +12,16 @@ function CW_HeadhuntersEvent.initialize()
 
     local sector = Sector()
     local x, y = sector:getCoordinates()
-    local player = Player()
 
-    -- Only trigger if the player is present
-    if not player then
+    -- Only trigger if a player is present. Sector scripts have no implicit "self"
+    -- player, so pull the present players explicitly rather than calling Player().
+    local players = {sector:getPlayers()}
+    if #players == 0 then
         Sector():removeScript("events/cw_headhunters.lua")
         terminate()
         return
     end
+    local player = players[random():getInt(1, #players)]
 
     local server = Server()
     local factionStr = server:getValue("factions")

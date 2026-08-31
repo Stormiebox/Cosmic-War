@@ -193,10 +193,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Propaganda Broadcast"%_T,
-        description = "Escort our broadcasting ship to a contested sector and defend it while it transmits demoralizing propaganda to the enemy.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Propaganda Broadcast"%_t,
+        description = "Escort our broadcasting ship to a contested sector and defend it while it transmits demoralizing propaganda to the enemy.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_propaganda_broadcast.lua",
         icon = "data/textures/icons/ShipEscort.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

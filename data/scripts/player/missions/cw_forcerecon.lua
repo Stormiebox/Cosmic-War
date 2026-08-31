@@ -226,10 +226,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Force Recon"%_T,
-        description = "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Force Recon"%_t,
+        description = "Tensions are rising. We need a discreet captain to scout a hostile sector and gather intel.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_forcerecon.lua",
         icon = "data/textures/icons/ShipRecon.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

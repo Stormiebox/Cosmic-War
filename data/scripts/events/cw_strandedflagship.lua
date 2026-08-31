@@ -52,7 +52,8 @@ function CW_StrandedFlagshipEvent.spawn()
     end
 
     local generator = SectorGenerator(x, y)
-    local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:getPositionInSector(), 25.0) -- Volume factor x25
+    local volume = Balancing_GetSectorShipVolume(x, y) * 25.0 -- Dreadnought-scale flagship
+    local ship = ShipGenerator.createMilitaryShip(flagshipFaction, generator:getPositionInSector(), volume)
 
     ship:setTitle("Stranded Flagship"%_T, {})
     ship.name = flagshipFaction.name .. " Dreadnought"

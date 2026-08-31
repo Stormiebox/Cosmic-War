@@ -170,10 +170,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Border Skirmish"%_T,
-        description = "Border disputes are getting violent. Intercept and eliminate an enemy border patrol.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Border Skirmish"%_t,
+        description = "Border disputes are getting violent. Intercept and eliminate an enemy border patrol.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_borderskirmish.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

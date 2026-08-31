@@ -31,8 +31,8 @@ function CW_RiftHazard.updateClient(timeStep)
             local sounds = {"distant-thunder1", "distant-thunder2", "distant-thunder3", "distant-thunder4"}
             local pick = sounds[localRand:getInt(1, #sounds)]
             
-            -- Avorion valid global audio API for client scripts
-            playSound(pick, SoundType.Other, position)
+            -- Positional ambient sound; playSound() has no position parameter, only play3DSound() does.
+            play3DSound(pick, SoundType.Other, position, 200000, 1)
         end
         soundInterval = 5 + (localRand:getFloat() * 10)
         soundTimer = 0

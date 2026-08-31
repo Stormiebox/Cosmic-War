@@ -152,10 +152,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: P.O.W. Extraction"%_T,
-        description = "Break into a nearby enemy prison sector, destroy the prison station, and extract the captured officers.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: P.O.W. Extraction"%_t,
+        description = "Break into a nearby enemy prison sector, destroy the prison station, and extract the captured officers.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_extract_pow.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

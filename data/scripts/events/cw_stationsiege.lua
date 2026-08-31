@@ -19,7 +19,11 @@ function CW_StationsiegeEvent.spawn()
     local attackerFaction = Galaxy():getNearestFaction(x, y)
     local targetStation = Sector():getEntitiesByType(EntityType.Station)
 
-    if not targetStation then return end
+    if not targetStation or not attackerFaction then
+        Sector():removeScript("events/cw_stationsiege.lua")
+        terminate()
+        return
+    end
 
     for i=1, 8 do
         local siegeShip = ShipGenerator.createMilitaryShip(attackerFaction, SectorGenerator(x,y):getPositionInSector())

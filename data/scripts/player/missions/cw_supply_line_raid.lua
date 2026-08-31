@@ -96,6 +96,7 @@ mission.phases[1].triggers = {
     {
         condition = function()
             if onClient() then return false end
+            if mission.data.custom.done then return false end
             local _raw_targets = { Sector():getEntitiesByScriptValue("cw_raid_target") }
 
             local targets = {}
@@ -112,6 +113,7 @@ mission.phases[1].triggers = {
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0
         end,
         callback = function()
+            mission.data.custom.done = true
             reward()
             accomplish()
         end
@@ -121,6 +123,7 @@ mission.phases[1].triggers = {
             if onClient() then return false end
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
+            if mission.data.custom.done then return false end
 
             mission.data.custom.jumpTimer = (mission.data.custom.jumpTimer or 180) - 1
 
@@ -155,6 +158,7 @@ mission.phases[1].triggers = {
             if giverFaction then
                 Player():sendChatMessage(giverFaction.name, 0, "The convoy escaped! Mission failed."%_T)
             end
+            mission.data.custom.done = true
             fail()
         end
     }
@@ -193,10 +197,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Supply Line Raid"%_T,
-        description = "An enemy logistics convoy is vulnerable in a nearby sector. Destroy the freighters before they warp out.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Supply Line Raid"%_t,
+        description = "An enemy logistics convoy is vulnerable in a nearby sector. Destroy the freighters before they warp out.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_supply_line_raid.lua",
         icon = "data/textures/icons/ResourceSteal.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

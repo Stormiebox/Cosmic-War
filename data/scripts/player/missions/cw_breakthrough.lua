@@ -163,6 +163,7 @@ mission.phases[1].updateServer = function(timeStep)
         end
 
         finishAndReward(#convoyShips)
+        return
     end
 
     if mission.data.custom.waveTimer > 45 then
@@ -257,10 +258,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Breakthrough"%_T,
-        description = "We have a critical supply convoy moving through contested space. Defend them until they can jump.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Breakthrough"%_t,
+        description = "We have a critical supply convoy moving through contested space. Defend them until they can jump.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_breakthrough.lua",
         icon = "data/textures/icons/ShipEscort.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

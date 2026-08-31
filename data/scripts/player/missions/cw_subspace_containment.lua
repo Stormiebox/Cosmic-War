@@ -66,18 +66,27 @@ function initialize(factionIndex)
             }
         end
 
+        mission.globalPhase.noBossEncountersTargetSector = true
+        mission.globalPhase.noPlayerEventsTargetSector = true
+
         mission.phases[1] = {
             onTargetLocationEntered = function(x, y)
                 mission.data.description[3].fulfilled = true
                 mission.data.description[4] = { text = "Destroy the Ancient Protection Platform."%_T, bulletPoint = true, fulfilled = false }
-                
+
+                -- onTargetLocationEntered fires on both client and server; entity creation
+                -- must only ever happen on the server, and only once per mission.
+                if onClient() then return end
+                if mission.data.custom.spawned then return end
+                mission.data.custom.spawned = true
+
                 local sector = Sector()
                 -- Add rift hazards
                 sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
                 local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(0,0,0)))
                 platform:setValue("cw_mission_target", true)
                 mission.data.custom.targetId = platform.id.string
-                
+
                 sector:broadcastChatMessage(giverFaction.name, 3, "The subspace anomaly has pulled an Ancient Protection Platform into normal space. Destroy it so we can harvest the data!"%_t)
             end,
             onTargetLocationLeft = function(x, y)
@@ -85,13 +94,30 @@ function initialize(factionIndex)
                 mission.data.description[4] = nil
             end,
             onEntityDestroyed = function(id, lastDamageInflictor)
-                if id.string == mission.data.custom.targetId then
+                if onClient() then return end
+                if mission.data.custom.targetId and id.string == mission.data.custom.targetId then
                     finishAndReward()
                 end
             end
         }
     end
     if cw_init then cw_init() end
+end
+
+function finishAndReward()
+    if onClient() then return end
+
+    local x, y = Sector():getCoordinates()
+    local article = {
+        title = "Ancient Protection Platform Destroyed",
+        content = "An Ancient Protection Platform, pulled into normal space by an experimental hyperspace weapon in sector [" .. x .. ":" .. y .. "], has been destroyed by independent contractors.",
+        category = "War"
+    }
+    local cv_news = include("cosmicvaultnews")
+    cv_news.publishArticle(article)
+
+    reward()
+    accomplish()
 end
 
 function getBulletin(station)
@@ -109,10 +135,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Subspace Containment"%_T,
-        description = "Our experimental hyperspace weapons have torn a rift in a nearby sector. Ancient structures have emerged. Destroy them and secure the zone.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Subspace Containment"%_t,
+        description = "Our experimental hyperspace weapons have torn a rift in a nearby sector. Ancient structures have emerged. Destroy them and secure the zone.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_subspace_containment.lua",
         icon = "data/textures/icons/vortex.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

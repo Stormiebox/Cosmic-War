@@ -184,10 +184,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Sector Raid"%_T,
-        description = "We're organizing a strike on an enemy-controlled sector. Your objective is simple: jump in and destroy at least one of their stations.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Hard"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Sector Raid"%_t,
+        description = "We're organizing a strike on an enemy-controlled sector. Your objective is simple: jump in and destroy at least one of their stations.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Hard"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_sector_raid.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

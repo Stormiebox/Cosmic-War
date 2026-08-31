@@ -188,9 +188,10 @@ if onClient() then
 
         for _, conflict in ipairs(self.lastData) do
             local match = true
-            if filter == "Active Conflicts"%_t and conflict.heat == 0 then match = false end
-            if filter == "Ceasefires Only"%_t and conflict.heat > 0 then match = false end
-            if filter == "Active Bounties"%_t and conflict.bountyA == 0 and conflict.bountyB == 0 then match = false end
+            -- selectedValue returns the raw addEntry() value, not the localized caption, so compare untranslated.
+            if filter == "Active Conflicts" and conflict.heat == 0 then match = false end
+            if filter == "Ceasefires Only" and conflict.heat > 0 then match = false end
+            if filter == "Active Bounties" and conflict.bountyA == 0 and conflict.bountyB == 0 then match = false end
 
             if match then
                 table.insert(self.displayedConflicts, conflict)

@@ -8,7 +8,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 
-local SectorGenerator = include("sectorgenerator")
+local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -159,10 +159,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Champion Duel"%_T,
-        description = "An arrogant enemy commander has broadcasted an open challenge to our faction, demanding a 1-on-1 duel. Command doesn't want to risk official assets, so we are paying you to answer the call and humiliate them.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Champion Duel"%_t,
+        description = "An arrogant enemy commander has broadcasted an open challenge to our faction, demanding a 1-on-1 duel. Command doesn't want to risk official assets, so we are paying you to answer the call and humiliate them.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_champion_duel.lua",
         icon = "data/textures/icons/ShipBounty.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

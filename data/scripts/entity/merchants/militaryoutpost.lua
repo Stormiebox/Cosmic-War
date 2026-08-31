@@ -23,14 +23,24 @@ function MilitaryOutpost.onEnlistInteraction()
         return
     end
 
+    -- Heat must be evaluated server-side; Server() is not available in UI context.
+    invokeServerFunction("requestEnlistDialog")
+end
+
+function MilitaryOutpost.requestEnlistDialog()
+    if onClient() then invokeServerFunction("requestEnlistDialog") return end
+    local entity = Entity()
     local CosmicWarBridge = include("cosmicwarbridge")
     local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
-    if heat < 0.25 then
-        ScriptUI():showDialog(MilitaryOutpost.makeNotAtWarDialog())
-        return
-    end
+    invokeClientFunction(Player(callingPlayer), "showEnlistDialog", heat >= 0.25)
+end
 
-    ScriptUI():showDialog(MilitaryOutpost.makeEnlistDialog())
+function MilitaryOutpost.showEnlistDialog(atWar)
+    if atWar then
+        ScriptUI():showDialog(MilitaryOutpost.makeEnlistDialog())
+    else
+        ScriptUI():showDialog(MilitaryOutpost.makeNotAtWarDialog())
+    end
 end
 
 function MilitaryOutpost.makeEnlistDialog()
@@ -78,3 +88,5 @@ function MilitaryOutpost.enlistPlayer()
     player:sendChatMessage(entity.name, 0, "Welcome aboard. Your privateer license is active. Hunt down our enemies.")
 end
 callable(MilitaryOutpost, "enlistPlayer")
+callable(MilitaryOutpost, "requestEnlistDialog")
+callable(MilitaryOutpost, "showEnlistDialog")

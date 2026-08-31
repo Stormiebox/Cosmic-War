@@ -53,7 +53,7 @@ function CW_BlockadeEvent.initialize()
     for i = 1, random:getInt(3, 5) do
         local pos = center + vec3(random:getFloat(-500, 500), random:getFloat(-500, 500), random:getFloat(-500, 500))
         local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
-        local ship = ShipGenerator.createMilitaryShip(attacker, matrix, random:getInt(1, 3)) -- 1: defender, 2: attacker, 3: heavy
+        local ship = ShipGenerator.createMilitaryShip(attacker, matrix) -- volume defaults to the sector's standard military ship size
         if ship then
             ship:addScriptOnce("ai/patrol.lua")
         end

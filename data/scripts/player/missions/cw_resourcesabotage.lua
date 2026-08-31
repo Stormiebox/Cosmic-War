@@ -172,10 +172,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Resource Sabotage"%_T,
-        description = "A hostile mining operation is extracting resources in contested space. Put an end to it.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Resource Sabotage"%_t,
+        description = "A hostile mining operation is extracting resources in contested space. Put an end to it.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_resourcesabotage.lua",
         icon = "data/textures/icons/ResourceSteal.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

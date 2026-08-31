@@ -165,7 +165,10 @@ function spawnFlagship(x, y)
     
     local boarding = Boarding(flagship.index)
     if boarding then
-        boarding.defenseMultiplier = boarding.defenseMultiplier * hpMult
+        -- Boarding has no "defenseMultiplier" property (see Boarding.lua stub); the real
+        -- scalable field is "defenseLevel". Guard against a 0 base value so the boss boost
+        -- always applies.
+        boarding.defenseLevel = math.max(boarding.defenseLevel, 1.0) * hpMult
     end
 
     -- Spawn a massive defender fleet to protect it
@@ -237,10 +240,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Decapitation Strike"%_T,
-        description = "The enemy Flagship has entered the sector. This is our chance to end the war.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Decapitation Strike"%_t,
+        description = "The enemy Flagship has entered the sector. This is our chance to end the war.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_decapitationstrike.lua",
         icon = "data/textures/icons/ShipBounty.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

@@ -177,16 +177,26 @@ local function applyWarProfiteeringShortages(factions, random)
         if rel <= -80000 then
             local stations = {sector:getEntitiesByFaction(f.index)}
             for _, station in pairs(stations) do
-                if station.isStation and (station:hasScript("tradingpost.lua") or station:hasScript("equipmentdock.lua") or station:hasScript("militaryoutpost.lua")) then
+                -- Only tradingpost.lua exposes a TradingAPI namespace (decreaseGoods); equipmentdock.lua
+                -- uses a different ShopAPI and militaryoutpost.lua has no trading manager at all.
+                if station.isStation and station:hasScript("tradingpost.lua") then
                     -- Artificially drain military goods
-                    local goodsToDrain = {"Ammunition", "Medical Supplies", "Steel", "Weapon Components", "Energy Tubes"}
+                    local goodsToDrain = {"Ammunition", "Medical Supplies", "Steel", "Weapon Components", "Energy Tube"}
                     for _, goodName in pairs(goodsToDrain) do
                         local good = goods[goodName]
                         if good then
                             -- Soft Bridge: We just remove stock. If Cosmic Overhaul is installed,
                             -- its dynamic economy will naturally detect the deficit and amplify prices.
-                            station:invokeFunction("tradingmanager.lua", "decreaseStock", goodName, random:getInt(500, 2000))
-                            didShortage = true
+                            -- invokeFunction returns the call-status code as its first value, not a
+                            -- table (see Avorion Stubs/Entity.lua) -- indexing it with [1] would try
+                            -- to index a number and crash. "decreaseGoods" is also not currently a
+                            -- callable() target on TradingPost, so this will report status ~= 0 until
+                            -- tradingpost.lua exposes one; left safe-but-inert rather than guessing at
+                            -- an internal TradingManager API to call instead.
+                            local status = station:invokeFunction("tradingpost.lua", "decreaseGoods", goodName, random:getInt(500, 2000))
+                            if status == 0 then
+                                didShortage = true
+                            end
                         end
                     end
                 end

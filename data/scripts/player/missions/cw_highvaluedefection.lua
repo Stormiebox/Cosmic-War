@@ -172,6 +172,7 @@ mission.phases[1].updateServer = function(timeStep)
         end
 
         finishAndReward()
+        return
     end
 
     -- Spawn hunters every 45 seconds
@@ -244,10 +245,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: High-Value Extraction"%_T,
-        description = "A high-ranking enemy officer is defecting to our side. We need you to extract them safely.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: High-Value Extraction"%_t,
+        description = "A high-ranking enemy officer is defecting to our side. We need you to extract them safely.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_highvaluedefection.lua",
         icon = "data/textures/icons/ShipEscort.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

@@ -36,7 +36,7 @@ function CW_BountyPayouts.onPlayerEntered(playerIndex)
                         -- Active bounty on the sector owner!
                         local reward = f:getValue("cw_bounty_reward") or 0
                         if reward > 0 then
-                            player:sendChatMessage("Bounty Network"%_T, 0, "Incoming Transmission: %s has placed an active War Bounty on military assets in this sector!"%_T, f.name)
+                            player:sendChatMessage("Bounty Network"%_T, 0, "Incoming Transmission: %1% has placed an active War Bounty on military assets in this sector!"%_T, f.name)
                             break
                         end
                     end
@@ -78,6 +78,7 @@ function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
     else
         return
     end
+    if not killer then return end
 
     local server = Server()
     if not server then return end
@@ -110,18 +111,22 @@ function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
                         local finalReward = reward * multiplier
                         
                         local scriptPath = "data/scripts/player/background/cw_bounty_tracker.lua"
-                        
+
                         if not killer:hasScript(scriptPath) then
-                            killer:addScriptOnce(scriptPath, fIndex, victimFactionIndex)
-                        end
-                        
-                        local targetIdx = killer:invokeFunction(scriptPath, "getTargetFaction")
-                        if targetIdx == victimFactionIndex then
-                            killer:invokeFunction(scriptPath, "registerKill", finalReward)
+                            -- First kill against this bounty: addScriptOnce is deferred (like
+                            -- removeScript), so the tracker won't be attached yet if we tried to
+                            -- invokeFunction("registerKill") on it within this same callback.
+                            -- Pass the reward straight through initialize() instead.
+                            killer:addScriptOnce(scriptPath, fIndex, victimFactionIndex, finalReward)
                         else
-                            -- Player is already tracking a DIFFERENT bounty and cannot accept this one right now.
-                            if killer.isPlayer then
-                                killer:sendChatMessage("Bounty Network"%_T, 1, "You cannot collect this bounty while another Bounty License is active."%_T)
+                            local invokeStatus, targetIdx = killer:invokeFunction(scriptPath, "getTargetFaction")
+                            if invokeStatus == 0 and targetIdx == victimFactionIndex then
+                                killer:invokeFunction(scriptPath, "registerKill", finalReward)
+                            else
+                                -- Player is already tracking a DIFFERENT bounty and cannot accept this one right now.
+                                if killer.isPlayer then
+                                    killer:sendChatMessage("Bounty Network"%_T, 1, "You cannot collect this bounty while another Bounty License is active."%_T)
+                                end
                             end
                         end
                         

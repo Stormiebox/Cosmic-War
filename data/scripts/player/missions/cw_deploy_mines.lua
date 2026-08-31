@@ -161,10 +161,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Deploy Minefield"%_T,
-        description = "Travel to a contested sector and deploy 5 tactical mines to deny enemy movement.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Deploy Minefield"%_t,
+        description = "Travel to a contested sector and deploy 5 tactical mines to deny enemy movement.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_deploy_mines.lua",
         icon = "data/textures/icons/ShipRecon.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

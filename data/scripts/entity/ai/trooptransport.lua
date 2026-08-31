@@ -17,6 +17,16 @@ end
 
 if onServer() then
 
+function TroopTransport.initialize(stationIdStr)
+    -- addScriptOnce is deferred, so the caller can't invokeFunction("setTarget") back into
+    -- us within the same tick it attaches this script. The target is passed straight through
+    -- here instead. Uuid values don't cross the addScriptOnce boundary directly, so the caller
+    -- sends the string form and we reconstruct it.
+    if stationIdStr then
+        TroopTransport.targetStationId = Uuid(stationIdStr)
+    end
+end
+
 function TroopTransport.setTarget(stationId)
     TroopTransport.targetStationId = stationId
 end
@@ -77,7 +87,7 @@ function TroopTransport.updateServer(timeStep)
         local sector = Sector()
         if not TroopTransport.boardingMessageSent then
             TroopTransport.boardingMessageSent = true
-            sector:broadcastChatMessage(ship, ChatMessageType.Warning, "Troop Transports have breached the hull of %s! Boarding in progress!"%_T, target.translatedTitle or "a station")
+            sector:broadcastChatMessage(ship, ChatMessageType.Warning, "Troop Transports have breached the hull of %1%! Boarding in progress!"%_T, target.translatedTitle or "a station")
         end
 
         if TroopTransport.boardingProgress >= TroopTransport.boardingRequired then
@@ -142,8 +152,9 @@ end
 
 
 
-function spawnExplosion(pos, radius)
+function TroopTransport.spawnExplosion(pos, radius)
     if onServer() then return end
     Sector():createExplosion(pos, radius, false)
 end
+callable(TroopTransport, "spawnExplosion")
 

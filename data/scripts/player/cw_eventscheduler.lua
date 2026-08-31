@@ -103,7 +103,7 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
             for i = 1, random:getInt(2, 4) do
                 local pos = center + vec3(random:getFloat(-200, 200), random:getFloat(-200, 200), random:getFloat(-200, 200))
                 local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
-                local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix, 3) -- Heavy military
+                local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix) -- Elite headhunter, scaled below
 
                 -- Custom Cosmic War Scaling for Elite Bounty Hunters
                 ship.damageMultiplier = (ship.damageMultiplier or 1) * 2.5

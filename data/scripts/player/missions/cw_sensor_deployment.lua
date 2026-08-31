@@ -8,7 +8,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 
-local SectorGenerator = include("sectorgenerator")
+local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -214,10 +214,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Sensor Deployment"%_T,
-        description = "We need greater visibility into enemy territory. We are contracting you to jump into 3 specific hostile sectors and drop stealth sensor buoys at their exact center coordinates (0, 0, 0). Expect heavy resistance.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Medium"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Sensor Deployment"%_t,
+        description = "We need greater visibility into enemy territory. We are contracting you to jump into 3 specific hostile sectors and drop stealth sensor buoys at their exact center coordinates (0, 0, 0). Expect heavy resistance.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Medium"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_sensor_deployment.lua",
         icon = "data/textures/icons/ShipRecon.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

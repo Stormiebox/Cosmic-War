@@ -1,10 +1,33 @@
 [i]Version 3.3.4[/i]
 [hr][/hr]
-[h1]v.3.3.4 🐛BUGFIX UPDATE!🐛[/h1]
+[h1]v.3.3.4 🐛MASSIVE BUGFIX UPDATE!🐛[/h1]
 [hr][/hr]
-[i]This hotfix addresses issues with Warbonds![/i]
+[i]This hotfix addresses many issues reported![/i]
 [*]🐛 [b]Warbond Purchase Server Crash:[/b] Fixed a fatal `attempt to call global 'Server' (a nil value)` error triggered when a player interacted with the "Purchase Warbonds" option at a Trading Post.
 [*]🐛 [b]Warbond Dialog Flow Rearchitected:[/b] The underlying architectural issue was that a UI interaction callback which always executes on the client — was directly calling a script to determine which dialog to show. Any bridge function that transitively calls [i]Server()[/i] will crash in this context. Reworked the flow to use the correct Avorion client/server RPC pattern.
+[*]🐛 [b]Bounty Payout Failing on First Kill:[/b] Fixed an issue where destroying the very first enemy target under a new War Bounty License would fail to pay out and incorrectly tell you that you already had a License active, even when you didn't. Bounty rewards are now credited immediately when the License activates, so your first kill always counts.
+[*]🐛 [b]Bounty Payout Failing on EVERY Kill After the First:[/b] Building on the fix above, every kill after your first one under an active License was also being wrongly rejected with the "License already active" message. Bounty kills now correctly register for the full duration of your License.
+[*]🐛 [b]Bounty License Crash / Recurring Error Log:[/b] Fixed a bug causing a repeating server error roughly every 5 minutes while a War Bounty License was active, along with the periodic "time remaining" and "target destroyed" chat messages not displaying correctly.
+[*]🐛 [b]Bounty Payout Crash on Invalid Killer:[/b] Fixed a rare server crash that could occur when a bounty target was destroyed under specific ownership conditions.
+[*]🐛 [b]Blank / Unclickable Bulletin Board Missions:[/b] Fixed a major bug where War Contract missions posted on faction bulletin boards would show up as empty bars with no description and could not be accepted. This affected every faction's bulletin board and was the cause of recent reports of "blank missions."
+[*]🐛 [b]Physical Sieges Not Triggering:[/b] Fixed a critical bug preventing the physical siege event (enemy Troop Transports warping in to board and capture a contested station) from ever starting. This is a core part of the Dynamic Territory Sieges feature and was completely broken until this fix.
+[*]🐛 [b]Troop Transports Boarding the Wrong Station:[/b] Fixed an issue where, in sectors with multiple hostile stations, an invading Troop Transport could target the wrong station instead of the one actually under siege.
+[*]🐛 [b]Shield Jammer Chance Corrected:[/b] The Electronic Warfare "Shield Jammer" effect during a siege was only triggering about 10% of the time instead of the intended 35%.
+[*]🐛 [b]Troop Transport Boarding Explosion Not Displaying:[/b] Fixed the self-destruct explosion effect not appearing for other players when a Troop Transport successfully boards a station.
+[*]🐛 [b]Subspace Containment Contract Could Never Finish:[/b] Fixed a bug preventing this War Contract from ever completing or paying out after destroying its target, plus a rare issue where leaving and re-entering the sector could spawn duplicate targets.
+[*]🐛 [b]Decapitation Strike & Frontline Siege Difficulty Scaling:[/b] Fixed a bug preventing the intended boss/base difficulty scaling from applying in these two War Contracts.
+[*]🐛 [b]Several War Contracts Could Fail to Load on Linux Servers:[/b] Fixed a file-name capitalization issue in 7 War Contract missions that would only cause problems on Linux-hosted dedicated servers.
+[*]🐛 [b]Interception & Supply Line Raid Could Show "Failed" After Succeeding:[/b] Fixed a timing bug where completing these contracts at the exact moment their timer ran out could show a failure message even though you'd already won.
+[*]🐛 [b]Breakthrough & High-Value Defection Spawning Extra Enemies After Completion:[/b] Fixed a bug where extra enemy waves could spawn into the sector right after these missions had already ended.
+[*]🐛 [b]Eclipse Vanguard Event Broken:[/b] Fixed this dynamic event so its boss ship and cinematic banner actually work.
+[*]🐛 [b]Headhunters Ambush Never Triggering:[/b] Fixed a bug that silently prevented this ambush event from ever firing.
+[*]🐛 [b]Military Outpost "Enlist" Option Not Appearing During War:[/b] Fixed a bug preventing the mercenary enlistment dialog from showing up at Military Outposts even when their faction was actively at war.
+[*]🐛 [b]Mercenary Contract Kills Not Tracked:[/b] Fixed a bug preventing kills from counting toward active Mercenary Contracts.
+[*]🐛 [b]Rift Hazard Sound Effect Crash:[/b] Fixed a potential crash tied to the ambient thunder sound effect in Rift-affected sectors.
+[*]🐛 [b]Galactic Politics Tab Filter (Non-English Clients):[/b] Fixed the conflict filter dropdown not working correctly for players using a non-English game language.
+[*]🐛 [b]Miniature/Undersized Ships in Several Dynamic Events:[/b] Fixed a sizing bug causing some enemy ships spawned by Blockade, Stranded Flagship, and other dynamic events to come out far smaller than intended.
+[*]🐛 [b]Rare Crashes in Capital Ship Duel, Orbital Bombardment, Diplomatic Sabotage, and Station Siege Events:[/b] Fixed a handful of edge-case crashes that could occur when these events triggered in unclaimed space.
+[*]🐛 [b]Enemy Ships Spawning Over 100km Away During Sieges:[/b] Fixed a bug causing invasion fleets to occasionally spawn nearly twice as far from the action as intended during sector sieges.
 
 [i]Version 3.3.3[/i]
 [hr][/hr]

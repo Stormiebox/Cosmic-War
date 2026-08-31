@@ -122,6 +122,7 @@ mission.phases[1].triggers = {
             if onClient() then return false end
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
+            if mission.data.custom.done then return false end
 
             -- Check if all ships spawned with our custom tracker are destroyed
             local _raw_targets = { Sector():getEntitiesByScriptValue("cw_interception_target") }
@@ -140,6 +141,7 @@ mission.phases[1].triggers = {
             return #targets == 0
         end,
         callback = function()
+            mission.data.custom.done = true
             finishAndReward()
         end
     },
@@ -148,6 +150,7 @@ mission.phases[1].triggers = {
             if onClient() then return false end
             if not atTargetLocation() then return false end
             if not mission.data.custom.spawned then return false end
+            if mission.data.custom.done then return false end
 
             mission.data.custom.jumpTimer = (mission.data.custom.jumpTimer or 300) - 1
 
@@ -182,6 +185,7 @@ mission.phases[1].triggers = {
             if giverFaction then
                 Player():sendChatMessage(giverFaction.name, 0, "The convoy escaped! Mission failed."%_T)
             end
+            mission.data.custom.done = true
             fail()
         end
     }
@@ -244,10 +248,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Interception"%_T,
-        description = "Conflict has intensified. Intercept hostile supply movement in nearby sectors.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Interception"%_t,
+        description = "Conflict has intensified. Intercept hostile supply movement in nearby sectors.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_interception.lua",
         icon = "data/textures/icons/ShipBounty.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

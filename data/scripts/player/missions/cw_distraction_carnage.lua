@@ -8,7 +8,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 
-local SectorGenerator = include("sectorgenerator")
+local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -178,10 +178,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Distraction Carnage"%_T,
-        description = "We need to move a massive invasion fleet completely undetected. To pull this off, we need you to jump into a heavily fortified enemy sector and cause as much chaos as possible to draw all their reinforcements to your location. Survive for 5 minutes.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Hard"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Distraction Carnage"%_t,
+        description = "We need to move a massive invasion fleet completely undetected. To pull this off, we need you to jump into a heavily fortified enemy sector and cause as much chaos as possible to draw all their reinforcements to your location. Survive for 5 minutes.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Hard"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_distraction_carnage.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

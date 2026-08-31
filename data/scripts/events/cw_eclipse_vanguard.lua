@@ -20,6 +20,8 @@ function CW_EclipseVanguardEvent.spawn()
     include("cosmicascendancybridge")
     if not Server():getValue("eclipse_fully_awake") then
         include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Eclipse not awoken. Skipping Eclipse Vanguard event.")
+        Sector():removeScript("events/cw_eclipse_vanguard.lua")
+        terminate()
         return
     end
 
@@ -28,7 +30,7 @@ function CW_EclipseVanguardEvent.spawn()
     -- Emulate a boss-level faction
     local eclipseFaction = Galaxy():getPirateFaction(0)
 
-    local dreadnought = ShipGenerator.createBossShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
+    local dreadnought = ShipGenerator.createMilitaryShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
     dreadnought.title = "The Eclipse Vanguard"
     dreadnought:addScriptOnce("data/scripts/entity/ai/patrol.lua")
     dreadnought:addBaseMultiplier(StatsBonuses.FireRate, 49.0) -- 50x total
@@ -44,7 +46,7 @@ function CW_EclipseVanguardEvent.spawn()
     terminate()
 end
 
-function CosmicWarEvent.showVanguardBanner()
+function CW_EclipseVanguardEvent.showVanguardBanner()
     if onClient() then
         local CosmicVaultUI = include("cosmicvaultui")
         if CosmicVaultUI and CosmicVaultUI.ShowCinematicBanner then
@@ -52,4 +54,4 @@ function CosmicWarEvent.showVanguardBanner()
         end
     end
 end
-callable(CosmicWarEvent, "showVanguardBanner")
+callable(CW_EclipseVanguardEvent, "showVanguardBanner")

@@ -8,7 +8,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 
-local SectorGenerator = include("sectorgenerator")
+local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -164,10 +164,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Black Box Retrieval"%_T,
-        description = "One of our prototype flagships was ambushed and destroyed in enemy territory. The enemy has dispatched salvage crews to strip the tech. Get in there, find the wreckage, and recover the black box data before they do.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Hard"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Black Box Retrieval"%_t,
+        description = "One of our prototype flagships was ambushed and destroyed in enemy territory. The enemy has dispatched salvage crews to strip the tech. Get in there, find the wreckage, and recover the black box data before they do.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Hard"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_black_box_retrieval.lua",
         icon = "data/textures/icons/ShipRecon.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

@@ -8,7 +8,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 
-local SectorGenerator = include("sectorgenerator")
+local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 mission._Debug = 0
@@ -167,10 +167,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Hunter Killer"%_T,
-        description = "An elite enemy squadron has been disrupting our operations in a nearby sector. We need you to hunt them down and eliminate them.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Hard"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Hunter Killer"%_t,
+        description = "An elite enemy squadron has been disrupting our operations in a nearby sector. We need you to hunt them down and eliminate them.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Hard"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_hunter_killer.lua",
         icon = "data/textures/icons/ShipBounty.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

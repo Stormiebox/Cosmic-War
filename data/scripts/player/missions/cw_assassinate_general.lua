@@ -153,10 +153,10 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: Assassinate Flag Officer"%_T,
-        description = "An enemy Flag Officer is traveling through a nearby sector. Hunt them down and eliminate them to sever their command structure.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_T,
-        difficulty = "Extreme"%_T,
-        reward = "¢${reward}"%_T,
+        brief = "War Contract: Assassinate Flag Officer"%_t,
+        description = "An enemy Flag Officer is traveling through a nearby sector. Hunt them down and eliminate them to sever their command structure.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Extreme"%_t,
+        reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_assassinate_general.lua",
         icon = "data/textures/icons/ShipBounty.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },

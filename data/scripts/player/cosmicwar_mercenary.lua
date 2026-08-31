@@ -9,7 +9,21 @@ CW_Mercenary = CW_Mercenary or {}
 
 function CW_Mercenary.initialize()
     if onServer() then
-        Player():registerCallback("onShipDestroyed", "onShipDestroyed")
+        -- "onShipDestroyed" is not a native engine event; kills are detected via the sector's
+        -- real "onDestroyed" callback, which must be re-registered on every sector the player enters.
+        Player():registerCallback("onSectorEntered", "onSectorEntered")
+
+        local sector = Sector()
+        if sector then
+            sector:registerCallback("onDestroyed", "onShipDestroyed")
+        end
+    end
+end
+
+function CW_Mercenary.onSectorEntered(playerIndex, x, y)
+    local sector = Sector()
+    if sector then
+        sector:registerCallback("onDestroyed", "onShipDestroyed")
     end
 end
 
@@ -59,7 +73,7 @@ function CW_Mercenary.onShipDestroyed(destroyedId, destroyerId)
             -- Hybrid Captain Scaling (Cross-Mod Synergy)
             local captainMultiplier = 1.0
             if craft:hasComponent(ComponentType.Crew) then
-                local captain = craft.captain
+                local captain = craft:getCaptain()
                 if captain then
                     -- Base multiplier for having any captain
                     captainMultiplier = 1.1 

@@ -18,6 +18,13 @@ function CW_OrbitalBombardmentEvent.spawn()
     local x, y = Sector():getCoordinates()
     local attackerFaction = Galaxy():getNearestFaction(x + 15, y + 15)
 
+    -- The offset sector can land in no man's land, where getNearestFaction returns nil.
+    if not attackerFaction then
+        Sector():removeScript("events/cw_orbital_bombardment.lua")
+        terminate()
+        return
+    end
+
     for i=1, 5 do
         local bomber = ShipGenerator.createMilitaryShip(attackerFaction, SectorGenerator(x,y):getPositionInSector())
         bomber.title = "Orbital Bomber"

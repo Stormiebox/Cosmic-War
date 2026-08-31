@@ -1,7 +1,5 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
-local CosmicVaultTerritory = include("cosmicvaultterritory")
-
 -- namespace CosmicWarSiegeServer
 CosmicWarSiegeServer = {}
 
