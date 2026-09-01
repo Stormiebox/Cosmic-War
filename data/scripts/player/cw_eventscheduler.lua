@@ -13,7 +13,11 @@ local events = {
     { min = 100, max = 160, script = "data/scripts/events/cw_wreckagefield.lua", timer = 0, schedule = 0 },
     { min = 60,  max = 120, script = "data/scripts/events/cw_headhunters.lua", timer = 0, schedule = 0 },
     { min = 100, max = 160, script = "data/scripts/events/cw_blockade.lua", timer = 0, schedule = 0 },
-    { min = 120, max = 180, script = "data/scripts/events/cw_diplomaticsabotage.lua", timer = 0, schedule = 0 }
+    { min = 120, max = 180, script = "data/scripts/events/cw_diplomaticsabotage.lua", timer = 0, schedule = 0 },
+    { min = 150, max = 210, script = "data/scripts/events/cw_stationsiege.lua", timer = 0, schedule = 0 },
+    { min = 120, max = 180, script = "data/scripts/events/cw_capital_ship_duel.lua", timer = 0, schedule = 0 },
+    { min = 90,  max = 150, script = "data/scripts/events/cw_distress_beacon_trap.lua", timer = 0, schedule = 0 },
+    { min = 130, max = 190, script = "data/scripts/events/cw_orbital_bombardment.lua", timer = 0, schedule = 0 }
 }
 
 function CW_EventScheduler.getUpdateInterval()

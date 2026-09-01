@@ -321,6 +321,30 @@ local function applyWarHazardSpawns(factions, random)
     end
 end
 
+local function applyEclipseVanguardEvent(factions, random)
+    local sector = Sector()
+
+    if not Server():getValue("eclipse_fully_awake") then return end
+
+    for _, f in pairs(factions) do
+        local enemy = f:getValue("enemy_faction") or 0
+        local rel = 0
+        if enemy > 0 then rel = f:getRelations(enemy) end
+
+        -- If at critical war heat while the Eclipse is fully awake, the Vanguard may intervene
+        -- directly -- a rare, boss-tier escalation distinct from the Sanitization Protocol's
+        -- ceasefire-forcing intervention in applyWeaponizedSubspaceTear above. cw_eclipse_vanguard.lua
+        -- re-checks eclipse_fully_awake itself before spawning, so this stays safe even if that
+        -- flag flips between the roll below and the script actually attaching.
+        if rel <= -80000 then
+            if random:test(0.08) then
+                sector:addScriptOnce("data/scripts/events/cw_eclipse_vanguard.lua")
+                break -- Only one Vanguard per sector update
+            end
+        end
+    end
+end
+
 function CosmicWarController.updateServer(timeStep)
     CosmicWarController._tick = (CosmicWarController._tick or 0) + timeStep
 
@@ -351,6 +375,7 @@ function CosmicWarController.updateServer(timeStep)
     applyWarProfiteeringShortages(factions, random)
     applyWeaponizedSubspaceTear(factions, random)
     applyWarHazardSpawns(factions, random)
+    applyEclipseVanguardEvent(factions, random)
     CosmicWarController._lastEventAt = now
 end
 

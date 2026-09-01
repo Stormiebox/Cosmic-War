@@ -19,7 +19,10 @@ function CW_StationsiegeEvent.spawn()
     local attackerFaction = Galaxy():getNearestFaction(x, y)
     local targetStation = Sector():getEntitiesByType(EntityType.Station)
 
-    if not targetStation or not attackerFaction then
+    -- getEntitiesByType always returns a table, even when empty -- an empty table is still
+    -- truthy in Lua 5.1, so "not targetStation" alone never catches the "no station" case.
+    -- Must check the length explicitly.
+    if not targetStation or #targetStation == 0 or not attackerFaction then
         terminate()
         return
     end

@@ -1,6 +1,6 @@
-# ⚙️ Cosmic War - Detailed Features
+# ⚙️ Cosmic War - Technical Wiki
 
-Welcome to the **Cosmic War** official wiki! This page contains the full, detailed documentation for the faction-conflict simulation module in the **Cosmic** mod series.
+Full technical reference for **Cosmic War**, the faction-conflict simulation module in the **Cosmic** mod series. Current release: **v3.4.0**.
 
 ---
 
@@ -13,40 +13,40 @@ Welcome to the **Cosmic War** official wiki! This page contains the full, detail
 - [Dependencies & Compatibility](#dependencies--compatibility)
 - [Installation & Troubleshooting](#installation--troubleshooting)
 - [Development Status](#development-status)
+- [Engine Hardening & Cross-Mod Integration](#engine-hardening--cross-mod-integration)
 
 ---
 
 ## 🧬 Mod Identity & Design Goals
 
-**Primary Focus:** Living, persistent AI faction politics and war-state simulation.
+**Primary focus:** living, persistent AI faction politics and war-state simulation.
 
-**Core Goals:**
+**Core goals:**
 
-1. **Active Politics:** Make galaxy politics feel dynamic and alive instead of static.
-2. **Sustained Cycles:** Produce meaningful war and cooling cycles over long campaign sessions via scripts properly attached to the global `Galaxy` loop.
-3. **Player Visibility:** Surface war-state consequences directly to players via news broadcasts, bounties, and sanctions pressure.
-4. **Configurability:** Remain highly configurable and server-operator friendly through the Cosmic Configuration Menu.
-5. **Safe Compatibility:** Preserve ecosystem compatibility by favoring non-invasive wrappers and safety guards over hard overwrites.
+1. **Active politics** - make galaxy politics feel dynamic instead of static.
+2. **Sustained cycles** - produce meaningful war and cooling cycles over long campaign sessions through scripts attached to the global `Galaxy` loop.
+3. **Player visibility** - surface war-state consequences to players through news broadcasts, bounties, and sanctions pressure.
+4. **Configurability** - stay server-operator friendly through the Cosmic Configuration Menu (CCM).
+5. **Safe compatibility** - favor non-invasive wrappers and safety guards over hard overwrites.
 
 ---
 
 ## 🏗️ Architecture Summary
 
-The mod utilizes a layered simulation model to bring the galaxy to life:
+The mod layers several simulation systems on top of vanilla Avorion:
 
-1. **Faction-Level Baseline Traits:** Seeded and maintained to define AI personality.
-2. **Sector-Level Pressure Loops:** Dynamically escalate local rivalries.
-3. **Global Diplomacy Drift:** Keeps galactic politics moving naturally over time.
-4. **War-Side Effects:** Systems like sanctions, bounties, bulletins, and ceasefires create visible, actionable outcomes.
-5. **Cross-Mod Bridges (Optional):** Influences command prediction overlays when combined with other Cosmic mods.
-6. **Dynamic Invasions & Scaling:** Vanilla invasions spawn a static number of small ships. **Cosmic War** introduces advanced mathematical scaling:
-   - **Strength Matching:** Invasions analyze the total combined Omicron and Volume of all defending stations and ships in the sector, dynamically adjusting the invading fleet's size and ship volume to match **100%** of the defending force.
-   - **Siege Dreadnoughts:** Large invasions spawn specialized Dreadnoughts with 5x shield multipliers to survive station point defense.
-   - **Shield Jamming (Surprise Attacks):** Invasions have a 50% chance to deploy Electronic Warfare, instantly locking all defending (including player and alliance) shields to `0` for the first 20 seconds of the assault!
-   - **Cinematic Battlefield HUD:** Entering a contested War Zone attaches a 100% split Red/Blue UI Bar to your screen, visually tracking the siege duration and dramatically broadcasting Sector captures or defenses.
+1. **Faction-level baseline traits** - seeded and maintained to define AI personality.
+2. **Sector-level pressure loops** - escalate local rivalries.
+3. **Global diplomacy drift** - keeps galactic politics moving over time.
+4. **War-side effects** - sanctions, bounties, bulletins, and ceasefires create visible, actionable outcomes.
+5. **Cross-mod bridges** - influence command prediction overlays when Cosmic Overhaul is present.
+6. **Dynamic invasions & scaling** - vanilla invasions spawn a fixed number of small ships; Cosmic War replaces this with:
+   - **Strength matching:** invasions total the Omicron and volume of every defending station and ship in the sector, then scale the invading fleet to match 100% of that strength.
+   - **Siege Dreadnoughts:** large invasions spawn Dreadnoughts with a 5x shield multiplier to survive point-defense fire.
+   - **Shield jamming:** sieges have a 35% chance and fleet clashes a 15% chance to deploy Electronic Warfare, pinning all defending (including player) shields to 0 for 10 seconds.
+   - **Cinematic Battlefield HUD:** entering a contested war zone attaches a split red/blue bar tracking siege duration, with border-flip text on capture or defense.
 
-*This architecture produces a cyclical macro behavior pattern:*
-**Tension → War Pressure → Side Effects → Détente Potential → Re-escalation.**
+This produces a cycle: **tension, war pressure, side effects, détente potential, re-escalation.**
 
 ---
 
@@ -60,38 +60,28 @@ The mod utilizes a layered simulation model to bring the galaxy to life:
 **Primary file:** `data/scripts/server/factions.lua`
 
 **What it does:**
-Injects and maintains faction-level war metadata and Custom Traits for AI factions so behavior trends are less random and more identity-driven over time. Factions dynamically analyze their vanilla generation parameters (e.g., `greedy`, `aggressive`) to assign one of 9 distinct Custom Traits.
+Injects and maintains faction-level war metadata and Custom Traits for AI factions, so behavior trends are identity-driven rather than random. Factions analyze their vanilla generation parameters (e.g. `greedy`, `aggressive`) to assign one of 9 Custom Traits.
 
-**The 9 Dynamic Traits:**
+**The 9 traits:**
 
-- **Warmonger / Pacifist / Isolationist / Opportunist:** Core stances that heavily influence War Heat buildup and ceasefire likelihood.
-- **Imperialist:** Frequently claims empty sectors and natively constructs new outposts.
-- **Entrenched:** Fortifies existing territory by continuously constructing defensive stations.
-- **Mercantile:** Pays triple (3x) standard rates for all mercenary contracts (Bounties & War Contracts).
-- **Vengeful:** Absolutely refuses to negotiate ceasefires once a war begins.
-- **Xenophobic:** Relations naturally decay with all known factions, guaranteeing eventual unprovoked wars.
+- **Warmonger / Pacifist / Isolationist / Opportunist:** core stances that shape War Heat buildup and ceasefire likelihood.
+- **Imperialist:** frequently claims empty sectors and builds new outposts.
+- **Entrenched:** fortifies existing territory with defensive stations.
+- **Mercantile:** pays 3x the standard rate for mercenary contracts (bounties and War Contracts alike).
+- **Vengeful:** refuses to negotiate ceasefires once a war begins.
+- **Xenophobic:** relations decay with every known faction, guaranteeing eventual unprovoked wars.
 
-**Dormant Trait Revival:**
-Cosmic War officially reactivates 4 unused vanilla traits (`Sadistic/Sympathetic`, `Strict/Forgiving`, `Smart/Dumb`, `Active/Passive`).
+**Dormant trait revival:**
+Cosmic War reactivates 4 unused vanilla traits: `Sadistic/Sympathetic`, `Strict/Forgiving`, `Smart/Dumb`, `Active/Passive`.
 
-- **Active/Passive:** Dictates how frequently a faction will attempt territory expansions.
-- **Strict/Forgiving:** Modifies their likelihood to accept peace treaties or hold eternal grudges.
-- **Smart/Dumb:** Dictates their strategic intelligence when declaring wars against superior forces.
-- **Sadistic/Sympathetic:** Determines whether they offer bonus payouts—or severe penalties—for mercenaries destroying unarmed civilian ships.
+- **Active/Passive:** governs how often a faction attempts territory expansion.
+- **Strict/Forgiving:** governs willingness to accept peace or hold a grudge.
+- **Smart/Dumb:** governs strategic judgment when declaring war against superior forces.
+- **Sadistic/Sympathetic:** governs bonus payouts (or penalties) for mercenaries who destroy unarmed civilian ships.
 
-**Typical Stored Values:**
+**Typical stored values:** `cw_enabled`, `cw_war_bias`, `cw_diplomatic_polarity`, plus trait indices exposed through the Cosmic Vault API (`cw_imperialist`, etc.).
 
-- `cw_enabled`
-- `cw_war_bias`
-- `cw_diplomatic_polarity`
-- Trait indices via Cosmic Vault API (`cw_imperialist`, etc.)
-
-**Gameplay Impact:**
-
-- AI factions have vastly differing, mechanically-backed personalities.
-- Rivalries become more coherent in long campaigns.
-- Better continuity between isolated events and long-term politics.
-- The UI seamlessly renders these traits natively via the `CosmicVaultFaction` API.
+**Gameplay impact:** AI factions read as distinct, mechanically-backed personalities, and the vanilla UI renders these traits natively through `CosmicVaultFaction`.
 
 </details>
 
@@ -100,24 +90,12 @@ Cosmic War officially reactivates 4 unused vanilla traits (`Sadistic/Sympathetic
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/sector/init.lua`
-- `data/scripts/sector/cosmicwarcontroller.lua`
+**Primary files:** `data/scripts/sector/init.lua`, `data/scripts/sector/cosmicwarcontroller.lua`
 
 **What it does:**
-Runs periodic sector-level scans and applies pressure to selected faction pairs when local conflict conditions align.
+Runs periodic sector-level scans and applies pressure to selected faction pairs when local conflict conditions align, with spacing and cooldown logic to avoid spamming every loaded sector at once.
 
-**Behavior Goals:**
-
-- Encourage natural hotspot emergence.
-- Avoid spam via spacing/cooldown logic.
-- Prevent every loaded sector from escalating identically.
-
-**Gameplay Impact:**
-
-- Frontlines and contested regions emerge organically.
-- Different sectors can diverge into quiet vs. volatile states.
+**Gameplay impact:** frontlines and contested regions emerge organically instead of escalating uniformly.
 
 </details>
 
@@ -126,21 +104,10 @@ Runs periodic sector-level scans and applies pressure to selected faction pairs 
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/player/init.lua`
-- `data/scripts/player/background/cosmicwardiplomacy.lua`
+**Primary files:** `data/scripts/player/init.lua`, `data/scripts/player/background/cosmicwardiplomacy.lua`
 
 **What it does:**
-Periodically evaluates random/eligible faction-pair subsets and nudges diplomacy over time.
-
-**Why it matters:**
-Without drift, diplomacy can remain too static between discrete scripted events.
-
-**Gameplay Impact:**
-
-- Politics evolve continuously.
-- Rivalry maintenance feels systemic, not scripted-only.
+Periodically evaluates a random subset of eligible faction pairs and nudges diplomacy over time, so relations keep moving between discrete scripted events.
 
 </details>
 
@@ -152,18 +119,7 @@ Without drift, diplomacy can remain too static between discrete scripted events.
 **Primary file:** `data/scripts/server/background/cosmicwarnews.lua`
 
 **What it does:**
-Publishes periodic war bulletins to improve player awareness of macro conflict shifts.
-
-**Implementation Style:**
-
-- Collects currently hot conflicts.
-- Chooses one using stable randomization.
-- Broadcasts informational message server-wide.
-
-**Gameplay Impact:**
-
-- Players can react strategically to political shifts.
-- Background simulation becomes visible and actionable.
+Publishes periodic war bulletins covering the hottest current conflicts, chosen with stable randomization, so background simulation stays visible to players. As of v3.4.0, this layer is joined by two new publishers: completed War Bounty Licenses post under "Bounty Board" once per completed License, and confirmed AI-to-AI ceasefires post under "Politics." Neither is flagged Breaking News, since both are common enough in an active galaxy that flagging every one would defeat the purpose of that flag.
 
 </details>
 
@@ -174,13 +130,7 @@ Publishes periodic war bulletins to improve player awareness of macro conflict s
 
 **Primary file:** `data/scripts/server/background/cosmicwardiplomaticsanctions.lua`
 
-**What it does:**
-Applies sanction-like pressure behavior tied to entrenched rivalries and hostile diplomatic states.
-
-**Gameplay Impact:**
-
-- Wars have economic/diplomatic consequences, not only combat outcomes.
-- Political hostility influences broader strategic conditions.
+**What it does:** applies sanction-like pressure tied to entrenched rivalries and hostile diplomatic states, so wars carry economic consequences and not just combat outcomes.
 
 </details>
 
@@ -191,13 +141,7 @@ Applies sanction-like pressure behavior tied to entrenched rivalries and hostile
 
 **Primary file:** `data/scripts/server/background/cosmicwarceasefires.lua`
 
-**What it does:**
-Allows conditional de-escalation when hostility recovers and ceasefire chance criteria are met.
-
-**Gameplay Impact:**
-
-- Conflict cycles can resolve naturally.
-- The galaxy does not lock permanently into one escalated state.
+**What it does:** allows conditional de-escalation once hostility recovers and ceasefire chance criteria are met, so the galaxy is not locked permanently into one escalated state. Since v3.4.0, an actual ceasefire between two AI factions (not just an escalation) publishes a "Politics" article on the Galactic News Network.
 
 </details>
 
@@ -206,28 +150,20 @@ Allows conditional de-escalation when hostility recovers and ceasefire chance cr
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/server/background/cosmicwarbounties.lua`
-- `data/scripts/sector/cw_bountypayouts.lua`
-- `data/scripts/player/background/cw_bounty_tracker.lua`
+**Primary files:** `data/scripts/server/background/cosmicwarbounties.lua`, `data/scripts/sector/cw_bountypayouts.lua`, `data/scripts/player/background/cw_bounty_tracker.lua`
 
 **What it does:**
-Transforms the global geopolitical state into highly interactive hunting licenses. When a faction has an active global bounty against their enemy, destroying your first valid military target (Ship, Station, Boss) automatically provisions a **Bounty License** to the player or alliance.
+Converts the global geopolitical state into interactive hunting licenses. When a faction has an active global bounty against an enemy, destroying the first valid military target (ship, station, or boss) provisions a **Bounty License** to the player or their alliance.
 
 **Mechanics:**
 
-- **Hunting Quota:** The license tracks progress (e.g. 0/15) across all sectors.
-- **Expiration:** You have a strict time limit (45 minutes) to complete the quota, with HUD notifications every 5 minutes.
-- **Dynamic Payouts:** Base rewards scale based on distance from the core. Standard military ships pay out 1x, Dreadnoughts and Bosses pay out 5x, and Stations pay out 10x.
-- **Civilian Immunity:** Bounties only trigger on military targets; defenseless mining and cargo ships are ignored.
-- **One License At A Time:** A player (or their alliance) can only hold one active License at once — it's a single hunting contract, not a stack of them. Killing a target under a *different* faction's bounty while yours is still active will not switch you over to it; finish or wait out your current License first.
-- **Checking Your License:** Use `/cosmicwarbounties` in chat, or open the **Galactic Politics** tab, to see your License's target, kill progress and time remaining, plus the full board of currently active bounties galaxy-wide.
-
-**Gameplay Impact:**
-
-- Gives players direct, massive incentives to participate in active wars.
-- Provides engaging, on-screen progression metrics (HUD alerts, UI trackers) rather than passive, invisible logic.
+- **Hunting quota:** the License tracks progress (0/15) across all sectors.
+- **Expiration:** 45 minutes to complete the quota, with HUD warnings every 5 minutes.
+- **Dynamic payouts:** base reward scales with distance from the core. Standard military ships pay 1x, Dreadnoughts and bosses pay 5x, and stations pay 10x.
+- **Civilian immunity:** only military and infrastructure targets pay out; defenseless mining and cargo ships do not.
+- **One License at a time:** a player (or alliance) holds a single active License. Killing a target under a different faction's bounty while yours is active does not switch you over; finish or wait out the current one first.
+- **Completion is now newsworthy:** fully clearing a License's 15-kill quota publishes a "Bounty Board" article naming the collecting captain and the faction they collected against (v3.4.0). Posting a bounty was already public through the mod's "MOST WANTED" articles; this closes the loop by reporting the resolution too.
+- **Checking your License:** `/cosmicwarbounties` in chat, or the **Galactic Politics** tab, shows your License's target, kill progress, and time remaining, plus the current galaxy-wide bounty board.
 
 </details>
 
@@ -236,18 +172,9 @@ Transforms the global geopolitical state into highly interactive hunting license
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
+**Primary files:** `data/scripts/sector/factionwar/temporarydefender.lua`, `data/scripts/sector/background/rebuildstations.lua`
 
-- `data/scripts/sector/factionwar/temporarydefender.lua`
-- `data/scripts/sector/background/rebuildstations.lua`
-
-**What it does:**
-Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wartime leftovers and transition artifacts.
-
-**Gameplay Impact:**
-
-- Cleaner war transitions.
-- Lower chance of lingering war-state artifacts.
+**What it does:** adds lifecycle-safe wrappers in war-adjacent paths to reduce stale wartime leftovers and transition artifacts, lowering the chance of lingering war-state clutter.
 
 </details>
 
@@ -260,14 +187,8 @@ Adds lifecycle-safe wrappers in selected war-adjacent paths to reduce stale wart
 
 **Command:** `/cosmicwarstatus`
 
-**What it provides:**
+**What it provides:** a quick status and health readout of the background simulation, useful for balancing and debug workflows, with readiness guards (e.g. galaxy API availability checks) for safe early-lifecycle behavior.
 
-- Quick status and health visibility.
-- Easier balancing and debug workflows.
-- Sanity checks for running servers.
-
-**Stability Hardening:**
-The command path includes readiness guards (e.g., galaxy API availability checks) for safer early lifecycle behavior.
 </details>
 
 ### 💰 9b) Bounty Board Command
@@ -281,10 +202,11 @@ The command path includes readiness guards (e.g., galaxy API availability checks
 
 **What it provides:**
 
-- A quick chat-only summary of your own active Bounty License (target faction, kills/quota, time remaining), or a note that none is active.
-- A ranked list (highest reward first) of every currently active War Bounty galaxy-wide, with the offering faction, target faction, reward per kill, and time until it expires.
+- A chat summary of the player's own active Bounty License (target faction, kills/quota, time remaining), or confirmation that none is active.
+- A ranked list, highest reward first, of up to the 10 highest-paying active War Bounties galaxy-wide, with offering faction, target faction, reward per kill, and time until expiry.
 
-Useful for players who don't want to open the Galactic Politics tab just to check whether they still have an active License, or which factions are currently paying out the most.
+Added in v3.4.0, backed by a `getStatus()` function on `cw_bounty_tracker.lua` that returns the License's state as plain scalar values, matching the marshaling convention already used by every other `invokeFunction()` call site in the mod. Useful for players who don't want to open the Galactic Politics tab just to check their License or the top of the board.
+
 </details>
 
 ### 🚀 10) Dynamic Territory Sieges & AI Boarding
@@ -292,22 +214,18 @@ Useful for players who don't want to open the Galactic Politics tab just to chec
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/lib/cosmicvaultterritory.lua` (via Cosmic Vault)
-- `data/scripts/events/siegeevent.lua`
-- `data/scripts/entity/ai/trooptransport.lua`
+**Primary files:** `data/scripts/lib/cosmicvaultterritory.lua` (via Cosmic Vault), `data/scripts/events/siegeevent.lua`, `data/scripts/entity/ai/trooptransport.lua`
 
 **What it does:**
-Allows factions to actively conquer enemy sectors and permanently expand their borders on the Galaxy Map. By utilizing mathematically abstracted background timers, the server naturally shifts influence without keeping thousands of sectors loaded (avoiding the "Sector Alive" crash trap).
+Lets factions conquer enemy sectors and expand their borders on the Galaxy Map. Background timers flip station ownership mathematically without keeping every contested sector loaded (avoiding the "Sector Alive" performance trap).
 
-**Gameplay Impact:**
+**Mechanics:**
 
-- **Background Conquests:** Contested zones have a hidden siege timer. If time runs out, the station flips ownership mathematically.
-- **Physical Sieges:** If a player enters a contested zone, the engine triggers a Siege Event.
-- **Troop Transports:** Three massive, heavily shielded AI transports will warp in and charge the defending station. If they survive the station's point-defense for 60 seconds (scaling up to 5 minutes based on the station's hull HP) at close range, they physically board and capture the station!
-- **Dynamic Borders:** Once a station flips ownership, the Galaxy Map influence border naturally expands.
-- **Zero-Stutter Performance:** Built on the V4 Progressive Materialization architecture, all background station flips and territory expansions are queued globally. When a player jumps in, the queue is instantaneously executed during the loading screen, completely eliminating the massive server lag spikes caused by native background sector loading.
+- **Background conquests:** contested zones carry a hidden siege timer. If it runs out, the station flips ownership mathematically.
+- **Physical sieges:** a player entering a contested zone triggers a Siege Event.
+- **Troop transports:** three heavily shielded AI transports warp in and charge the defending station. Base boarding time is 60 seconds at close range, scaling up by 1 second per 100,000 HP of the station's hull and capping at 300 seconds (5 minutes); surviving the station's point defense for that long lets them physically board and capture it.
+- **Dynamic borders:** a flipped station expands the faction's Galaxy Map influence naturally.
+- **Zero-stutter performance:** background station flips and territory expansions are queued globally and executed instantly during a player's loading screen when they jump into the affected sector, avoiding the lag spikes native background sector loading causes.
 
 </details>
 
@@ -316,17 +234,14 @@ Allows factions to actively conquer enemy sectors and permanently expand their b
 <details>
 <summary><b>Click to expand details</b></summary>
 
-Recent iterations include:
+Ongoing hardening work includes:
 
-- Safer startup behavior during early server lifecycles by waiting for the **Cosmic Vault** `factions_ready` flag before running simulation steps.
-- Absolute abandonment of expensive `Galaxy():getFactions()` loops in favor of the performant, shared Cosmic Vault index cache (`Server():getValue("factions")`).
-- Corrected global simulation attachment (`galaxy/init.lua` instead of `server/init.lua`).
-- Defensive checks in background loops.
+- Waiting for the Cosmic Vault `factions_ready` flag before running simulation steps, for safer startup behavior.
+- Replacing expensive `Galaxy():getFactions()` loops with the shared Cosmic Vault index cache (`Server():getValue("factions")`).
+- Correct global simulation attachment (`galaxy/init.lua`, not `server/init.lua`).
+- Defensive checks in background loops, including the `onServer()` guards described under [Engine Hardening & Cross-Mod Integration](#engine-hardening--cross-mod-integration).
 
-**Gameplay/Ops Impact:**
-
-- Fewer nil-method crashes at startup.
-- Stronger behavior in heavily modded stacks.
+**Impact:** fewer nil-method crashes at startup and steadier behavior in heavily modded stacks.
 
 </details>
 
@@ -335,25 +250,13 @@ Recent iterations include:
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary bridge files:**
+**Primary bridge files:** `data/scripts/lib/cosmicwareconomybridge.lua`, `data/scripts/lib/cosmicwarcaptainbridge.lua`
 
-- `data/scripts/lib/cosmicwareconomybridge.lua`
-- `data/scripts/lib/cosmicwarcaptainbridge.lua`
+**Typical wrapper targets:** command prediction hooks in Cosmic Overhaul simulation scripts (trade, scout, travel, refine, mine, salvage variants).
 
-**Typical wrapper targets (when present in the load stack):**
-Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refine, mine, salvage variants).
+**Design intent:** the original prediction path always runs first; the bridge applies bounded post-processing only when enabled and the context is valid, and falls back to a no-op when disabled or missing context.
 
-**Design Intent:**
-
-- Emphasizes non-invasive composition over hard overwrites.
-- The original prediction path runs first.
-- The bridge applies bounded post-processing only when enabled and when the context is valid.
-- Graceful no-op fallback occurs when disabled or when missing context.
-
-**High-Level Effect:**
-
-- Command planning outputs can reflect war-heat pressure more clearly.
-- Baseline behavior is safely preserved when bridge toggles are disabled.
+**Effect:** command planning can reflect War Heat pressure, and baseline behavior stays intact when bridge toggles are off.
 
 </details>
 
@@ -362,30 +265,21 @@ Command prediction hooks in simulation scripts (e.g., trade, scout, travel, refi
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/entity/bulletinboardmissions.lua`
-- `data/scripts/player/missions/cw_forcerecon.lua`
-- `data/scripts/player/missions/cw_borderskirmish.lua`
-- `data/scripts/player/missions/cw_resourcesabotage.lua`
-- `data/scripts/player/missions/cw_interception.lua`
-- `data/scripts/player/missions/cw_breakthrough.lua`
-- `data/scripts/player/missions/cw_frontlinesiege.lua`
-- `data/scripts/player/missions/cw_highvaluedefection.lua`
-- `data/scripts/player/missions/cw_decapitationstrike.lua`
+**Primary files:** `data/scripts/entity/bulletinboardmissions.lua` and all 22 `cw_*.lua` files in `data/scripts/player/missions/`
 
 **What it does:**
-Injects custom, highly-scaled combat missions directly into Avorion's native Bulletin Board mission pools based on the current macro-level **War Heat** between the station's owner and their rival faction.
+Injects custom, scaled combat missions into Avorion's native Bulletin Board pools based on the War Heat between a station's owner and its rival faction. All 22 War Contracts are clickable and completable from the bulletin board.
 
-**Available Contracts:**
+**Available contracts:**
 
-- **War Heat > 0.15:** *Force Recon* (Scout a hostile listening post) & *Sensor Deployment* (Sneak into the dead center of 3 hostile sectors).
-- **War Heat > 0.25:** *Border Skirmish* (Eliminate an enemy border patrol).
-- **War Heat > 0.35:** *Resource Sabotage* (Destroy an enemy mining operation), *Resource Heist* (Infiltrate and steal large quantities of resources), & *Deploy Minefield* (Deploy and defend a minefield).
-- **War Heat > 0.45:** *Interception* (Destroy enemy supply convoy), *Breakthrough* (Defend allied supply convoy), *Sector Raid* (Wipe out enemy infrastructure), *Black Box Retrieval* (Extract data from a destroyed prototype), & *Propaganda Broadcast* (Hack comms array).
-- **War Heat > 0.60:** *Frontline Siege* (Assault a dynamically scaled enemy FOB), *Hunter Killer* (Hunt a specialized fleet), & *Distraction Carnage* (Survive a massive 5-minute ambush).
-- **War Heat > 0.80:** *High-Value Extraction* (Holdout survival for defector), *Assassinate General* (Kill a high-ranking target), *Supply Line Raid* (Destroy logistics hubs), & *Blockade Runner* (Deliver supplies through a heavy blockade).
-- **War Heat = 1.00:** *Decapitation Strike* (Ultra-hard Flagship Boss), *Extract POW* (Rescue prisoners from a heavily guarded facility), & *Champion Duel* (1-on-1 duel with a scaled boss).
+- **War Heat > 0.15:** *Force Recon* (scout a hostile listening post) and *Sensor Deployment* (deploy stealth buoys in 3 hostile sectors).
+- **War Heat > 0.25:** *Border Skirmish* (eliminate a border patrol).
+- **War Heat > 0.35:** *Resource Sabotage* (destroy a mining operation), *Resource Heist* (steal resources from enemy territory), and *Deploy Minefield* (deploy and defend a minefield).
+- **War Heat > 0.45:** *Interception* (destroy an enemy supply convoy), *Breakthrough* (defend an allied convoy), *Sector Raid* (wipe out enemy infrastructure), *Black Box Retrieval* (extract data from a destroyed prototype), and *Propaganda Broadcast* (hack a comms array).
+- **War Heat > 0.60:** *Frontline Siege* (assault a scaled enemy FOB), *Hunter Killer* (hunt a specialized fleet), and *Distraction Carnage* (survive a 5-minute ambush).
+- **War Heat > 0.80:** *High-Value Extraction* (holdout survival for a defector), *Assassinate General* (kill a high-ranking target), *Supply Line Raid* (destroy logistics hubs), and *Blockade Runner* (deliver supplies through a blockade).
+- **War Heat = 1.00:** *Decapitation Strike* (Flagship boss fight), *Extract POW* (rescue prisoners from a guarded facility), and *Champion Duel* (1-on-1 with a scaled boss).
+- **Rift-dependent:** *Subspace Containment* becomes available when a Weaponized Subspace Tear opens in a warzone (see [Engine Hardening & Cross-Mod Integration](#engine-hardening--cross-mod-integration)).
 
 </details>
 
@@ -394,25 +288,23 @@ Injects custom, highly-scaled combat missions directly into Avorion's native Bul
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/player/eventscheduler.lua`
-- `data/scripts/events/cw_fleetclash.lua`
-- `data/scripts/events/cw_refugeeconvoy.lua`
-- `data/scripts/events/cw_strandedflagship.lua`
-- `data/scripts/events/cw_armsdeal.lua`
-- `data/scripts/events/cw_diplomaticsabotage.lua`
+**Primary files:** `data/scripts/player/cw_eventscheduler.lua` and all 8 scripts it schedules under `data/scripts/events/`
 
 **What it does:**
-Injects new spontaneous events into Avorion's global event scheduler. As players explore the galaxy, they will encounter live warzones, covert operations, and distress calls directly tied to the macro political simulation.
+Injects spontaneous events into a per-player scheduler so players encounter live warzones, covert operations, and distress calls tied to the macro political simulation as they explore.
 
-**Available Events:**
+**Scheduled events:**
 
-- **Fleet Clash (Heat > 0.60):** Massive enemy strike fleets jump into active AI sectors.
-- **Refugee Convoy (Heat > 0.40):** Civilian freighters are ambushed by hunter fleets.
-- **Stranded Flagship (Heat > 0.80):** A severely damaged dreadnought boss is discovered vulnerable, with a repair fleet en route.
-- **Arms Deal (Heat > 0.20):** An illegal weapon transaction occurs, dropping high-rarity turrets if interrupted.
-- **Diplomatic Sabotage (Heat > 0.20):** Extremists attack a peace envoy. Saving the envoy provides massive reputation.
+- **Fleet Clash (Heat > 0.60):** an enemy strike fleet jumps into an active AI sector.
+- **Refugee Convoy (Heat > 0.40):** civilian freighters under attack from a hunter fleet.
+- **Stranded Flagship (Heat > 0.80):** a damaged Dreadnought boss found vulnerable, with a repair fleet inbound.
+- **Arms Deal (Heat > 0.20):** an illegal weapon transaction that drops high-rarity turrets if interrupted.
+- **Diplomatic Sabotage (Heat > 0.20):** extremists attack a peace envoy; saving the envoy grants a large reputation boost.
+- **Wreckage Field (no Heat requirement):** a populated AI-owned sector spawns 4-9 wrecks marking a recent battle, a salvage opportunity rather than a combat encounter.
+- **Headhunters Ambush (no Heat requirement):** the present player's worst-standing enemy faction dispatches an elite squad to intercept them directly in the sector, matching the "Bounty Hunter Ambush" feature described in the v3.1.0 release.
+- **Blockade (no Heat requirement):** an enemy fleet forms up at the edge of a populated, defended sector.
+
+Each entry rolls its own randomized timer window (typically 60 to 240 in-game minutes) independently, so multiple events can be pending at once. As of v3.4.0 all 8 resolve to their full `data/scripts/events/...` path when the scheduler attaches them.
 
 </details>
 
@@ -421,31 +313,23 @@ Injects new spontaneous events into Avorion's global event scheduler. As players
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:**
-
-- `data/scripts/player/ui/galacticpolitics_tab.lua`
-- `data/scripts/player/init.lua`
+**Primary files:** `data/scripts/player/ui/galacticpolitics_tab.lua`, `data/scripts/player/init.lua`
 
 **What it does:**
-Adds a fully featured, interactive intelligence UI tab to the native Player Window, giving players unprecedented visibility into the macro-geopolitical state of the galaxy.
+Adds an interactive intelligence tab to the native Player Window, giving visibility into the macro-geopolitical state of the galaxy.
 
-**Key Features:**
+**Key features:**
 
-- **Your License At A Glance:** The header shows your own active Bounty License (target, kills, time remaining) right next to the tab title, refreshed alongside everything else — no more digging through chat history to remember what you're hunting.
-- **Active Conflict Tracking:** Displays a real-time, sortable list of all active AI wars, skirmishes, and ceasefires across the galaxy.
-- **Dedicated Bounty Column:** Active War Bounties get their own sortable column showing the credit reward at a glance, instead of being crammed into the faction name text.
-- **Interactive Column Sorting:** Click on any column header (Faction A, Faction B, Bounty, War Heat, Famine, Status, Relations) to instantly sort the intelligence data ascending or descending.
-- **Strategic Filtering:** Use the dropdown menu to filter the list by "All", "Active Conflicts", "Ceasefires Only", or factions with "Active Bounties".
-- **Immersive Relation Toggle:** A checkbox allows players to switch between raw numeric relation values and immersive diplomatic descriptors (e.g., "Allied", "Confrontational", "All-Out War").
-- **Strategic Tooltips:** Hovering over any conflict reveals deep intelligence, including internal Faction Indices, AI Traits (Aggressive, Peaceful, Wealthy, etc.), exact numerical player relations, and the exact credit payout of active War Bounties.
-- **Color-Coded Standing:** Faction names are dynamically colored based on your personal reputation with them, allowing you to instantly spot when your allies are under attack.
-- **Decluttered Layout:** Filter, relation toggle and refresh controls now live on their own row below the title instead of being crammed into the same strip, so nothing overlaps regardless of window size.
-- **Legend & Summary:** A clean bottom panel explains the color-coding system and provides a brief summary of how the Cosmic War simulation operates in the background — including a pointer to the `/cosmicwarbounties` chat command for a quick text-only view.
-
-**Gameplay Impact:**
-
-- Transforms invisible background math into actionable intelligence.
-- Allows players to strategically hunt for lucrative war bounties, intercept conflicts involving their allies, or identify highly volatile regions to exploit.
+- **Your License at a glance:** the header shows the player's own active Bounty License (target, kills, time remaining), sourced from the same lookup as `/cosmicwarbounties`.
+- **Active conflict tracking:** a sortable, real-time list of active AI wars, skirmishes, and ceasefires.
+- **Dedicated Bounty column:** active War Bounties get their own sortable column showing the higher of either side's reward, instead of an inline `[BOUNTY]` text suffix.
+- **Interactive column sorting:** click any column header (Faction A, Faction B, Bounty, War Heat, Famine, Status, Relations) to sort ascending or descending.
+- **Strategic filtering:** filter by All, Active Conflicts, Ceasefires Only, or factions with Active Bounties.
+- **Relation toggle:** switch between raw numeric relation values and diplomatic descriptors (Allied, Confrontational, All-Out War).
+- **Strategic tooltips:** hovering a row reveals internal faction indices, AI traits, exact numeric relations, and exact bounty payouts.
+- **Color-coded standing:** faction names are colored by the player's personal reputation with them.
+- **Decluttered header layout (v3.4.0):** the title, filter dropdown, numeric-relations checkbox, and refresh button previously shared one width-relative row that could overlap at narrower window sizes. Controls now sit on their own row below the title with fixed left-to-right spacing, removing the overlap entirely.
+- **Legend & Summary:** a bottom panel explains the color coding and how the background simulation works, including a pointer to `/cosmicwarbounties`.
 
 </details>
 
@@ -454,18 +338,12 @@ Adds a fully featured, interactive intelligence UI tab to the native Player Wind
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**What it does:**
-Injects immersive background events related to the ongoing galactic conflict, making the universe feel alive and reacting to the violence around you.
+**What it does:** injects immersive background events tied to the ongoing conflict.
 
-**Key Features:**
+**Key features:**
 
-- **Refugee Convoys:** Civilian ships fleeing warzones will occasionally hail you in deep space. Donating supplies or credits grants massive reputation boosts. They also have a 25% chance to upload the exact coordinates of a massive hidden resource stash directly to your galaxy map.
-- **Distress Beacons:** Wreckages of destroyed ships may broadcast an active distress signal. Interacting with the beacon to download logs and "Answer the Call" triggers a dynamic rescue (or ambush) scenario. Be warned: If you simply salvage the wreck without answering the beacon, it will permanently lock out the interaction!
-
-**Gameplay Impact:**
-
-- Provides dynamic, narrative-driven events outside of standard missions.
-- Offers alternative, peaceful routes to gain massive faction standing via charity.
+- **Refugee Convoys:** civilian ships fleeing warzones occasionally hail the player in deep space; donating supplies or credits grants reputation, and there is a 25% chance of a hidden resource stash tip-off.
+- **Distress Beacons:** wreckage of destroyed ships may broadcast a distress signal. Interacting with the beacon downloads logs and triggers "Answer the Call," a dynamic rescue (or ambush) scenario. Salvaging the wreck without answering the beacon permanently locks out the interaction.
 
 </details>
 
@@ -475,15 +353,15 @@ Injects immersive background events related to the ongoing galactic conflict, ma
 
 ### 🌐 Multiplayer / Dedicated Server Behavior
 
-- Avorion's simulation is server-authoritative. **Cosmic War** logic is predominantly server-side with synchronization-aware behavior implemented where needed.
-- Global background loops (like news, sanctions, and ceasefires) are strictly attached to the `Galaxy()` component to ensure proper headless execution.
-- In mixed mod stacks, maintain consistent configuration and load order. Validate logs at startup to catch any issues early.
+- Avorion's simulation is server-authoritative. Cosmic War logic is predominantly server-side, with synchronization-aware behavior where needed.
+- Global background loops (news, sanctions, ceasefires) are strictly attached to `Galaxy()` for correct headless execution.
+- In mixed mod stacks, keep configuration and load order consistent, and check startup logs for early issues.
 
 ### 🛡️ Performance & Safety Notes
 
-- Interval-driven loops are strictly favored over heavy per-frame (`update()`) logic to maintain server TPS.
-- Defensive nil and callable checks are heavily used in high-risk lifecycle paths.
-- Debug logging is toggleable via the CCM config to reduce noise and overhead in live production environments.
+- Interval-driven loops are favored over per-frame (`update()`) logic to protect server TPS.
+- Nil and callable checks are used heavily in high-risk lifecycle paths.
+- Debug logging is toggleable through the CCM config to reduce noise in production.
 
 ---
 
@@ -491,15 +369,19 @@ Injects immersive background events related to the ongoing galactic conflict, ma
 
 ### Required Mods
 
-- Avorion
-- Cosmic Series (Overhaul, Chornicles & Ascendancy)
-- **Cosmic Vault** (Provides the underlying faction index API and shared data contracts).
+Per `modinfo.lua`, Cosmic War declares three hard dependencies plus the base game:
+
+- **Avorion** 1.0+
+- **Cosmic Vault** (shared faction index API and data contracts, required by every Cosmic mod)
+- **Cosmic Overhaul**
+- **Cosmic Chronicles**
+
+**Cosmic Ascendancy is not a hard dependency of Cosmic War.** A handful of features (the Eclipse faction's hardcoded Imperialist/Vengeful stance, the Eclipse Sanitization Protocol ceasefire event) reference Ascendancy content and only activate when it happens to be installed. Everything else in this document works without it.
 
 ### Compatibility Intent
 
-- Built to seamlessly coexist with **Cosmic Overhaul**.
-- Bridge-style integration explicitly avoids hard coupling to external mods.
-- For large custom stacks, always verify your load order and check the server startup logs.
+- Built to coexist with Cosmic Overhaul; bridge-style integration avoids hard coupling to it.
+- For large custom stacks, verify load order and check server startup logs.
 
 ---
 
@@ -507,69 +389,63 @@ Injects immersive background events related to the ongoing galactic conflict, ma
 
 ### 🛠️ Installation
 
-1. Place folder in:
+1. Place the folder in:
    - **Windows:** `%AppData%\Avorion\mods\`
    - **Linux:** `~/.avorion/mods/`
-2. Install all Cosmic Series Mods (Vault, Overhaul, Chronicles & Ascendancy)
-3. Enable **Cosmic War** in **Settings -> Mods**.
+2. Install Cosmic Vault, Cosmic Overhaul, and Cosmic Chronicles.
+3. Enable **Cosmic War** under **Settings -> Mods**.
 4. Restart the game or server.
 
 ### 🛠️ Troubleshooting Checklist
 
 - [ ] Confirm the mod is active in your Avorion mod settings.
-- [ ] Confirm All Cosmic Series mods except Cosmic Starfall are installed.
-- [ ] Review the latest client/server logs for any early startup warnings.
-- [ ] Validate your load order if running in a heavily modified stack.
-- [ ] Use `/cosmicwarstatus` in-game for quick operational diagnostics.
-- [ ] Use `/cosmicwarbounties` in-game to check your active Bounty License and the galaxy-wide bounty board.
+- [ ] Confirm Cosmic Vault, Cosmic Overhaul, and Cosmic Chronicles are installed.
+- [ ] Review the latest client/server logs for early startup warnings.
+- [ ] Validate load order if running a heavily modified stack.
+- [ ] Use `/cosmicwarstatus` in-game for operational diagnostics.
+- [ ] Use `/cosmicwarbounties` in-game to check your active Bounty License and the top of the bounty board.
 
 ---
 
 ## 📈 Development Status
 
-**Cosmic War** remains an actively iterated **WIP** with ongoing balancing and long-session validation.
-
-The current architectural direction is heavily focused on:
+Cosmic War is at **v3.4.0**, a UI-polish and bugfix release following the War Contracts & Bounties Expansion (v3.3.0). Current work focuses on:
 
 - Resilient lifecycle behavior.
-- Highly configurable war simulation.
-- Stable, predictable coexistence with broader **Cosmic** series mod stacks.
+- A highly configurable war simulation.
+- Stable coexistence with the rest of the Cosmic suite.
 
 ---
 
-## 🔗 Cosmic Series Integration & Audit 3.0 Updates
+## 🔗 Engine Hardening & Cross-Mod Integration
 
 <details>
 <summary><b>Click to expand</b></summary>
 
+This section tracks stability work and suite-wide integration points that don't fit neatly into a single feature above. It replaces the older "Audit 3.0" appendix; the content below reflects the mod as of v3.4.0, not a single historical pass.
+
 ### 📖 Cosmic Codex Integration
 
-All deep lore, stat blocks, and dynamic recipes have been fully integrated into the in-game **Cosmic Codex**. You no longer need to tab out of the game to read these features; they will natively update and unlock inside your Codex UI as you progress!
+Lore, stat blocks, and dynamic feature explanations are integrated into the in-game **Cosmic Codex**, unlocking natively as the player progresses.
 
-### 🔒 Network Safety & Anti-Cheat
+### 🔒 Network Safety
 
-- **Math.Random Fix:** We systematically replaced all unstable Lua `math.random` calls with Avorion's deterministic `random():getInt()` generation sequence. This guarantees 100% synchronization on Multiplayer Dedicated Servers and prevents cascading desyncs during massive fleet spawns.
-- **Callable Validation:** UI and background scripts have been fully hardened. Malicious clients can no longer spoof "free" remote calls; the server actively verifies execution contexts before processing any requests, sealing multiple Arbitrary Code Execution (ACE) vulnerabilities.
-- **Diplomacy Thread Safety:** Background diplomacy threads have been fully synchronized with the main Avorion engine, permanently eliminating `EXCEPTION_ACCESS_VIOLATION` server hangs during massive sector relation updates.
-
-### 🛠️ Vanilla Bug Fixes
-
-- **Scout Mission Fix:** We patched a massive, long-standing vanilla bug where Scout Missions would completely skip and ignore Faction Headquarters sectors because the native dialogue trees were missing the template definition.
+- **Deterministic randomization:** unstable Lua `math.random` calls were replaced with Avorion's deterministic `random():getInt()` sequence throughout the mod, preventing multiplayer client/server desyncs when generating loot, stats, or enemies.
+- **Callable validation:** UI and background scripts verify execution context on the server before processing remote calls, closing gaps that let malicious clients spoof free actions.
+- **Diplomacy thread safety (v3.0.1):** the background war-simulation scripts (`cosmicwarceasefires.lua`, `cosmicwardiplomaticsanctions.lua`, `cosmicwarbounties.lua`) previously used a `CosmicVaultTask.RunAsync` coroutine wrapper with no pumping mechanism, which could let a dangling thread violate memory boundaries on garbage collection and crash the instance with `EXCEPTION_ACCESS_VIOLATION`. They were rewritten to run synchronously, and this class of crash has not recurred since.
 
 ### 🌌 Cosmic Vault Synergy
 
-- **Deep Economy Warfare:** Market collapses and starvation natively trigger desperation invasions via the Cosmic Vault Economy simulation! Factions with 100+ Famine Scores will launch massive assaults on wealthy neighbors to survive.
-- **Weather-Assisted Boarding:** The CosmicVaultWeather API allows players to utilize weather events for sieges. If a DarkMatterFog or IonStorm hits a sector, the defending station's boarding defense multiplier is slashed by 50%!
-- **Commodore Siege Leadership:** If you are defending an allied faction's sector during a siege and ultimately fail, parking a ship with a Commodore captain in the sector will reduce the economic Famine penalty inflicted on the defenders.
+- **Deep Economy Warfare:** factions with high Famine Scores can launch desperation invasions on wealthy neighbors through the Cosmic Vault Economy simulation.
+- **Weather-Assisted Boarding:** a DarkMatterFog or IonStorm rolling into a sector during a siege slashes the defending station's boarding defense multiplier by 50%, through the CosmicVaultWeather API.
+- **Commodore Siege Leadership:** if a ship with a Commodore captain is present when a defended sector falls, the resulting Famine Score penalty drops from +5 to +2.
+- **Wartime Shortages - currently a no-op:** losing a sector's controlling faction is supposed to drain military and medical goods stock at that faction's `tradingpost.lua` stations. As of v3.4.0, the code correctly checks the real `invokeFunction()` call-status return instead of misreading it as a table, and no longer publishes a false "Wartime Shortage" news article when nothing happened. The drain itself stays inert, though: `decreaseGoods` is not yet a `callable()`-registered function on `TradingPost`, so the call safely no-ops rather than crashing. There's no price or scarcity effect to exploit here yet.
 
-### 🚀 Synergy Update (Rift DLC & More)
+### 🚀 Rift & Suite Synergy
 
-- **Wartime Propaganda Beacons**: There is a 5% chance for a narrative Cosmic Chronicles beacon to dynamically spawn after a siege resolves, immortalizing the battle.
-- **Inherent Imperialism**: The Eclipse (Ascendancy) faction is now hardcoded as Imperialist and Vengeful. They will relentlessly expand their territory and will absolutely never accept ceasefires.
-- **Wartime Shortages:** The destruction of supply convoys will cause massive shortages in military and medical goods at Trading Posts and Equipment Docks. If you are a trader, you can make billions smuggling these goods to desperate stations!
-- **Weaponized Subspace Tears:** At Critical War Heat, warring factions may detonate experimental subspace weapons, tearing the fabric of space and unleashing localized Rift hazards.
-- **Dynamic Frontline Sieges:** When a war reaches its absolute boiling point, factions will proactively spawn massive siege fleets directly into their rival's occupied sectors, creating dynamic combat hazards outside of normal missions.
-- **Alliance PvP Repercussions:** Triggering a diplomatic incident or destroying civilian convoys will permanently damage relations not just for you, but dynamically spread the consequences to your active Player Alliance.
-- **War Contracts - Subspace Containment:** When a rift tears in a warzone, factions will issue high-paying War Contracts to secure emerged Ancient Tech platforms and contain the anomaly.
+- **Wartime Propaganda Beacons:** a 5% chance for a Cosmic Chronicles narrative beacon to spawn after a siege resolves, carrying `cc_blackbox.lua`.
+- **Weaponized Subspace Tears:** at critical War Heat (relations at or below -80000), warring factions may detonate experimental subspace weapons, opening a localized Rift hazard.
+- **Subspace Containment:** when a rift tears in a warzone, factions issue the *Subspace Containment* War Contract to secure emerged Ancient Tech platforms and close the anomaly.
+- **Alliance PvP repercussions:** reputation shifts from PvP and civilian-convoy destruction propagate to the player's active Alliance, so switching to a personal ship no longer shields the alliance from the consequences.
 
 </details>

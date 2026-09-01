@@ -2,69 +2,79 @@
 
 *A complete overhaul to diplomacy, fleet battles, and faction tension in Avorion.*
 
-## 📖 Overview
-**Cosmic War** transforms the static political landscape of Avorion into a living, breathing geopolitical simulation. Factions now actively track "War Heat" with their neighbors through skirmishes, intercepts, and trait differences. When tensions boil over, they will declare full-scale war, launching massive, dynamically scaled Dreadnought invasions to systematically capture enemy territory and physically expand their borders on the Galaxy Map.
+**Current release: v3.4.0** - a UI-polish and bugfix pass following the War Contracts & Bounties Expansion.
 
-Players are not just bystanders—you can actively influence these conflicts! Fund rebellions via the Galactic Politics UI, answer distress beacons, claim massive Bounty Licenses, or sign up as a mercenary and take on 22 different highly scaled War Contracts.
+---
+
+## 📖 Overview
+
+**Cosmic War** turns Avorion's static political landscape into a living geopolitical simulation. Factions track War Heat with their neighbors through skirmishes, intercepts, and trait differences. When tensions boil over, they declare full-scale war and launch dynamically scaled Dreadnought invasions to capture enemy territory and physically expand their borders on the Galaxy Map.
+
+Players aren't bystanders. Fund rebellions through the Galactic Politics UI, answer distress beacons, claim Bounty Licenses, or sign up as a mercenary and take on 22 War Contracts.
 
 ---
 
 ## ✨ Key Features
+
 <details>
 <summary><b>Click to expand full feature list</b></summary>
 
 ### ⚔️ Dynamic Geopolitics
-- **War Heat System:** Factions passively build tension and declare war dynamically based on borders and traits.
-- **Dynamic Faction Traits:** AI factions spawn with 9 distinct, mechanically active behavioral traits (e.g., *Imperialist*, *Vengeful*, *Mercantile*, *Xenophobic*).
-- **Dormant Trait Revival:** 4 previously unused vanilla traits (`Active/Passive`, `Strict/Forgiving`, `Smart/Dumb`, `Sadistic/Sympathetic`) have been reactivated for deeper AI decision-making.
+- **War Heat System:** factions build tension and declare war dynamically based on borders and traits.
+- **Dynamic Faction Traits:** AI factions spawn with 9 mechanically active behavioral traits (*Imperialist*, *Vengeful*, *Mercantile*, *Xenophobic*, and more).
+- **Dormant Trait Revival:** 4 previously unused vanilla traits (`Active/Passive`, `Strict/Forgiving`, `Smart/Dumb`, `Sadistic/Sympathetic`) are back in play for deeper AI decisions.
 
 ### 🛡️ Tactical Warfare & Sieges
-- **Dynamic Invasions:** Fully simulated fleet invasions featuring mathematical scaling that perfectly matches 100% of the target sector's defensive strength.
-- **Siege Dreadnoughts:** Colossal invasion flagships spawn with a 5x shield multiplier to tank station point-defense arrays.
-- **Electronic Warfare:** Invasions have a 50% chance to deploy a Shield Jammer, instantly pinning ALL defending shields (including yours!) to 0 for the first 20 seconds of an ambush.
-- **Planetary Defense Grids:** Certain sectors feature Planetary Shield Generators that render all allied stations 100% invincible until destroyed.
+- **Dynamic Invasions:** fleet invasions scale mathematically to match 100% of the target sector's defensive strength.
+- **Siege Dreadnoughts:** invasion flagships spawn with a 5x shield multiplier to tank station point-defense arrays.
+- **Electronic Warfare:** sieges have a 35% chance and open fleet clashes a 15% chance to deploy a Shield Jammer, pinning all defending shields (including yours) to 0 for 10 seconds.
+- **Planetary Defense Grids:** some sectors run Planetary Shield Generators that make every allied station invincible until the generator falls.
 
 ### 💰 Mercenary Operations
-- **Galactic Politics UI:** A new, highly detailed UI tab to track all active conflicts, ceasefires, and faction relations galaxy-wide.
-- **Bounty Licenses:** Factions actively offering a Bounty License against their enemies show it in a dedicated Bounty column in the UI (or via the `/cosmicwarbounties` chat command). Taking down your first target activates a time-sensitive 45-minute hunting license for massive payouts!
-- **Dynamic War Contracts:** Over 20 entirely new mercenary missions dynamically injected into Bulletin Boards based on the sector's current War Heat (e.g., *Force Recon*, *Resource Heist*, *Blockade Runner*, *Distraction Carnage*, *Decapitation Strike*).
+- **Galactic Politics UI:** a detailed tab tracking every active conflict, ceasefire, and faction relation galaxy-wide, with a dedicated sortable Bounty column and your own License status right in the header.
+- **`/cosmicwarbounties` chat command:** new in v3.4.0. Check your active Bounty License and the top of the galaxy-wide bounty board without opening the UI.
+- **Bounty Licenses:** destroy your first target against a faction with an active bounty to start a 45-minute, 15-kill hunting license for major payouts.
+- **Dynamic War Contracts:** 22 mercenary missions injected into Bulletin Boards based on the sector's current War Heat (*Force Recon*, *Resource Heist*, *Blockade Runner*, *Distraction Carnage*, *Decapitation Strike*, and more), all clickable and completable as of v3.4.0.
 
 ### 🚀 Dynamic Galaxy Expansion
-- **Territory Expansion:** Factions seamlessly expand their borders by launching troop transports to physically board and capture enemy stations.
-- **Background Conquests:** Contested zones feature hidden siege timers, natively flipping ownership mathematically behind the scenes without the massive lag of keeping sectors loaded.
-- **War Casualties & Events:** Discover refugee convoys fleeing the violence, or answer distress beacons from destroyed prototype flagships.
+- **Territory Expansion:** factions expand their borders by launching troop transports to physically board and capture enemy stations.
+- **Background Conquests:** contested zones carry hidden siege timers, flipping ownership mathematically without the performance cost of keeping every sector loaded.
+- **War Casualties & Events:** stumble across refugee convoys fleeing violence, wreckage fields, bounty hunter ambushes, or distress beacons from destroyed prototype flagships.
 
-### 🌌 Synergy & DLC Interoperability (Audit 3.0+)
-- **Economy Warfare (Cosmic Vault):** Market collapses and starvation can trigger desperate invasions as factions with massive Famine Scores assault their wealthy neighbors.
-- **Weather-Assisted Boarding:** Use hazards to your advantage! If a DarkMatterFog or IonStorm hits a sector, the defending station's boarding defense multiplier drops by 50%.
-- **Weaponized Subspace Tears (Rift DLC):** At Critical War Heat, warring factions may detonate experimental subspace weapons, tearing the fabric of space and unleashing localized Rift hazards.
-- **Subspace Containment Contracts:** When a rift tears in a warzone, factions issue high-paying War Contracts to secure emerged Ancient Tech platforms.
+### 📰 Galactic News Network
+- **Live war coverage:** bounty postings and completions, ceasefires, war declarations, and sector conquests all publish to the Galactic News Network.
+- **Bounty & ceasefire coverage:** new in v3.4.0. Fully completing a War Bounty License and factions reaching an actual ceasefire now generate their own news articles, closing the loop on two milestones that used to be visible only in local chat.
+
 </details>
 
 ---
 
 ## ⚙️ Requirements
-- **Avorion v2.0+**
-- **Dependencies:** This mod is part of the broader Cosmic Suite and relies on shared architecture.
-  - **Cosmic Vault** (Required API Framework)
+
+- **Avorion 1.0+**
+- **Hard dependencies** (enforced by `modinfo.lua`):
+  - **Cosmic Vault** - shared faction API and data contracts, required by every Cosmic mod.
   - **Cosmic Overhaul**
   - **Cosmic Chronicles**
-  - **Cosmic Ascendancy**
+
+Cosmic Ascendancy is not required to run Cosmic War. A few features (the Eclipse faction's hardcoded stances, the Eclipse Sanitization Protocol) reference Ascendancy content and light up automatically if you also happen to have it installed - everything else works without it.
 
 ---
 
 ## 🚀 Installation
+
 1. Place the extracted `Cosmic War` folder in your Avorion mods directory:
    - **Windows:** `%AppData%\Avorion\mods\`
    - **Linux:** `~/.avorion/mods/`
-2. Install all required dependencies (Cosmic Vault, Overhaul, Chronicles, Ascendancy).
+2. Install the required dependencies: Cosmic Vault, Cosmic Overhaul, Cosmic Chronicles.
 3. Launch Avorion, go to **Settings -> Mods**, and enable **Cosmic War**.
 4. Restart the game or dedicated server when prompted.
 
 ---
 
 ## 📚 Documentation & Diagnostics
-- **In-Game Lore:** All deep lore, stat blocks, and dynamic features are fully integrated into the in-game **Cosmic Codex**. You do not need to tab out to learn!
-- **Offline Guides:** Check the included `WIKI.md` and `PLAYER_GUIDE.md` files in the mod folder for a complete breakdown of mechanics, scaling equations, and background systems.
-- **Diagnostics:** Server Operators can use the `/cosmicwarstatus` command in chat to view live diagnostic health and activity readouts of the background simulation.
-- **Bounty Board:** Any player can use the `/cosmicwarbounties` command in chat to check their active Bounty License and see the full galaxy-wide bounty board without opening the UI.
+
+- **In-Game Lore:** deep lore, stat blocks, and dynamic features live in the in-game **Cosmic Codex** - no need to tab out to learn the mod.
+- **Offline Guides:** the included `WIKI.md` (technical reference) and `PLAYER_GUIDE.md` (gameplay-focused) cover the full mechanics, scaling equations, and background systems.
+- **Diagnostics:** server operators can run `/cosmicwarstatus` in chat for a live health and activity readout of the background simulation.
+- **Bounty Board:** any player can run `/cosmicwarbounties` in chat to check their active Bounty License and the top of the galaxy-wide bounty board without opening the UI.

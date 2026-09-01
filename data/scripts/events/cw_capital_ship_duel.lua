@@ -28,9 +28,11 @@ function CW_CapitalShipDuelEvent.spawn()
 
     local dreadA = ShipGenerator.createMilitaryShip(facA, SectorGenerator(x,y):getPositionInSector())
     dreadA.title = facA.name .. " Dreadnought"
+    ShipAI(dreadA.index):setAggressive()
 
     local dreadB = ShipGenerator.createMilitaryShip(facB, SectorGenerator(x,y):getPositionInSector())
     dreadB.title = facB.name .. " Dreadnought"
+    ShipAI(dreadB.index):setAggressive()
 
     Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!")
     terminate()
