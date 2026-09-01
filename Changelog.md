@@ -7,6 +7,16 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.4.1]
+
+### 🪲 Bug Fixes
+
+- [Bugfix] **4 of the "5 New War Zone Events" Were Never Reachable (`cw_eventscheduler.lua`):** `cw_stationsiege.lua`, `cw_capital_ship_duel.lua`, `cw_distress_beacon_trap.lua`, and `cw_orbital_bombardment.lua` — advertised as shipped content since the v3.0.0 changelog — had no `addScriptOnce` call site anywhere in the workspace (confirmed via a full-repo grep, not just this mod's own `data/scripts` folder), so none of them could ever fire. This is a distinct failure mode from the v3.4.0 fix to the other 8 scheduler events, which had a dispatch site but resolved to the wrong short path. `infoCw.lua`'s "Dynamic War Events (Flashpoints)" codex article lists all four as `eventscheduler.lua`-driven, matching the working `cw_blockade.lua`'s identical self-contained `initialize → spawn → terminate` shape (zero extra args, context derived entirely from `Sector()`/`Galaxy()`). All four are now registered in `cw_eventscheduler.lua`'s `events` table on the same random min/max timer pattern as the mod's other roaming events.
+- [Bugfix] **Eclipse Vanguard Event Also Never Reachable (`cosmicwarcontroller.lua`):** `cw_eclipse_vanguard.lua` was the fifth orphaned event, but unlike the four above it was deliberately excluded from `infoCw.lua`'s scheduler-event listing, and its own code gates on `Server():getValue("eclipse_fully_awake")` — the same condition already checked by `cosmicwarcontroller.lua`'s existing "Eclipse Sanitization Protocol" branch inside `applyWeaponizedSubspaceTear`. Added a new `applyEclipseVanguardEvent(factions, random)`, gated on Critical War Heat (`rel <= -80000`) and `eclipse_fully_awake`, called from `CosmicWarController.updateServer()`, with its own independent 8% roll separate from the Sanitization Protocol's.
+- [Bugfix] **Capital Ship Duel Ships Never Actually Fought (`cw_capital_ship_duel.lua`):** The two dreadnoughts spawned by this event had no AI and no `ai/patrol.lua` script attached, unlike every other combat ship spawned across the 5 War Zone Event files — so once reachable, they would have just sat idle instead of "engaging in a fight to the death" as both the flavor text and the in-game Codex describe. Added `ShipAI():setAggressive()` to both.
+- [Bugfix] **Station Siege's "No Target" Guard Never Actually Worked (`cw_stationsiege.lua`):** `Sector():getEntitiesByType()` always returns a table, even when empty, and an empty table is still truthy in Lua 5.1 — so `if not targetStation` never caught the "no station in this sector" case it was written for. Now checks `#targetStation == 0` explicitly. Without this fix, now that the event is reachable, it would have spawned 8 hostile Siege Dreadnoughts into sectors with nothing to besiege.
+- [Bugfix] **Distress Beacon Trap Guaranteed Crash On First Fire (`cw_distress_beacon_trap.lua`):** Called `PlanGenerator.makeStationPlan(...)` without ever including that library (`local PlanGenerator = include("plangenerator")`), which would have thrown an "attempt to index a nil value (global 'PlanGenerator')" the moment this event fired now that it's reachable. Added the missing include.
+
 ## [v3.4.0]
 
 ### ⭐ New Features & Enhancements
