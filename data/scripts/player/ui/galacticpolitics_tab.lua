@@ -63,24 +63,34 @@ if onClient() then
     function GalacticPoliticsTab.buildWindow(container)
         -- Reserve a taller top strip (2 rows: title/license status, then filter controls)
         -- so controls never have to fight the title for the same horizontal space.
-        local hsplit = UIHorizontalSplitter(Rect(container.size), 5, 5, 0.14)
+        -- The splitter's margin (3rd arg) is deliberately large: the sorting-header button
+        -- strip built below reaches 25px above the list's top edge (i.e. above hsplit.bottom's
+        -- own start), so anything less than that would let it collide with row 2's controls.
+        local hsplit = UIHorizontalSplitter(Rect(container.size), 5, 30, 0.14)
         local margin = 10
         local topWidth = hsplit.top.width
         local topHeight = hsplit.top.height
 
-        local row1Bottom = topHeight * 0.5
-        local row2Top = topHeight * 0.5 + 4
+        -- Row 1 gets a smaller share than row 2 so the filter row sits higher, closer to the title.
+        local row1Bottom = topHeight * 0.4
+        local row2Top = topHeight * 0.4 + 4
         local row2Bottom = topHeight - 4
 
-        -- Row 1: title (left) + this player's own Bounty License status (right half)
+        -- Row 1: title (left) + this player's own Bounty License status (middle), with a
+        -- small icon-only refresh button anchored in the actual top-right corner instead of
+        -- competing with the filter row below for horizontal space.
         container:createLabel(Rect(margin, 2, margin + 320, row1Bottom), "Active Galactic Conflicts"%_t, 20)
 
-        self.licenseLabel = container:createLabel(Rect(topWidth * 0.42, 2, topWidth - margin, row1Bottom), "", 15)
+        self.licenseLabel = container:createLabel(Rect(topWidth * 0.42, 2, topWidth - margin - 40, row1Bottom), "", 15)
         self.licenseLabel:setTopLeftAligned()
 
-        -- Row 2: filter, numeric toggle and refresh, laid out left-to-right with fixed
-        -- spacing instead of width-relative right offsets, so nothing overlaps regardless
-        -- of the player window's actual size.
+        local refreshButton = container:createButton(Rect(topWidth - margin - 32, 2, topWidth - margin, row1Bottom), "", "clientFetchData")
+        refreshButton.icon = "data/textures/icons/cw_refresh.png"
+        refreshButton.tooltip = "Refresh Galactic Intelligence"%_t
+
+        -- Row 2: filter and numeric toggle, laid out left-to-right with fixed spacing
+        -- instead of width-relative right offsets, so nothing overlaps regardless of the
+        -- player window's actual size.
         self.filterComboBox = container:createValueComboBox(Rect(margin, row2Top, margin + 230, row2Bottom), "onFilterChanged")
         self.filterComboBox:addEntry("All", "All"%_t)
         self.filterComboBox:addEntry("Active Conflicts", "Active Conflicts"%_t)
@@ -92,12 +102,11 @@ if onClient() then
         self.numericCheck.checked = false
         self.numericCheck.tooltip = "Toggle between numeric and descriptive relation values."%_t
 
-        local refreshButton = container:createButton(Rect(margin + 480, row2Top, margin + 620, row2Bottom), "Refresh"%_t, "clientFetchData")
-        refreshButton.icon = "data/textures/icons/cw_refresh.png"
-        refreshButton.tooltip = "Refresh Galactic Intelligence"%_t
-
-        -- Reserve 160px at the bottom of the UI for the Legend/Summary section
-        local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - 160)
+        -- Reserve enough height at the bottom of the UI for the Legend/Summary section --
+        -- both this bound and infoRect below must agree, or the text box ends up taller
+        -- than the space actually reserved for it and spills past the window's own edge.
+        local legendAreaHeight = 195
+        local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - legendAreaHeight)
         politicsList = container:createListBoxEx(listRect)
         politicsList.columns = 7
         politicsList.rowHeight = 35
@@ -127,7 +136,7 @@ if onClient() then
         self.updateSortingIcons()
 
         -- Bottom Information Section (Legend & Summary)
-        local infoRect = Rect(margin, container.size.y - 150, container.size.x - margin, container.size.y - 10)
+        local infoRect = Rect(margin, container.size.y - legendAreaHeight + 10, container.size.x - margin, container.size.y - 10)
         local infoFrame = container:createFrame(infoRect)
         local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.45)
 
