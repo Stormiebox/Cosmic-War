@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.4.2]
+
+### 🪲 Bug Fixes
+
+- [Bugfixed] **Dead Cross-Mod Bridge Spamming Log Errors on Every Elite Headhunter Spawn (`cw_eventscheduler.lua`):** Reported log line: `cw_eventscheduler.lua:121 - include error: module 'starfall_subsystems' not found`. The Elite Headhunter ambush event carried a `pcall(include, "starfall_subsystems")` "soft bridge" meant to equip heavy subsystems on elite bounty hunters if Cosmic Starfall was installed, but `starfall_subsystems.lua` and its `equipEliteSubsystems` function were never actually built anywhere in the workspace - not in Cosmic Starfall, not anywhere else. The `pcall` prevented a crash, but Avorion's `include()` still logs the failed lookup every time it's attempted, regardless of the `pcall` catching it, so every Elite Headhunter spawn wrote a spurious error to the log. This is the same class of issue already fixed once on this exact event (see the earlier fix in this file removing a dead `entity/enemy.lua` reference on the same Elite Headhunter ambush ships) - removed the dead bridge rather than build the never-implemented feature, matching that precedent. Elite Headhunters keep their existing 2.5x damage/durability scaling; only the non-functional subsystem bonus attempt is gone.
+
 ## [v3.4.1]
 
 ### 🪲 Bug Fixes

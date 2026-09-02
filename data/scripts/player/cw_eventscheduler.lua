@@ -117,12 +117,6 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
                     ship.durability = ship.maxDurability
                 end
 
-                -- Soft Bridge to Cosmic Starfall (Equip heavy subsystems if available)
-                local success, sfAPI = pcall(include, "starfall_subsystems")
-                if success and sfAPI and sfAPI.equipEliteSubsystems then
-                    sfAPI.equipEliteSubsystems(ship)
-                end
-
                 ship.title = "Elite Headhunter"
                 ship:addScriptOnce("ai/patrol.lua")
             end
