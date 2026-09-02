@@ -7,6 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.4.3]
+
+### 🪲 Bug Fixes
+
+- [Bugfix] **Station Siege Crashed the Server on First Fire (`cw_stationsiege.lua:20`):** Reported log line: `cw_stationsiege.lua:25: attempt to get length of local 'targetStation' (a userdata value)`. The v3.4.1 fix to this event's "no target" guard (see that entry below) addressed the wrong half of the bug: `Sector():getEntitiesByType(type)` does not return a single Lua table — per the vanilla API docs (`function Entity... getEntitiesByType(int type)`) it returns *multiple values*, one per matching entity, exactly like every other call site of this function across the mod (`cw_blockade.lua`, `dreadnoughtboss.lua`, `siegeevent.lua`, etc.), all of which correctly capture it as `local x = {sector:getEntitiesByType(...)}`. `cw_stationsiege.lua` was the sole exception, assigning the raw call straight to `targetStation` without the wrapping `{}`. With exactly one station in the target sector, that assignment made `targetStation` a bare `Entity` (userdata) rather than a table, so the v3.4.1 fix's own `#targetStation == 0` length check crashed instead of running — meaning the event has been hard-crashing the server (any time it fired into a sector containing exactly one station) since 3.4.1, not just failing to guard correctly. Now wraps the call in `{}` like every other site in the mod.
+
 ## [v3.4.2]
 
 ### 🪲 Bug Fixes

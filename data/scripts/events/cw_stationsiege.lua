@@ -17,12 +17,15 @@ function CW_StationsiegeEvent.spawn()
 
     local x, y = Sector():getCoordinates()
     local attackerFaction = Galaxy():getNearestFaction(x, y)
-    local targetStation = Sector():getEntitiesByType(EntityType.Station)
+    -- getEntitiesByType() returns MULTIPLE VALUES (Entity, Entity, ...), not a table --
+    -- assigning it straight to one local only keeps the first result. With exactly one
+    -- station in the sector that first result is a bare Entity (userdata), and #targetStation
+    -- below would crash with "attempt to get length of a userdata value". Wrapping the call
+    -- in {} collects every returned value into an actual table, which is also what makes an
+    -- empty table (rather than nil) the correct "no station" signal to check for below.
+    local targetStation = {Sector():getEntitiesByType(EntityType.Station)}
 
-    -- getEntitiesByType always returns a table, even when empty -- an empty table is still
-    -- truthy in Lua 5.1, so "not targetStation" alone never catches the "no station" case.
-    -- Must check the length explicitly.
-    if not targetStation or #targetStation == 0 or not attackerFaction then
+    if #targetStation == 0 or not attackerFaction then
         terminate()
         return
     end
