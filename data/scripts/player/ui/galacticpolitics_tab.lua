@@ -424,7 +424,7 @@ function GalacticPoliticsTab.serverFetchData()
     end
 
     local conflicts, uniquePairs = {}, {}
-    local cw_success = true; include("cosmicwarbridge")
+    include("cosmicwarbridge")
     local now = server.unpausedRuntime or 0
 
     for _, idx in pairs(factionIndices) do
@@ -442,7 +442,7 @@ function GalacticPoliticsTab.serverFetchData()
                     if not uniquePairs[key] then
                         uniquePairs[key] = true
                         local heat = 0
-                        if cw_success and CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
+                        if CosmicWarBridge and CosmicWarBridge.getFactionWarHeat then
                             heat = CosmicWarBridge.getFactionWarHeat(f.index) or 0
                         end
 

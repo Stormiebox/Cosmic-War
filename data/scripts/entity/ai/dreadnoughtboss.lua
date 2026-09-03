@@ -10,19 +10,22 @@ function DreadnoughtBoss.getUpdateInterval()
     return 0.5
 end
 
+if onClient() then
+
+-- registerBoss(entityId) with a real Uuid tracks that entity's own durability/shield
+-- natively (no bigaibehaviour.lua tag, no manual setBossHealth sync needed) and shows its
+-- own Entity title as the boss name -- both spawners (cw_strandedflagship.lua,
+-- cw_decapitationstrike.lua) already set one via setTitle() before attaching this script.
+function DreadnoughtBoss.initialize()
+    registerBoss(Entity().id)
+end
+
+end
+
 if onServer() then
 
 function DreadnoughtBoss.initialize()
     local ship = Entity()
-    -- Render the vanilla Boss Health Bar across the entire sector! This is attached to the
-    -- Sector, not the ship (addScriptOnce resolves against the calling target's own default
-    -- script folder, so this must be the real vanilla sector/story/bigaihealthbar.lua, not a
-    -- "bosshealthbar.lua" file that exists nowhere on disk).
-    -- Note: vanilla's BigAIHealthBar only tracks ships tagged with "bigaibehaviour.lua", which
-    -- this custom boss AI does not attach, so the bar will not pick up this ship as-is; wiring
-    -- that up fully needs a dedicated health-bar script outside this file's scope.
-    Sector():addScriptOnce("data/scripts/sector/story/bigaihealthbar.lua")
-
     -- Make them immune to boarding. "boardable" lives on the Boarding component, not directly
     -- on Entity -- ship.boardable is not a real property and would silently no-op.
     Boarding(ship).boardable = false
@@ -39,15 +42,15 @@ function DreadnoughtBoss.updateServer(timeStep)
     if not valid(ship) then return end
 
     local ai = ShipAI()
-    
+
     -- Increment timer for dynamic aggro swapping
     DreadnoughtBoss.retargetTimer = (DreadnoughtBoss.retargetTimer or 0) + timeStep
-    
+
     -- Only evaluate if we have no target, OR if 15 seconds have passed
-    if ai.isAttackingSomething and DreadnoughtBoss.retargetTimer < 15 then 
-        return 
+    if ai.isAttackingSomething and DreadnoughtBoss.retargetTimer < 15 then
+        return
     end
-    
+
     DreadnoughtBoss.retargetTimer = 0 -- Reset timer
 
     -- Prioritize targeting military ships and stations over weak freighters

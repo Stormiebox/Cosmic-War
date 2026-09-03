@@ -42,6 +42,9 @@ end
 function CW_RiftHazard.updateServer(timeStep)
     -- Drain shields by 5% every 2 seconds for ALL ships in the tear
     local sector = Sector()
+    -- Queried once, reused below for both the target-presence check and the shield-drain pass.
+    local ships = {sector:getEntitiesByType(EntityType.Ship)}
+
     local hasTarget = false
     local stations = {sector:getEntitiesByType(EntityType.Station)}
     for _, entity in pairs(stations) do
@@ -51,7 +54,6 @@ function CW_RiftHazard.updateServer(timeStep)
         end
     end
     if not hasTarget then
-        local ships = {sector:getEntitiesByType(EntityType.Ship)}
         for _, entity in pairs(ships) do
             if entity:getValue("cw_mission_target") then
                 hasTarget = true
@@ -59,15 +61,14 @@ function CW_RiftHazard.updateServer(timeStep)
             end
         end
     end
-    
+
     -- Terminate hazard if the target is destroyed or removed
     if not hasTarget then
         terminate()
         return
     end
 
-    local entities = {sector:getEntitiesByType(EntityType.Ship)}
-    for _, entity in pairs(entities) do
+    for _, entity in pairs(ships) do
         -- Protect the Ancient Tech target structure (if it somehow has shields)
         if not entity:getValue("cw_mission_target") then
             if entity.shieldMaxDurability and entity.shieldMaxDurability > 0 then

@@ -82,8 +82,9 @@ function initialize(factionIndex)
         -- Extremely high base reward due to the heat requirement
         local baseReward = math.floor(750000 + heat * 750000)
 
+        -- giverFaction is already resolved and confirmed non-nil above.
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 18000,
             paymentMessage = "Target secured. You have struck a massive blow to the enemy command structure. Payment transferred."%_T
         }

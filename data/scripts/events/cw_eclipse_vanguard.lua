@@ -16,8 +16,8 @@ end
 function CW_EclipseVanguardEvent.finalize() terminate() end
 
 function CW_EclipseVanguardEvent.spawn()
-    -- Safety Guard: Ensure Eclipse is fully awoken
-    include("cosmicascendancybridge")
+    -- Safety Guard: Ensure Eclipse is fully awoken. "eclipse_fully_awake" is a plain Server
+    -- custom value, so no include() is needed to read it.
     if not Server():getValue("eclipse_fully_awake") then
         include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Eclipse not awoken. Skipping Eclipse Vanguard event.")
         terminate()

@@ -84,7 +84,8 @@ function initialize(factionIndex)
         mission.data.custom.bonusPerShip = math.floor(75000 + heat * 100000)
 
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            -- giverFaction is already resolved and confirmed non-nil above.
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 4000,
             paymentMessage = "Convoy has escaped. Contract payment transferred."%_T
         }

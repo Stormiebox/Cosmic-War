@@ -19,9 +19,8 @@ mission.data.title = mission._Name
 mission.data.icon = "data/textures/icons/ShipEscort.png"
 mission.data.autoTrackMission = true
 
-function getUpdateInterval()
-    return 5.0
-end
+-- No getUpdateInterval() override: broadcastTimer below decrements by "-1" per update and
+-- treats that as 1 second, so this needs structuredmission.lua's default 1 update/second.
 
 local cw_init = initialize
 function initialize(factionIndex)
@@ -71,7 +70,8 @@ function initialize(factionIndex)
         local baseReward = math.floor(100000 + heat * 150000)
 
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            -- giverFaction is already resolved and confirmed non-nil above.
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 10000,
             paymentMessage = "Contract fulfilled. Payment transferred."%_T
         }

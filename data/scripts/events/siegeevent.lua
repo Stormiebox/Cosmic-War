@@ -174,17 +174,14 @@ function SiegeEvent.updateServer(timeStep)
                 -- Terminate the event script as the siege is over
                 terminate()
             else
-                -- Invaders are still present. Check if defenders lost (no stations left)
+                -- Invaders are still present. Count remaining defender stations and standing
+                -- Planetary Shield Generators from a single station query.
                 local defenderStations = 0
+                local planetaryShields = 0
                 for _, station in pairs({sector:getEntitiesByType(EntityType.Station)}) do
                     if station.factionIndex == zone.defender then
                         defenderStations = defenderStations + 1
                     end
-                end
-
-                -- Also check if Planetary Shield Generators are destroyed
-                local planetaryShields = 0
-                for _, station in pairs({sector:getEntitiesByType(EntityType.Station)}) do
                     if station:hasScript("cw_planetary_defense.lua") then
                         planetaryShields = planetaryShields + 1
                     end
@@ -207,6 +204,12 @@ function SiegeEvent.updateServer(timeStep)
 
                     cv_economy.addFamineScore(zone.defender, faminePenalty)
                     include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Faction " .. tostring(zone.defender) .. " lost a sector! Famine score increased.")
+
+                    -- Flip the Battlefield HUD to its "invasion successful" state for every
+                    -- player present, mirroring triggerDefenseSuccess() on the win branch.
+                    for _, player in pairs({sector:getPlayers()}) do
+                        player:invokeFunction("cw_battlefieldhud.lua", "triggerSiegeSuccess")
+                    end
 
                     -- Cosmic War/Chronicles: Wartime Propaganda Beacons
                     if random():test(0.05) then

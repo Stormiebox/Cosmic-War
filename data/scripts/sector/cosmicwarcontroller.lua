@@ -226,9 +226,9 @@ local function applyWeaponizedSubspaceTear(factions, random)
 
         -- If at critical war heat (relations very low, bias high)
         if rel <= -80000 then
-            -- Synergy: Eclipse Sanitization Protocol (10% chance)
-            local EclipseGenerator = include("eclipsegenerator")
+
             if Server():getValue("eclipse_fully_awake") and random:test(0.1) then
+                local EclipseGenerator = include("eclipsegenerator")
                 local cvn = include("cosmicvaultnews")
                 local article = {
                     title = "Sanitization Protocol",
@@ -259,7 +259,7 @@ local function applyWeaponizedSubspaceTear(factions, random)
                     f:setValue("cw_war_bias", 0)
                     enemyFaction:setValue("cw_war_bias", 0)
                 end
-                
+
                 break -- only one intervention per sector update
             end
 
@@ -306,7 +306,7 @@ local function applyWarHazardSpawns(factions, random)
                             ship:addScriptOnce("ai/patrol.lua")
                         end
                     end
-                    
+
                     local cvn = include("cosmicvaultnews")
                     local article = {
                         title = "Frontline Siege",

@@ -66,7 +66,8 @@ function initialize(factionIndex)
         local baseReward = math.floor(250000 + heat * 300000)
 
         mission.data.reward = precomputedReward or {
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((Faction(mission.data.custom.giverIndex or 0) and Faction(mission.data.custom.giverIndex or 0):getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            -- giverFaction is already resolved and confirmed non-nil above.
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
             relations = 20000,
             paymentMessage = "The Champion is defeated! A massive victory for us. Payment transferred."%_T
         }
