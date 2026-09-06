@@ -7,6 +7,14 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v3.4.5]
+
+### 🪲 Bug Fixes
+
+- [Bugfix] **Distress Beacon Trap Spawned A Full Station Instead Of A Beacon (`cw_distress_beacon_trap.lua`):** `CW_DistressBeaconTrapEvent.spawn()` built its "wreckage" via `Sector():createWreckage(PlanGenerator.makeStationPlan(pirateFaction), position)`. `PlanGenerator.makeStationPlan()` generates a full station-scale hull (`Balancing_GetSectorStationVolume(...)`), so every trigger of this event spawned a genuine, multi-segment derelict station rather than a small distress signal — confirmed by a player report and reproduced directly. Replaced with `SectorGenerator:createBeacon(position, pirateFaction, text)`, the same convenience function this mod already uses correctly for the Wartime Propaganda Beacon (`siegeevent.lua`), which builds the small, purpose-built beacon plan (`PlanGenerator.makeBeaconPlan`) vanilla ships for exactly this purpose.
+- [Bugfix] **Distress Beacon Trap Could Trigger In Populated, Faction-Owned Sectors (`cw_distress_beacon_trap.lua`):** Unlike every other roaming ambush event in this mod (`cw_armsdeal.lua`, `cw_refugeeconvoy.lua`, `cw_strandedflagship.lua`, `cw_diplomaticsabotage.lua`), this event had no `sector:getValue("neutral_zone")` check and no check that the sector was actually unclaimed, so it could fire in the middle of any faction's controlled, populated territory. Added the same `neutral_zone` and `Galaxy():getControllingFaction(x, y)` gating `cw_armsdeal.lua` already uses.
+- [Bugfix] **Distress Beacon Trap Left Permanent Sector Bloat (`cw_distress_beacon_trap.lua`):** Neither the beacon entity nor any of the 10 spawned pirates had a cleanup script attached, so leaving the sector without engaging the ambush left all 11 entities behind permanently. Added `data/scripts/entity/deleteonplayersleft.lua` to the beacon and every spawned pirate, matching the cleanup pattern `cw_armsdeal.lua` already uses on its own temporary combatants.
+
 ## [v3.4.4]
 
 ### 🪲 Bug Fixes
