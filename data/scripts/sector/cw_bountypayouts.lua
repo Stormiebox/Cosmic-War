@@ -62,6 +62,12 @@ function CW_BountyPayouts.onDestroyed(destroyedId, destroyerId)
     local victimFactionIndex = victim.factionIndex
     if not victimFactionIndex or victimFactionIndex <= 0 then return end
 
+    -- v4.0.0 War Score: any valid military kill counts toward the war's scoreboard if
+    -- the victim's faction is actually at war -- independent of the bounty logic below,
+    -- and regardless of whether the destroyer was a player or an AI ship.
+    local CosmicWarBridge = include("cosmicwarbridge")
+    CosmicWarBridge.recordWarScoreKill(victimFactionIndex)
+
     local destroyer = Sector():getEntity(destroyerId)
     if not destroyer then return end
     if not destroyer.factionIndex then return end

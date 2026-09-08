@@ -371,6 +371,18 @@ function CosmicWarController.updateServer(timeStep)
     local a, b = chooseWarPair(factions, random)
     if not a or not b then return end
 
+    -- v4.0.0 Coalition Ceasefires: while this pair is under a temporary Eclipse-driven
+    -- truce (cosmicwarceasefires.lua), suppress new escalation entirely for the pair
+    -- actually chosen this tick -- everyone's too busy fleeing the Eclipse to escalate.
+    do
+        local server = Server()
+        local left, right = math.min(a.index, b.index), math.max(a.index, b.index)
+        local dampenedUntil = server and server:getValue("cw_coalition_dampened_" .. tostring(left) .. "_" .. tostring(right)) or 0
+        if dampenedUntil > (server and server.unpausedRuntime or 0) then
+            return
+        end
+    end
+
     applyWarPressure(a, b, random)
     applyWarProfiteeringShortages(factions, random)
     applyWeaponizedSubspaceTear(factions, random)

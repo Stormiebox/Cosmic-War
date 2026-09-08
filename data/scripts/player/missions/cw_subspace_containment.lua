@@ -57,7 +57,7 @@ function initialize(factionIndex)
         if precomputedReward then
             mission.data.reward = precomputedReward
         else
-            local mult = (giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+            local mult = (giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
             local rewardCredits = math.floor((200000 + heat * 200000) * Balancing_GetSectorRewardFactor(x, y) * mult)
             mission.data.reward = {
                 credits = rewardCredits,
@@ -139,7 +139,7 @@ function getBulletin(station)
 
     local baseReward = math.floor(200000 + heat * 200000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,

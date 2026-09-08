@@ -1,6 +1,6 @@
 # ⚔️ 🌌 Cosmic War - Player Guide
 
-Welcome to **Cosmic War**! This guide covers War Heat, faction traits, mercenary contracts, invasions, and everything else you'll run into while the galaxy tears itself apart. Current release: **v3.4.0**.
+Welcome to **Cosmic War**! This guide covers War Heat, faction traits, mercenary contracts, invasions, and everything else you'll run into while the galaxy tears itself apart. Current release: **v4.0.0**.
 
 ---
 
@@ -11,7 +11,11 @@ Welcome to **Cosmic War**! This guide covers War Heat, faction traits, mercenary
 - [Mercenary Contracts](#-mercenary-contracts)
 - [Dreadnought Invasions](#-dreadnought-invasions)
 - [Galactic Politics & Bounty Licenses](#-galactic-politics--bounty-licenses)
+- [War Score & Attrition](#-war-score--attrition)
 - [Dynamic Territory Expansion](#-dynamic-territory-expansion)
+- [Intelligence Network](#-intelligence-network)
+- [Humanitarian Contracts](#-humanitarian-contracts)
+- [Coalition Ceasefires](#-coalition-ceasefires)
 - [Random Encounters](#-random-encounters)
 - [Suite Integration](#-suite-integration)
 
@@ -71,6 +75,21 @@ Profit from the chaos by signing up as a mercenary.
 
 </details>
 
+## 💰 Warbonds
+
+<details>
+<summary><b>Click to expand</b></summary>
+
+Prefer financing a war over fighting it yourself? Any faction actively at war sells Warbonds at its Trading Posts.
+
+### ⚙️ Mechanics
+
+- **Purchase:** a Standard Warbond costs 10,000,000 Cr, a Premium one 50,000,000 Cr. You can hold up to 250,000,000 Cr in bonds with a single faction, and each faction's Trading Post stops selling once its total investment from all players combined hits 1,000,000,000 Cr.
+- **Maturity:** once the war you invested in fully resolves and stays resolved for 2 hours, your bonds pay out — anywhere from nothing up to 300%, scaled by how costly the war actually was for that faction (its Famine Score at maturity versus when you bought in). A faction that came through strong pays out big; one that was left broken pays out little or nothing.
+- **Cash out early (v4.0.0):** don't want to wait out a war that's clearly going badly? Return to the same Trading Post and cash out immediately for a flat 40% — less than a good maturity payout, but guaranteed, and yours right away instead of locked in for however long the war drags on.
+
+</details>
+
 ## 🛡️ Dreadnought Invasions
 
 <details>
@@ -107,6 +126,21 @@ Open the Galactic Politics tab to track every known faction's status, or type `/
 
 </details>
 
+## ⚔️ War Score & Attrition
+
+<details>
+<summary><b>Click to expand</b></summary>
+
+New in v4.0.0. Every active war now keeps score, so "who's winning" is something you can actually check instead of guessing from a relations number.
+
+### ⚙️ Mechanics
+
+- Hover a conflict row in the Galactic Politics tab to see which side is currently ahead, tallied from kills and captured stations (a captured station counts for a lot more than a single kill).
+- **War Exhaustion:** the longer a war drags on, the more likely both sides are to accept a ceasefire.
+- **Decisive Victory:** if one side pulls decisively ahead, the war can end outright - the loser takes a real economic hit and a forced peace, and the Galactic News Network reports it.
+
+</details>
+
 ## 🚀 Dynamic Territory Expansion
 
 <details>
@@ -123,6 +157,48 @@ Factions actively conquer enemy sectors and permanently expand their borders on 
 
 </details>
 
+## 🕵️ Intelligence Network
+
+<details>
+<summary><b>Click to expand</b></summary>
+
+New in v4.0.0. Recon-flavored War Contracts now pay off in more than just credits.
+
+### ⚙️ Mechanics
+
+- Completing Force Recon, Sensor Deployment, or Black Box Retrieval banks Intel against the faction you scouted.
+- Check what you've gathered with `/cosmicwarintel`, or spend 50 Intel against a specific faction with `/cosmicwarintel <faction name>` to get a scouting report on their likely next expansion target - handy for beating them to a border sector, or just knowing where the frontier is about to move.
+
+</details>
+
+## 🤝 Humanitarian Contracts
+
+<details>
+<summary><b>Click to expand</b></summary>
+
+New in v4.0.0. Not every way to get involved in a war has to involve pulling a trigger.
+
+### ⚙️ Mechanics
+
+- **Relief Convoy:** a bulletin-board mission that appears at any faction going through a serious famine. Gather raw materials and deliver them directly to the faction - no combat, no war declaration, just a solid payout and a real reputation boost for helping people who actually need it.
+- **Broker Sanctions Relief:** a new option at Trading Posts. Pay a flat fee to buy a struggling faction two hours of relief from the economic sanctions grinding them down.
+
+</details>
+
+## 🌑 Coalition Ceasefires
+
+<details>
+<summary><b>Click to expand</b></summary>
+
+New in v4.0.0. Some threats are bigger than any one war.
+
+### ⚙️ Mechanics
+
+- When the Eclipse becomes a serious galaxy-wide threat, every faction currently at war gets pulled into a temporary truce - galaxy-wide, not just nearby the danger.
+- Old grudges resume once the immediate crisis passes, but for a while, everyone has bigger problems than each other.
+
+</details>
+
 ## 🆘 Random Encounters
 
 <details>
@@ -132,7 +208,7 @@ Wars don't just affect stations and Dreadnoughts. They displace civilians and li
 
 ### ⚙️ What You Might Run Into
 
-- **Refugee Convoys:** civilian ships fleeing violence occasionally hail you in deep space. Donate supplies or credits for a solid reputation boost, and there's a 25% chance they tip you off to a hidden resource stash.
+- **Refugee Convoys:** civilian ships fleeing violence occasionally hail you in deep space. Escort survivors to safety for a reputation boost and a direct "Hero of the People" credit reward (v4.0.0), and there's a 25% chance they tip you off to a hidden resource stash.
 - **Distress Beacons:** wreckage may broadcast a distress signal. Interact with it to download logs and "Answer the Call," triggering a rescue or ambush. Salvage the wreck without answering first and you lose the interaction for good.
 - **Fleet Clashes and blockades:** active warzones can drop an enemy strike fleet or blockade fleet into a sector you're passing through, no warning beyond what you see on arrival.
 - **Bounty hunter ambushes:** tank your reputation with a military faction during wartime and they may dispatch an elite squad to intercept you the next time you jump into a new sector.

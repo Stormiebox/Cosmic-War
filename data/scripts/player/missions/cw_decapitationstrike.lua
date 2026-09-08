@@ -79,7 +79,7 @@ function initialize(factionIndex)
         local baseReward = math.floor(2500000 + heat * 5000000)
         mission.data.reward = precomputedReward or {
             -- giverFaction is already resolved and confirmed non-nil above.
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
             relations = 35000,
             paymentMessage =
                 "The enemy Flagship is destroyed! Their fleet is completely broken! We are suing for peace immediately."%_T
@@ -151,19 +151,40 @@ function spawnFlagship(x, y)
 
     -- Create the Flagship (Massive Super Boss)
     local pos = generator:getPositionInSector()
-    local flagship = ShipGenerator.createCarrier(enemyFaction, pos, 10.0) -- 3rd argument is volumeFactor, not raw volume
+    -- ShipGenerator.createCarrier(faction, position, fighters) has no volume/size parameter
+    -- at all (see shipgenerator.lua: its internal `volume` is always a fixed
+    -- Balancing_GetSectorShipVolume(...) * Balancing_GetShipVolumeDeviation()`, with no hook
+    -- to override it). The 3rd argument is the fighter squadron count, and 10 is already
+    -- that function's own default, so this call was a no-op -- the flagship spawned at
+    -- stock carrier size despite the "Massive Super Boss" framing. Hull volume can't be
+    -- scaled here, so the toughness scaling below (added alongside the existing
+    -- FireRate/Boarding scaling) is what actually makes it match that framing.
+    local flagship = ShipGenerator.createCarrier(enemyFaction, pos, 10.0)
 
     flagship:setTitle("Flagship Dreadnought"%_T, {})
     flagship:setValue("cw_flagship", true)
 
     -- Give it boss properties
     flagship:addScriptOnce("data/scripts/entity/ai/dreadnoughtboss.lua")
-    -- Scale Damage and Boarding Defense (Safer than maxDurability since block damage recalculates HP)
     local heat = mission.data.custom.heat or 1.0
     local hpMult = math.max(4.0, 8.0 * heat)
 
+    -- Hull and shield toughness, via the same officially-supported APIs already proven
+    -- elsewhere in this mod (cw_refugeeconvoy.lua, siegeevent.lua) -- a direct
+    -- `ship.maxDurability = X` write is the confirmed-broken pattern (read-only property,
+    -- fixed in v3.0.5); `Durability().maxDurabilityFactor` and `addBaseMultiplier` are the
+    -- safe, real hooks, not something to be avoided.
+    if flagship:hasComponent(ComponentType.Durability) then
+        Durability(flagship.index).maxDurabilityFactor = Durability(flagship.index).maxDurabilityFactor * hpMult
+        flagship.durability = flagship.maxDurability
+    end
+    if flagship:hasComponent(ComponentType.Shield) then
+        flagship:addBaseMultiplier(StatsBonuses.ShieldDurability, hpMult - 1.0)
+        flagship.shieldDurability = flagship.shieldMaxDurability
+    end
+
     flagship:addBaseMultiplier(StatsBonuses.FireRate, 3.0 * (hpMult / 2.0) - 1.0)
-    
+
     local boarding = Boarding(flagship.index)
     if boarding then
         -- Boarding has no "defenseMultiplier" property (see Boarding.lua stub); the real
@@ -232,7 +253,7 @@ function getBulletin(station)
 
     local baseReward = math.floor(2500000 + heat * 5000000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,

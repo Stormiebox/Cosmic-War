@@ -63,12 +63,14 @@ function initialize(factionIndex)
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
-        -- Huge buff for v3.0.0
-        local baseReward = math.floor(100000 + heat * 150000)
+        -- v4.0.0: realigned to the 0.80 War Heat tier band (was using the 0.25-tier
+        -- formula copy-pasted from cw_borderskirmish.lua). Matches Blockade Runner,
+        -- the nearest same-tier anchor for a single-target, escort-guarded kill.
+        local baseReward = math.floor(180000 + heat * 220000)
 
         mission.data.reward = precomputedReward or {
             -- giverFaction is already resolved and confirmed non-nil above.
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
             relations = 10000,
             paymentMessage = "Contract fulfilled. Payment transferred."%_T
         }
@@ -141,11 +143,11 @@ end
 
 function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    if heat < 0.25 then return end
+    if heat < 0.80 then return end
 
     local baseReward = math.floor(100000 + heat * 150000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,

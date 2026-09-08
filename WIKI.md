@@ -1,6 +1,6 @@
 # ⚙️ Cosmic War - Technical Wiki
 
-Full technical reference for **Cosmic War**, the faction-conflict simulation module in the **Cosmic** mod series. Current release: **v3.4.0**.
+Full technical reference for **Cosmic War**, the faction-conflict simulation module in the **Cosmic** mod series. Current release: **v4.0.0**.
 
 ---
 
@@ -104,7 +104,7 @@ Runs periodic sector-level scans and applies pressure to selected faction pairs 
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:** `data/scripts/player/init.lua`, `data/scripts/player/background/cosmicwardiplomacy.lua`
+**Primary file:** `data/scripts/server/background/cosmicwardiplomacy.lua` (attached via `data/scripts/galaxy/server.lua`)
 
 **What it does:**
 Periodically evaluates a random subset of eligible faction pairs and nudges diplomacy over time, so relations keep moving between discrete scripted events.
@@ -283,6 +283,21 @@ Injects custom, scaled combat missions into Avorion's native Bulletin Board pool
 
 </details>
 
+### 💰 13b) Warbonds (War Financing)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/entity/merchants/tradingpost.lua` (purchase, cash-out, and Sanctions Relief dialogs and RPCs), `data/scripts/player/cosmicwar_warbonds.lua` (per-player bond tracking and maturity resolution).
+
+**What it does:** A faction actively at war (War Heat ≥ 0.25) sells Warbonds at its Trading Posts — a Standard bond at 10,000,000 Cr or a Premium bond at 50,000,000 Cr, capped at 250,000,000 Cr held per faction per player, and 1,000,000,000 Cr total across all players combined per faction (`cw_warbond_pool_<factionIndex>`, freed back up as bonds mature).
+
+**Maturity (v4.0.0):** once War Heat returns to 0 and stays there for 2 hours, `CW_Warbonds.checkWarbondStatus()` resolves the bond against the faction's Famine Score delta between purchase and maturity — `payoutMultiplier = (1.0 - min(1.0, max(0, famineDelta) / 150)) * 3.0`, giving a smooth 0%–300% return rather than the pre-v4.0.0 binary (300% or total loss).
+
+**Early cash-out (v4.0.0):** `CW_Warbonds.cashOutEarly(factionIndex)`, exposed via a new "Cash Out Warbonds Early" Trading Post interaction, lets a player exit before maturity for a flat 40% — previously bonds had no exit before the war fully resolved.
+
+</details>
+
 ### ⚔️ 14) Dynamic War Events (Flashpoints)
 
 <details>
@@ -347,6 +362,58 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 
 </details>
 
+### 🕵️ 17) Intelligence Network
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/lib/cosmicwarbridge.lua` (`grantIntel`/`getIntel`/`spendIntel`/`findExpansionCandidate`), `data/scripts/commands/cosmicwarintel.lua`, plus completion hooks in `cw_forcerecon.lua`, `cw_sensor_deployment.lua`, `cw_black_box_retrieval.lua`.
+
+**What it does:** Completing Force Recon (+25), Sensor Deployment (+35), or Black Box Retrieval (+30) banks Intel Points against the scouted faction, tracked per-player. `/cosmicwarintel` with no argument lists your current Intel by faction; `/cosmicwarintel <faction name>` spends 50 Intel to preview an Imperialist faction's likely next expansion heading — a live query of the same directional-walk algorithm that drives real expansion (see the Dynamic Territory Expansion entry above), seeded deterministically per 15-minute window so every player asking about the same faction in that window sees the same answer. A non-Imperialist faction still consumes the Intel but honestly reports it has no discernible expansion pattern.
+
+</details>
+
+### 🤝 18) Humanitarian Contracts
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/player/missions/cw_relief_convoy.lua`, `data/scripts/entity/merchants/tradingpost.lua` (Sanctions Relief interaction), `data/scripts/server/background/cosmicwardiplomaticsanctions.lua` (immunity check).
+
+**What it does:** Two non-combat, non-warlike mechanics give a faction's Famine Score a real player-facing path downward — previously Famine only ever accumulated (siege losses, Cosmic Ascendancy's World Eater, Cosmic Chronicles' stock-market rolls), with Chronicles' own market events the only existing decay path.
+
+- **Relief Convoy:** a bulletin-board mission gated on Famine Score (≥50, "Struggling" or worse) rather than War Heat. Gather 3,000–8,000 units of a distance-tiered raw material and deliver it to the giver's own sector. Completion reduces that faction's Famine Score by 40 and pays `50,000 + famineScore·800` credits plus 8,000 reputation. No war declaration, no assigned enemy, no abandon penalty.
+- **Sanctions Relief:** an instant 8,000,000 Cr Trading Post transaction (mirroring the Warbonds dialog flow), available whenever a faction's relations with its registered enemy are at or below the rivalry threshold — the exact condition Diplomatic Sanctions pressure itself checks. Grants 2 hours of immunity from that pressure.
+
+</details>
+
+### ⚔️ 19) War Score & Attrition
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/lib/cosmicwarbridge.lua` (`recordWarScoreKill`/`recordWarScoreTerritory`/`getWarScore`), `data/scripts/sector/cw_bountypayouts.lua`, `data/scripts/entity/ai/trooptransport.lua`, `data/scripts/player/cw_siege_injector_persistent.lua`, `data/scripts/server/background/cosmicwarceasefires.lua`, `data/scripts/player/ui/galacticpolitics_tab.lua`.
+
+**What it does:** A legible, per-conflict scoreboard replacing "who's winning this war" as a mental calculation from the raw relations number. Tracks net kills (1 point each, any valid military kill between two factions actually at war, credited to whichever side didn't lose the unit regardless of who landed the blow) and net territory (25 points each, station captures) per faction pair. Visible by hovering a conflict row in the Galactic Politics tab.
+
+**Feeds two mechanics:**
+
+- **War Exhaustion:** ceasefire chance rises +3% per full day a war has been active, capped at +30%.
+- **Decisive Victory:** once a pair's War Score magnitude reaches 250, the war ends outright regardless of the normal détente roll — the losing side takes a 15-point Famine Score penalty, relations are forced to a solid peace level, the pair's War Score resets to zero, and a "Decisive Victory" article publishes to the Galactic News Network.
+
+</details>
+
+### 🌑 20) Coalition Ceasefires
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/server/background/cosmicwarceasefires.lua`, `data/scripts/sector/cosmicwarcontroller.lua`.
+
+**What it does:** Generalizes the single-pair "Eclipse Sanitization Protocol" into a galaxy-wide mechanic. Once Cosmic Ascendancy's Eclipse Threat Economy (`eclipse_threat`) crosses 5,000 (on its 0–10,000 scale) while the Eclipse is fully awake, every currently-warring AI faction pair galaxy-wide is pulled into a 1-hour temporary truce: relations pushed clear of the rivalry threshold, and new escalation suppressed for the affected pair for the duration. Runs on its own 30-minute cooldown, independent of the normal per-pair ceasefire roll. Scoped to factions actually at war ("affected factions"), with galaxy-wide reach rather than proximity-limited.
+
+</details>
+
 ---
 
 ## 🌐 Server & Performance Guidelines
@@ -369,14 +436,15 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 
 ### Required Mods
 
-Per `modinfo.lua`, Cosmic War declares three hard dependencies plus the base game:
+Cosmic War requires the base game plus the full Core 4 + Vault suite:
 
 - **Avorion** 1.0+
 - **Cosmic Vault** (shared faction index API and data contracts, required by every Cosmic mod)
 - **Cosmic Overhaul**
 - **Cosmic Chronicles**
+- **Cosmic Ascendancy**
 
-**Cosmic Ascendancy is not a hard dependency of Cosmic War.** A handful of features (the Eclipse faction's hardcoded Imperialist/Vengeful stance, the Eclipse Sanitization Protocol ceasefire event) reference Ascendancy content and only activate when it happens to be installed. Everything else in this document works without it.
+`modinfo.lua` itself only declares Vault, Overhaul, and Chronicles: the Core 4 (Overhaul, War, Chronicles, Ascendancy) deliberately never cross-declare each other there, since Avorion's dependency resolver flags a mutual/circular requirement as a load error. Ascendancy is enforced instead through Cosmic War's Steam Workshop "Require Items" listing, the same mechanism the other Core 4 mods already use for each other. The Eclipse faction's hardcoded Imperialist/Vengeful stance and the Eclipse Sanitization Protocol ceasefire event both depend on Ascendancy content and assume it's present; `eclipse_fully_awake` still gates them, but as the game-state check it always was (the Eclipse's own multi-stage awakening, most galaxies won't reach early) rather than an "is the mod even installed" guard.
 
 ### Compatibility Intent
 
@@ -392,14 +460,14 @@ Per `modinfo.lua`, Cosmic War declares three hard dependencies plus the base gam
 1. Place the folder in:
    - **Windows:** `%AppData%\Avorion\mods\`
    - **Linux:** `~/.avorion/mods/`
-2. Install Cosmic Vault, Cosmic Overhaul, and Cosmic Chronicles.
+2. Install Cosmic Vault, Cosmic Overhaul, Cosmic Chronicles, and Cosmic Ascendancy.
 3. Enable **Cosmic War** under **Settings -> Mods**.
 4. Restart the game or server.
 
 ### 🛠️ Troubleshooting Checklist
 
 - [ ] Confirm the mod is active in your Avorion mod settings.
-- [ ] Confirm Cosmic Vault, Cosmic Overhaul, and Cosmic Chronicles are installed.
+- [ ] Confirm Cosmic Vault, Cosmic Overhaul, Cosmic Chronicles, and Cosmic Ascendancy are installed.
 - [ ] Review the latest client/server logs for early startup warnings.
 - [ ] Validate load order if running a heavily modified stack.
 - [ ] Use `/cosmicwarstatus` in-game for operational diagnostics.
@@ -409,8 +477,11 @@ Per `modinfo.lua`, Cosmic War declares three hard dependencies plus the base gam
 
 ## 📈 Development Status
 
-Cosmic War is at **v3.4.0**, a UI-polish and bugfix release following the War Contracts & Bounties Expansion (v3.3.0). Current work focuses on:
+Cosmic War is at **v4.0.0**, a complete overhaul following the War Contracts & Bounties Expansion (v3.3.0) and the incremental hardening releases through v3.4.5. Current work focuses on:
 
+- A legible, per-conflict War Score replacing raw relations numbers as the way players read "who's winning."
+- Famine as a two-way lever (Humanitarian Contracts) rather than a one-way accumulator.
+- Deeper Cosmic Ascendancy integration (Coalition Ceasefires) now that the dependency is guaranteed present.
 - Resilient lifecycle behavior.
 - A highly configurable war simulation.
 - Stable coexistence with the rest of the Cosmic suite.

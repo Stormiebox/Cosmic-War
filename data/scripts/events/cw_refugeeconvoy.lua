@@ -120,16 +120,18 @@ function CW_RefugeeConvoyEvent.escapeTransports()
 
             for _, player in pairs({Sector():getPlayers()}) do
                 changeRelations(player, faction, survived * 2500, RelationChangeType.General)
-                
-                -- "cosmicvaultbuffs.lua" is a plain include()-only library (no initialize/updateServer,
-                -- returns its table at the bottom) -- it is never meant to be addScriptOnce'd onto an
-                -- entity, and exposes no "addBuff" function or trade-price stat (only applyBuff, which
-                -- multiplies a real StatsBonuses ship stat via the Entity() it resolves the id against;
-                -- a Player is not an Entity, and there is no trade-price hook anywhere in this codebase
-                -- to wire a price buff into). Record the grant as a real, queryable player flag instead
-                -- of a call into a function that never existed.
-                player:setValue("cw_hero_of_the_people_until", Server().unpausedRuntime + 3600)
-                player:sendChatMessage("System", ChatMessageType.Information, "You have received the 'Hero of the People' status for 1 hour!"%_T)
+
+                -- v4.0.0: the original "Hero of the People" design promised a +10% trade-price
+                -- buff, but no per-player trade-price hook exists anywhere in Avorion's exposed
+                -- API (confirmed against the API stubs) -- building one would mean patching
+                -- vanilla's own trading UI price calculation directly, a systemic vanilla
+                -- override this suite avoids by design (see modding_philosophy.md). A direct
+                -- credit reward via player:receive() -- the same mechanism this mod already
+                -- uses for every other payout -- delivers a real, honest reward instead of an
+                -- hour-long flag with no mechanical effect behind it.
+                local reward = 300000 * survived
+                player:receive("Hero of the People"%_T, reward)
+                player:sendChatMessage("System", ChatMessageType.Information, "You've been hailed as a 'Hero of the People'! %1% has transferred you %2% Credits in gratitude."%_T, faction.name, createMonetaryString(reward))
             end
         end
     end

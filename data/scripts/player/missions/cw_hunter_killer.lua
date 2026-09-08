@@ -67,7 +67,7 @@ function initialize(factionIndex)
 
         mission.data.reward = precomputedReward or {
             -- giverFaction is already resolved and confirmed non-nil above.
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
             relations = 10000,
             paymentMessage = "Contract fulfilled. Payment transferred."%_T
         }
@@ -159,7 +159,7 @@ function getBulletin(station)
 
     local baseReward = math.floor(125000 + heat * 150000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,

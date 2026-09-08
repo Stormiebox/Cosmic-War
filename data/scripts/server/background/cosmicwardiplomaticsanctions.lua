@@ -65,8 +65,14 @@ function CosmicWarDiplomaticSanctions.update(timeStep)
     for _, idx in pairs(factionIndices) do
         local a = Faction(idx)
         if a and a.isAIFaction and a:getValue("cw_enabled") then
+            -- v4.0.0 Humanitarian Contracts: a player can broker temporary Sanctions
+            -- Relief for a faction (tradingpost.lua) -- skip this faction entirely while
+            -- that immunity is active.
+            local immuneUntil = a:getValue("cw_sanctions_immune_until") or 0
+            local isImmune = immuneUntil > server.unpausedRuntime
+
             local enemy = a:getValue("enemy_faction")
-            if enemy and enemy > 0 then
+            if not isImmune and enemy and enemy > 0 then
                 local b = Faction(enemy)
                 if b and b.isAIFaction then
                     local rel = a:getRelations(b.index) or 0

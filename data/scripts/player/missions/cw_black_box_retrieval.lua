@@ -68,7 +68,7 @@ function initialize(factionIndex)
 
         mission.data.reward = precomputedReward or {
             -- giverFaction is already resolved and confirmed non-nil above.
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
             relations = 10000,
             paymentMessage = "Black box data received. Payment transferred."%_T
         }
@@ -121,6 +121,9 @@ mission.phases[1].triggers = {
         callback = function()
             mission.data.description[4].fulfilled = true
             sync()
+            -- v4.0.0 Intelligence Network: extracted data banks Intel against the
+            -- faction whose prototype it came from.
+            CosmicWarBridge.grantIntel(Player(), mission.data.custom.enemyIndex, 30)
             reward()
             accomplish()
         end
@@ -156,7 +159,7 @@ function getBulletin(station)
 
     local baseReward = math.floor(150000 + heat * 175000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,

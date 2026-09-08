@@ -5,8 +5,31 @@ include("cosmicwarconfig")
 include("cosmicvaultdebug")
 include("stringutility")
 
+local cvf = include("cosmicvaultfaction")
+
 -- namespace CosmicWarNews
 CosmicWarNews = {}
+
+-- Cosmic War's 9 custom traits are mutually exclusive per faction (cosmicwartraits.lua
+-- assigns at most one), so returning on the first match is safe. Display names are read
+-- from the same Cosmic Vault trait registry the vanilla UI itself uses, rather than a
+-- second hardcoded label list that could drift from cosmicwartraits.lua's registrations.
+local CW_TRAIT_IDS = {
+    "cw_warmonger", "cw_pacifist", "cw_isolationist", "cw_opportunist",
+    "cw_imperialist", "cw_entrenched", "cw_vengeful", "cw_mercantile", "cw_xenophobic"
+}
+
+local function getFactionStanceLabel(faction)
+    if not faction then return "Balanced" end
+    local registry = cvf.getCustomTraits() or {}
+    for _, traitId in pairs(CW_TRAIT_IDS) do
+        if (cvf.getTrait(faction.index, traitId) or 0) > 0 then
+            local info = registry[traitId]
+            return (info and info.name) or "Balanced"
+        end
+    end
+    return "Balanced"
+end
 
 function CosmicWarNews.initialize()
     if onServer() then
@@ -94,8 +117,8 @@ function CosmicWarNews.update(timeStep)
     local pick = conflicts[random:getInt(1, #conflicts)]
     if not pick then return end
 
-    local aStance = pick.a:getValue("cw_diplomatic_stance") or "Balanced"
-    local bStance = pick.b:getValue("cw_diplomatic_stance") or "Balanced"
+    local aStance = getFactionStanceLabel(pick.a)
+    local bStance = getFactionStanceLabel(pick.b)
 
     local templates =
     {
@@ -123,8 +146,8 @@ function CosmicWarNews.onSeedNews()
     for _, pick in pairs(conflicts) do
         local factionA = pick.a.name or ("Faction " .. tostring(pick.a.index))
         local factionB = pick.b.name or ("Faction " .. tostring(pick.b.index))
-        local aStance = pick.a:getValue("cw_diplomatic_stance") or "Balanced"
-        local bStance = pick.b:getValue("cw_diplomatic_stance") or "Balanced"
+        local aStance = getFactionStanceLabel(pick.a)
+        local bStance = getFactionStanceLabel(pick.b)
 
         local article = {
             title = "Active Conflict: " .. factionA,

@@ -39,6 +39,16 @@ function CW_EclipseVanguardEvent.spawn()
         dreadnought.shieldDurability = dreadnought.shieldMaxDurability
     end
 
+    -- v4.0.0: this boss-tier anomaly had 50x shields and 50x fire rate but zero hull
+    -- scaling -- once the shield broke, it died like a stock military ship. 4x hull
+    -- toughness (via the same officially-supported maxDurabilityFactor API used
+    -- throughout this mod) gives it a real second phase after the shield goes down,
+    -- without approaching Decapitation Strike's true-superboss toughness.
+    if dreadnought:hasComponent(ComponentType.Durability) then
+        Durability(dreadnought.index).maxDurabilityFactor = Durability(dreadnought.index).maxDurabilityFactor * 4.0
+        dreadnought.durability = dreadnought.maxDurability
+    end
+
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
     broadcastInvokeClientFunction("showVanguardBanner")
     terminate()

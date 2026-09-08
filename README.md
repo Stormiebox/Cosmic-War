@@ -2,7 +2,7 @@
 
 *A complete overhaul to diplomacy, fleet battles, and faction tension in Avorion.*
 
-**Current release: v3.4.0** - a UI-polish and bugfix pass following the War Contracts & Bounties Expansion.
+**Current release: v4.0.0** - a complete overhaul: four new systems and a full numbers-and-balance pass.
 
 ---
 
@@ -45,6 +45,12 @@ Players aren't bystanders. Fund rebellions through the Galactic Politics UI, ans
 - **Live war coverage:** bounty postings and completions, ceasefires, war declarations, and sector conquests all publish to the Galactic News Network.
 - **Bounty & ceasefire coverage:** new in v3.4.0. Fully completing a War Bounty License and factions reaching an actual ceasefire now generate their own news articles, closing the loop on two milestones that used to be visible only in local chat.
 
+### 🆕 New in v4.0.0
+- **War Score & Attrition:** every war keeps a real scoreboard now - hover a conflict in the Galactic Politics tab to see who's winning. Long wars trend toward peace on their own, and decisive wars can end outright with real consequences for the loser.
+- **Intelligence Network:** recon-flavored War Contracts bank Intel you can spend with `/cosmicwarintel` to preview a rival faction's next expansion move.
+- **Humanitarian Contracts:** Relief Convoy missions and a new Sanctions Relief option at Trading Posts give Famine a real player-facing way down, not just up.
+- **Coalition Ceasefires:** when the Eclipse becomes a serious threat, every warring faction galaxy-wide gets pulled into a temporary truce.
+
 </details>
 
 ---
@@ -52,12 +58,13 @@ Players aren't bystanders. Fund rebellions through the Galactic Politics UI, ans
 ## ⚙️ Requirements
 
 - **Avorion 1.0+**
-- **Hard dependencies** (enforced by `modinfo.lua`):
+- **Required mods:**
   - **Cosmic Vault** - shared faction API and data contracts, required by every Cosmic mod.
   - **Cosmic Overhaul**
   - **Cosmic Chronicles**
+  - **Cosmic Ascendancy**
 
-Cosmic Ascendancy is not required to run Cosmic War. A few features (the Eclipse faction's hardcoded stances, the Eclipse Sanitization Protocol) reference Ascendancy content and light up automatically if you also happen to have it installed - everything else works without it.
+`modinfo.lua` itself only enforces Vault, Overhaul, and Chronicles - the Core 4 (Overhaul, War, Chronicles, Ascendancy) deliberately never cross-declare each other there, since Avorion treats a mutual dependency as a circular-load error. Ascendancy is required through Cosmic War's Steam Workshop "Require Items" listing instead, the same way the rest of the Core 4 already require each other. The Eclipse faction's hardcoded stances and the Eclipse Sanitization Protocol both depend on Ascendancy content being present.
 
 ---
 
@@ -66,7 +73,7 @@ Cosmic Ascendancy is not required to run Cosmic War. A few features (the Eclipse
 1. Place the extracted `Cosmic War` folder in your Avorion mods directory:
    - **Windows:** `%AppData%\Avorion\mods\`
    - **Linux:** `~/.avorion/mods/`
-2. Install the required dependencies: Cosmic Vault, Cosmic Overhaul, Cosmic Chronicles.
+2. Install the required dependencies: Cosmic Vault, Cosmic Overhaul, Cosmic Chronicles, Cosmic Ascendancy.
 3. Launch Avorion, go to **Settings -> Mods**, and enable **Cosmic War**.
 4. Restart the game or dedicated server when prompted.
 

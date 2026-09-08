@@ -33,10 +33,25 @@ function CW_SiegeInjectorPersistent.onSectorEntered(playerIndex, x, y, sectorCha
 
         if factionStr then
             local factionIndex = tonumber(factionStr)
+
+            -- Captured before the flip below overwrites it -- the pre-flip controlling
+            -- faction is the defender who just lost this sector.
+            local previousController = Galaxy():getControllingFaction(x, y)
+
             Server():setValue("CosmicVault_PendingFlips", table.concat(remaining, ",") .. (#remaining > 0 and "," or ""))
 
             -- Trigger the flip natively
             Galaxy():invokeFunction("data/scripts/server/cosmicvaultterritory_server.lua", "flipSectorTerritory", x, y, factionIndex)
+
+            -- v4.0.0 Expansion Momentum -- same boost as a physical siege win
+            -- (trooptransport.lua), applied here too since a background-resolved siege
+            -- is just as real a conquest. See cosmicwarexpansion.lua.
+            Server():setValue("cw_expansion_momentum_" .. tostring(factionIndex), Server().unpausedRuntime + 86400)
+
+            -- v4.0.0 War Score: same territory-swing credit as a physical siege win.
+            if previousController and previousController.index ~= factionIndex then
+                include("cosmicwarbridge").recordWarScoreTerritory(previousController.index, factionIndex)
+            end
         end
 
         -- When a player enters a sector, check if it's currently contested

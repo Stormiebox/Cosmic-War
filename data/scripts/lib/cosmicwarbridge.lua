@@ -1,9 +1,54 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include("cosmicwarconfig")
+include("randomext")
 
 
 CosmicWarBridge = CosmicWarBridge or {}
+
+--- Pure lookup: walks outward from `faction`'s home sector along a random heading and
+-- returns the first unclaimed sector along that ray, or nil if the ray immediately runs
+-- into someone else's territory or the faction has no home. Never claims anything itself.
+-- Lives here (a lib/ file every context can safely include()) rather than in
+-- cosmicwarexpansion.lua itself (a server/background/ lifecycle script with no proven
+-- include-from-elsewhere path in this codebase) so both the real expansion tick and the
+-- Intelligence Network's "preview a rival's likely next move" query (/cosmicwarintel)
+-- can reach it.
+-- @param faction (Faction) the Imperialist-style expanding faction
+-- @param maxSteps (number|nil) walk length in sectors, defaults to 15
+-- @param seed (number|nil) explicit Random seed; when supplied, the walk is deterministic
+--        (used by the intel preview so every player asking about the same faction in the
+--        same time window sees the same answer, rather than a fresh heading per query)
+-- @return tx, ty (number, number) or nil if no candidate was found
+function CosmicWarBridge.findExpansionCandidate(faction, maxSteps, seed)
+    if not faction then return nil end
+    local hx, hy = faction:getHomeSectorCoordinates()
+    if not hx or not hy then return nil end
+
+    local rnd = seed and Random(seed) or random()
+    local angle = rnd:getFloat() * math.pi * 2
+    local dx = math.cos(angle)
+    local dy = math.sin(angle)
+    local cx, cy = hx, hy
+
+    for step = 1, (maxSteps or 15) do
+        cx = cx + dx
+        cy = cy + dy
+        local tx, ty = math.floor(cx + 0.5), math.floor(cy + 0.5)
+
+        local controllingFaction = Galaxy():getControllingFaction(tx, ty)
+        if not controllingFaction then
+            return tx, ty
+        elseif controllingFaction.index ~= faction.index then
+            -- Ran into someone else's territory -- stop here rather than hopping over
+            -- it to claim something further out.
+            return nil
+        end
+        -- controllingFaction.index == faction.index: already-owned sector, keep walking.
+    end
+
+    return nil
+end
 
 local function safeRelations(a, bIndex)
     if not a or not bIndex then return 0 end
@@ -145,6 +190,109 @@ function CosmicWarBridge.forceDeclareWar(attackerFaction, defenderFaction)
     else
         Galaxy():setFactionRelations(attackerFaction, defenderFaction, -100000)
     end
+end
+
+-- v4.0.0 Intelligence Network: recon/sabotage War Contracts (Force Recon, Sensor
+-- Deployment, Black Box Retrieval) bank Intel Points against their target faction on
+-- completion. /cosmicwarintel spends them to preview that faction's likely next
+-- expansion move (see findExpansionCandidate() above). Stored per-player,
+-- per-target-faction as a plain custom value -- the same pattern used for every other
+-- per-player War state in this mod (cw_mercenary_faction, cw_bounty_enemy, etc.).
+function CosmicWarBridge.grantIntel(player, factionIndex, amount)
+    if not player or not factionIndex or factionIndex <= 0 or not amount or amount <= 0 then return end
+    local key = "cw_intel_" .. tostring(factionIndex)
+    local current = player:getValue(key) or 0
+    player:setValue(key, current + amount)
+end
+
+function CosmicWarBridge.getIntel(player, factionIndex)
+    if not player or not factionIndex or factionIndex <= 0 then return 0 end
+    return player:getValue("cw_intel_" .. tostring(factionIndex)) or 0
+end
+
+--- Returns true and deducts `amount` if the player had enough; returns false and
+-- changes nothing otherwise.
+function CosmicWarBridge.spendIntel(player, factionIndex, amount)
+    if not player or not factionIndex or factionIndex <= 0 or not amount then return false end
+    local key = "cw_intel_" .. tostring(factionIndex)
+    local current = player:getValue(key) or 0
+    if current < amount then return false end
+    player:setValue(key, current - amount)
+    return true
+end
+
+-- v4.0.0 War Score & Attrition: a legible, per-conflict scoreboard replacing "who's
+-- winning this war" as a mental calculation from the raw relations number. Stored as two
+-- signed counters per faction pair (kills, territory), always keyed from the
+-- lower-indexed faction's perspective so there's exactly one canonical entry per pair
+-- regardless of call order.
+local function warScorePairKey(a, b)
+    local lo, hi = math.min(a, b), math.max(a, b)
+    return tostring(lo) .. "_" .. tostring(hi)
+end
+
+--- Call whenever a valid military kill happens between two factions actually at war
+-- with each other. Credits the score to whichever side did NOT lose the unit,
+-- regardless of who actually landed the killing blow (a player mercenary killing an
+-- enemy ship is exactly as much "attrition against that faction" as an AI-vs-AI kill).
+function CosmicWarBridge.recordWarScoreKill(victimFactionIndex)
+    if not onServer() then return end
+    local victim = Faction(victimFactionIndex)
+    if not victim or not victim.isAIFaction then return end
+    local enemyIdx = victim:getValue("enemy_faction") or 0
+    if enemyIdx <= 0 then return end
+
+    local server = Server()
+    if not server then return end
+
+    local lo = math.min(victimFactionIndex, enemyIdx)
+    local delta = (enemyIdx == lo) and 1 or -1
+    local key = "cw_ws_kills_" .. warScorePairKey(victimFactionIndex, enemyIdx)
+    server:setValue(key, (server:getValue(key) or 0) + delta)
+end
+
+--- Call whenever a station changes hands between two AI factions via conquest (siege or
+-- background flip). Territory swings are weighted far higher than a single kill when
+-- getWarScore() combines them.
+function CosmicWarBridge.recordWarScoreTerritory(loserFactionIndex, winnerFactionIndex)
+    if not onServer() then return end
+    if not loserFactionIndex or not winnerFactionIndex or loserFactionIndex == winnerFactionIndex then return end
+
+    local server = Server()
+    if not server then return end
+
+    local lo = math.min(loserFactionIndex, winnerFactionIndex)
+    local delta = (winnerFactionIndex == lo) and 1 or -1
+    local key = "cw_ws_territory_" .. warScorePairKey(loserFactionIndex, winnerFactionIndex)
+    server:setValue(key, (server:getValue(key) or 0) + delta)
+end
+
+--- Returns the combined War Score from factionA's perspective: positive means A is
+-- winning. 1 point per net kill, 25 per net station capture -- a single territory swing
+-- outweighs a long kill streak, matching how much more a captured station actually
+-- changes the shape of a war than one more destroyed ship.
+function CosmicWarBridge.getWarScore(factionA, factionB)
+    local server = Server()
+    if not server or not factionA or not factionB then return 0 end
+
+    local key = warScorePairKey(factionA, factionB)
+    local kills = server:getValue("cw_ws_kills_" .. key) or 0
+    local territory = server:getValue("cw_ws_territory_" .. key) or 0
+    local netForLo = kills + (territory * 25)
+
+    local lo = math.min(factionA, factionB)
+    if factionA == lo then return netForLo end
+    return -netForLo
+end
+
+--- Clears both counters for a pair -- called once a war is decisively resolved so a
+-- future war between the same two factions starts its scoreboard fresh.
+function CosmicWarBridge.resetWarScore(factionA, factionB)
+    local server = Server()
+    if not server or not factionA or not factionB then return end
+    local key = warScorePairKey(factionA, factionB)
+    server:setValue("cw_ws_kills_" .. key, nil)
+    server:setValue("cw_ws_territory_" .. key, nil)
 end
 
 return CosmicWarBridge

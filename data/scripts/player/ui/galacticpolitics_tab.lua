@@ -144,7 +144,8 @@ if onClient() then
             " " .. "Bounty column:"%_t .. " " .. "Shows the higher of either side's active War Bounty reward. Hover a row for full details."%_t .. "\n" ..
             " " .. "War Heat:"%_t .. " (" .. "Red"%_t .. ") " .. "Critical"%_t .. " | (" .. "Orange"%_t .. ") " .. "High"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Rising"%_t .. " | (" .. "Green"%_t .. ") " .. "Zero"%_t .. "\n" ..
             " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t .. "\n" ..
-            " " .. "Famine:"%_t .. " (" .. "Green"%_t .. ") " .. "Normal"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Struggling"%_t .. " | (" .. "Red"%_t .. ") " .. "Critical"%_t
+            " " .. "Famine:"%_t .. " (" .. "Green"%_t .. ") " .. "Normal"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Struggling"%_t .. " | (" .. "Red"%_t .. ") " .. "Critical"%_t .. "\n" ..
+            " " .. "War Score:"%_t .. " " .. "hover a row for who's currently winning (kills + territory), if either side is decisively ahead"%_t
         local legendRectInset = Rect(infoSplit.left.lower + vec2(10, 10), infoSplit.left.upper - vec2(10, 10))
         local legendLabel = container:createLabel(legendRectInset, legendStr, 15)
         legendLabel.wordBreak = true
@@ -338,7 +339,12 @@ if onClient() then
             politicsList:setEntryNoCallback(5, row, conflict.status%_t, false, false, heatColor)
             politicsList:setEntryNoCallback(6, row, relationText, false, false, gray)
 
-            local tooltip = "=== " .. nameA .. " ===\n"
+            local tooltip = ""
+            if conflict.warScore and conflict.warScore ~= 0 then
+                local leaderName = conflict.warScore > 0 and nameA or nameB
+                tooltip = tooltip .. "War Score: "%_t .. leaderName .. " leading (" .. tostring(math.abs(math.floor(conflict.warScore))) .. ")\n\n"
+            end
+            tooltip = tooltip .. "=== " .. nameA .. " ===\n"
             tooltip = tooltip .. "Index: "%_t .. conflict.factionAIndex .. "\n"
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsA) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relA) .. " (" .. math.floor(relA) .. ")\n"
@@ -471,7 +477,11 @@ function GalacticPoliticsTab.serverFetchData()
                         local famineA = server:getValue("cv_famine_" .. tostring(f.index)) or 0
                         local famineB = server:getValue("cv_famine_" .. tostring(e.index)) or 0
 
+                        -- v4.0.0 War Score & Attrition: positive favors faction A.
+                        local warScore = CosmicWarBridge.getWarScore and CosmicWarBridge.getWarScore(f.index, e.index) or 0
+
                         table.insert(conflicts, {
+                            warScore = warScore,
                             factionA = string.gsub(fName, "%s*/%*.-%*/%s*", ""),
                             factionAIndex = f.index,
                             traitsA = getFactionTraitsSafe(f),

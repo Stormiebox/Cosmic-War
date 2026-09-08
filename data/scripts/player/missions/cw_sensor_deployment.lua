@@ -95,7 +95,7 @@ function initialize(factionIndex)
 
         mission.data.reward = precomputedReward or {
             -- giverFaction is already resolved and confirmed non-nil above.
-            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1),
+            credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
             relations = 10000,
             paymentMessage = "All sensors deployed. We are receiving the telemetry now. Payment transferred."%_T
         }
@@ -164,6 +164,9 @@ mission.phases[1].triggers = {
             if mission.data.custom.deployedCount >= 3 then
                 mission.data.description[4].fulfilled = true
                 sync()
+                -- v4.0.0 Intelligence Network: 3 sectors surveyed banks more Intel than
+                -- a single-target recon run.
+                CosmicWarBridge.grantIntel(player, mission.data.custom.enemyIndex, 35)
                 reward()
                 accomplish()
             else
@@ -206,7 +209,7 @@ function getBulletin(station)
 
     local baseReward = math.floor(100000 + heat * 125000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 3 or 1
+    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,

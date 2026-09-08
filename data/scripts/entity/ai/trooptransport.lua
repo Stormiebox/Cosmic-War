@@ -106,6 +106,15 @@ function TroopTransport.captureStation(station, newFactionIndex)
     local oldFactionIndex = station.factionIndex
     station.factionIndex = newFactionIndex
 
+    -- v4.0.0 Expansion Momentum: a faction that just won a siege gets a temporary boost
+    -- to its own organic (Imperialist/Entrenched) expansion rolls -- see
+    -- cosmicwarexpansion.lua. 24 in-game hours of unpausedRuntime.
+    Server():setValue("cw_expansion_momentum_" .. tostring(newFactionIndex), Server().unpausedRuntime + 86400)
+
+    -- v4.0.0 War Score: a captured station is a territory swing, weighted far above a
+    -- single kill (see CosmicWarBridge.getWarScore).
+    include("cosmicwarbridge").recordWarScoreTerritory(oldFactionIndex, newFactionIndex)
+
     local sector = Sector()
     sector:broadcastChatMessage(station, ChatMessageType.Warning, "The station has been captured by enemy forces!"%_T)
 

@@ -6,8 +6,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 -- To reduce global collision risk while preserving compatibility, helpers are scoped locally.
 
 local function collectStatus()
-    local galaxy = Galaxy()
-    if not galaxy then
+    if not Galaxy() then
         return nil, "Galaxy unavailable"
     end
 

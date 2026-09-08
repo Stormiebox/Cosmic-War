@@ -50,6 +50,15 @@ function MissionBulletins.getPossibleMissions()
             table.insert(scripts, {path = "data/scripts/player/missions/cw_champion_duel.lua", prob = 0.5})
         end
     end
-    
+
+    -- v4.0.0 Humanitarian Contracts: gated on Famine, not War Heat -- a starving faction
+    -- wants relief regardless of whether it's currently at war with anyone, so this
+    -- check doesn't depend on CosmicWarBridge being available above.
+    local server = Server()
+    local famineScore = server and (server:getValue("cv_famine_" .. tostring(entity.factionIndex)) or 0) or 0
+    if famineScore >= 50 then
+        table.insert(scripts, {path = "data/scripts/player/missions/cw_relief_convoy.lua", prob = 1.5})
+    end
+
     return scripts
 end

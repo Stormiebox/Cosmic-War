@@ -16,7 +16,7 @@ meta =
     type = "mod",
 
     -- Description of your mod that will be displayed to players
-    description = "A living, persistent AI faction politics and dynamic war-state simulation module. Now featuring Bounties and Galactic News broadcasts! This version fully integrates with the Cosmic Vault API framework for unified progression, enhanced background simulation safety, and global news reporting.",
+    description = "A living, persistent AI faction politics and dynamic war-state simulation module. v4.0.0 is a complete overhaul: a legible War Score & Attrition system, an Intelligence Network, Humanitarian Contracts that give Famine a real player-facing path downward, galaxy-wide Coalition Ceasefires against the Eclipse, and a corrected numbers pass across every mission and boss.",
 
     -- Insert all authors into this list
     authors = { "Stormbox" },
@@ -25,7 +25,7 @@ meta =
     -- This will be used to check for unmet dependencies or incompatibilities, and to check compatibility between clients and dedicated servers with mods.
     -- If a client with an unmatching major or minor mod version wants to log into a server, login is prohibited.
     -- Unmatching patch version still allows logging into a server. This works in both ways (server or client higher or lower version).
-    version = "3.4.5",
+    version = "4.0.0",
 
     -- If your mod requires dependencies, enter them here. The game will check that all dependencies given here are met.
     -- Possible attributes:

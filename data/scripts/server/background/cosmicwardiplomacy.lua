@@ -186,6 +186,15 @@ local function maybeAdjustPair(a, b, random)
                 -- Broadcast the War via Cosmic Vault Events (7 days duration default)
                 cve.startEvent("cw_war_" .. a.index .. "_" .. b.index, 7 * 24 * 3600)
                 cve.startEvent("cw_war_" .. b.index .. "_" .. a.index, 7 * 24 * 3600)
+
+                -- v4.0.0 War Score & Attrition: mark when this war actually started, so
+                -- cosmicwarceasefires.lua can apply War Exhaustion (ceasefire chance
+                -- rising the longer a war drags on).
+                local lo, hi = math.min(a.index, b.index), math.max(a.index, b.index)
+                local srv = Server()
+                if srv then
+                    srv:setValue("cw_war_started_" .. tostring(lo) .. "_" .. tostring(hi), srv.unpausedRuntime)
+                end
             end
         end
     elseif random:test(math.min(0.40, peaceChance)) then
