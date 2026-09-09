@@ -5,14 +5,14 @@ function MissionBulletins.getPossibleMissions()
     if cw_getPossibleMissions then
         scripts = cw_getPossibleMissions()
     end
-    
+
     local entity = Entity()
     if not entity or not entity.factionIndex then return scripts end
 
     include("cosmicwarbridge")
     if CosmicWarBridge then
         local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
-        
+
         -- The probabilities are roughly matched to vanilla standard missions
         if heat >= 0.15 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_forcerecon.lua", prob = 2.0})
@@ -25,6 +25,7 @@ function MissionBulletins.getPossibleMissions()
             table.insert(scripts, {path = "data/scripts/player/missions/cw_resource_heist.lua", prob = 1.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_resourcesabotage.lua", prob = 1.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_deploy_mines.lua", prob = 1.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_scorched_earth.lua", prob = 1.0})
         end
         if heat >= 0.45 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_sector_raid.lua", prob = 1.0})
@@ -32,17 +33,22 @@ function MissionBulletins.getPossibleMissions()
             table.insert(scripts, {path = "data/scripts/player/missions/cw_breakthrough.lua", prob = 1.0})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_propaganda_broadcast.lua", prob = 1.0})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_black_box_retrieval.lua", prob = 1.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_deniableraid.lua", prob = 1.0})
         end
         if heat >= 0.60 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_hunter_killer.lua", prob = 1.0})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_frontlinesiege.lua", prob = 1.0})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_distraction_carnage.lua", prob = 1.0})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_shieldbreaker.lua", prob = 0.75})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_decisivepush.lua", prob = 0.75})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_prizecrew.lua", prob = 0.75})
         end
         if heat >= 0.80 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_highvaluedefection.lua", prob = 0.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_assassinate_general.lua", prob = 0.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_supply_line_raid.lua", prob = 0.5})
             table.insert(scripts, {path = "data/scripts/player/missions/cw_blockade_runner.lua", prob = 0.5})
+            table.insert(scripts, {path = "data/scripts/player/missions/cw_subspace_containment.lua", prob = 0.5})
         end
         if heat >= 1.00 then
             table.insert(scripts, {path = "data/scripts/player/missions/cw_decapitationstrike.lua", prob = 0.5})
@@ -58,6 +64,15 @@ function MissionBulletins.getPossibleMissions()
     local famineScore = server and (server:getValue("cv_famine_" .. tostring(entity.factionIndex)) or 0) or 0
     if famineScore >= 50 then
         table.insert(scripts, {path = "data/scripts/player/missions/cw_relief_convoy.lua", prob = 1.5})
+    end
+    -- v4.0.0: Medical Airlift is Severe-Famine-only (>=100), so it never
+    -- competes with Relief Convoy's own >=50 slot for the same struggling-but-not-yet-
+    -- critical faction.
+    if famineScore >= 100 then
+        table.insert(scripts, {path = "data/scripts/player/missions/cw_medical_airlift.lua", prob = 1.0})
+    end
+    if famineScore >= 50 then
+        table.insert(scripts, {path = "data/scripts/player/missions/cw_refugeeresettlement.lua", prob = 1.0})
     end
 
     return scripts

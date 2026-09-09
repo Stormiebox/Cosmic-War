@@ -30,15 +30,16 @@ end
 function onRemove()
     if onServer() then
         local sector = Sector()
-        
+        local stations = {sector:getEntitiesByType(EntityType.Station)}
+
         -- Redundancy Check: Do not drop shields if another generator is active in the sector!
-        for _, entity in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+        for _, entity in pairs(stations) do
             if entity.id ~= Entity().id and entity:hasScript("cw_planetary_defense.lua") then
                 return
             end
         end
 
-        for _, entity in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+        for _, entity in pairs(stations) do
             if entity.id ~= Entity().id then
                 entity.invincible = false
             end

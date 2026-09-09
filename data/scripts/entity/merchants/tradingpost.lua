@@ -9,6 +9,14 @@ function TradingPost.initUI()
     ScriptUI():registerInteraction("Purchase Warbonds"%_t, "onPurchaseWarbondsInteraction")
     ScriptUI():registerInteraction("Broker Sanctions Relief"%_t, "onSanctionsReliefInteraction")
     ScriptUI():registerInteraction("Cash Out Warbonds Early"%_t, "onCashOutWarbondsInteraction")
+    ScriptUI():registerInteraction("Send Diplomatic Aid Package"%_t, "onDiplomaticAidInteraction")
+
+    -- v4.0.0: Live Battlefield Salvage Markets -- only the temporary posts
+    -- siegeevent.lua spawns mid-siege carry this flag, so ordinary Trading Posts never
+    -- show this interaction.
+    if Entity():getValue("cw_salvage_market") then
+        ScriptUI():registerInteraction("Sell Salvage For A Premium"%_t, "onSalvagePremiumInteraction")
+    end
 end
 
 -- v4.0.0: the one-way lock-in Warbonds had until now -- wait for the war to fully
@@ -157,6 +165,111 @@ function TradingPost.buySanctionsRelief()
     player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Agreement reached. We won't forget this."%_t)
 end
 
+-- v4.0.0: Diplomatic Aid Package -- a third Humanitarian Contract, this one
+-- a flat-fee credit donation that reduces Famine directly, for players who'd rather pay
+-- than fly a Relief Convoy run. Mirrors Sanctions Relief's own instant-transaction dialog
+-- flow, gated on the same Famine >= 50 ("Struggling or worse") threshold Relief Convoy
+-- itself uses. Feeds CosmicWarBridge.recordFamineReliefApplied() the same way every other
+-- Humanitarian Contract does, so Warbonds can't be made risk-free by pairing a bond with
+-- this donation either.
+local DIPLOMATIC_AID_COST = 6000000
+local DIPLOMATIC_AID_FAMINE_REDUCTION = 20
+
+function TradingPost.onDiplomaticAidInteraction()
+    invokeServerFunction("requestDiplomaticAidDialog")
+end
+
+function TradingPost.requestDiplomaticAidDialog()
+    if onClient() then invokeServerFunction("requestDiplomaticAidDialog") return end
+    local server = Server()
+    local famineScore = server and (server:getValue("cv_famine_" .. tostring(Entity().factionIndex)) or 0) or 0
+    invokeClientFunction(Player(callingPlayer), "showDiplomaticAidDialog", famineScore >= 50)
+end
+
+function TradingPost.showDiplomaticAidDialog(eligible)
+    if eligible then
+        ScriptUI():showDialog(TradingPost.makeDiplomaticAidDialog())
+    else
+        ScriptUI():showDialog(TradingPost.makeNoDiplomaticAidDialog())
+    end
+end
+
+function TradingPost.makeDiplomaticAidDialog()
+    local dialog = {}
+    dialog.text = "Our people are struggling through famine. A direct credit donation would let us purchase relief supplies immediately, no convoy required."%_t
+    dialog.answers = {
+        {answer = "Send Aid Package (6,000,000 Cr)"%_t, onSelect = "buyDiplomaticAid"},
+        {answer = "Not right now."%_t}
+    }
+    return dialog
+end
+
+function TradingPost.makeNoDiplomaticAidDialog()
+    local dialog = {}
+    dialog.text = "We appreciate the thought, but we aren't in enough need to accept aid right now."%_t
+    dialog.answers = {{answer = "Understood."%_t}}
+    return dialog
+end
+
+function TradingPost.buyDiplomaticAid()
+    if onClient() then invokeServerFunction("buyDiplomaticAid") return end
+
+    local player = Player(callingPlayer)
+    if not player then return end
+
+    local canPay, msg = player:canPay(DIPLOMATIC_AID_COST)
+    if not canPay then
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg)
+        return
+    end
+
+    player:pay("Diplomatic Aid Package"%_t, DIPLOMATIC_AID_COST)
+
+    local factionIndex = Entity().factionIndex
+    local CosmicVaultEconomy = include("cosmicvaulteconomy")
+    local CosmicWarBridge = include("cosmicwarbridge")
+    CosmicVaultEconomy.addFamineScore(factionIndex, -DIPLOMATIC_AID_FAMINE_REDUCTION)
+    CosmicWarBridge.recordFamineReliefApplied(factionIndex, DIPLOMATIC_AID_FAMINE_REDUCTION)
+
+    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Your generosity will not be forgotten."%_t)
+end
+
+-- v4.0.0: Live Battlefield Salvage Markets. Sells the player's entire raw
+-- material hold in one transaction at a flat premium rate, well above ordinary trade-good
+-- value -- only reachable at a station siegeevent.lua flagged cw_salvage_market on.
+function TradingPost.onSalvagePremiumInteraction()
+    invokeServerFunction("sellSalvageAtPremium")
+end
+
+function TradingPost.sellSalvageAtPremium()
+    if onClient() then invokeServerFunction("sellSalvageAtPremium") return end
+    local player = Player()
+    if not player then return end
+
+    local rates = {
+        [MaterialType.Iron] = 5, [MaterialType.Titanium] = 15, [MaterialType.Naonite] = 40,
+        [MaterialType.Trinium] = 100, [MaterialType.Xanion] = 250, [MaterialType.Ogonite] = 600,
+        [MaterialType.Avorion] = 1500
+    }
+
+    local resources = { player:getResources() }
+    local total = 0
+    for matType, rate in pairs(rates) do
+        local amount = resources[matType + 1] or 0
+        if amount > 0 then
+            player:payResource("Sold to Salvage Market", Material(matType), amount)
+            total = total + math.floor(amount * rate)
+        end
+    end
+
+    if total > 0 then
+        player:receive("Salvage Market Sale", total)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Sold your entire raw materials hold for %1% Credits."%_T, createMonetaryString(total))
+    else
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "You have no raw materials to sell."%_t)
+    end
+end
+
 function TradingPost.onPurchaseWarbondsInteraction()
     -- Heat must be evaluated server-side; Server() is not available in UI context.
     invokeServerFunction("requestWarbondDialog")
@@ -274,3 +387,7 @@ callable(TradingPost, "buySanctionsRelief")
 callable(TradingPost, "requestCashOutDialog")
 callable(TradingPost, "showCashOutDialog")
 callable(TradingPost, "cashOutWarbonds")
+callable(TradingPost, "requestDiplomaticAidDialog")
+callable(TradingPost, "showDiplomaticAidDialog")
+callable(TradingPost, "buyDiplomaticAid")
+callable(TradingPost, "sellSalvageAtPremium")

@@ -7,20 +7,20 @@ local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 include("structuredmission")
 
--- v4.0.0: Humanitarian Contract -- the first Cosmic War mission that isn't combat or an
--- act of war. Gated on a faction's Famine Score (missionbulletins.lua), not War Heat.
--- Delivering the relief supplies reduces that Famine Score directly -- Famine previously
--- had no player-facing way to go back down; it only ever accumulated from siege losses
--- and read into War Heat.
+-- v4.0.0: a second Humanitarian Contract alongside Relief Convoy, gated at
+-- Famine >= 100 ("Severe Famine") specifically -- for the worst-off factions, a smaller,
+-- faster emergency delivery (framed as a critical airlift, not a bulk supply run) for a
+-- bigger single-shot Famine reduction and a higher payout, so it doesn't compete with
+-- Relief Convoy's own >=50 bulletin slot.
 mission._Debug = 0
-mission._Name = "Relief Convoy"
+mission._Name = "Medical Airlift"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
 mission.data.icon = "data/textures/icons/ResourceSteal.png"
 mission.data.autoTrackMission = true
 
-local cw_relief_init = initialize
+local cw_medical_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
         local fIndex = factionIndex
@@ -38,11 +38,6 @@ function initialize(factionIndex)
 
         local x, y = Sector():getCoordinates()
         mission.data.custom.giverCoords = { x = x, y = y }
-
-        -- Unlike the combat War Contracts, there's no adversarial "travel to a hostile
-        -- sector first" phase here -- the player gathers materials from wherever they
-        -- like and delivers them to the giver's own sector, so the mission location
-        -- (and its map marker) is the giver's sector itself, not a synthetic waypoint.
         mission.data.location = { x = x, y = y }
 
         local d = length(vec2(x, y))
@@ -55,7 +50,9 @@ function initialize(factionIndex)
         if d < 50 then matType = MaterialType.Avorion end
 
         local requiredMaterial = Material(matType)
-        local materialAmount = random():getInt(3000, 8000)
+        -- A smaller, faster load than Relief Convoy (3,000-8,000) -- an emergency airlift
+        -- moves quickly, it doesn't wait to fill a bulk convoy.
+        local materialAmount = random():getInt(1200, 3000)
 
         mission.data.custom.materialType = matType
         mission.data.custom.materialName = requiredMaterial.name
@@ -66,21 +63,21 @@ function initialize(factionIndex)
         mission.data.custom.famineScore = famineScore
 
         mission.data.description = {
-            { text = "You accepted a Relief Convoy contract from ${giver}, whose people are struggling through famine."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Gather ${amount} ${material} and deliver it to sector (${x}:${y})."%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = x, y = y } },
+            { text = "You accepted an emergency Medical Airlift contract from ${giver} -- their famine has reached crisis levels."%_T, arguments = { giver = giverFaction.name } },
+            { text = "Gather ${amount} ${material} and deliver it to sector (${x}:${y}) immediately."%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = x, y = y } },
             { text = "Deliver ${amount} ${material} to (${x}:${y})"%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = x, y = y }, bulletPoint = true, fulfilled = false }
         }
 
-        local baseReward = math.floor(50000 + famineScore * 800)
+        local baseReward = math.floor(100000 + famineScore * 1000)
         mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y),
-            relations = 8000,
-            paymentMessage = "The relief supplies have saved lives. You have our deepest gratitude."%_T
+            relations = 10000,
+            paymentMessage = "You saved countless lives today. We will not forget this."%_T
         }
 
-        cw_relief_init(factionIndex)
+        cw_medical_init(factionIndex)
     else
-        cw_relief_init(factionIndex)
+        cw_medical_init(factionIndex)
     end
 end
 
@@ -112,17 +109,15 @@ mission.phases[1].triggers = {
             local matType = mission.data.custom.materialType
             local requiredAmount = mission.data.custom.materialAmount
 
-            player:payResource("Relief Convoy delivered", Material(matType), requiredAmount)
+            player:payResource("Medical Airlift delivered", Material(matType), requiredAmount)
 
             local giverIndex = mission.data.custom.giverIndex
             if giverIndex and giverIndex > 0 then
-                -- -20 Famine per completed convoy -- a meaningful dent (Struggling starts
-                -- at 50, Severe Famine at 100) without single-handedly solving a crisis.
-                -- Matches Cosmic Chronicles' own decay-event convention (Market Boom -20,
-                -- Stock Market good roll -25) rather than standing as the largest single
-                -- decay value in the suite.
-                CosmicVaultEconomy.addFamineScore(giverIndex, -20)
-                CosmicWarBridge.recordFamineReliefApplied(giverIndex, 20)
+                -- -35 Famine per completed airlift -- a bigger single-shot dent than Relief
+                -- Convoy's -20, reflecting both the higher >=100 severity gate and the
+                -- higher reward, without single-handedly zeroing out a crisis.
+                CosmicVaultEconomy.addFamineScore(giverIndex, -35)
+                CosmicWarBridge.recordFamineReliefApplied(giverIndex, 35)
             end
 
             mission.data.description[3].fulfilled = true
@@ -138,29 +133,29 @@ function getBulletin(station)
     local server = Server()
     if not server then return end
     local famineScore = server:getValue("cv_famine_" .. tostring(station.factionIndex)) or 0
-    if famineScore < 50 then return end -- Struggling or worse only
+    if famineScore < 100 then return end -- Severe Famine only
 
     local giverFaction = Faction(station.factionIndex)
     if not giverFaction then return end
 
-    local baseReward = math.floor(50000 + famineScore * 800)
+    local baseReward = math.floor(100000 + famineScore * 1000)
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates())
     local rewardStruct = {
         credits = rewardCredits,
-        relations = 8000,
-        paymentMessage = "The relief supplies have saved lives. You have our deepest gratitude."%_T
+        relations = 10000,
+        paymentMessage = "You saved countless lives today. We will not forget this."%_T
     }
 
     return {
-        brief = "Relief Convoy"%_t,
-        description = "Our people are suffering through a severe resource shortage. We are asking independent captains to gather raw materials and deliver them directly to us -- no questions asked, no strings attached."%_t,
+        brief = "Medical Airlift"%_t,
+        description = "Our famine has reached crisis levels. We need emergency supplies airlifted in immediately -- name your price, we'll pay it."%_t,
         difficulty = "Moderate"%_t,
         reward = "¢${reward}"%_t,
-        script = "data/scripts/player/missions/cw_relief_convoy.lua",
+        script = "data/scripts/player/missions/cw_medical_airlift.lua",
         icon = "data/textures/icons/ResourceSteal.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Thank you for hearing our call. Every shipment matters."%_T,
+        msg = "Thank the stars. Please, hurry."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)

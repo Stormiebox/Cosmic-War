@@ -2,25 +2,29 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
 local CosmicVaultFaction = include("cosmicvaultfaction")
 local CosmicVaultEconomy = include("cosmicvaulteconomy")
+local CosmicVaultTerritory = include("cosmicvaultterritory")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 include("randomext")
 include("structuredmission")
 
--- v4.0.0: Humanitarian Contract -- the first Cosmic War mission that isn't combat or an
--- act of war. Gated on a faction's Famine Score (missionbulletins.lua), not War Heat.
--- Delivering the relief supplies reduces that Famine Score directly -- Famine previously
--- had no player-facing way to go back down; it only ever accumulated from siege losses
--- and read into War Heat.
+-- v4.0.0: the first tie between Humanitarian Contracts and territorial
+-- Expansion Momentum. Unlike Relief Convoy (delivers to the giver's own sector), the
+-- destination here is a sector the faction is actively expanding toward -- the same
+-- CosmicWarBridge.findExpansionCandidate() directional-walk the Imperialist trait's own
+-- organic growth and the Intelligence Network's preview both already use. Successful
+-- delivery directly settles that sector for the faction (cvt.expandToSector, the same
+-- function the organic roll itself uses) -- a guaranteed, player-assisted expansion
+-- instead of leaving it to chance, framed as resettling refugees rather than conquest.
 mission._Debug = 0
-mission._Name = "Relief Convoy"
+mission._Name = "Refugee Resettlement"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
 mission.data.icon = "data/textures/icons/ResourceSteal.png"
 mission.data.autoTrackMission = true
 
-local cw_relief_init = initialize
+local cw_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
         local fIndex = factionIndex
@@ -33,19 +37,19 @@ function initialize(factionIndex)
         local giverFaction = Faction(fIndex)
         if not giverFaction then terminate() return end
 
+        local targetX, targetY = CosmicWarBridge.findExpansionCandidate(giverFaction, 15)
+        if not targetX or not targetY then terminate() return end
+
         mission.data.custom.giverIndex = fIndex
         mission.data.giver = { factionIndex = fIndex }
 
         local x, y = Sector():getCoordinates()
         mission.data.custom.giverCoords = { x = x, y = y }
+        mission.data.custom.targetX = targetX
+        mission.data.custom.targetY = targetY
+        mission.data.location = { x = targetX, y = targetY }
 
-        -- Unlike the combat War Contracts, there's no adversarial "travel to a hostile
-        -- sector first" phase here -- the player gathers materials from wherever they
-        -- like and delivers them to the giver's own sector, so the mission location
-        -- (and its map marker) is the giver's sector itself, not a synthetic waypoint.
-        mission.data.location = { x = x, y = y }
-
-        local d = length(vec2(x, y))
+        local d = length(vec2(targetX, targetY))
         local matType = MaterialType.Iron
         if d < 430 then matType = MaterialType.Titanium end
         if d < 350 then matType = MaterialType.Naonite end
@@ -66,21 +70,21 @@ function initialize(factionIndex)
         mission.data.custom.famineScore = famineScore
 
         mission.data.description = {
-            { text = "You accepted a Relief Convoy contract from ${giver}, whose people are struggling through famine."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Gather ${amount} ${material} and deliver it to sector (${x}:${y})."%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = x, y = y } },
-            { text = "Deliver ${amount} ${material} to (${x}:${y})"%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = x, y = y }, bulletPoint = true, fulfilled = false }
+            { text = "You accepted a Refugee Resettlement contract from ${giver}. They want to give their people fleeing famine a real fresh start."%_T, arguments = { giver = giverFaction.name } },
+            { text = "Gather ${amount} ${material} and deliver it to sector (${x}:${y}) -- the site of a planned new settlement."%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = targetX, y = targetY } },
+            { text = "Deliver ${amount} ${material} to (${x}:${y})"%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = targetX, y = targetY }, bulletPoint = true, fulfilled = false }
         }
 
-        local baseReward = math.floor(50000 + famineScore * 800)
+        local baseReward = math.floor(60000 + famineScore * 900)
         mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y),
-            relations = 8000,
-            paymentMessage = "The relief supplies have saved lives. You have our deepest gratitude."%_T
+            relations = 10000,
+            paymentMessage = "Our people have a new home, thanks to you. We won't forget this."%_T
         }
 
-        cw_relief_init(factionIndex)
+        cw_init(factionIndex)
     else
-        cw_relief_init(factionIndex)
+        cw_init(factionIndex)
     end
 end
 
@@ -96,7 +100,6 @@ mission.phases[1].triggers = {
             if onClient() then return false end
 
             local player = Player()
-            local giverCoords = mission.data.custom.giverCoords
             local matType = mission.data.custom.materialType
             local requiredAmount = mission.data.custom.materialAmount
 
@@ -105,24 +108,28 @@ mission.phases[1].triggers = {
 
             local x, y = Sector():getCoordinates()
 
-            return x == giverCoords.x and y == giverCoords.y and current >= requiredAmount
+            return x == mission.data.custom.targetX and y == mission.data.custom.targetY and current >= requiredAmount
         end,
         callback = function()
             local player = Player()
             local matType = mission.data.custom.materialType
             local requiredAmount = mission.data.custom.materialAmount
 
-            player:payResource("Relief Convoy delivered", Material(matType), requiredAmount)
+            player:payResource("Resettlement supplies delivered", Material(matType), requiredAmount)
 
             local giverIndex = mission.data.custom.giverIndex
             if giverIndex and giverIndex > 0 then
-                -- -20 Famine per completed convoy -- a meaningful dent (Struggling starts
-                -- at 50, Severe Famine at 100) without single-handedly solving a crisis.
-                -- Matches Cosmic Chronicles' own decay-event convention (Market Boom -20,
-                -- Stock Market good roll -25) rather than standing as the largest single
-                -- decay value in the suite.
                 CosmicVaultEconomy.addFamineScore(giverIndex, -20)
                 CosmicWarBridge.recordFamineReliefApplied(giverIndex, 20)
+
+                -- Settle the sector for real, if it's still unclaimed -- another faction
+                -- (or the giver's own organic roll) may have already reached it first.
+                if not Galaxy():getControllingFaction(mission.data.custom.targetX, mission.data.custom.targetY) then
+                    CosmicVaultTerritory.expandToSector(mission.data.custom.targetX, mission.data.custom.targetY, giverIndex, false)
+                    Player():sendChatMessage(Faction(giverIndex).name, 0, "The settlement is founded. This sector is ours now."%_T)
+                else
+                    Player():sendChatMessage(Faction(giverIndex).name, 0, "Someone reached the sector first, but the supplies weren't wasted -- our people are still grateful."%_T)
+                end
             end
 
             mission.data.description[3].fulfilled = true
@@ -143,24 +150,31 @@ function getBulletin(station)
     local giverFaction = Faction(station.factionIndex)
     if not giverFaction then return end
 
-    local baseReward = math.floor(50000 + famineScore * 800)
+    -- Only makes narrative and mechanical sense for a faction actively pushing outward.
+    local cvf = include("cosmicvaultfaction")
+    if (cvf.getTrait(station.factionIndex, "cw_imperialist") or 0) <= 0 then return end
+
+    local targetX, targetY = CosmicWarBridge.findExpansionCandidate(giverFaction, 15)
+    if not targetX or not targetY then return end
+
+    local baseReward = math.floor(60000 + famineScore * 900)
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates())
     local rewardStruct = {
         credits = rewardCredits,
-        relations = 8000,
-        paymentMessage = "The relief supplies have saved lives. You have our deepest gratitude."%_T
+        relations = 10000,
+        paymentMessage = "Our people have a new home, thanks to you. We won't forget this."%_T
     }
 
     return {
-        brief = "Relief Convoy"%_t,
-        description = "Our people are suffering through a severe resource shortage. We are asking independent captains to gather raw materials and deliver them directly to us -- no questions asked, no strings attached."%_t,
+        brief = "Refugee Resettlement"%_t,
+        description = "Famine has left many of our people desperate for a fresh start. We've identified a promising sector to resettle them in -- we just need the supplies to get a foothold established."%_t,
         difficulty = "Moderate"%_t,
         reward = "¢${reward}"%_t,
-        script = "data/scripts/player/missions/cw_relief_convoy.lua",
+        script = "data/scripts/player/missions/cw_refugeeresettlement.lua",
         icon = "data/textures/icons/ResourceSteal.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Thank you for hearing our call. Every shipment matters."%_T,
+        msg = "Thank you. A new home means everything to them right now."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)

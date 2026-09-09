@@ -3,6 +3,7 @@ package.path = package.path .. ";data/scripts/?.lua"
 
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
+local CosmicVaultUI = include("cosmicvaultui")
 
 -- namespace CW_EclipseVanguardEvent
 CW_EclipseVanguardEvent = {}
@@ -32,10 +33,16 @@ function CW_EclipseVanguardEvent.spawn()
     local dreadnought = ShipGenerator.createMilitaryShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
     dreadnought.title = "The Eclipse Vanguard"
     dreadnought:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-    dreadnought:addBaseMultiplier(StatsBonuses.FireRate, 49.0) -- 50x total
+    -- v4.0.0: the original 50x/50x offense multipliers below predate this
+    -- pass's hull fix (4x maxDurabilityFactor, added below) and were left untouched by it --
+    -- leaving a solo, escort-less ship hitting far harder than Decapitation Strike, this
+    -- mod's own calibrated "true superboss" (8 escorts, up to ~12x fire rate at max heat).
+    -- Recalibrated using that same hpMult-scaling formula at this ship's own 4.0 hull
+    -- multiplier, so it stays a step below the superboss on every axis instead of above it.
+    dreadnought:addBaseMultiplier(StatsBonuses.FireRate, 5.0) -- 6x total
 
     if dreadnought:hasComponent(ComponentType.Shield) then
-        dreadnought:addBaseMultiplier(StatsBonuses.ShieldDurability, 49.0)
+        dreadnought:addBaseMultiplier(StatsBonuses.ShieldDurability, 3.0) -- 4x total
         dreadnought.shieldDurability = dreadnought.shieldMaxDurability
     end
 
@@ -50,16 +57,15 @@ function CW_EclipseVanguardEvent.spawn()
     end
 
     Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
-    broadcastInvokeClientFunction("showVanguardBanner")
+
+    -- ShowCinematicBanner is a server-only "push" helper (it guards `if not onServer()`
+    -- and does its own player:invokeFunction() push internally) -- call it directly from
+    -- here for each player rather than broadcasting to clients and having them call it
+    -- on themselves, which silently no-ops. See Avorion_Modding_Codex.md's
+    -- "A Player()-targeted push API must be called from the server" section.
+    for _, player in pairs({Sector():getPlayers()}) do
+        CosmicVaultUI.ShowCinematicBanner(player, "ECLIPSE VANGUARD INBOUND", ColorRGB(1, 0, 0), "data/sounds/siren.ogg", 5)
+    end
+
     terminate()
 end
-
-function CW_EclipseVanguardEvent.showVanguardBanner()
-    if onClient() then
-        local CosmicVaultUI = include("cosmicvaultui")
-        if CosmicVaultUI and CosmicVaultUI.ShowCinematicBanner then
-            CosmicVaultUI.ShowCinematicBanner(Player(), "ECLIPSE VANGUARD INBOUND", ColorRGB(1, 0, 0), "data/sounds/siren.ogg", 5)
-        end
-    end
-end
-callable(CW_EclipseVanguardEvent, "showVanguardBanner")

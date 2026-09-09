@@ -1,14 +1,24 @@
 [i]Version 4.0.0.[/i]
 [hr][/hr]
-[h1]v4.0.0 🌌THE COMPLETE OVERHAUL🌌[/h1] UNRELEASED (Work-In-Progress)
-[i]A ground-up pass across the entire mod: real numbers fixes and four brand new systems.[/i]
+[h1]v4.0.0 🌌THE WAR OVERHAUL🌌[/h1] UNRELEASED (Work-In-Progress)
+[i]A ground-up overhaul across the entire mod: real numbers fixes and four brand new systems.[/i]
 
 [b]🆕 NEW SYSTEMS[/b]
 [list]
 [*]🕵️ [b]Intelligence Network:[/b] Force Recon, Sensor Deployment, and Black Box Retrieval contracts now bank Intel against the faction you're scouting. Check your stash and spend it with the new [b]/cosmicwarintel[/b] chat command to get a scouting report on an Imperialist faction's next likely expansion target.
-[*]🤝 [b]Humanitarian Contracts:[/b] Two brand new peaceful ways to get involved in the war. [b]Relief Convoy[/b] is a new bulletin board mission from any faction going through a famine - deliver raw materials, ease their suffering, get paid and get thanked. [b]Broker Sanctions Relief[/b] is a new Trading Post option that buys a struggling faction two hours of breathing room from economic sanctions.
+[*]🤝 [b]Humanitarian Contracts:[/b] Peaceful ways to get involved in the war. [b]Relief Convoy[/b] is a bulletin board mission from any faction going through a famine - deliver raw materials, ease their suffering, get paid and get thanked. [b]Medical Airlift[/b] is a faster, higher-paying emergency version for factions in outright crisis. [b]Diplomatic Aid Package[/b] is a Trading Post option to donate credits directly instead of flying cargo. [b]Broker Sanctions Relief[/b] buys a struggling faction two hours of breathing room from economic sanctions.
+[*]🔥 [b]Scorched Earth:[/b] A new War Contract for the other side of the coin - strip-mine resources from enemy territory and keep them, denying your foe the materials while turning a profit yourself.
 [*]⚔️ [b]War Score & Attrition:[/b] Every active war now tracks a real scoreboard of kills and captured territory. Hover a conflict in the Galactic Politics tab to see who's actually winning. Long wars now naturally trend toward ceasefires the longer they drag on, and a sufficiently one-sided war can end in a forced Decisive Victory, complete with territorial and economic consequences for the loser.
 [*]🌑 [b]Coalition Ceasefires:[/b] When the Eclipse becomes a serious galaxy-wide threat, every faction currently at war gets pulled into a temporary truce, galaxy-wide. Old grudges have to wait when something far worse is coming for everyone.
+[*]🛡️ [b]Planetary Defense Generators Are Real Now:[/b] This structure was always described in the Codex, but could never actually be found anywhere. Threatened factions can now genuinely build one at their home sector - and a new [b]Shield Breaker[/b] War Contract sends you to take it down.
+[*]🏁 [b]Salvage Race:[/b] Race a battlefield's wreckage field before rival scavengers and enemy patrols clear it out. Pays more the more one-sided the fight it came from was.
+[*]🏴‍☠️ [b]Deniable Raid:[/b] A pirate-flagged raid a faction hires you for when they need something done with no fingerprints - and it turns up real intelligence on their actual enemy.
+[*]🏆 [b]Decisive Push:[/b] When a war is already nearly won, this new contract lets you personally deliver the final blow instead of waiting on fate.
+[*]🚢 [b]Prize Crew:[/b] Disable an enemy escort ship without destroying it, and your prize crew brings it in intact for the faction that hired you.
+[*]🏘️ [b]Refugee Resettlement:[/b] Help a starving Imperialist faction resettle their people in a new sector - a genuine, guaranteed foothold instead of leaving their expansion to chance.
+[*]🌌 [b]Subspace Corridors:[/b] The most brutal wars can tear a genuine, permanent shortcut through subspace between the two capitals. Rare, and here to stay once it happens.
+[*]💰 [b]Live Battlefield Salvage Markets:[/b] Some sieges see the defenders open a desperate black-market post buying raw materials at a steep premium while the fighting lasts.
+[*]🤝 [b]Alliance War Councils:[/b] Player Alliances now share one pooled Intelligence Network balance per faction instead of every member tracking their own separately.
 [/list]
 
 [b]⚖️BALANCE[/b]
@@ -20,13 +30,29 @@
 [*]⚖️ [b]Warbonds Reworked:[/b] Returns now scale smoothly with how the war actually went instead of an all-or-nothing coin flip, there's a new server-wide investment cap so one faction's war chest can't be infinitely inflated, and a new "Cash Out Warbonds Early" option lets you exit for a flat 40% instead of being locked in until the war ends.
 [*]⚖️ [b]Orbital Bombardment Actually Bombards Now:[/b] This event used to just be a regular fight. Now the bombers genuinely shell the defending station while you deal with them.
 [*]⚖️ [b]Hero of the People Pays Real Credits:[/b] Escorting a Refugee Convoy to safety now pays a direct cash reward instead of an hour-long status effect that didn't actually do anything.
+[*]⚖️ [b]Two Contracts Were Overpaying:[/b] Frontline Siege and High-Value Extraction paid 3-4x what other contracts at the same difficulty pay. Brought back in line.
+[*]⚖️ [b]Eclipse Vanguard Toned Down:[/b] This event was hitting and tanking harder than the mod's own toughest boss fight. Rebalanced to sit below it, where it belongs.
+[*]⚖️ [b]Relief Convoy Reward Reduced:[/b] Its famine reduction was undoing more good than losing an entire war did harm. Brought in line with similar effects elsewhere in the Cosmic series.
+[*]⚖️ [b]Warbonds Loophole Closed:[/b] You could buy Warbonds on a faction, then personally deliver enough aid to guarantee yourself the maximum payout regardless of how the war actually went. Aid missions still help the faction - they just no longer game your own investment.
+[*]⚖️ [b]War Score Kill-Farming Closed:[/b] Racking up kills alone could end a war outright almost as fast as actually capturing territory could. Kills are now capped so territory always matters more, as intended.
+[/list]
+
+[b]🖥️UI IMPROVEMENTS[/b]
+[list]
+[*]🖥️ [b]Intel Now Visible In Galactic Politics:[/b] Your banked Intel against each faction now shows right in the tab, instead of only being visible through the /cosmicwarintel command.
+[*]🖥️ [b]War Score Shows Progress To Decisive Victory:[/b] The Galactic Politics tooltip now shows how close a war actually is to ending outright, not just who's ahead.
+[*]🖥️ [b]Battlefield HUD Shows Live War Score:[/b] The siege HUD now displays the current War Score for the conflict you're standing in the middle of.
 [/list]
 
 [b]🪲BUGFIXES[/b]
 [list]
-[*]🐛 [b]Every War Bulletin Said "[Balanced]":[/b] Since the game's earliest versions, war news headlines showed every faction's stance as "Balanced" no matter their real personality. They now correctly show each faction's actual trait.
+[*]🐛 [b]Every War Bulletin Said "[Balanced]":[/b] Since the mod's earliest versions, war news headlines showed every faction's stance as "Balanced" no matter their real personality. They now correctly show each faction's actual trait.
 [*]🐛 [b]4 War Zone Events Could Target The Wrong Factions:[/b] Station Siege, Capital Ship Duel, and Orbital Bombardment could fire in the middle of peaceful space, and Capital Ship Duel could even pit a faction against itself. All three now correctly target real, hostile war pairs only.
 [*]🐛 [b]Imperialist Expansion Border Bug:[/b] Expansionist factions could occasionally claim territory that already belonged to someone else. Fixed with the same safeguard Cosmic Ascendancy already uses.
+[*]🐛 [b]Contested Sectors Could Crash On Entry:[/b] Flying into a sector under siege could crash your game outright. Fixed.
+[*]🐛 [b]Eclipse Vanguard's Warning Banner Never Showed:[/b] The on-screen "MASSIVE ANOMALY DETECTED" warning for this boss event never actually appeared for anyone. It now shows up properly.
+[*]🐛 [b]Subspace Containment Contract Could Never Appear:[/b] This War Contract was fully built but never actually showed up on any bulletin board. It's now offered like every other high-tier contract.
+[*]🐛 [b]Weather-Boosted Boarding Never Triggered:[/b] Ion Storms and Dark Matter Fog were supposed to weaken enemy boarding defenses during a Frontline Siege — that effect never actually fired. Fixed.
 [/list]
 
 [i]Version 3.4.5.[/i]

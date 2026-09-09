@@ -10,6 +10,8 @@ include("randomext")
 SiegeEvent = {}
 
 function SiegeEvent.initialize()
+    if onClient() then return end
+
     local sector = Sector()
     local x, y = sector:getCoordinates()
 
@@ -78,6 +80,19 @@ function SiegeEvent.startSiege(zoneData)
     if usedJammer then
         sector:broadcastChatMessage(invadingFaction.name, ChatMessageType.Warning,
             "Target locked. Electronic warfare initialized. Suppressing all sector shields."%_T)
+    end
+
+    -- v4.0.0: Live Battlefield Salvage Markets. A 40% chance the defenders,
+    -- desperate for liquidity mid-siege, stand up a temporary black-market post buying
+    -- raw materials at well above their ordinary value. Cleans itself up once everyone
+    -- leaves the sector, the same pattern this mod already uses for other temporary
+    -- siege-adjacent structures (cw_distress_beacon_trap.lua's pirates).
+    if random:test(0.40) then
+        local market = generator:createStation(zoneData.defender, "data/scripts/entity/merchants/tradingpost.lua")
+        market:setTitle("Black Market Salvage Post"%_T, {})
+        market:setValue("cw_salvage_market", true)
+        market:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
+        sector:broadcastChatMessage(Faction(zoneData.defender).name, 0, "Desperate for liquidity, we've opened a black-market salvage post in-sector -- selling raw materials there pays well above the going rate while this siege lasts."%_T)
     end
 
     -- Spawn massive Troop Transports

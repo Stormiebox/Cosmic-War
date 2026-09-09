@@ -51,6 +51,14 @@ function DreadnoughtBoss.updateServer(timeStep)
         return
     end
 
+    -- v4.0.0: without a target, the guard above never throttles at all -- a
+    -- full sector scan would run every 0.5s tick for as long as nothing valid is found
+    -- (e.g. the boss is alone in its sector). A short 3s minimum delay after a scan that
+    -- found nothing covers that case without meaningfully slowing real reacquisition.
+    if not ai.isAttackingSomething and DreadnoughtBoss.lastScanFoundNothing and DreadnoughtBoss.retargetTimer < 3 then
+        return
+    end
+
     DreadnoughtBoss.retargetTimer = 0 -- Reset timer
 
     -- Prioritize targeting military ships and stations over weak freighters
@@ -82,6 +90,9 @@ function DreadnoughtBoss.updateServer(timeStep)
 
     if bestTarget then
         ai:setAttack(bestTarget)
+        DreadnoughtBoss.lastScanFoundNothing = false
+    else
+        DreadnoughtBoss.lastScanFoundNothing = true
     end
 end
 

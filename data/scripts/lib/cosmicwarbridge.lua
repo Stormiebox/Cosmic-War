@@ -107,7 +107,7 @@ function CosmicWarBridge.computeWarHeatForFaction(faction)
     local famineB = server and (server:getValue("cv_famine_" .. tostring(enemyFaction.index)) or 0) or 0
     local maxFamine = math.max(famineA, famineB)
     local famineHeat = math.min(0.4, maxFamine / 250)
-    
+
     local heat = relHeat * 0.6 + bias * 0.2 + pairBonus + famineHeat
     return math.min(1.0, math.max(0.0, heat))
 end
@@ -121,6 +121,7 @@ function CosmicWarBridge.publishWarHeatSnapshot()
     local factions = getGalaxyFactions(server)
     local snapshot = {}
     local maxHeat = 0
+    local totalHeat = 0
     local snapshotParts = {}
 
     for _, f in pairs(factions) do
@@ -129,6 +130,7 @@ function CosmicWarBridge.publishWarHeatSnapshot()
             snapshot[f.index] = heat
             table.insert(snapshotParts, tostring(f.index) .. ":" .. tostring(heat))
             if heat > maxHeat then maxHeat = heat end
+            totalHeat = totalHeat + heat
         end
     end
 
@@ -136,6 +138,12 @@ function CosmicWarBridge.publishWarHeatSnapshot()
     local snapshotStr = table.concat(snapshotParts, ",")
     server:setValue("cw_war_heat_snapshot", snapshotStr)
     server:setValue("cw_war_heat_max", maxHeat)
+
+    -- v4.0.0: sum of every AI faction's current War Heat, published as a
+    -- plain Server value so any Cosmic mod can read "how much overall warfare is
+    -- happening right now" (Cosmic Vault's getGalacticHostilityIndex() soft-reads this
+    -- same key) without taking a hard dependency on Cosmic War.
+    server:setValue("cw_galactic_hostility_index", totalHeat)
 end
 
 function CosmicWarBridge.getWarHeatSnapshot()
@@ -177,13 +185,13 @@ end
 
 function CosmicWarBridge.forceDeclareWar(attackerFaction, defenderFaction)
     if not attackerFaction or not defenderFaction then return end
-    
+
     attackerFaction:setValue("enemy_faction", defenderFaction.index)
     defenderFaction:setValue("enemy_faction", attackerFaction.index)
-    
+
     attackerFaction:setValue("cw_war_bias", 1000)
     defenderFaction:setValue("cw_war_bias", 1000)
-    
+
     local CosmicVaultFaction = include("cosmicvaultfaction")
     if CosmicVaultFaction and CosmicVaultFaction.changeRelations then
         CosmicVaultFaction.changeRelations(attackerFaction.index, defenderFaction.index, -200000)
@@ -198,27 +206,35 @@ end
 -- expansion move (see findExpansionCandidate() above). Stored per-player,
 -- per-target-faction as a plain custom value -- the same pattern used for every other
 -- per-player War state in this mod (cw_mercenary_faction, cw_bounty_enemy, etc.).
+-- v4.0.0 extended pass, Alliance War Councils: now thin wrappers around Cosmic Vault's
+-- generic grantLedger/getLedger/spendLedger primitive (cosmicvaultfaction.lua). If the
+-- player belongs to a Player Alliance, Intel is banked to (and spent from) the Alliance's
+-- own shared pool instead of that one player individually -- co-belligerent Alliance
+-- members now scout as one intelligence apparatus instead of N trackers that never talk to
+-- each other, directly serving the suite's standing Alliance-compatibility requirement.
+local function resolveIntelActor(player)
+    if player and player.allianceIndex and player.allianceIndex > 0 then
+        local alliance = Alliance(player.allianceIndex)
+        if alliance then return alliance end
+    end
+    return player
+end
+
 function CosmicWarBridge.grantIntel(player, factionIndex, amount)
-    if not player or not factionIndex or factionIndex <= 0 or not amount or amount <= 0 then return end
-    local key = "cw_intel_" .. tostring(factionIndex)
-    local current = player:getValue(key) or 0
-    player:setValue(key, current + amount)
+    local CosmicVaultFaction = include("cosmicvaultfaction")
+    CosmicVaultFaction.grantLedger(resolveIntelActor(player), factionIndex, "intel", amount)
 end
 
 function CosmicWarBridge.getIntel(player, factionIndex)
-    if not player or not factionIndex or factionIndex <= 0 then return 0 end
-    return player:getValue("cw_intel_" .. tostring(factionIndex)) or 0
+    local CosmicVaultFaction = include("cosmicvaultfaction")
+    return CosmicVaultFaction.getLedger(resolveIntelActor(player), factionIndex, "intel")
 end
 
---- Returns true and deducts `amount` if the player had enough; returns false and
--- changes nothing otherwise.
+--- Returns true and deducts `amount` if the player (or their Alliance) had enough;
+-- returns false and changes nothing otherwise.
 function CosmicWarBridge.spendIntel(player, factionIndex, amount)
-    if not player or not factionIndex or factionIndex <= 0 or not amount then return false end
-    local key = "cw_intel_" .. tostring(factionIndex)
-    local current = player:getValue(key) or 0
-    if current < amount then return false end
-    player:setValue(key, current - amount)
-    return true
+    local CosmicVaultFaction = include("cosmicvaultfaction")
+    return CosmicVaultFaction.spendLedger(resolveIntelActor(player), factionIndex, "intel", amount)
 end
 
 -- v4.0.0 War Score & Attrition: a legible, per-conflict scoreboard replacing "who's
@@ -278,7 +294,17 @@ function CosmicWarBridge.getWarScore(factionA, factionB)
     local key = warScorePairKey(factionA, factionB)
     local kills = server:getValue("cw_ws_kills_" .. key) or 0
     local territory = server:getValue("cw_ws_territory_" .. key) or 0
-    local netForLo = kills + (territory * 25)
+
+    -- v4.0.0: kills are credited for ANY valid military kill between the two
+    -- factions galaxy-wide, including ambient AI-vs-AI combat from this mod's own
+    -- background events -- not just player action -- so kill volume alone could reach the
+    -- Decisive Victory threshold far faster than 10 net territory swings, the opposite of
+    -- "a territory swing should outweigh a long kill streak" above. Capping kills'
+    -- contribution keeps them meaningful (they still move the visible score right up to
+    -- the cap) without letting them alone cross the 250-point Decisive Victory threshold --
+    -- a real territory swing is now always required to get there.
+    local cappedKills = math.max(-100, math.min(100, kills))
+    local netForLo = cappedKills + (territory * 25)
 
     local lo = math.min(factionA, factionB)
     if factionA == lo then return netForLo end
@@ -293,6 +319,25 @@ function CosmicWarBridge.resetWarScore(factionA, factionB)
     local key = warScorePairKey(factionA, factionB)
     server:setValue("cw_ws_kills_" .. key, nil)
     server:setValue("cw_ws_territory_" .. key, nil)
+end
+
+-- v4.0.0: Warbonds' famine-outcome-scaled payout can be gamed by buying a
+-- bond then personally running the faction's own Humanitarian Contracts to manufacture a
+-- "the war went well" famine reading, independent of how the war actually went. Every
+-- humanitarian famine-relief action (Relief Convoy, Diplomatic Aid Package, Medical
+-- Airlift) records itself here as a running, never-reset total; Warbonds snapshots this at
+-- purchase and subtracts the delta at maturity, so relief actions still do their real job
+-- of lowering the faction's live Famine Score everywhere else, but can no longer be read as
+-- a war outcome for bond-payout purposes specifically.
+-- v4.0.0: now a thin wrapper around Cosmic Vault's generalized
+-- recordReliefApplied/getReliefApplied primitive (cosmicvaulteconomy.lua) -- same
+-- behavior, shared mechanism any other mod's own payout-vs-tracked-score system can reuse.
+function CosmicWarBridge.recordFamineReliefApplied(factionIndex, amount)
+    include("cosmicvaulteconomy").recordReliefApplied("famine", factionIndex, amount)
+end
+
+function CosmicWarBridge.getFamineReliefApplied(factionIndex)
+    return include("cosmicvaulteconomy").getReliefApplied("famine", factionIndex)
 end
 
 return CosmicWarBridge

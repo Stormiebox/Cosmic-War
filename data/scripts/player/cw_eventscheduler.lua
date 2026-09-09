@@ -110,8 +110,10 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
                 local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
                 local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix) -- Elite headhunter, scaled below
 
-                -- Custom Cosmic War Scaling for Elite Bounty Hunters
-                ship.damageMultiplier = (ship.damageMultiplier or 1) * 2.5
+                -- Custom Cosmic War Scaling for Elite Bounty Hunters. addBaseMultiplier is the
+                -- proven DPS lever (see Avorion_Modding_Codex.md's "Unproven stat levers" entry) --
+                -- 1.5 here is additive on top of the base 1.0, giving the intended 2.5x total.
+                ship:addBaseMultiplier(StatsBonuses.FireRate, 1.5)
                 if ship:hasComponent(ComponentType.Durability) then
                     Durability(ship.index).maxDurabilityFactor = Durability(ship.index).maxDurabilityFactor * 2.5
                     ship.durability = ship.maxDurability

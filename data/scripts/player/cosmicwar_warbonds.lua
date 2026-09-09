@@ -34,9 +34,13 @@ function CW_Warbonds.addBond(factionIndex, amount)
     if not activeBonds[factionIndex] then
         local server = Server()
         local initialFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
-        activeBonds[factionIndex] = { 
-            amount = 0, 
+        activeBonds[factionIndex] = {
+            amount = 0,
             initialFamine = initialFamine,
+            -- v4.0.0: also snapshot how much Humanitarian-Contract famine
+            -- relief this faction has ever received, so maturity can back it out of the
+            -- payout calculation -- see checkWarbondStatus() below.
+            initialReliefApplied = CosmicWarBridge.getFamineReliefApplied(factionIndex),
             timestamp = server.unpausedRuntime
         }
     end
@@ -74,10 +78,10 @@ end
 
 function CW_Warbonds.checkWarbondStatus()
     local player = Player()
-    
+
     local server = Server()
     local now = server.unpausedRuntime
-        
+
         for factionIndex, bond in pairs(activeBonds) do
             local heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
 
@@ -98,7 +102,16 @@ function CW_Warbonds.checkWarbondStatus()
                     -- +150 famine swing (the faction was effectively broken), up to the
                     -- full 300% originally promised if famine held steady or improved.
                     local currentFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
-                    local famineDelta = currentFamine - (bond.initialFamine or 0)
+                    local rawFamineDelta = currentFamine - (bond.initialFamine or 0)
+
+                    -- v4.0.0: a player could otherwise buy a bond, then fly
+                    -- that same faction's own Humanitarian Contracts (Relief Convoy, etc.)
+                    -- to manufacture a "the war went well" reading regardless of the war's
+                    -- actual outcome. Add back whatever relief was applied during the hold,
+                    -- so the payout tracks the war itself, not humanitarian action taken by
+                    -- the very player holding the bond.
+                    local reliefDuringHold = CosmicWarBridge.getFamineReliefApplied(factionIndex) - (bond.initialReliefApplied or 0)
+                    local famineDelta = rawFamineDelta + reliefDuringHold
                     local outcomeQuality = 1.0 - math.min(1.0, math.max(0, famineDelta) / 150)
                     local payoutMultiplier = outcomeQuality * 3.0
 

@@ -145,7 +145,7 @@ function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     if heat < 0.80 then return end
 
-    local baseReward = math.floor(100000 + heat * 150000)
+    local baseReward = math.floor(180000 + heat * 220000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult

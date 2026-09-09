@@ -63,5 +63,61 @@ function CW_SiegeInjectorPersistent.onSectorEntered(playerIndex, x, y, sectorCha
                 sector:addScriptOnce("data/scripts/events/siegeevent.lua")
             end
         end
+
+        -- v4.0.0: PROGRESSIVE MATERIALIZATION for Planetary Defense
+        -- Generators, same idea as the pending-flip check above -- cosmicwardefensegenerators.lua
+        -- only ever sets a flag (no sector load required); the actual station entity is
+        -- deferred until a player is physically here to see it appear.
+        local controllingFaction = Galaxy():getControllingFaction(x, y)
+        if controllingFaction and controllingFaction.isAIFaction then
+            local flaggedSector = controllingFaction:getValue("cw_defense_generator_sector")
+            if flaggedSector == (x .. ":" .. y) then
+                local sector = Sector()
+                if sector then
+                    local alreadyPresent = false
+                    for _, station in pairs({sector:getEntitiesByType(EntityType.Station)}) do
+                        if station:hasScript("cw_planetary_defense.lua") then
+                            alreadyPresent = true
+                            break
+                        end
+                    end
+
+                    if not alreadyPresent then
+                        local SectorGenerator = include("SectorGenerator")
+                        local station = SectorGenerator(x, y):createStation(controllingFaction, "data/scripts/entity/merchants/militaryoutpost.lua")
+                        station:setTitle("Planetary Defense Generator"%_T, {})
+                        station:addScriptOnce("data/scripts/entity/cw_planetary_defense.lua")
+                    end
+                end
+            end
+        end
+
+        -- v4.0.0: Dynamic Wartime Subspace Corridors -- same lazy
+        -- materialization idea as the Defense Generator above. cosmicwarsubspacecorridors.lua
+        -- only ever flags a corridor pair; the actual wormhole entity here is created the
+        -- first time a player is physically present at either endpoint.
+        do
+            local server = Server()
+            local otherEndpoint = server and server:getValue("cw_corridor_at_" .. x .. ":" .. y)
+            if otherEndpoint then
+                local ox, oy = string.match(otherEndpoint, "(-?%d+):(-?%d+)")
+                ox, oy = tonumber(ox), tonumber(oy)
+                if ox and oy then
+                    local sector = Sector()
+                    if sector then
+                        local alreadyPresent = false
+                        for _, e in pairs({ sector:getEntitiesByType(EntityType.WormHole) }) do
+                            alreadyPresent = true
+                            break
+                        end
+
+                        if not alreadyPresent then
+                            sector:createWormHole(ox, oy, ColorRGB(0.6, 0.2, 1.0), 400)
+                            sector:broadcastChatMessage("Unknown", 2, "Subspace readings spike -- a wartime corridor terminates here."%_T)
+                        end
+                    end
+                end
+            end
+        end
     end
 end

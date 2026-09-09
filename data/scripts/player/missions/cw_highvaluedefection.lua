@@ -80,7 +80,7 @@ function initialize(factionIndex)
         }
 
         -- Extremely high base reward due to the heat requirement
-        local baseReward = math.floor(750000 + heat * 750000)
+        local baseReward = math.floor(220000 + heat * 260000)
 
         -- giverFaction is already resolved and confirmed non-nil above.
         mission.data.reward = precomputedReward or {
@@ -235,7 +235,7 @@ function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     if heat < 0.8 then return end
 
-    local baseReward = math.floor(750000 + heat * 750000)
+    local baseReward = math.floor(220000 + heat * 260000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult

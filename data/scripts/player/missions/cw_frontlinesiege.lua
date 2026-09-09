@@ -81,7 +81,7 @@ function initialize(factionIndex)
         }
 
         -- Massive payout. Scales up to 4x base depending on War Heat
-        local baseReward = math.floor(375000 + heat * 1125000)
+        local baseReward = math.floor(250000 + heat * 400000)
         -- giverFaction is already resolved and confirmed non-nil above.
         mission.data.reward = precomputedReward or {
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
@@ -160,7 +160,7 @@ mission.phases[1].updateServer = function(timeStep)
                     station:setValue("cw_base_boarding_defense", baseDefense)
                 end
 
-                if weather == "IonStorm" or weather == "DarkMatterFog" then
+                if weather and (weather.type == "IonStorm" or weather.type == "DarkMatterFog") then
                     boarding.defenseLevel = baseDefense * 0.5
                 else
                     boarding.defenseLevel = baseDefense
@@ -275,7 +275,7 @@ function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
     if heat < 0.6 then return end
 
-    local baseReward = math.floor(375000 + heat * 1125000)
+    local baseReward = math.floor(250000 + heat * 400000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult

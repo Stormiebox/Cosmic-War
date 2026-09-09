@@ -7,12 +7,17 @@ include("structuredmission")
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
-
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
+-- v4.0.0: unlike Border Skirmish (which only falls back to a pirate target
+-- when the giver has no real registered enemy), Deniable Raid always flags the raid as
+-- pirate activity, regardless of whether the giver has a real enemy -- the whole pitch is
+-- deniability, not simply "no better target available." If the giver DOES have a real
+-- enemy, the intelligence gathered during the raid is banked as Intel against that enemy
+-- instead, extending Intel-earning beyond the three dedicated 0.15-tier recon missions.
 mission._Debug = 0
-mission._Name = "War Contract: P.O.W. Extraction"
+mission._Name = "War Contract: Deniable Raid"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
@@ -32,48 +37,44 @@ function initialize(factionIndex)
         local giverFaction = Faction(fIndex)
         if not giverFaction then terminate() return end
 
-        local enemyIndex = giverFaction:getValue("enemy_faction") or 0
-        if enemyIndex == 0 then
-            local x, y = Sector():getCoordinates()
-            local pirateLevel = Balancing_GetPirateLevel(x, y)
-            enemyIndex = Galaxy():getPirateFaction(pirateLevel).index
-        end
+        -- Always pirate-flagged, regardless of whether the giver has a real enemy.
+        local x, y = Sector():getCoordinates()
+        local pirateLevel = Balancing_GetPirateLevel(x, y)
+        local pirateFaction = Galaxy():getPirateFaction(pirateLevel)
+        if not pirateFaction then terminate() return end
+
+        -- Real enemy, if any -- Intel from this raid banks against them, not the pirates.
+        local realEnemyIndex = giverFaction:getValue("enemy_faction") or 0
 
         mission.data.custom.giverIndex = fIndex
         mission.data.giver = { factionIndex = fIndex }
-        mission.data.custom.enemyIndex = enemyIndex
+        mission.data.custom.enemyIndex = pirateFaction.index
+        mission.data.custom.realEnemyIndex = realEnemyIndex
 
-        if enemyIndex and enemyIndex > 0 then
-            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
-            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
-        end
+        CosmicVaultFaction.changeRelations(Player().index, pirateFaction.index, -200000)
 
-        local x, y = Sector():getCoordinates()
-        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
+        local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
+        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, insideBarrier)
         if not targetX or not targetY then terminate() return end
 
         mission.data.location = { x = targetX, y = targetY }
 
         mission.data.description = {
-            { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Break into the enemy prison sector at (${location.x}:${location.y}), destroy the prison station, and extract the captured officers."%_T, arguments = { location = mission.data.location } },
-            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false }
+            { text = "You accepted a deniable contract from ${giver}. Officially, this never happened."%_T, arguments = { giver = giverFaction.name } },
+            { text = "Raid the target at sector (${x}:${y}), flagged as pirate activity. Nothing here traces back to ${giver}."%_T, arguments = { x = targetX, y = targetY, giver = giverFaction.name } },
+            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the target"%_T, bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
-        -- v4.0.0: realigned to the 1.00 War Heat tier band (was using the 0.25-tier
-        -- formula copy-pasted from cw_borderskirmish.lua, making this the worst-paying
-        -- contract in the mod despite requiring the galaxy's maximum war heat). Matches
-        -- Champion Duel, the nearest same-tier anchor for a non-superboss encounter.
-        local baseReward = math.floor(250000 + heat * 300000)
+        local baseReward = math.floor(150000 + heat * 200000)
 
         mission.data.reward = precomputedReward or {
-            -- giverFaction is already resolved and confirmed non-nil above.
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
-            relations = 10000,
-            paymentMessage = "Contract fulfilled. Payment transferred."%_T
+            relations = 5000,
+            paymentMessage = "Clean work. No one will trace this back to us."%_T
         }
 
         cw_init(factionIndex)
@@ -90,81 +91,76 @@ mission.phases[1].showUpdateOnEnd = true
 
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
+    mission.data.description[4].visible = true
+
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
+        spawnRaidTarget(x, y)
         mission.data.custom.spawned = true
     end
 end
 
 mission.phases[1].triggers = {
     {
-        condition = function() 
-
+        condition = function()
             if onClient() then return false end
-            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_prison_target") }
-
             local targets = {}
-
-            for _, _t in pairs(_raw_targets) do
-
-                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
-
-                    table.insert(targets, _t)
-
+            for _, t in pairs({ Sector():getEntitiesByScriptValue("cw_deniable_target") }) do
+                if t.type == EntityType.Ship or t.type == EntityType.Station then
+                    table.insert(targets, t)
                 end
-
             end
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0
-
         end,
         callback = function()
+            local realEnemyIndex = mission.data.custom.realEnemyIndex
+            if realEnemyIndex and realEnemyIndex > 0 then
+                CosmicWarBridge.grantIntel(Player(), realEnemyIndex, 20)
+                Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0, "The raid turned up useful intelligence. Banked 20 Intel."%_T)
+            end
+
             reward()
             accomplish()
         end
     }
 }
 
-function spawnEvent(x, y)
+function spawnRaidTarget(x, y)
     if onClient() then return end
-
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    
-    local prison = generator:createStation(enemyFaction, "data/scripts/entity/merchants/militaryoutpost.lua")
-    prison:setTitle("P.O.W. Prison"%_T, {})
-    prison:setValue("cw_prison_target", true)
-    
-    for i=1, 5 do
-        local escort = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
-        ShipAI(escort.index):setAggressive()
-    end
+    local numDefenders = math.floor(3 + ((mission.data.custom.heat or 0) * 4))
 
+    for i = 1, numDefenders do
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
+        ship:setValue("cw_deniable_target", true)
+        ShipAI(ship.index):setAggressive()
+    end
 end
 
 function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    if heat < 1.00 then return end
+    if heat < 0.45 then return end
 
-    local baseReward = math.floor(250000 + heat * 300000)
+    local baseReward = math.floor(150000 + heat * 200000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
-        relations = 10000,
-        paymentMessage = "Contract fulfilled. Payment transferred."%_T
+        relations = 5000,
+        paymentMessage = "Clean work. No one will trace this back to us."%_T
     }
 
     return {
-        brief = "War Contract: P.O.W. Extraction"%_t,
-        description = "Break into a nearby enemy prison sector, destroy the prison station, and extract the captured officers.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
-        difficulty = "Extreme"%_t,
+        brief = "War Contract: Deniable Raid"%_t,
+        description = "We need a target hit, but nothing that traces back to us. Fly under a pirate flag and make it look like the usual raiders.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the local pirate faction.",
+        difficulty = "Hard"%_t,
         reward = "¢${reward}"%_t,
-        script = "data/scripts/player/missions/cw_extract_pow.lua",
+        script = "data/scripts/player/missions/cw_deniableraid.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Bring our people home."%_T,
+        msg = "Fly the pirate colors. This never happened."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)
@@ -173,7 +169,6 @@ function getBulletin(station)
     }
 end
 
--- Added by Cosmic War v3.0.0: Massive reputation penalty on abandoning a War Contract
 local cw_mission_abandon_original = mission.abandon
 mission.abandon = function()
     if onServer() then

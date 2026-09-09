@@ -1,22 +1,27 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
 local CosmicVaultFaction = include("cosmicvaultfaction")
+local CosmicVaultEconomy = include("cosmicvaulteconomy")
 
 include("randomext")
 include("structuredmission")
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
-
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
+-- v4.0.0: the first War Contract that pushes a faction's Famine Score UP as
+-- a direct combat-side action, mirroring Relief Convoy's pull down. Strip-mine ore from the
+-- enemy's own contested territory and keep it -- unlike Resource Heist, nothing is handed
+-- back to the giver; denying the enemy the resources (and profiting from them yourself) is
+-- the entire point.
 mission._Debug = 0
-mission._Name = "War Contract: P.O.W. Extraction"
+mission._Name = "War Contract: Scorched Earth"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
-mission.data.icon = "data/textures/icons/ShipCombat.png"
+mission.data.icon = "data/textures/icons/ResourceSteal.png"
 mission.data.autoTrackMission = true
 
 local cw_init = initialize
@@ -43,34 +48,46 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
+        local x, y = Sector():getCoordinates()
+
         if enemyIndex and enemyIndex > 0 then
             CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
             Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
         end
 
-        local x, y = Sector():getCoordinates()
         local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
         if not targetX or not targetY then terminate() return end
 
         mission.data.location = { x = targetX, y = targetY }
 
+        local d = length(vec2(targetX, targetY))
+        local matType = MaterialType.Iron
+        if d < 430 then matType = MaterialType.Titanium end
+        if d < 350 then matType = MaterialType.Naonite end
+        if d < 275 then matType = MaterialType.Trinium end
+        if d < 150 then matType = MaterialType.Xanion end
+        if d < 75 then matType = MaterialType.Ogonite end
+        if d < 50 then matType = MaterialType.Avorion end
+
+        local requiredMaterial = Material(matType)
+        local materialAmount = random():getInt(4000, 10000)
+
+        mission.data.custom.materialType = matType
+        mission.data.custom.materialName = requiredMaterial.name
+        mission.data.custom.materialAmount = materialAmount
+
         mission.data.description = {
             { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Break into the enemy prison sector at (${location.x}:${location.y}), destroy the prison station, and extract the captured officers."%_T, arguments = { location = mission.data.location } },
-            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false }
+            { text = "Travel to sector (${location.x}:${location.y}) and strip-mine ${amount} ${material} from their territory before their patrols arrive. Keep it -- denying them the resources is the mission."%_T, arguments = { location = mission.data.location, amount = materialAmount, material = requiredMaterial.name } },
+            { text = "Head to sector (${location.x}:${location.y}) and mine ${amount} ${material}"%_T, arguments = { location = mission.data.location, amount = materialAmount, material = requiredMaterial.name }, bulletPoint = true, fulfilled = false }
         }
 
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
-        -- v4.0.0: realigned to the 1.00 War Heat tier band (was using the 0.25-tier
-        -- formula copy-pasted from cw_borderskirmish.lua, making this the worst-paying
-        -- contract in the mod despite requiring the galaxy's maximum war heat). Matches
-        -- Champion Duel, the nearest same-tier anchor for a non-superboss encounter.
-        local baseReward = math.floor(250000 + heat * 300000)
+        local baseReward = math.floor(100000 + heat * 125000)
 
         mission.data.reward = precomputedReward or {
-            -- giverFaction is already resolved and confirmed non-nil above.
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
             relations = 10000,
             paymentMessage = "Contract fulfilled. Payment transferred."%_T
@@ -89,35 +106,43 @@ mission.phases[1] = {}
 mission.phases[1].showUpdateOnEnd = true
 
 mission.phases[1].onTargetLocationEntered = function(x, y)
-    mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
         spawnEvent(x, y)
         mission.data.custom.spawned = true
+        sync()
     end
 end
 
 mission.phases[1].triggers = {
     {
-        condition = function() 
-
+        condition = function()
             if onClient() then return false end
-            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_prison_target") }
+            if not mission.data.custom.spawned then return false end
 
-            local targets = {}
+            local player = Player()
+            local matType = mission.data.custom.materialType
+            local requiredAmount = mission.data.custom.materialAmount
 
-            for _, _t in pairs(_raw_targets) do
+            local resources = { player:getResources() }
+            local current = resources[matType + 1] or 0
 
-                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
+            local x, y = Sector():getCoordinates()
+            local targetCoords = mission.data.location
 
-                    table.insert(targets, _t)
-
-                end
-
-            end
-            return atTargetLocation() and mission.data.custom.spawned and #targets == 0
-
+            return x == targetCoords.x and y == targetCoords.y and current >= requiredAmount
         end,
         callback = function()
+            mission.data.description[3].fulfilled = true
+
+            local enemyIndex = mission.data.custom.enemyIndex
+            if enemyIndex and enemyIndex > 0 then
+                -- +20 Famine per completed raid -- the same magnitude as a single Relief
+                -- Convoy delivery's -20, so one raid roughly offsets one relief run rather
+                -- than dwarfing it in either direction.
+                CosmicVaultEconomy.addFamineScore(enemyIndex, 20)
+            end
+
+            sync()
             reward()
             accomplish()
         end
@@ -129,23 +154,21 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    
-    local prison = generator:createStation(enemyFaction, "data/scripts/entity/merchants/militaryoutpost.lua")
-    prison:setTitle("P.O.W. Prison"%_T, {})
-    prison:setValue("cw_prison_target", true)
-    
-    for i=1, 5 do
-        local escort = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
-        ShipAI(escort.index):setAggressive()
-    end
 
+    generator:createAsteroidField(0.2)
+
+    for i = 1, 3 do
+        local position = generator:getPositionInSector()
+        local ship = ShipGenerator.createDefender(enemyFaction, position)
+        ShipAI(ship.index):setAggressive()
+    end
 end
 
 function getBulletin(station)
     local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    if heat < 1.00 then return end
+    if heat < 0.35 then return end
 
-    local baseReward = math.floor(250000 + heat * 300000)
+    local baseReward = math.floor(100000 + heat * 125000)
     local giverFaction = Faction(station.factionIndex)
     local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
@@ -156,15 +179,15 @@ function getBulletin(station)
     }
 
     return {
-        brief = "War Contract: P.O.W. Extraction"%_t,
-        description = "Break into a nearby enemy prison sector, destroy the prison station, and extract the captured officers.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
-        difficulty = "Extreme"%_t,
+        brief = "War Contract: Scorched Earth"%_t,
+        description = "Enemy territory sits on resources they can't afford to lose. Get in there, strip-mine what you can, and get out before their patrols catch you. Keep everything you mine -- what they lose, you profit from.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Hard"%_t,
         reward = "¢${reward}"%_t,
-        script = "data/scripts/player/missions/cw_extract_pow.lua",
-        icon = "data/textures/icons/ShipCombat.png",
+        script = "data/scripts/player/missions/cw_scorched_earth.lua",
+        icon = "data/textures/icons/ResourceSteal.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Bring our people home."%_T,
+        msg = "Burn what you can't carry. Dismissed."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)
@@ -173,7 +196,6 @@ function getBulletin(station)
     }
 end
 
--- Added by Cosmic War v3.0.0: Massive reputation penalty on abandoning a War Contract
 local cw_mission_abandon_original = mission.abandon
 mission.abandon = function()
     if onServer() then

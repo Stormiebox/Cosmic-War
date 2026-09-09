@@ -12,6 +12,7 @@ local defenderName = "Defenders"
 local invaderName = "Invaders"
 local isContested = false
 local flashTimer = 0
+local warScore = 0 -- v4.0.0: positive favors the defender
 
 function initialize()
     if onServer() then
@@ -31,18 +32,24 @@ function checkZone()
     local sector = Sector()
     if not sector then return end
     local x, y = sector:getCoordinates()
-    
+
     local CosmicVaultTerritory = include("cosmicvaultterritory")
     local zones = CosmicVaultTerritory.getContestedZones()
     local zone = zones[x .. "_" .. y]
-    
+
     if zone then
         local def = Faction(zone.defender)
         local inv = Faction(zone.invader)
         local dName = def and def.name or "Defenders"
         local iName = inv and inv.name or "Invaders"
-        
-        invokeClientFunction(Player(), "receiveZoneData", true, zone.endTime, Server().unpausedRuntime, dName, iName, zone.startTime)
+
+        -- v4.0.0: surface War Score alongside the siege timer -- previously
+        -- the one HUD most directly tied to a live conflict showed none of this pass's
+        -- new attrition data.
+        local CosmicWarBridge = include("cosmicwarbridge")
+        local ws = CosmicWarBridge.getWarScore(zone.defender, zone.invader)
+
+        invokeClientFunction(Player(), "receiveZoneData", true, zone.endTime, Server().unpausedRuntime, dName, iName, zone.startTime, ws)
         return
     end
     invokeClientFunction(Player(), "receiveZoneData", false)
@@ -54,21 +61,22 @@ function requestZoneData()
 end
 callable(nil, "requestZoneData")
 
-function receiveZoneData(contested, et, now, dName, iName, st)
+function receiveZoneData(contested, et, now, dName, iName, st, ws)
     isContested = contested
     if contested then
         local remaining = et - now
         endTime = Client().unpausedRuntime + remaining
         defenderName = dName
         invaderName = iName
-        
+        warScore = ws or 0
+
         -- Exact calculation based on recorded start time
         if st and et > st then
             totalTime = et - st
         else
             totalTime = 60 * 60 -- Fallback if st is missing
         end
-        
+
         if uiContainer then uiContainer:show() end
     else
         if flashTimer <= 0 then
@@ -82,16 +90,16 @@ function triggerSiegeSuccess()
         invokeClientFunction(Player(), "triggerSiegeSuccess")
         return
     end
-    
+
     isContested = true
     flashTimer = 5.0
-    
+
     if uiContainer then uiContainer:show() end
     local width = 600
     if blueRect then blueRect.rect = Rect(0, 0, 0, 40) end
     if redRect then redRect.rect = Rect(0, 0, width, 40) end
-    if factionLabel then factionLabel.caption = "INVASION SUCCESSFUL - BORDER FLIPPED" end
-    if timeLabel then timeLabel.caption = "Sector Lost" end
+    if factionLabel then factionLabel.caption = "INVASION SUCCESSFUL - BORDER FLIPPED"%_t end
+    if timeLabel then timeLabel.caption = "Sector Lost"%_t end
 end
 callable(nil, "triggerSiegeSuccess")
 
@@ -100,16 +108,16 @@ function triggerDefenseSuccess()
         invokeClientFunction(Player(), "triggerDefenseSuccess")
         return
     end
-    
+
     isContested = true
     flashTimer = 5.0
-    
+
     if uiContainer then uiContainer:show() end
     local width = 600
     if blueRect then blueRect.rect = Rect(0, 0, width, 40) end
     if redRect then redRect.rect = Rect(width, 0, width, 40) end
-    if factionLabel then factionLabel.caption = "DEFENSE SUCCESSFUL - INVADERS REPELLED" end
-    if timeLabel then timeLabel.caption = "Sector Secured" end
+    if factionLabel then factionLabel.caption = "DEFENSE SUCCESSFUL - INVADERS REPELLED"%_t end
+    if timeLabel then timeLabel.caption = "Sector Secured"%_t end
 end
 callable(nil, "triggerDefenseSuccess")
 
@@ -119,22 +127,22 @@ function buildUI()
     local height = 40
     local x = (res.x / 2) - (width / 2)
     local y = 95
-    
+
     uiContainer = Hud():createContainer(Rect(x, y, x + width, y + height))
-    
+
     uiContainer:createRect(Rect(0, 0, width, height), ColorRGB(0.1, 0.1, 0.1))
-    
+
     blueRect = uiContainer:createRect(Rect(0, 0, width / 2, height), ColorRGB(0.1, 0.4, 0.9))
     redRect = uiContainer:createRect(Rect(width / 2, 0, width, height), ColorRGB(0.9, 0.1, 0.1))
-    
-    factionLabel = uiContainer:createLabel(vec2(width / 2, 5), "Defenders vs Invaders", 14)
+
+    factionLabel = uiContainer:createLabel(vec2(width / 2, 5), "Defenders vs Invaders"%_t, 14)
     factionLabel.centered = true
     factionLabel.color = ColorRGB(1, 1, 1)
-    
-    timeLabel = uiContainer:createLabel(vec2(width / 2, 20), "Time Remaining: --:--", 12)
+
+    timeLabel = uiContainer:createLabel(vec2(width / 2, 20), "Time Remaining: --:--"%_t, 12)
     timeLabel.centered = true
     timeLabel.color = ColorRGB(1, 1, 1)
-    
+
     uiContainer:hide()
 end
 
@@ -162,23 +170,28 @@ function updateClient(timeStep)
     end
 
     if not isContested or not uiContainer then return end
-    
+
     local remaining = endTime - Client().unpausedRuntime
     if remaining < 0 then remaining = 0 end
-    
+
     local invaderPercent = (totalTime - remaining) / totalTime
     if invaderPercent > 1 then invaderPercent = 1 end
     if invaderPercent < 0 then invaderPercent = 0 end
-    
+
     local width = 600
     local splitX = width * (1.0 - invaderPercent)
-    
+
     blueRect.rect = Rect(0, 0, splitX, 40)
     redRect.rect = Rect(splitX, 0, width, 40)
-    
-    factionLabel.caption = string.format("%s vs %s", defenderName, invaderName)
-    
+
+    local scoreText = ""
+    if warScore and warScore ~= 0 then
+        local leaderName = warScore > 0 and defenderName or invaderName
+        scoreText = string.format("  [War Score: %d %s]", math.abs(math.floor(warScore)), leaderName)
+    end
+    factionLabel.caption = string.format("%s vs %s", defenderName, invaderName) .. scoreText
+
     local m = math.floor(remaining / 60)
     local s = math.floor(remaining % 60)
-    timeLabel.caption = string.format("Conflict resolves in: %02d:%02d", m, s)
+    timeLabel.caption = string.format("Conflict resolves in: %02d:%02d"%_t, m, s)
 end

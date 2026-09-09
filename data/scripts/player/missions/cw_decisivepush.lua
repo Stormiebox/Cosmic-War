@@ -7,12 +7,17 @@ include("structuredmission")
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
-
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
+-- v4.0.0: the first War Contract gated on War Score itself rather than raw
+-- War Heat. Only offered once a faction pair's War Score is already close to the 250-point
+-- Decisive Victory threshold (150-249, giver ahead) -- giving the player direct agency to
+-- finish what's nearly already decided, instead of only ever waiting for the background
+-- roll. Completion credits a territory-weight (25-point) War Score contribution, the same
+-- weight a real station capture gets, on top of the normal combat rewards.
 mission._Debug = 0
-mission._Name = "War Contract: P.O.W. Extraction"
+mission._Name = "War Contract: Decisive Push"
 
 mission.data.brief = mission._Name
 mission.data.title = mission._Name
@@ -33,47 +38,38 @@ function initialize(factionIndex)
         if not giverFaction then terminate() return end
 
         local enemyIndex = giverFaction:getValue("enemy_faction") or 0
-        if enemyIndex == 0 then
-            local x, y = Sector():getCoordinates()
-            local pirateLevel = Balancing_GetPirateLevel(x, y)
-            enemyIndex = Galaxy():getPirateFaction(pirateLevel).index
-        end
+        local enemyFaction = enemyIndex > 0 and Faction(enemyIndex) or nil
+        if not enemyFaction then terminate() return end
 
         mission.data.custom.giverIndex = fIndex
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
-        if enemyIndex and enemyIndex > 0 then
-            CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
-            Player():sendChatMessage(giverFaction.name, 0, "By accepting this contract, you have openly declared war on our enemies."%_T)
-        end
+        CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
 
         local x, y = Sector():getCoordinates()
-        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, MissionUT.checkSectorInsideBarrier(x, y))
+        local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
+        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, insideBarrier)
         if not targetX or not targetY then terminate() return end
 
         mission.data.location = { x = targetX, y = targetY }
 
         mission.data.description = {
-            { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Break into the enemy prison sector at (${location.x}:${location.y}), destroy the prison station, and extract the captured officers."%_T, arguments = { location = mission.data.location } },
-            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false }
+            { text = "You accepted a war contract from ${giver}. This war is nearly won -- one more decisive blow could end it outright."%_T, arguments = { giver = giverFaction.name } },
+            { text = "Break ${enemy}'s last defense fleet at sector (${x}:${y})."%_T, arguments = { enemy = enemyFaction.name, x = targetX, y = targetY } },
+            { text = "Head to sector (${location.x}:${location.y})"%_T, bulletPoint = true, fulfilled = false },
+            { text = "Destroy the fleet"%_T, bulletPoint = true, fulfilled = false, visible = false }
         }
 
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
 
-        -- v4.0.0: realigned to the 1.00 War Heat tier band (was using the 0.25-tier
-        -- formula copy-pasted from cw_borderskirmish.lua, making this the worst-paying
-        -- contract in the mod despite requiring the galaxy's maximum war heat). Matches
-        -- Champion Duel, the nearest same-tier anchor for a non-superboss encounter.
-        local baseReward = math.floor(250000 + heat * 300000)
+        local baseReward = math.floor(300000 + heat * 350000)
 
         mission.data.reward = precomputedReward or {
-            -- giverFaction is already resolved and confirmed non-nil above.
             credits = baseReward * Balancing_GetSectorRewardFactor(x, y) * ((giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1),
-            relations = 10000,
-            paymentMessage = "Contract fulfilled. Payment transferred."%_T
+            relations = 15000,
+            paymentMessage = "This war is over. History will remember what you did here."%_T
         }
 
         cw_init(factionIndex)
@@ -90,81 +86,88 @@ mission.phases[1].showUpdateOnEnd = true
 
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
+    mission.data.description[4].visible = true
+
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
+        spawnFleet(x, y)
         mission.data.custom.spawned = true
     end
 end
 
 mission.phases[1].triggers = {
     {
-        condition = function() 
-
+        condition = function()
             if onClient() then return false end
-            local _raw_targets = { Sector():getEntitiesByScriptValue("cw_prison_target") }
-
             local targets = {}
-
-            for _, _t in pairs(_raw_targets) do
-
-                if _t.type == EntityType.Ship or _t.type == EntityType.Station then
-
-                    table.insert(targets, _t)
-
+            for _, t in pairs({ Sector():getEntitiesByScriptValue("cw_decisive_target") }) do
+                if t.type == EntityType.Ship or t.type == EntityType.Station then
+                    table.insert(targets, t)
                 end
-
             end
             return atTargetLocation() and mission.data.custom.spawned and #targets == 0
-
         end,
         callback = function()
+            local giverIndex = mission.data.custom.giverIndex
+            local enemyIndex = mission.data.custom.enemyIndex
+            if giverIndex and enemyIndex then
+                -- Credited the same 25-point weight a real station capture gets --
+                -- the decisive blow this contract is named for.
+                CosmicWarBridge.recordWarScoreTerritory(enemyIndex, giverIndex)
+            end
+
             reward()
             accomplish()
         end
     }
 }
 
-function spawnEvent(x, y)
+function spawnFleet(x, y)
     if onClient() then return end
-
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    
-    local prison = generator:createStation(enemyFaction, "data/scripts/entity/merchants/militaryoutpost.lua")
-    prison:setTitle("P.O.W. Prison"%_T, {})
-    prison:setValue("cw_prison_target", true)
-    
-    for i=1, 5 do
-        local escort = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
-        ShipAI(escort.index):setAggressive()
-    end
+    local numDefenders = math.floor(4 + ((mission.data.custom.heat or 0) * 5))
 
+    for i = 1, numDefenders do
+        local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
+        ship:setValue("cw_decisive_target", true)
+        ShipAI(ship.index):setAggressive()
+    end
 end
 
 function getBulletin(station)
-    local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
-    if heat < 1.00 then return end
-
-    local baseReward = math.floor(250000 + heat * 300000)
     local giverFaction = Faction(station.factionIndex)
-    local mult = (giverFaction and giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
+    if not giverFaction then return end
+
+    local heat = CosmicWarBridge.getFactionWarHeat(station.factionIndex) or 0
+    if heat < 0.60 then return end
+
+    local enemyIndex = giverFaction:getValue("enemy_faction") or 0
+    if enemyIndex <= 0 then return end
+
+    -- Only offered when the giver is already ahead and close to, but short of, the
+    -- 250-point Decisive Victory threshold -- this contract exists to close that gap.
+    local warScore = CosmicWarBridge.getWarScore(station.factionIndex, enemyIndex) or 0
+    if warScore < 150 or warScore >= 250 then return end
+
+    local baseReward = math.floor(300000 + heat * 350000)
+    local mult = (giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
     local rewardCredits = baseReward * Balancing_GetSectorRewardFactor(Sector():getCoordinates()) * mult
     local rewardStruct = {
         credits = rewardCredits,
-        relations = 10000,
-        paymentMessage = "Contract fulfilled. Payment transferred."%_T
+        relations = 15000,
+        paymentMessage = "This war is over. History will remember what you did here."%_T
     }
 
     return {
-        brief = "War Contract: P.O.W. Extraction"%_t,
-        description = "Break into a nearby enemy prison sector, destroy the prison station, and extract the captured officers.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
-        difficulty = "Extreme"%_t,
+        brief = "War Contract: Decisive Push"%_t,
+        description = "We have the enemy on the ropes. One more decisive strike and this war is over for good.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        difficulty = "Hard"%_t,
         reward = "¢${reward}"%_t,
-        script = "data/scripts/player/missions/cw_extract_pow.lua",
+        script = "data/scripts/player/missions/cw_decisivepush.lua",
         icon = "data/textures/icons/ShipCombat.png",
         formatArguments = { reward = createMonetaryString(rewardCredits) },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
-        msg = "Bring our people home."%_T,
+        msg = "Finish this. End it for good."%_T,
         onAccept = [[
             local self, player = ...
             local faction = Faction(self.arguments[1].giver)
@@ -173,7 +176,6 @@ function getBulletin(station)
     }
 end
 
--- Added by Cosmic War v3.0.0: Massive reputation penalty on abandoning a War Contract
 local cw_mission_abandon_original = mission.abandon
 mission.abandon = function()
     if onServer() then

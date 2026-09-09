@@ -342,13 +342,15 @@ if onClient() then
             local tooltip = ""
             if conflict.warScore and conflict.warScore ~= 0 then
                 local leaderName = conflict.warScore > 0 and nameA or nameB
-                tooltip = tooltip .. "War Score: "%_t .. leaderName .. " leading (" .. tostring(math.abs(math.floor(conflict.warScore))) .. ")\n\n"
+                local magnitude = math.abs(math.floor(conflict.warScore))
+                tooltip = tooltip .. "War Score: "%_t .. leaderName .. " leading (" .. tostring(magnitude) .. "/250 toward Decisive Victory)\n\n"
             end
             tooltip = tooltip .. "=== " .. nameA .. " ===\n"
             tooltip = tooltip .. "Index: "%_t .. conflict.factionAIndex .. "\n"
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsA) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relA) .. " (" .. math.floor(relA) .. ")\n"
             if (conflict.famineA or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineA) .. "\n" end
+            if (conflict.intelA or 0) > 0 then tooltip = tooltip .. "Your Intel: "%_t .. math.floor(conflict.intelA) .. " (spend 50 via /cosmicwarintel)\n" end
             if conflict.bountyA > 0 then tooltip = tooltip .. "Bounty License (Per Kill): ¢"%_t .. createMonetaryString(conflict.bountyA) .. " (Max 15 Kills)\n" end
 
             tooltip = tooltip .. "\n=== " .. nameB .. " ===\n"
@@ -356,6 +358,7 @@ if onClient() then
             tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsB) .. "\n"
             tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relB) .. " (" .. math.floor(relB) .. ")\n"
             if (conflict.famineB or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineB) .. "\n" end
+            if (conflict.intelB or 0) > 0 then tooltip = tooltip .. "Your Intel: "%_t .. math.floor(conflict.intelB) .. " (spend 50 via /cosmicwarintel)\n" end
             if conflict.bountyB > 0 then tooltip = tooltip .. "Bounty License (Per Kill): ¢"%_t .. createMonetaryString(conflict.bountyB) .. " (Max 15 Kills)\n" end
 
             politicsList:setTooltip(row, tooltip)
@@ -377,8 +380,6 @@ local function getFactionTraitsSafe(faction)
     -- Send pure strings across the network boundary, the client will apply the local %_t translation!
     if faction:getTrait("aggressive") > 0.5 then table.insert(traits, "Aggressive") end
     if faction:getTrait("peaceful") > 0.5 then table.insert(traits, "Peaceful") end
-    if faction:getTrait("wealthy") > 0.5 then table.insert(traits, "Wealthy") end
-    if faction:getTrait("poor") > 0.5 then table.insert(traits, "Poor") end
     if #traits == 0 then return {"Unknown"} end
     return traits
 end
@@ -480,6 +481,12 @@ function GalacticPoliticsTab.serverFetchData()
                         -- v4.0.0 War Score & Attrition: positive favors faction A.
                         local warScore = CosmicWarBridge.getWarScore and CosmicWarBridge.getWarScore(f.index, e.index) or 0
 
+                        -- v4.0.0: Intel was previously only visible via
+                        -- /cosmicwarintel -- surfaced here too since this tab is the
+                        -- natural home for it, right alongside War Score/Famine/Bounty.
+                        local intelA = CosmicWarBridge.getIntel and CosmicWarBridge.getIntel(player, f.index) or 0
+                        local intelB = CosmicWarBridge.getIntel and CosmicWarBridge.getIntel(player, e.index) or 0
+
                         table.insert(conflicts, {
                             warScore = warScore,
                             factionA = string.gsub(fName, "%s*/%*.-%*/%s*", ""),
@@ -487,11 +494,13 @@ function GalacticPoliticsTab.serverFetchData()
                             traitsA = getFactionTraitsSafe(f),
                             bountyA = bountyA,
                             famineA = famineA,
+                            intelA = intelA,
                             factionB = string.gsub(eName, "%s*/%*.-%*/%s*", ""),
                             factionBIndex = e.index,
                             traitsB = getFactionTraitsSafe(e),
                             bountyB = bountyB,
                             famineB = famineB,
+                            intelB = intelB,
                             heat = math.floor(heat * 100),
                             relation = rel,
                             status = status

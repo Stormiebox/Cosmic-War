@@ -265,21 +265,21 @@ Ongoing hardening work includes:
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:** `data/scripts/entity/bulletinboardmissions.lua` and all 22 `cw_*.lua` files in `data/scripts/player/missions/`
+**Primary files:** `data/scripts/entity/bulletinboardmissions.lua` and all 27 `cw_*.lua` files in `data/scripts/player/missions/`
 
 **What it does:**
-Injects custom, scaled combat missions into Avorion's native Bulletin Board pools based on the War Heat between a station's owner and its rival faction. All 22 War Contracts are clickable and completable from the bulletin board.
+Injects custom, scaled combat missions into Avorion's native Bulletin Board pools based on the War Heat between a station's owner and its rival faction. All 27 War Contracts are clickable and completable from the bulletin board.
 
 **Available contracts:**
 
 - **War Heat > 0.15:** *Force Recon* (scout a hostile listening post) and *Sensor Deployment* (deploy stealth buoys in 3 hostile sectors).
 - **War Heat > 0.25:** *Border Skirmish* (eliminate a border patrol).
-- **War Heat > 0.35:** *Resource Sabotage* (destroy a mining operation), *Resource Heist* (steal resources from enemy territory), and *Deploy Minefield* (deploy and defend a minefield).
-- **War Heat > 0.45:** *Interception* (destroy an enemy supply convoy), *Breakthrough* (defend an allied convoy), *Sector Raid* (wipe out enemy infrastructure), *Black Box Retrieval* (extract data from a destroyed prototype), and *Propaganda Broadcast* (hack a comms array).
-- **War Heat > 0.60:** *Frontline Siege* (assault a scaled enemy FOB), *Hunter Killer* (hunt a specialized fleet), and *Distraction Carnage* (survive a 5-minute ambush).
-- **War Heat > 0.80:** *High-Value Extraction* (holdout survival for a defector), *Assassinate General* (kill a high-ranking target), *Supply Line Raid* (destroy logistics hubs), and *Blockade Runner* (deliver supplies through a blockade).
+- **War Heat > 0.35:** *Resource Sabotage* (destroy a mining operation), *Resource Heist* (steal resources from enemy territory), *Deploy Minefield* (deploy and defend a minefield), and *Scorched Earth* (strip-mine enemy territory and keep what you take, extended pass).
+- **War Heat > 0.45:** *Interception* (destroy an enemy supply convoy), *Breakthrough* (defend an allied convoy), *Sector Raid* (wipe out enemy infrastructure), *Black Box Retrieval* (extract data from a destroyed prototype), *Propaganda Broadcast* (hack a comms array), and *Deniable Raid* (a pirate-flagged raid with no fingerprints, extended pass).
+- **War Heat > 0.60:** *Frontline Siege* (assault a scaled enemy FOB), *Hunter Killer* (hunt a specialized fleet), *Distraction Carnage* (survive a 5-minute ambush), *Shield Breaker* (destroy an enemy Planetary Defense Generator, extended pass), and *Prize Crew* (capture an enemy escort ship intact, extended pass).
+- **War Heat > 0.80:** *High-Value Extraction* (holdout survival for a defector), *Assassinate General* (kill a high-ranking target), *Supply Line Raid* (destroy logistics hubs), *Blockade Runner* (deliver supplies through a blockade), and *Subspace Containment*.
 - **War Heat = 1.00:** *Decapitation Strike* (Flagship boss fight), *Extract POW* (rescue prisoners from a guarded facility), and *Champion Duel* (1-on-1 with a scaled boss).
-- **Rift-dependent:** *Subspace Containment* becomes available when a Weaponized Subspace Tear opens in a warzone (see [Engine Hardening & Cross-Mod Integration](#engine-hardening--cross-mod-integration)).
+- **War Score 150-249, giver ahead (extended pass):** *Decisive Push* — deliver the final blow to a war that's already nearly decided, gated on War Score rather than War Heat.
 
 </details>
 
@@ -293,6 +293,8 @@ Injects custom, scaled combat missions into Avorion's native Bulletin Board pool
 **What it does:** A faction actively at war (War Heat ≥ 0.25) sells Warbonds at its Trading Posts — a Standard bond at 10,000,000 Cr or a Premium bond at 50,000,000 Cr, capped at 250,000,000 Cr held per faction per player, and 1,000,000,000 Cr total across all players combined per faction (`cw_warbond_pool_<factionIndex>`, freed back up as bonds mature).
 
 **Maturity (v4.0.0):** once War Heat returns to 0 and stays there for 2 hours, `CW_Warbonds.checkWarbondStatus()` resolves the bond against the faction's Famine Score delta between purchase and maturity — `payoutMultiplier = (1.0 - min(1.0, max(0, famineDelta) / 150)) * 3.0`, giving a smooth 0%–300% return rather than the pre-v4.0.0 binary (300% or total loss).
+
+**Famine delta, war-caused only (extended pass):** the raw famine delta above is adjusted by subtracting any Humanitarian Contract relief applied during the hold (`CosmicWarBridge.getFamineReliefApplied()`, snapshotted at purchase and re-read at maturity) — otherwise a player could buy a bond, then personally fly that same faction's Relief Convoy/Medical Airlift/Diplomatic Aid Package to manufacture a "the war went well" reading regardless of the war's actual outcome. Relief actions still reduce the faction's live Famine Score everywhere else; they just can't be read as a war outcome for bond-payout purposes.
 
 **Early cash-out (v4.0.0):** `CW_Warbonds.cashOutEarly(factionIndex)`, exposed via a new "Cash Out Warbonds Early" Trading Post interaction, lets a player exit before maturity for a flat 40% — previously bonds had no exit before the war fully resolved.
 
@@ -378,12 +380,17 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:** `data/scripts/player/missions/cw_relief_convoy.lua`, `data/scripts/entity/merchants/tradingpost.lua` (Sanctions Relief interaction), `data/scripts/server/background/cosmicwardiplomaticsanctions.lua` (immunity check).
+**Primary files:** `data/scripts/player/missions/cw_relief_convoy.lua`, `data/scripts/player/missions/cw_medical_airlift.lua`, `data/scripts/player/missions/cw_scorched_earth.lua`, `data/scripts/entity/merchants/tradingpost.lua` (Sanctions Relief and Diplomatic Aid Package interactions), `data/scripts/server/background/cosmicwardiplomaticsanctions.lua` (immunity check), `data/scripts/lib/cosmicwarbridge.lua` (`recordFamineReliefApplied`/`getFamineReliefApplied`).
 
-**What it does:** Two non-combat, non-warlike mechanics give a faction's Famine Score a real player-facing path downward — previously Famine only ever accumulated (siege losses, Cosmic Ascendancy's World Eater, Cosmic Chronicles' stock-market rolls), with Chronicles' own market events the only existing decay path.
+**What it does:** Non-combat, non-warlike mechanics give a faction's Famine Score a real player-facing path downward — previously Famine only ever accumulated (siege losses, Cosmic Ascendancy's World Eater, Cosmic Chronicles' stock-market rolls), with Chronicles' own market events the only existing decay path.
 
-- **Relief Convoy:** a bulletin-board mission gated on Famine Score (≥50, "Struggling" or worse) rather than War Heat. Gather 3,000–8,000 units of a distance-tiered raw material and deliver it to the giver's own sector. Completion reduces that faction's Famine Score by 40 and pays `50,000 + famineScore·800` credits plus 8,000 reputation. No war declaration, no assigned enemy, no abandon penalty.
+- **Relief Convoy:** a bulletin-board mission gated on Famine Score (≥50, "Struggling" or worse) rather than War Heat. Gather 3,000–8,000 units of a distance-tiered raw material and deliver it to the giver's own sector. Completion reduces that faction's Famine Score by 20 (reduced from 40 during the extended pass, to match Cosmic Chronicles' own decay-event convention rather than standing as the largest single decay value in the suite) and pays `50,000 + famineScore·800` credits plus 8,000 reputation. No war declaration, no assigned enemy, no abandon penalty.
+- **Medical Airlift** *(extended pass)*: a second, Famine ≥100 ("Severe Famine") variant — a smaller, faster delivery (1,200–3,000 units) for a bigger single-shot reduction (-35 Famine) and a higher payout (`100,000 + famineScore·1,000` plus 10,000 reputation). Never competes with Relief Convoy's own ≥50 bulletin slot.
+- **Scorched Earth** *(extended pass)*: the combat-side mirror — a War Contract (0.35 War Heat gate) that strip-mines a quota of ore from enemy territory and lets the player keep it, applying +20 Famine to the target faction rather than reducing it. No delivery back to the giver; denying the enemy the resources is the mission.
 - **Sanctions Relief:** an instant 8,000,000 Cr Trading Post transaction (mirroring the Warbonds dialog flow), available whenever a faction's relations with its registered enemy are at or below the rivalry threshold — the exact condition Diplomatic Sanctions pressure itself checks. Grants 2 hours of immunity from that pressure.
+- **Diplomatic Aid Package** *(extended pass)*: an instant 6,000,000 Cr Trading Post donation reducing Famine by 20, for players who'd rather pay than fly a Relief Convoy run. Gated on the same Famine ≥50 threshold.
+
+**Famine relief tracking (extended pass):** every mechanic above that reduces Famine also calls `CosmicWarBridge.recordFamineReliefApplied(factionIndex, amount)` — a running, never-reset total Warbonds reads at purchase and maturity so its famine-outcome-scaled payout can't be gamed by pairing a bond with the very relief action that would guarantee it a maximum return (see Warbonds, above).
 
 </details>
 
@@ -394,7 +401,9 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 
 **Primary files:** `data/scripts/lib/cosmicwarbridge.lua` (`recordWarScoreKill`/`recordWarScoreTerritory`/`getWarScore`), `data/scripts/sector/cw_bountypayouts.lua`, `data/scripts/entity/ai/trooptransport.lua`, `data/scripts/player/cw_siege_injector_persistent.lua`, `data/scripts/server/background/cosmicwarceasefires.lua`, `data/scripts/player/ui/galacticpolitics_tab.lua`.
 
-**What it does:** A legible, per-conflict scoreboard replacing "who's winning this war" as a mental calculation from the raw relations number. Tracks net kills (1 point each, any valid military kill between two factions actually at war, credited to whichever side didn't lose the unit regardless of who landed the blow) and net territory (25 points each, station captures) per faction pair. Visible by hovering a conflict row in the Galactic Politics tab.
+**What it does:** A legible, per-conflict scoreboard replacing "who's winning this war" as a mental calculation from the raw relations number. Tracks net kills (1 point each, any valid military kill between two factions actually at war, credited to whichever side didn't lose the unit regardless of who landed the blow, capped at ±100 toward the combined score — extended pass, see below) and net territory (25 points each, station captures, uncapped) per faction pair. Visible by hovering a conflict row in the Galactic Politics tab, alongside progress toward the 250-point Decisive Victory threshold; also shown live in the Battlefield HUD during an active siege (extended pass).
+
+**Kill-contribution cap (extended pass):** kills are credited for any valid military kill galaxy-wide, including ambient AI-vs-AI combat from this mod's own background events, not just player action — so kill volume alone could reach 250 far faster than 10 net territory swings, the opposite of the stated intent that territory should outweigh a kill streak. Kills' contribution to the combined score is now capped at ±100, so a real territory swing is always required to actually trigger Decisive Victory.
 
 **Feeds two mechanics:**
 
@@ -411,6 +420,116 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 **Primary files:** `data/scripts/server/background/cosmicwarceasefires.lua`, `data/scripts/sector/cosmicwarcontroller.lua`.
 
 **What it does:** Generalizes the single-pair "Eclipse Sanitization Protocol" into a galaxy-wide mechanic. Once Cosmic Ascendancy's Eclipse Threat Economy (`eclipse_threat`) crosses 5,000 (on its 0–10,000 scale) while the Eclipse is fully awake, every currently-warring AI faction pair galaxy-wide is pulled into a 1-hour temporary truce: relations pushed clear of the rivalry threshold, and new escalation suppressed for the affected pair for the duration. Runs on its own 30-minute cooldown, independent of the normal per-pair ceasefire roll. Scoped to factions actually at war ("affected factions"), with galaxy-wide reach rather than proximity-limited.
+
+</details>
+
+### 🛡️ 21) Planetary Defense Generators & Shield Breaker
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/entity/cw_planetary_defense.lua`, `data/scripts/server/background/cosmicwardefensegenerators.lua`, `data/scripts/player/cw_siege_injector_persistent.lua`, `data/scripts/player/missions/cw_shieldbreaker.lua`.
+
+**What it does:** `cw_planetary_defense.lua` has always been a correct, working script — while active, it projects invincibility over every other station in its sector — but nothing anywhere ever actually attached it to a station, despite being documented as a real siege mechanic in the in-game Codex and `PLAYER_GUIDE.md`. `cosmicwardefensegenerators.lua` closes that gap: a faction under meaningful threat (War Heat ≥0.35) gets a rolling per-pass chance to commission one at its own home sector, tracked as a plain flag (`faction:cw_defense_generator_sector`) rather than a physical entity. The station itself is lazily materialized the first time any player physically enters that sector (`cw_siege_injector_persistent.lua`), the same progressive-materialization pattern this mod already uses for background-resolved sieges — no sector ever needs to be loaded just to place a station in it.
+
+**Shield Breaker:** a War Contract (0.60 War Heat) built on top of this. Only offered when the target enemy actually has a generator commissioned — the mission reads the exact flagged sector directly, so it's never offered with no valid target to send the player to. Destroying it clears the flag (so the faction can be commissioned a new one in the future) and credits a War Score kill.
+
+**Known limitation:** if a generator is destroyed by any means other than this exact mission (e.g. incidental combat during an unrelated event), the flag is not automatically cleared, so that faction won't be re-commissioned another this save. A deliberate scope boundary, not a bug — see Changelog.md.
+
+</details>
+
+### 🏁 22) Salvage Race
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_salvagerace.lua`.
+
+**What it does:** A War Contract (0.35 War Heat) spawning a wreckage field, rival scavenger ships, and a defensive patrol at a hostile sector. The player must salvage a quota of a distance-tiered raw material within a 5-minute window before the contract fails — "before it despawns" urgency via a real timeout, not just flavor text. Reward scales with the giver/enemy pair's current `CosmicWarBridge.getWarScore()` margin, up to +50% — the first contract to tie its payout directly to that scoreboard.
+
+</details>
+
+### 🏴‍☠️ 23) Deniable Raid
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_deniableraid.lua`.
+
+**What it does:** A War Contract (0.45 War Heat) always flagged as pirate activity, regardless of whether the giver has a real registered enemy — unlike Border Skirmish, which only falls back to a pirate target when no real enemy exists, deniability is the entire premise here, not a fallback for a missing target. If the giver does have a real registered enemy, the raid banks 20 Intel against that enemy via `CosmicWarBridge.grantIntel()`, extending Intel-earning beyond the three dedicated 0.15-tier recon missions.
+
+</details>
+
+### 🏆 24) Decisive Push
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_decisivepush.lua`.
+
+**What it does:** The first War Contract gated on War Score itself rather than raw War Heat. Only offered once a faction pair's War Score is 150–249 with the giver ahead — close to, but short of, the 250-point Decisive Victory threshold. Completing it destroys a defended fleet and credits a 25-point territory-weight War Score contribution (`CosmicWarBridge.recordWarScoreTerritory`), the same weight a real station capture gets — giving players direct agency to finish a war that's already nearly decided instead of only ever waiting on the background roll.
+
+</details>
+
+### 🚢 25) Prize Crew
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_prizecrew.lua`.
+
+**What it does:** Capture an enemy escort ship intact instead of destroying it. Reduce the flagged target below 25% hull while it's still alive, and a scripted prize crew flips its `factionIndex` to the giver faction — the same mechanism `trooptransport.lua` already uses to capture stations, retargeted at a Ship. Destroying the target outright instead of disabling it fails the contract (checked every tick via a dedicated failure trigger).
+
+> [!NOTE]
+> This deliberately does NOT use vanilla's `Boarding` component or `AIState.Boarding` — ship-level capture through that system has never been resolved anywhere in this workspace, and this mission sidesteps that uncertainty entirely by reusing this mod's own already-proven station-capture mechanism (direct `factionIndex` reassignment) against a Ship instead. Only the target *type* is new; the underlying mechanism shipped and has been correct since the base v4.0.0 pass.
+
+</details>
+
+### 🏘️ 26) Refugee Resettlement
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_refugeeresettlement.lua`.
+
+**What it does:** The first tie between Humanitarian Contracts and territorial Expansion Momentum. Gated on Famine ≥50 and the giver faction having the Imperialist trait, the delivery destination is a sector the faction is actively expanding toward (`CosmicWarBridge.findExpansionCandidate()` — the same directional walk the Imperialist trait's own organic growth and the Intelligence Network's preview both already use), rather than the giver's own sector like Relief Convoy. Successful delivery directly settles that sector for the faction via `CosmicVaultTerritory.expandToSector()` if it's still unclaimed — a guaranteed, player-assisted expansion rather than leaving it to the organic roll's own chance.
+
+</details>
+
+### 🌌 27) Dynamic Wartime Subspace Corridors
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/server/background/cosmicwarsubspacecorridors.lua`, `data/scripts/player/cw_siege_injector_persistent.lua`.
+
+**What it does:** At maximum War Heat (1.00 — the same rare threshold gating Decapitation Strike/Champion Duel/Extract POW), a war has a rolling per-pass chance to tear open a genuine subspace wormhole connecting the two factions' home sectors. Feasibility confirmed against vanilla: `Sector():createWormHole(x, y, color, size)` is the same native convenience function vanilla's own galaxy generation uses, gated by `SectorGenerator:wormHoleAllowed(from, to)` — the same passability/barrier check vanilla's own wormhole network construction runs, called live against a freshly-constructed `SectorGenerator` instance rather than only at map-generation time.
+
+**Permanent by design, not timed:** removing a spawned entity later would require that exact sector to be loaded again at the expiry moment — the same "can't touch an unloaded sector" constraint this mod's entire territory system already exists to avoid. Once torn, a corridor stays open for the rest of the save, framed as a lasting scar the war left in subspace rather than a cosmetic, temporary effect.
+
+**Materialization:** only a flag pair is set when a corridor is granted (`cw_corridor_at_<x>:<y>` reverse-lookup keys at both endpoints); the actual wormhole entities are lazily created the first time a player is physically present at either endpoint sector, same pattern as Planetary Defense Generators above.
+
+</details>
+
+### 💰 28) Live Battlefield Salvage Markets
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/events/siegeevent.lua`, `data/scripts/entity/merchants/tradingpost.lua`.
+
+**What it does:** A 40% chance any physical siege (`SiegeEvent.startSiege`) spawns a temporary "Black Market Salvage Post" — a `tradingpost.lua`-based station owned by the defending faction, flagged `cw_salvage_market` — offering a new "Sell Salvage For A Premium" interaction that buys the player's entire raw-material hold in one transaction at a flat rate well above ordinary trade value (5-1,500 Cr/unit depending on material, Iron cheapest through Avorion most valuable). Framed as the defenders' desperation for liquidity mid-siege. Cleans itself up once every player leaves the sector (`deleteonplayersleft.lua`, the same cleanup this mod already uses for other temporary siege-adjacent structures).
+
+</details>
+
+### 🤝 29) Alliance War Councils
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/lib/cosmicwarbridge.lua`.
+
+**What it does:** Intel banking (`grantIntel`/`getIntel`/`spendIntel`) now resolves to a player's Player Alliance when they belong to one, instead of always the individual player — co-belligerent Alliance members now scout as one shared intelligence apparatus (a single pooled `/cosmicwarintel` balance per scouted faction) instead of each independently tracking their own in isolation. Built on Cosmic Vault v3.8.0's new generic ledger primitive (`CosmicVaultFaction.grantLedger`/etc.), which accepts either a `Player()` or an `Alliance()` transparently since both expose the same `getValue`/`setValue` interface. War Score itself needed no change here — it was already a per-faction-pair scoreboard visible to every player regardless of Alliance membership, not a per-player one.
 
 </details>
 
