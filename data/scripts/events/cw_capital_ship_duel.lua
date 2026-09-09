@@ -64,6 +64,6 @@ function CW_CapitalShipDuelEvent.spawn()
         dreadB.shieldDurability = dreadB.shieldMaxDurability
     end
 
-    Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!")
+    Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!"%_T)
     terminate()
 end

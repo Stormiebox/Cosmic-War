@@ -103,17 +103,23 @@ function CW_SiegeInjectorPersistent.onSectorEntered(playerIndex, x, y, sectorCha
                 local ox, oy = string.match(otherEndpoint, "(-?%d+):(-?%d+)")
                 ox, oy = tonumber(ox), tonumber(oy)
                 if ox and oy then
-                    local sector = Sector()
-                    if sector then
-                        local alreadyPresent = false
-                        for _, e in pairs({ sector:getEntitiesByType(EntityType.WormHole) }) do
-                            alreadyPresent = true
-                            break
-                        end
-
-                        if not alreadyPresent then
+                    -- v4.0.0 fix: this used to check "is any EntityType.WormHole
+                    -- present" as a proxy for "did I already materialize this
+                    -- corridor?" -- but vanilla generation places wormholes in a great
+                    -- many sectors regardless of this mod, so a faction home sector
+                    -- with a pre-existing vanilla wormhole false-positived as "already
+                    -- materialized" and silently never got its corridor endpoint,
+                    -- after the news article announcing it had already gone out. A
+                    -- dedicated per-sector marker, set only when THIS corridor actually
+                    -- creates its own wormhole, is unambiguous regardless of what else
+                    -- the sector contains.
+                    local materializedKey = "cw_corridor_materialized_" .. x .. ":" .. y
+                    if not server:getValue(materializedKey) then
+                        local sector = Sector()
+                        if sector then
                             sector:createWormHole(ox, oy, ColorRGB(0.6, 0.2, 1.0), 400)
                             sector:broadcastChatMessage("Unknown", 2, "Subspace readings spike -- a wartime corridor terminates here."%_T)
+                            server:setValue(materializedKey, true)
                         end
                     end
                 end

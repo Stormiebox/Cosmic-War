@@ -56,7 +56,7 @@ function CW_EclipseVanguardEvent.spawn()
         dreadnought.durability = dreadnought.maxDurability
     end
 
-    Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED.")
+    Sector():broadcastChatMessage("Unknown", 2, "WARNING: MASSIVE ANOMALY DETECTED. THE ECLIPSE VANGUARD HAS ARRIVED."%_T)
 
     -- ShowCinematicBanner is a server-only "push" helper (it guards `if not onServer()`
     -- and does its own player:invokeFunction() push internally) -- call it directly from

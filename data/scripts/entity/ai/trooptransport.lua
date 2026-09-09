@@ -115,6 +115,25 @@ function TroopTransport.captureStation(station, newFactionIndex)
     -- single kill (see CosmicWarBridge.getWarScore).
     include("cosmicwarbridge").recordWarScoreTerritory(oldFactionIndex, newFactionIndex)
 
+    -- v4.0.0 Occupation & Insurgency: a captured sector isn't instantly settled --
+    -- for 6 in-game hours it's marked Occupied, giving the dispossessed faction
+    -- (oldFactionIndex) a chance to harass the new owner with insurgent raiders
+    -- (cosmicwarcontroller.lua's applyInsurgency) and softening the new owner's War
+    -- Contract payouts from this sector in the meantime (CosmicWarBridge.
+    -- getSectorRewardMultiplier). Layered strictly on top of the capture that already
+    -- happens above -- this never blocks or delays the ownership flip itself, since
+    -- reconquest already exists independently of this mechanic.
+    if oldFactionIndex and oldFactionIndex > 0 and oldFactionIndex ~= newFactionIndex then
+        local ox, oy = Sector():getCoordinates()
+        -- unpausedRuntime is a double (Server.lua confirms it), so it renders with a
+        -- decimal point far more often than not -- math.floor() before storing keeps this a
+        -- plain integer string, which is what CosmicWarBridge.getOccupationData()'s parser
+        -- actually expects. Sub-second precision on a 6-hour window is meaningless anyway.
+        local endTime = math.floor(Server().unpausedRuntime + 21600)
+        Server():setValue("cw_occupation_" .. ox .. ":" .. oy,
+            tostring(oldFactionIndex) .. "," .. tostring(newFactionIndex) .. "," .. tostring(endTime))
+    end
+
     local sector = Sector()
     sector:broadcastChatMessage(station, ChatMessageType.Warning, "The station has been captured by enemy forces!"%_T)
 
@@ -130,11 +149,26 @@ function TroopTransport.captureStation(station, newFactionIndex)
 
     include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Station " .. station.name .. " captured by faction " .. tostring(newFactionIndex) .. ". Sector borders updated.")
 
+    -- v4.0.0: only a captured HOME sector is rare and significant enough to
+    -- warrant the "breaking" flag -- an ordinary station falling happens too often across
+    -- a large war to interrupt every player for (see cosmicvaultnews.lua's own warning
+    -- against a "breaking" article every few minutes).
+    local oldFaction = Faction(oldFactionIndex)
+    local oldFactionName = oldFaction and oldFaction.name or "an Unknown Faction"
+    local isHomeSector = false
+    if oldFaction then
+        local homeX, homeY = oldFaction:getHomeSectorCoordinates()
+        isHomeSector = homeX == x and homeY == y
+    end
+
     local CosmicVaultNews = include("cosmicvaultnews")
     CosmicVaultNews.publishArticle({
-        title = "Territory Conquered",
-        content = "The sector " .. sectorName .. " has been successfully annexed by " .. factionName .. " via ground assault. The galaxy borders have officially shifted.",
-        category = "War"
+        title = isHomeSector and ("Home Sector Falls: " .. oldFactionName .. " Loses Their Capital") or "Territory Conquered",
+        content = isHomeSector
+            and ("In a devastating blow, " .. oldFactionName .. "'s home sector " .. sectorName .. " has fallen to " .. factionName .. " via ground assault. The galaxy borders have officially shifted.")
+            or ("The sector " .. sectorName .. " has been successfully annexed by " .. factionName .. " via ground assault. The galaxy borders have officially shifted."),
+        category = "War",
+        breaking = isHomeSector
     })
 end
 

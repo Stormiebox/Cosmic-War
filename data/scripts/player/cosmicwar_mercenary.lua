@@ -43,11 +43,29 @@ function CW_Mercenary.onShipDestroyed(destroyedId, destroyerId)
     
     local destroyedFactionId = destroyedEntity.factionIndex
     if not destroyedFactionId then return end
-    
+
+    -- v4.0.0 Letters of Marque: attacking your own patron revokes the
+    -- commission outright, on the spot -- a real consequence, not just the softer
+    -- civilian-kill relations dip below. Checked before the "at war" branch since a
+    -- faction is never at war with itself.
+    if destroyedFactionId == enlistedFactionId then
+        local enlistedFactionObj = Faction(enlistedFactionId)
+        player:setValue("cw_mercenary_faction", nil)
+        cvf.changeRelations(player.index, enlistedFactionId, -100000)
+        player:sendChatMessage(enlistedFactionObj and enlistedFactionObj.name or "Letter of Marque"%_T, 1, "You turned your guns on us! Your Letter of Marque is revoked, effective immediately."%_T)
+        -- terminate() alone is the proven pattern for a persistent player-attached
+        -- script ending itself (cw_bounty_tracker.lua's own License-expiry/completion exits
+        -- use the exact same call, no paired removeScript()) -- a self-targeted
+        -- removeScript() is deferred and not a reliable substitute for terminate()'s
+        -- documented self-removal guarantee (Avorion_Modding_Codex.md).
+        terminate()
+        return
+    end
+
     -- Check if destroyed faction is at war with enlisted faction
     local enlistedFaction = Faction(enlistedFactionId)
     local destroyedFaction = Faction(destroyedFactionId)
-    
+
     if enlistedFaction and destroyedFaction then
         local relation = enlistedFaction:getRelations(destroyedFactionId)
         if relation <= -80000 then -- At war
@@ -65,7 +83,7 @@ function CW_Mercenary.onShipDestroyed(destroyedId, destroyerId)
                 local playerRelation = player:getRelations(destroyedFactionId)
                 if playerRelation then
                     cvf.changeRelations(player.index, enlistedFactionId, -5000)
-                    player:sendChatMessage(enlistedFaction.name, 1, "We do not pay mercenaries to slaughter unarmed civilians! Your standing with us has dropped.")
+                    player:sendChatMessage(enlistedFaction.name, 1, "We do not pay mercenaries to slaughter unarmed civilians! Your standing with us has dropped."%_T)
                 end
                 return -- No bounty payout!
             end

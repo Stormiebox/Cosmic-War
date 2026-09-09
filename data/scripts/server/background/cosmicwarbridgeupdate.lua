@@ -57,6 +57,7 @@ function CosmicWarBridgeUpdate.update(timeStep)
     retrofitMissingFactions()
 
     CosmicWarBridge.publishWarHeatSnapshot()
+    CosmicWarBridge.updateFrontlines()
 end
 
 

@@ -9,4 +9,5 @@ if onServer() then
     player:addScriptOnce("data/scripts/player/ui/galacticpolitics_tab.lua")
     player:addScriptOnce("data/scripts/player/cw_eventscheduler.lua")
     player:addScriptOnce("data/scripts/player/cosmicwarcodex.lua")
+    player:addScriptOnce("data/scripts/player/ui/cw_frontlines_overlay.lua")
 end

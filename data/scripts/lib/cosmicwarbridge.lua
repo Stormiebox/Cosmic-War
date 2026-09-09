@@ -128,7 +128,12 @@ function CosmicWarBridge.publishWarHeatSnapshot()
         if f and f.isAIFaction and f:getValue("cw_enabled") then
             local heat = CosmicWarBridge.computeWarHeatForFaction(f)
             snapshot[f.index] = heat
-            table.insert(snapshotParts, tostring(f.index) .. ":" .. tostring(heat))
+            -- v4.0.0 fix: tostring() on a very small float (e.g. a near-zero heat just
+            -- past the rivalry threshold) renders as scientific notation ("1.2e-005"),
+            -- and getWarHeatSnapshot()'s parse pattern below stops at the "e" -- so a
+            -- near-zero heat could misread as >= 1.0 and unlock this mod's hardest
+            -- tier. %.6f never enters scientific notation regardless of magnitude.
+            table.insert(snapshotParts, tostring(f.index) .. ":" .. string.format("%.6f", heat))
             if heat > maxHeat then maxHeat = heat end
             totalHeat = totalHeat + heat
         end
@@ -338,6 +343,172 @@ end
 
 function CosmicWarBridge.getFamineReliefApplied(factionIndex)
     return include("cosmicvaulteconomy").getReliefApplied("famine", factionIndex)
+end
+
+-- v4.0.0 Frontlines: recomputes and publishes, for every currently-warring AI
+-- faction pair, the sectors where their territories actually meet -- via Cosmic Vault's
+-- CosmicVaultTerritory.getBorderSectors(), a bounded scan, not a galaxy-wide one. Border
+-- geometry only changes when a siege or expansion actually resolves, so this is driven from
+-- cosmicwarbridgeupdate.lua's existing 5-minute cadence rather than a dedicated background
+-- script. Publishes two shapes: one per-pair value (for the galaxy map overlay, which wants
+-- to color-code by conflict) and one flat combined set (for the cheap single-sector lookups
+-- applyWarHazardSpawns() and cw_eventscheduler.lua make every tick).
+local function getGalaxyFactionsForFrontlines(server)
+    if not server or type(server.getValue) ~= "function" then return {} end
+    local factionIndices = {}
+    local factionStr = server:getValue("factions")
+    if type(factionStr) == "string" and factionStr ~= "" then
+        for id in string.gmatch(factionStr, "([^,]+)") do
+            table.insert(factionIndices, tonumber(id))
+        end
+    end
+    return factionIndices
+end
+
+function CosmicWarBridge.updateFrontlines()
+    if not onServer() then return end
+    local server = Server()
+    if not server then return end
+
+    local cfg = CosmicWarConfig.get() or {}
+    if cfg.enableFrontlines == false then
+        server:setValue("cw_frontline_pairs", nil)
+        server:setValue("cw_frontline_sectors", nil)
+        return
+    end
+
+    local factionIndices = getGalaxyFactionsForFrontlines(server)
+    local processedPairs = {}
+    local pairKeys = {}
+    local combinedParts = {}
+
+    for _, idx in pairs(factionIndices) do
+        local a = Faction(idx)
+        if a and a.isAIFaction and a:getValue("cw_enabled") then
+            local enemyIndex = a:getValue("enemy_faction")
+            if enemyIndex and enemyIndex > 0 then
+                local b = Faction(enemyIndex)
+                if b and b.isAIFaction then
+                    local left = math.min(a.index, b.index)
+                    local right = math.max(a.index, b.index)
+                    local pairKey = tostring(left) .. ":" .. tostring(right)
+
+                    if not processedPairs[pairKey] then
+                        processedPairs[pairKey] = true
+
+                        local CosmicVaultTerritory = include("cosmicvaultterritory")
+                        local border = CosmicVaultTerritory.getBorderSectors(left, right, 15)
+
+                        if #border > 0 then
+                            table.insert(pairKeys, pairKey)
+                            local sectorParts = {}
+                            for _, s in pairs(border) do
+                                table.insert(sectorParts, s.x .. "," .. s.y)
+                                table.insert(combinedParts, s.x .. "," .. s.y)
+                            end
+                            server:setValue("cw_frontline_sectors_" .. pairKey, table.concat(sectorParts, ";"))
+                        else
+                            server:setValue("cw_frontline_sectors_" .. pairKey, nil)
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    server:setValue("cw_frontline_pairs", table.concat(pairKeys, ","))
+    -- Delimited on both ends so a substring search for ",x,y," can't false-positive
+    -- match a longer coordinate that merely contains the same digits.
+    server:setValue("cw_frontline_sectors", "," .. table.concat(combinedParts, ",") .. ",")
+end
+
+--- Returns the {x,y} sector list for one warring pair (pairKey = "min:max" faction
+-- indices, matching cosmicwarceasefires.lua's own pairKey convention), for the galaxy map
+-- overlay to render.
+function CosmicWarBridge.getFrontlinePairs()
+    if not onServer() then return {} end
+    local server = Server()
+    if not server then return {} end
+
+    local pairsStr = server:getValue("cw_frontline_pairs")
+    local result = {}
+    if type(pairsStr) ~= "string" or pairsStr == "" then return result end
+
+    for pairKey in string.gmatch(pairsStr, "([^,]+)") do
+        local sectorsStr = server:getValue("cw_frontline_sectors_" .. pairKey)
+        local sectors = {}
+        if type(sectorsStr) == "string" and sectorsStr ~= "" then
+            for x, y in string.gmatch(sectorsStr, "(-?%d+),(-?%d+)") do
+                table.insert(sectors, {x = tonumber(x), y = tonumber(y)})
+            end
+        end
+        table.insert(result, {pairKey = pairKey, sectors = sectors})
+    end
+
+    return result
+end
+
+--- Cheap single-sector check against the flat combined frontline set -- the lookup
+-- applyWarHazardSpawns() and cw_eventscheduler.lua use every tick, so it stays a plain
+-- string find rather than re-deriving faction pairs on every call.
+function CosmicWarBridge.isFrontlineSector(x, y)
+    if not onServer() or not x or not y then return false end
+    local server = Server()
+    if not server then return false end
+
+    local sectorsStr = server:getValue("cw_frontline_sectors")
+    if type(sectorsStr) ~= "string" or sectorsStr == "" then return false end
+
+    return string.find(sectorsStr, "," .. x .. "," .. y .. ",", 1, true) ~= nil
+end
+
+--- v4.0.0 Occupation & Insurgency: reads back the marker
+-- trooptransport.lua's captureStation() sets, {oldFactionIndex, newFactionIndex, endTime}, or
+-- nil if this sector was never captured or its 6-hour occupation window has already passed
+-- (a lazily-expired marker -- nothing proactively clears it, the same "check the timestamp,
+-- don't poll a countdown" pattern this mod's other lightweight markers already use).
+function CosmicWarBridge.getOccupationData(x, y)
+    if not onServer() or not x or not y then return nil end
+    local server = Server()
+    if not server then return nil end
+
+    local raw = server:getValue("cw_occupation_" .. x .. ":" .. y)
+    if type(raw) ~= "string" or raw == "" then return nil end
+
+    local oldIdx, newIdx, endTime = string.match(raw, "^(%-?%d+),(%-?%d+),(%-?%d+)$")
+    oldIdx, newIdx, endTime = tonumber(oldIdx), tonumber(newIdx), tonumber(endTime)
+    if not oldIdx or not newIdx or not endTime then return nil end
+    if endTime <= (server.unpausedRuntime or 0) then return nil end
+
+    return { oldFactionIndex = oldIdx, newFactionIndex = newIdx, endTime = endTime }
+end
+
+function CosmicWarBridge.isSectorOccupied(x, y)
+    return CosmicWarBridge.getOccupationData(x, y) ~= nil
+end
+
+--- Combines both of this pass's sector-level reward modifiers into the one
+-- multiplier War Contract reward formulas actually chain in: a +15% premium on a
+-- Frontlines sector, a -30% penalty on a freshly-Occupied one (the new owner's hold isn't
+-- fully productive yet). The two are mutually exclusive in practice -- a sector inside
+-- another faction's 6-hour occupation window isn't also a live frontline -- but the
+-- multiplication is written to compose safely regardless.
+function CosmicWarBridge.getSectorRewardMultiplier(x, y)
+    local mult = CosmicWarBridge.isFrontlineSector(x, y) and 1.15 or 1.0
+    if CosmicWarBridge.isSectorOccupied(x, y) then
+        mult = mult * 0.70
+    end
+    return mult
+end
+
+--- v4.0.0 War Weariness: read accessor for the 0..100 counter
+-- cosmicwarweariness.lua maintains. 0 if the faction has none recorded (never lost
+-- ground in a war, or is at peace and fully decayed).
+function CosmicWarBridge.getWarWeariness(factionIndex)
+    if not onServer() or not factionIndex then return 0 end
+    local server = Server()
+    if not server then return 0 end
+    return server:getValue("cw_weariness_" .. tostring(factionIndex)) or 0
 end
 
 return CosmicWarBridge

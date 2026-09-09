@@ -123,6 +123,15 @@ mission.phases[1].triggers = {
                 -- decay value in the suite.
                 CosmicVaultEconomy.addFamineScore(giverIndex, -20)
                 CosmicWarBridge.recordFamineReliefApplied(giverIndex, 20)
+
+                local giverFaction = Faction(giverIndex)
+                local article = {
+                    title = "Relief Convoy Reaches " .. (giverFaction and giverFaction.name or "Faction in Need"),
+                    content = "An independent relief convoy has delivered a shipment of raw materials to " .. (giverFaction and giverFaction.name or "a faction") .. ", easing the strain of an ongoing famine.",
+                    category = "Humanitarian"
+                }
+                local cv_news = include("cosmicvaultnews")
+                cv_news.publishArticle(article)
             end
 
             mission.data.description[3].fulfilled = true

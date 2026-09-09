@@ -1,9 +1,20 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
+include("cosmicwarconfig")
 include("randomext")
 include("stringutility")
+local CosmicWarBridge = include("cosmicwarbridge")
 
 -- namespace CW_EventScheduler
 CW_EventScheduler = {}
+
+-- v4.0.0: a rolling per-player hourly budget on how many of THIS scheduler's own
+-- events can fire, per the CCM "War Event Budget" option -- twenty-two of them
+-- (twelve original, ten added this Final Pass) on one shared 60-second tick could
+-- otherwise fire far more often than any single tuned interval below intends.
+-- Vanilla and other mods' own events are untouched; this only throttles this file's
+-- own addScriptOnce() calls.
+local eventsFiredThisHour = 0
+local hourWindowStart = 0
 
 local events = {
     { min = 120, max = 180, script = "data/scripts/events/cw_fleetclash.lua", timer = 0, schedule = 0 },
@@ -17,7 +28,18 @@ local events = {
     { min = 150, max = 210, script = "data/scripts/events/cw_stationsiege.lua", timer = 0, schedule = 0 },
     { min = 120, max = 180, script = "data/scripts/events/cw_capital_ship_duel.lua", timer = 0, schedule = 0 },
     { min = 90,  max = 150, script = "data/scripts/events/cw_distress_beacon_trap.lua", timer = 0, schedule = 0 },
-    { min = 130, max = 190, script = "data/scripts/events/cw_orbital_bombardment.lua", timer = 0, schedule = 0 }
+    { min = 130, max = 190, script = "data/scripts/events/cw_orbital_bombardment.lua", timer = 0, schedule = 0 },
+    -- v4.0.0 Final Pass: ten new events.
+    { min = 80,  max = 140, script = "data/scripts/events/cw_border_checkpoint.lua", timer = 0, schedule = 0 },
+    { min = 120, max = 180, script = "data/scripts/events/cw_field_hospital_convoy.lua", timer = 0, schedule = 0 },
+    { min = 110, max = 170, script = "data/scripts/events/cw_artillery_barrage.lua", timer = 0, schedule = 0 },
+    { min = 130, max = 190, script = "data/scripts/events/cw_mutiny.lua", timer = 0, schedule = 0 },
+    { min = 100, max = 160, script = "data/scripts/events/cw_prisoner_transport.lua", timer = 0, schedule = 0 },
+    { min = 140, max = 200, script = "data/scripts/events/cw_signal_jamming_net.lua", timer = 0, schedule = 0 },
+    { min = 150, max = 210, script = "data/scripts/events/cw_scorched_retreat.lua", timer = 0, schedule = 0 },
+    { min = 160, max = 220, script = "data/scripts/events/cw_defection_offer.lua", timer = 0, schedule = 0 },
+    { min = 90,  max = 150, script = "data/scripts/events/cw_runner_intercept.lua", timer = 0, schedule = 0 },
+    { min = 100, max = 160, script = "data/scripts/events/cw_coalition_muster.lua", timer = 0, schedule = 0 }
 }
 
 function CW_EventScheduler.getUpdateInterval()
@@ -119,7 +141,7 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
                     ship.durability = ship.maxDurability
                 end
 
-                ship.title = "Elite Headhunter"
+                ship.title = "Elite Headhunter"%_T
                 ship:addScriptOnce("ai/patrol.lua")
             end
 
@@ -129,7 +151,7 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
 end
 
 function CW_EventScheduler.secure()
-    return {events = events}
+    return {events = events, eventsFiredThisHour = eventsFiredThisHour, hourWindowStart = hourWindowStart}
 end
 
 function CW_EventScheduler.restore(data)
@@ -149,20 +171,46 @@ function CW_EventScheduler.restore(data)
             end
         end
     end
+    eventsFiredThisHour = data.eventsFiredThisHour or 0
+    hourWindowStart = data.hourWindowStart or 0
 end
 
 function CW_EventScheduler.updateServer(timeStep)
     local now = Player().playtime
+
+    local cfg = CosmicWarConfig.get() or {}
+    local budget = cfg.eventBudgetPerHour or 15
+    if now - hourWindowStart >= 3600 then
+        hourWindowStart = now
+        eventsFiredThisHour = 0
+    end
+
     for _, event in pairs(events) do
         if now >= event.timer then
-            -- Reset timer and roll a new schedule
+            -- Reschedule regardless of whether the budget allows this one to
+            -- actually fire -- an event skipped for budget reasons gets a fresh
+            -- roll rather than firing the instant the hourly window resets.
             event.schedule = random():getInt(event.min, event.max) * 60
-            event.timer = now + event.schedule
 
-            -- Spawn event
+            -- v4.0.0 Frontlines: reroll faster while the player is sitting in a
+            -- sector that's an actual frontline between two warring factions, so War
+            -- Events genuinely cluster where the fighting is instead of firing at the
+            -- same rate everywhere. Still counted against the same hourly budget below.
             local sector = Sector()
             if sector then
-                sector:addScriptOnce(event.script)
+                local sx, sy = sector:getCoordinates()
+                if CosmicWarBridge.isFrontlineSector(sx, sy) then
+                    event.schedule = math.floor(event.schedule * 0.6)
+                end
+            end
+
+            event.timer = now + event.schedule
+
+            if eventsFiredThisHour < budget then
+                if sector then
+                    sector:addScriptOnce(event.script)
+                end
+                eventsFiredThisHour = eventsFiredThisHour + 1
             end
         end
     end

@@ -121,6 +121,8 @@ Periodically evaluates a random subset of eligible faction pairs and nudges dipl
 **What it does:**
 Publishes periodic war bulletins covering the hottest current conflicts, chosen with stable randomization, so background simulation stays visible to players. As of v3.4.0, this layer is joined by two new publishers: completed War Bounty Licenses post under "Bounty Board" once per completed License, and confirmed AI-to-AI ceasefires post under "Politics." Neither is flagged Breaking News, since both are common enough in an active galaxy that flagging every one would defeat the purpose of that flag.
 
+As of v4.0.0, eight more moments publish to the Galactic News Network, none flagged Breaking News for the same reason (each is routine enough during an active war that flagging every one would defeat the flag's purpose): a captured **Prize Crew** target ("War"), a delivered **Relief Convoy**/**Medical Airlift**/**Diplomatic Aid Package** (all "Humanitarian"), a completed **Scorched Earth** raid ("War Crime"), a successful **Refugee Resettlement** — only when the destination sector was still unclaimed at delivery ("Galactic Expansion"), and a **Planetary Defense Generator** being commissioned or destroyed (both "Military"). `breaking = true` — written into the publish API since it was added, but never actually set anywhere until now — is used for the first time on exactly three articles: the existing Coalition Ceasefire and Decisive Victory publishes (see sections 19 and 20), and a station capture (`trooptransport.lua`) specifically when the captured station sits in the losing faction's own registered home sector (`Faction:getHomeSectorCoordinates()`) rather than any ordinary station.
+
 </details>
 
 ### 5) Diplomatic Sanctions Pressure
@@ -209,6 +211,19 @@ Added in v3.4.0, backed by a `getStatus()` function on `cw_bounty_tracker.lua` t
 
 </details>
 
+### 📋 9c) Command List (v4.0.0)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/commands/cosmicwar.lua`
+
+**Command:** `/cosmicwar`
+
+**What it provides:** a one-line reminder of this mod's other three chat commands and what each does. Vanilla's own `/help` already lists every command, modded included, so this is a convenience shortcut, not a replacement.
+
+</details>
+
 ### 🚀 10) Dynamic Territory Sieges & AI Boarding
 
 <details>
@@ -275,11 +290,12 @@ Injects custom, scaled combat missions into Avorion's native Bulletin Board pool
 - **War Heat > 0.15:** *Force Recon* (scout a hostile listening post) and *Sensor Deployment* (deploy stealth buoys in 3 hostile sectors).
 - **War Heat > 0.25:** *Border Skirmish* (eliminate a border patrol).
 - **War Heat > 0.35:** *Resource Sabotage* (destroy a mining operation), *Resource Heist* (steal resources from enemy territory), *Deploy Minefield* (deploy and defend a minefield), and *Scorched Earth* (strip-mine enemy territory and keep what you take, extended pass).
-- **War Heat > 0.45:** *Interception* (destroy an enemy supply convoy), *Breakthrough* (defend an allied convoy), *Sector Raid* (wipe out enemy infrastructure), *Black Box Retrieval* (extract data from a destroyed prototype), *Propaganda Broadcast* (hack a comms array), and *Deniable Raid* (a pirate-flagged raid with no fingerprints, extended pass).
-- **War Heat > 0.60:** *Frontline Siege* (assault a scaled enemy FOB), *Hunter Killer* (hunt a specialized fleet), *Distraction Carnage* (survive a 5-minute ambush), *Shield Breaker* (destroy an enemy Planetary Defense Generator, extended pass), and *Prize Crew* (capture an enemy escort ship intact, extended pass).
-- **War Heat > 0.80:** *High-Value Extraction* (holdout survival for a defector), *Assassinate General* (kill a high-ranking target), *Supply Line Raid* (destroy logistics hubs), *Blockade Runner* (deliver supplies through a blockade), and *Subspace Containment*.
+- **War Heat > 0.45:** *Interception* (destroy an enemy supply convoy), *Breakthrough* (defend an allied convoy), *Sector Raid* (wipe out enemy infrastructure), *Black Box Retrieval* (extract data from a destroyed prototype), *Propaganda Broadcast* (hack a comms array), *Deniable Raid* (a pirate-flagged raid with no fingerprints, extended pass), and *Counter-Intelligence Sweep* (destroy their listening post and blind their next expansion roll, final pass).
+- **War Heat > 0.60:** *Frontline Siege* (assault a scaled enemy FOB), *Hunter Killer* (hunt a specialized fleet), *Distraction Carnage* (survive a 5-minute ambush), *Shield Breaker* (destroy an enemy Planetary Defense Generator, extended pass), *Prize Crew* (capture an enemy escort ship intact, extended pass), and *Defector Debrief* (costs 50 Intel against the target to unlock, final pass).
+- **War Heat > 0.80:** *High-Value Extraction* (holdout survival for a defector), *Assassinate General* (kill a high-ranking target), *Supply Line Raid* (destroy logistics hubs), *Blockade Runner* (deliver supplies through a blockade), *Subspace Containment*, and *Corridor Interdiction* (hold a Subspace Corridor endpoint for four minutes, final pass).
 - **War Heat = 1.00:** *Decapitation Strike* (Flagship boss fight), *Extract POW* (rescue prisoners from a guarded facility), and *Champion Duel* (1-on-1 with a scaled boss).
 - **War Score 150-249, giver ahead (extended pass):** *Decisive Push* — deliver the final blow to a war that's already nearly decided, gated on War Score rather than War Heat.
+- **War Score 200-249, either side (final pass):** *Armistice Escort* — negotiate a softer end to the war before it's decided by force, gated on War Score rather than War Heat.
 
 </details>
 
@@ -305,7 +321,7 @@ Injects custom, scaled combat missions into Avorion's native Bulletin Board pool
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:** `data/scripts/player/cw_eventscheduler.lua` and all 8 scripts it schedules under `data/scripts/events/`
+**Primary files:** `data/scripts/player/cw_eventscheduler.lua` and all 18 scripts it schedules under `data/scripts/events/` (10 added in the final v4.0.0 pass)
 
 **What it does:**
 Injects spontaneous events into a per-player scheduler so players encounter live warzones, covert operations, and distress calls tied to the macro political simulation as they explore.
@@ -320,8 +336,18 @@ Injects spontaneous events into a per-player scheduler so players encounter live
 - **Wreckage Field (no Heat requirement):** a populated AI-owned sector spawns 4-9 wrecks marking a recent battle, a salvage opportunity rather than a combat encounter.
 - **Headhunters Ambush (no Heat requirement):** the present player's worst-standing enemy faction dispatches an elite squad to intercept them directly in the sector, matching the "Bounty Hunter Ambush" feature described in the v3.1.0 release.
 - **Blockade (no Heat requirement):** an enemy fleet forms up at the edge of a populated, defended sector.
+- **Border Checkpoint (final pass, no Heat requirement):** an armed customs picket demands a toll. Pay it via the picket's own interaction, fight it, or fly past and leave it alone — the first of these events with a genuine non-combat resolution.
+- **Field Hospital Convoy (final pass, no Heat requirement):** a marked medical convoy under attack. Same defend-and-survive shape as Refugee Convoy, but success reduces the owner faction's Famine directly, and the convoy's destruction by anyone — hunters or the player — publishes under Cosmic Vault's "War Crime" news category with a real relations penalty if a player lands the kill.
+- **Artillery Barrage (final pass, no Heat requirement):** a stationary platform that, while it survives, periodically re-applies the Shield Jammer debuff (`cw_shieldjammer.lua`) to every present player — shields stay suppressed continuously, not just for one 10-second hit.
+- **Mutiny (final pass, requires the target faction's Famine ≥100):** one of the faction's own warships turns on its former fleet-mates. Since Avorion's AI has no "attack your own faction" state, the mutineer's `factionIndex` is reassigned to the local pirate faction the instant it spawns — mechanically a defection, which is what a mutiny actually is. Survive alongside it and it escorts you for 60 seconds before jumping away.
+- **Prisoner Transport (final pass, no Heat requirement):** a lightly escorted POW convoy. Destroy the escort, let the transport survive, and the prisoners are freed — pays directly and credits a War Score kill.
+- **Signal Jamming Net (final pass, no Heat requirement):** a net of jammer drones periodically blocks hyperspace charge-up (`Entity:blockHyperspace()`, the same API and continuous-reapplication pattern vanilla's own `entity/blocker.lua` uses) for every present player. Nobody present can jump away while at least one drone survives.
+- **Scorched Retreat (final pass, requires the controlling faction to be losing badly on War Score):** already resolved by the time a player arrives — narrated, not fought. A losing faction demolished its own station rather than let it fall intact, leaving a rich wreckage field (`SectorGenerator:createWreckage`) and a real Famine spike behind.
+- **Defection Offer (final pass, requires the controlling faction to be losing badly on War Score):** a lone warship offers to stand down for 200,000 Cr via its own `ScriptUI` interaction (`cw_defector_ship.lua`). Paying makes it jump to safety and credits a territory-weight War Score swing against its former faction — it does not join the player's own fleet, since there's no confirmed way in this codebase to reassign a live ship's `factionIndex` to a player's personal faction, and this event doesn't guess at unverified engine behavior to get there.
+- **Runner Intercept (final pass, no Heat requirement):** an AI blockade runner tries to slip through while an enemy interceptor squadron hunts it. Escort it to safety or finish the job yourself — either choice, made entirely by which ship the player shoots at, credits a different side's War Score.
+- **Coalition Muster (final pass, requires an active Coalition Ceasefire between the sector's controlling faction and its enemy):** a joint patrol of both normally-hostile factions' ships, flying together. `ShipAI:registerFriendFaction()` explicitly overrides their real relations for this encounter (confirmed in the stub — "this setting overrides normal faction relations") so they don't fight each other despite their war being very much still real everywhere else.
 
-Each entry rolls its own randomized timer window (typically 60 to 240 in-game minutes) independently, so multiple events can be pending at once. As of v3.4.0 all 8 resolve to their full `data/scripts/events/...` path when the scheduler attaches them.
+Each entry rolls its own randomized timer window (typically 60 to 240 in-game minutes) independently, so multiple events can be pending at once, all subject to the shared `eventBudgetPerHour` CCM cap (§12) added in the final v4.0.0 pass. As of v3.4.0 all resolve to their full `data/scripts/events/...` path when the scheduler attaches them.
 
 </details>
 
@@ -330,23 +356,27 @@ Each entry rolls its own randomized timer window (typically 60 to 240 in-game mi
 <details>
 <summary><b>Click to expand details</b></summary>
 
-**Primary files:** `data/scripts/player/ui/galacticpolitics_tab.lua`, `data/scripts/player/init.lua`
+**Primary files:** `data/scripts/player/ui/galacticpolitics_tab.lua`, `data/scripts/player/init.lua`, `data/scripts/lib/cosmicvaultuikit.lua` (via Cosmic Vault)
 
 **What it does:**
-Adds an interactive intelligence tab to the native Player Window, giving visibility into the macro-geopolitical state of the galaxy.
+Adds an interactive intelligence tab to the native Player Window, giving visibility into the macro-geopolitical state of the galaxy. **Rebuilt in v4.0.0** as four sub-tabs, built on Cosmic Vault's shared UI Kit, instead of one single table with a legend block nailed to the bottom of the same view.
 
-**Key features:**
+**Conflicts sub-tab:**
 
-- **Your License at a glance:** the header shows the player's own active Bounty License (target, kills, time remaining), sourced from the same lookup as `/cosmicwarbounties`.
-- **Active conflict tracking:** a sortable, real-time list of active AI wars, skirmishes, and ceasefires.
-- **Dedicated Bounty column:** active War Bounties get their own sortable column showing the higher of either side's reward, instead of an inline `[BOUNTY]` text suffix.
-- **Interactive column sorting:** click any column header (Faction A, Faction B, Bounty, War Heat, Famine, Status, Relations) to sort ascending or descending.
-- **Strategic filtering:** filter by All, Active Conflicts, Ceasefires Only, or factions with Active Bounties.
-- **Relation toggle:** switch between raw numeric relation values and diplomatic descriptors (Allied, Confrontational, All-Out War).
-- **Strategic tooltips:** hovering a row reveals internal faction indices, AI traits, exact numeric relations, and exact bounty payouts.
-- **Color-coded standing:** faction names are colored by the player's personal reputation with them.
-- **Decluttered header layout (v3.4.0):** the title, filter dropdown, numeric-relations checkbox, and refresh button previously shared one width-relative row that could overlap at narrower window sizes. Controls now sit on their own row below the title with fixed left-to-right spacing, removing the overlap entirely.
-- **Legend & Summary:** a bottom panel explains the color coding and how the background simulation works, including a pointer to `/cosmicwarbounties`.
+- **Sortable table, eight columns:** Faction A, Faction B, War Score, Bounty, War Heat, Famine, Status, Relations — click any header to sort; sort direction shows as an icon arrow, matching every other sortable list in the Cosmic suite.
+- **War Score, finally visible as a column** (v4.0.0) — previously only reachable by hovering a row's tooltip.
+- **Real faction identities** (v4.0.0 fix) — this mod's own nine custom traits (Warmonger, Mercantile, Isolationist, etc.) now actually show here; the tab previously only ever checked the two vanilla traits, so most AI factions read as "Unknown."
+- **Strategic filtering:** All, Active Conflicts, Ceasefires Only, Active Bounties — filtering on the same Status the column itself shows (v4.0.0 fix; the filter and the column used to disagree with each other for ceasefires specifically).
+- **Severity-ordered Status sort** (v4.0.0 fix) — Ceasefire → Cold War → Active Conflict → Total War, not alphabetical.
+- **Relation toggle:** switch between raw numeric relation values and diplomatic descriptors.
+- **Your License at a glance:** the header shows your own active Bounty License, sourced from the same lookup as `/cosmicwarbounties`.
+- Select a row to open its full detail on the **Dossier** sub-tab.
+
+**Dossier sub-tab (new in v4.0.0):** select a conflict on the Conflicts tab to see both factions' full detail side by side — real trait name and description, home sector, War Heat and Famine as readable bars/labels, your relation and banked Intel, their registered enemy, whether they have a Planetary Defense Generator commissioned, whether they're under Expansion Momentum, and any Subspace Corridor endpoint they own. Fetched only for the selected pair, not computed for every row on every refresh.
+
+**War Room sub-tab (new in v4.0.0):** everything you personally have riding on the galaxy's wars, in one place instead of scattered across two chat commands and a station dialog — your Bounty License's full status, every open Warbond position with its live projected payout (computed with the exact same formula that pays it out at maturity, not an estimate), your banked Intel per faction, and whether it's pooled with your Player Alliance.
+
+**Legend sub-tab:** color key for War Heat, Relations, and Famine — real color swatches, not the word "(Red)" written in text — plus a short explainer of the background simulation and a pointer to `/cosmicwarbounties`/`/cosmicwarintel`.
 
 </details>
 
@@ -430,11 +460,11 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 
 **Primary files:** `data/scripts/entity/cw_planetary_defense.lua`, `data/scripts/server/background/cosmicwardefensegenerators.lua`, `data/scripts/player/cw_siege_injector_persistent.lua`, `data/scripts/player/missions/cw_shieldbreaker.lua`.
 
-**What it does:** `cw_planetary_defense.lua` has always been a correct, working script — while active, it projects invincibility over every other station in its sector — but nothing anywhere ever actually attached it to a station, despite being documented as a real siege mechanic in the in-game Codex and `PLAYER_GUIDE.md`. `cosmicwardefensegenerators.lua` closes that gap: a faction under meaningful threat (War Heat ≥0.35) gets a rolling per-pass chance to commission one at its own home sector, tracked as a plain flag (`faction:cw_defense_generator_sector`) rather than a physical entity. The station itself is lazily materialized the first time any player physically enters that sector (`cw_siege_injector_persistent.lua`), the same progressive-materialization pattern this mod already uses for background-resolved sieges — no sector ever needs to be loaded just to place a station in it.
+**What it does:** `cw_planetary_defense.lua` has always been a correct, working script — while active, it projects invincibility over every other station in its sector that wasn't already invincible for an unrelated reason (a vanilla story asset, a DLC entity, another mod's protected structure — those are left untouched, and correctly restored to their own state, never this generator's) — but nothing anywhere ever actually attached it to a station, despite being documented as a real siege mechanic in the in-game Codex and `PLAYER_GUIDE.md`. `cosmicwardefensegenerators.lua` closes that gap: a faction under meaningful threat (War Heat ≥0.35) gets a rolling per-pass chance to commission one at its own home sector, tracked as a plain flag (`faction:cw_defense_generator_sector`) rather than a physical entity. The station itself is lazily materialized the first time any player physically enters that sector (`cw_siege_injector_persistent.lua`), the same progressive-materialization pattern this mod already uses for background-resolved sieges — no sector ever needs to be loaded just to place a station in it.
 
 **Shield Breaker:** a War Contract (0.60 War Heat) built on top of this. Only offered when the target enemy actually has a generator commissioned — the mission reads the exact flagged sector directly, so it's never offered with no valid target to send the player to. Destroying it clears the flag (so the faction can be commissioned a new one in the future) and credits a War Score kill.
 
-**Known limitation:** if a generator is destroyed by any means other than this exact mission (e.g. incidental combat during an unrelated event), the flag is not automatically cleared, so that faction won't be re-commissioned another this save. A deliberate scope boundary, not a bug — see Changelog.md.
+**Destruction by any other means:** the generator's own `onDelete()` hook clears the commissioning flag too, generically, for every destruction path — incidental combat, another event, another mod. A destroyed generator always stays destroyed, and its faction always becomes eligible for a new one, regardless of how it was destroyed.
 
 </details>
 
@@ -511,6 +541,58 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 
 </details>
 
+### 🕵️ 28) Counter-Intelligence Sweep (final pass)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/player/missions/cw_counterintelligence_sweep.lua`, `data/scripts/server/background/cosmicwarexpansion.lua`.
+
+**What it does:** A War Contract (0.45 War Heat) sending you to destroy the enemy faction's own forward listening post — a defended station spawned for the mission. Success sets `cw_expansion_blinded_until_<factionIndex>` on the enemy, a 24-hour window `cosmicwarexpansion.lua`'s own `getExpansionBlindMultiplier()` multiplies into that faction's organic expansion roll chance, zeroing it out for the duration (composing correctly with the existing Expansion Momentum multiplier, which can't overcome a simultaneous blind). Also banks 15 Intel from the wreckage.
+
+**Gameplay Impact:** the first contract to give the enemy's own intelligence-gathering a real cost, and the first non-recon way to earn Intel that isn't Deniable Raid.
+
+</details>
+
+### 🌀 29) Corridor Interdiction (final pass)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_corridor_interdiction.lua`.
+
+**What it does:** A War Contract (0.80 War Heat), only offered when the giver faction's own home sector is confirmed to be a real Subspace Corridor endpoint (`cw_corridor_at_<home>` — the exact value the corridor system itself maintains, so there's never a "no corridor to defend" dead end). Sends you to hold that endpoint for four minutes against periodic enemy reinforcement waves arriving every 25 seconds, using the same timed-survival pattern as Distraction Carnage.
+
+**Gameplay Impact:** gives the permanent Subspace Corridor mechanic a reason to matter beyond travel convenience — the first content actually built around it.
+
+</details>
+
+### 🕊️ 30) Armistice Escort (final pass)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/player/missions/cw_armistice_escort.lua`, `data/scripts/server/background/cosmicwarceasefires.lua`.
+
+**What it does:** A War Contract only offered once a War Score has reached 200-249 — close to, but short of, the 250-point Decisive Victory threshold, in either direction. Sends you to the enemy faction's home sector to hold for 90 seconds against "War Hawk Spoiler" defenders while negotiators open communications. Success sets `cw_armistice_<factionA>_<factionB>`, a one-shot flag `cosmicwarceasefires.lua`'s own Decisive Victory block checks and consumes: instead of the usual +15 Famine penalty a war that ran its course inflicts on the loser, a negotiated peace costs them only +5.
+
+**Gameplay Impact:** the first contract where the outcome is a negotiated settlement rather than a body count — Decisive Push lets a player decide *who* wins; this lets them shape *how* the war ends.
+
+</details>
+
+### 🩸 31) Famine Blockade Break (final pass)
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/player/missions/cw_famine_blockade_break.lua`.
+
+**What it does:** A Humanitarian Contract (Famine ≥100), the combat mirror of Relief Convoy/Medical Airlift. Sends you to destroy a blockade squadron choking the giver faction's own supply lanes (crewed by their registered enemy if one exists, otherwise local pirates exploiting the famine) near their own territory. Success reduces the giver's Famine Score by 30, the same `recordFamineReliefApplied()` tracking every other Humanitarian Contract already uses (so it still nets correctly out of Warbonds' famine-outcome calculation).
+
+**Gameplay Impact:** a combat-focused player previously had no route into the Famine system except making it worse (Scorched Earth) — this is the route down.
+
+</details>
+
 ### 💰 28) Live Battlefield Salvage Markets
 
 <details>
@@ -529,7 +611,88 @@ Adds an interactive intelligence tab to the native Player Window, giving visibil
 
 **Primary file:** `data/scripts/lib/cosmicwarbridge.lua`.
 
-**What it does:** Intel banking (`grantIntel`/`getIntel`/`spendIntel`) now resolves to a player's Player Alliance when they belong to one, instead of always the individual player — co-belligerent Alliance members now scout as one shared intelligence apparatus (a single pooled `/cosmicwarintel` balance per scouted faction) instead of each independently tracking their own in isolation. Built on Cosmic Vault v3.8.0's new generic ledger primitive (`CosmicVaultFaction.grantLedger`/etc.), which accepts either a `Player()` or an `Alliance()` transparently since both expose the same `getValue`/`setValue` interface. War Score itself needed no change here — it was already a per-faction-pair scoreboard visible to every player regardless of Alliance membership, not a per-player one.
+**What it does:** Intel banking (`grantIntel`/`getIntel`/`spendIntel`) now resolves to a player's Player Alliance when they belong to one, instead of always the individual player — co-belligerent Alliance members now scout as one shared intelligence apparatus (a single pooled `/cosmicwarintel` balance per scouted faction) instead of each independently tracking their own in isolation. Built on Cosmic Vault v4.0.0's new generic ledger primitive (`CosmicVaultFaction.grantLedger`/etc.), which accepts either a `Player()` or an `Alliance()` transparently since both expose the same `getValue`/`setValue` interface. War Score itself needed no change here — it was already a per-faction-pair scoreboard visible to every player regardless of Alliance membership, not a per-player one.
+
+</details>
+
+### 🗺️ 32) Frontlines
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/lib/cosmicwarbridge.lua`, `data/scripts/server/background/cosmicwarbridgeupdate.lua`, `data/scripts/player/ui/cw_frontlines_overlay.lua`; Cosmic Vault's `data/scripts/lib/cosmicvaultterritory.lua`.
+
+**What it does:** Gives the war a location, not just a scoreboard. Cosmic Vault's new `CosmicVaultTerritory.getBorderSectors(factionA, factionB, radius)` finds the sectors where two factions' territories actually meet — a bounded scan centered on the midpoint of their home sectors (default 15-sector radius), not a galaxy-wide sweep. `CosmicWarBridge.updateFrontlines()` recomputes this for every active war pair every 5 minutes, called from the existing `cosmicwarbridgeupdate.lua` driver rather than a dedicated background script, and publishes both a per-pair breakdown (`CosmicWarBridge.getFrontlinePairs()`) and a flat combined lookup set (`CosmicWarBridge.isFrontlineSector(x, y)`).
+
+A new player-attached client script, `cw_frontlines_overlay.lua`, requests the current frontline sectors when the galaxy map opens (`Player:onShowGalaxyMap`) and on a 30-second refresh while it stays open (`Player:onGalaxyMapUpdate`) — the same extension points vanilla's own `player/map/mapcommandareas.lua` uses for ship command areas — and renders them as a translucent red overlay via `GalaxyMap():setHighlightedSectors()`/`removeHighlightedArea()`.
+
+**Gameplay consequences, all gated on `CosmicWarBridge.isFrontlineSector()`:**
+- `cosmicwarcontroller.lua`'s aggressive strike-fleet roll (`applyWarHazardSpawns`) fires at 35% instead of 20%, spawning 5-10 ships instead of 3-7.
+- `cw_eventscheduler.lua` rerolls a War Event's timer at 60% of its normal length while a player sits in a frontline sector.
+- War Contracts given from a frontline sector pay a +15% premium via the new combined `CosmicWarBridge.getSectorRewardMultiplier(x, y)` (see §36 below) — currently wired into the five newest War Contracts (Corridor Interdiction, Counter-Intelligence Sweep, Armistice Escort, Famine Blockade Break, Defector Debrief).
+
+**New CCM option:** `enableFrontlines` (bool, default `true`).
+
+</details>
+
+### 😩 33) War Weariness
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary file:** `data/scripts/server/background/cosmicwarweariness.lua` (new file).
+
+**What it does:** A real per-faction 0-100 counter, distinct from the existing War Exhaustion clock (§7's day-based ceasefire bonus, unchanged). Every `ceasefireInterval` pass (default 600s), for each active war pair, `getWarScore(left, right)` determines who's currently behind and by how much; the losing side's Weariness rises proportionally (capped against the same `warScoreDecisiveVictoryThreshold` Decisive Victory itself uses, so "losing badly" tracks the same scale everywhere). Every faction *not* actively losing that tick — at peace, or currently winning or even — decays back toward 0 through Cosmic Vault's `registerPassiveDecay`/`tickPassiveDecay` registry — present in Cosmic Vault since its own v4.0.0 release but never actually consumed until this mechanic.
+
+**Gameplay consequences, all read via `CosmicWarBridge.getWarWeariness(factionIndex)`:**
+- `cosmicwarcontroller.lua`'s aggressive strike fleets shrink up to 50% at maximum Weariness (applied after the Frontlines size bonus above, so a weary faction on a frontline still spawns something, just not at full strength).
+- The existing War Profiteering Shortages hook (`applyWarProfiteeringShortages`) drains a weary faction's own station stock up to 2x harder — worse prices wherever Cosmic Overhaul's dynamic economy is installed to read the resulting deficit.
+- `cosmicwarceasefires.lua`'s ceasefire roll gets up to another +30% chance on top of War Exhaustion's own +30% cap, using whichever side of the pair is more weary.
+
+</details>
+
+### 🚚 34) Supply Lines
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/events/siegeevent.lua`, `data/scripts/entity/cw_supply_convoy.lua` (new file).
+
+**What it does:** Force projection falls off with distance from home. The first time `SiegeEvent.initialize()` observes a contested sector, it calculates the invading faction's distance from its own home sector and scales the zone's background-resolution duration by up to +50% at long range, re-calling Cosmic Vault's `CosmicVaultTerritory.setContestedZone()` with the adjusted duration. A Server-side marker (`cw_supplyline_scaled_<x>:<y>`) guards this to exactly once per siege — without it, a player leaving and re-entering an already-contested sector could keep re-triggering the scaling and extending the same clock indefinitely.
+
+An invasion launched from 150+ sectors away also spawns a lightly-defended "Invasion Supply Convoy" alongside the usual troop transports. Its destruction (`cw_supply_convoy.lua`'s `onDelete()`) sets a `cw_supplyline_cut` sector marker that `SiegeEvent.updateServer()` checks every 2-second tick alongside the existing "no troop transports left" win condition — cutting the supply line collapses the siege immediately, regardless of how many transports are still standing. A nearby invasion (under 150 sectors) has no convoy to hunt; force projection close to home doesn't need one.
+
+</details>
+
+### 🏴‍☠️ 35) Letters of Marque
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/entity/merchants/militaryoutpost.lua`, `data/scripts/player/cosmicwar_mercenary.lua`.
+
+> [!NOTE]
+> **Extends Mercenary Enlistment rather than replacing the Bounty License.** Cosmic War already shipped a standing, no-timer, no-kill-cap enlistment system (Mercenary Enlistment) alongside the timed, 15-kill-capped Bounty License (`cw_bounty_tracker.lua`, §7b). Mercenary Enlistment was already structurally closer to "a commission, a thing you can lose" than the License was — so this mechanic adds its three missing pieces directly to Mercenary Enlistment instead of building a third parallel system or deleting a shipped, save-compatible one. The Bounty License is untouched.
+
+**What it does:**
+- **Immediate belligerent status:** `MilitaryOutpost.enlistPlayer()` now applies the same -200,000 relations hit every War Contract already uses to "declare war" on acceptance, against the enlisting faction's current registered enemy — belligerent status no longer only ever follows eventually from kills.
+- **Discounted repair:** a new "Request Emergency Repairs (Letter of Marque)" Military Outpost interaction, available only to a player currently enlisted with that station's own faction, restores the player's active ship to full hull at a flat rate (`missingDurability × 2.5` Cr) — there is no other paid-repair service anywhere in this mod's own scripts to discount against, so this is the perk in absolute terms.
+- **Revocation for attacking the wrong target:** `CW_Mercenary.onShipDestroyed()` now checks whether the destroyed entity belongs to the enlisting faction itself before the normal "at war" branch — if so, the commission is revoked on the spot (`removeScript`, clear `cw_mercenary_faction`), with a real -100,000 relations penalty. The existing, softer civilian-kill relations dip for Sympathetic factions is unchanged and still applies to ordinary war crimes.
+
+Player-facing dialog and chat text across both files now reads "Letter of Marque" rather than "privateer license," matching this mechanic's own naming.
+
+</details>
+
+### 🏚️ 36) Occupation & Insurgency
+
+<details>
+<summary><b>Click to expand details</b></summary>
+
+**Primary files:** `data/scripts/entity/ai/trooptransport.lua`, `data/scripts/sector/cosmicwarcontroller.lua`.
+
+**What it does:** A captured station is no longer instantly and fully settled. `TroopTransport.captureStation()` now marks the sector Occupied for 6 in-game hours (`cw_occupation_<x>:<y>`, `oldFactionIndex,newFactionIndex,endTime`), read back through the new `CosmicWarBridge.getOccupationData(x, y)` (a lazily-expiring marker — nothing proactively clears it, it just stops returning once `endTime` passes). This is layered strictly on top of the ownership flip that already happens in the same function; it never blocks or delays the capture, and no new reconquest logic was written, since a captured sector can already change hands again through the same border-conquest/siege system Cosmic War and Cosmic Ascendancy already share.
+
+While the window is open, `cosmicwarcontroller.lua`'s new `applyInsurgency()` gives the dispossessed faction a rolling 25% chance, on its own 15-minute timer, to spawn a 2-4 ship raid against the new occupier — checked independently of the controller's normal two-live-warring-factions requirement, since a freshly-occupied sector often has only the new owner physically present. War Contracts given from an occupied sector pay 30% less for the duration, via the same combined `CosmicWarBridge.getSectorRewardMultiplier(x, y)` Frontlines uses above (a +15% Frontlines premium and a -30% Occupation penalty compose in the same multiplier, though the two conditions are mutually exclusive in practice — a sector inside another faction's occupation window isn't also a live frontline).
 
 </details>
 

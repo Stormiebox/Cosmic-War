@@ -147,6 +147,16 @@ mission.phases[1].triggers = {
                 CosmicWarBridge.grantIntel(Player(), enemyIndex, 20)
             end
 
+            local giverFaction = giverIndex and Faction(giverIndex)
+            local enemyFaction = enemyIndex and Faction(enemyIndex)
+            local article = {
+                title = "Enemy Escort Captured Intact",
+                content = "A " .. (enemyFaction and enemyFaction.name or "hostile") .. " escort ship has been disabled and boarded by a prize crew acting for " .. (giverFaction and giverFaction.name or "an independent faction") .. ", adding the vessel to their fleet.",
+                category = "War"
+            }
+            local cv_news = include("cosmicvaultnews")
+            cv_news.publishArticle(article)
+
             reward()
             accomplish()
         end

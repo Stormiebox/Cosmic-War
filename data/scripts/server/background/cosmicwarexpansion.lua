@@ -47,6 +47,19 @@ local function getMomentumMultiplier(faction)
     return 1.0
 end
 
+-- v4.0.0: Counter-Intelligence Sweep sets this flag on a faction whose forward
+-- listening post was destroyed -- blinding their next expansion roll rather than
+-- blocking expansion outright, since the multiplier still composes with Momentum
+-- above (a blinded faction's roll is 0 regardless of any simultaneous Momentum boost,
+-- matching "blind their next expansion roll" rather than "pause expansion").
+local function getExpansionBlindMultiplier(faction)
+    local until_ = Server():getValue("cw_expansion_blinded_until_" .. tostring(faction.index)) or 0
+    if until_ > Server().unpausedRuntime then
+        return 0.0
+    end
+    return 1.0
+end
+
 function CosmicWarExpansion.update(timeStep)
     if not onServer() then return end
 
@@ -54,7 +67,7 @@ function CosmicWarExpansion.update(timeStep)
     for _, faction in pairs(factions) do
 
         local activeTrait = faction:getTrait("active") or 0
-        local expansionMultiplier = math.max(0, 1.0 + activeTrait) * getMomentumMultiplier(faction)
+        local expansionMultiplier = math.max(0, 1.0 + activeTrait) * getMomentumMultiplier(faction) * getExpansionBlindMultiplier(faction)
 
         -- Imperialist Logic
         -- v4.0.0: was a single random point within a 15-sector radius, claimed if

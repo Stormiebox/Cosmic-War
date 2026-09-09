@@ -75,7 +75,11 @@ function initialize(factionIndex)
             { text = "Destroy the Enemy Flagship"%_T,                   bulletPoint = true, fulfilled = false, visible = false }
         }
 
-        -- Astronomical base reward for a boss fight
+        -- v4.0.0: intentionally ~13x this mod's other 1.00-tier contracts (Extract
+        -- POW, Champion Duel both pay 250,000 + heat*300,000) -- this is the mod's
+        -- one true superboss fight (up to 8x toughness via hpMult, an up-to-8-ship
+        -- defender escort at max heat), and the premium is meant to reflect that,
+        -- not a tier-band mistake.
         local baseReward = math.floor(2500000 + heat * 5000000)
         mission.data.reward = precomputedReward or {
             -- giverFaction is already resolved and confirmed non-nil above.

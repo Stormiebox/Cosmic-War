@@ -80,7 +80,8 @@ local function applyCoalitionCeasefires(server, factionIndices)
             cv_news.publishArticle({
                 title = "Coalition Ceasefire Declared",
                 content = "With the Eclipse's advance threatening the entire galaxy, warring factions across known space have agreed to stand down, at least for now: " .. table.concat(pulled, "; ") .. ". Old grudges will have to wait.",
-                category = "Politics"
+                category = "Politics",
+                breaking = true
             })
         end
         cwlog("Coalition Ceasefire pulled %i war pairs into a temporary truce.", #pulled)
@@ -152,7 +153,7 @@ function CosmicWarCeasefires.update(timeStep)
                         local CosmicWarBridge = include("cosmicwarbridge")
                         local score = CosmicWarBridge.getWarScore(a.index, b.index)
 
-                        if math.abs(score) >= 250 then
+                        if math.abs(score) >= (cfg.warScoreDecisiveVictoryThreshold or 250) then
                             local winner, loser = a, b
                             if score < 0 then winner, loser = b, a end
 
@@ -166,8 +167,20 @@ function CosmicWarCeasefires.update(timeStep)
                             loser:setValue("cw_target_faction", 0)
                             loser:setValue("cw_war_bias", 0)
 
+                            -- v4.0.0 Armistice Escort: successfully escorting negotiators
+                            -- to the eventual winner's home sector before the score
+                            -- actually crossed this threshold softens the outcome -- a
+                            -- negotiated peace costs the loser less than a war that simply
+                            -- ran its course. One-shot: the flag is consumed here.
+                            local armisticeKey = "cw_armistice_" .. pairKey
+                            local famineConcession = 15
+                            if server:getValue(armisticeKey) then
+                                famineConcession = 5
+                                server:setValue(armisticeKey, nil)
+                            end
+
                             local cv_economy = include("cosmicvaulteconomy")
-                            cv_economy.addFamineScore(loser.index, 15)
+                            cv_economy.addFamineScore(loser.index, famineConcession)
 
                             CosmicWarBridge.resetWarScore(a.index, b.index)
 
@@ -176,7 +189,8 @@ function CosmicWarCeasefires.update(timeStep)
                                 cv_news.publishArticle({
                                     title = "Decisive Victory: " .. tostring(winner.name) .. " Prevails Over " .. tostring(loser.name),
                                     content = "After a long and costly conflict, " .. tostring(winner.name) .. " has decisively broken " .. tostring(loser.name) .. "'s ability to continue the war. A peace has been forced, though " .. tostring(loser.name) .. " will feel the economic cost for some time.",
-                                    category = "Politics"
+                                    category = "Politics",
+                                    breaking = true
                                 })
                             end
 
@@ -196,8 +210,18 @@ function CosmicWarCeasefires.update(timeStep)
                                 end
                             end
 
+                            -- v4.0.0 War Weariness: on top of the flat day-based War
+                            -- Exhaustion clock above, a faction that's actually been losing
+                            -- ground gets a real extra nudge toward peace -- up to another
+                            -- +30% at maximum weariness (100), same cap as Exhaustion's own,
+                            -- so a badly-losing, long-running war stacks both bonuses rather
+                            -- than either alone carrying the whole effect.
+                            local cwb = include("cosmicwarbridge")
+                            local weariness = math.max(cwb.getWarWeariness(a.index), cwb.getWarWeariness(b.index))
+                            local wearinessBonus = (weariness / 100) * 0.30
+
                             -- If relationship has recovered above rivalry threshold, allow détente chance.
-                            local ceasefireChance = (cfg.ceasefireChance or 0.25) + exhaustionBonus
+                            local ceasefireChance = (cfg.ceasefireChance or 0.25) + exhaustionBonus + wearinessBonus
                             if rel > rivalryThreshold and random:test(ceasefireChance) then
                                 local gain = random:getInt(2000, 6000)
                                 local cvf = include("cosmicvaultfaction")

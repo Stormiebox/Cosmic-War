@@ -118,6 +118,15 @@ mission.phases[1].triggers = {
                 -- higher reward, without single-handedly zeroing out a crisis.
                 CosmicVaultEconomy.addFamineScore(giverIndex, -35)
                 CosmicWarBridge.recordFamineReliefApplied(giverIndex, 35)
+
+                local giverFaction = Faction(giverIndex)
+                local article = {
+                    title = "Emergency Airlift Averts Crisis for " .. (giverFaction and giverFaction.name or "Faction in Need"),
+                    content = "An independent captain has completed an emergency medical airlift to " .. (giverFaction and giverFaction.name or "a faction") .. ", pulling them back from the brink of a severe famine.",
+                    category = "Humanitarian"
+                }
+                local cv_news = include("cosmicvaultnews")
+                cv_news.publishArticle(article)
             end
 
             mission.data.description[3].fulfilled = true

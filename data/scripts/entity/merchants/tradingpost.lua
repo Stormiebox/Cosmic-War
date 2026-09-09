@@ -80,7 +80,7 @@ function TradingPost.cashOutWarbonds()
         player:receive("Early Warbond Cash-Out", payout)
         player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Bond cashed out. %1% Credits transferred immediately."%_T, createMonetaryString(payout))
     else
-        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "You don't have an active Warbond with us to cash out."%_t)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "You don't have an active Warbond with us to cash out."%_T)
     end
 end
 
@@ -149,9 +149,9 @@ function TradingPost.buySanctionsRelief()
     local player = Player(callingPlayer)
     if not player then return end
 
-    local canPay, msg = player:canPay(SANCTIONS_RELIEF_COST)
+    local canPay, msg, args = player:canPay(SANCTIONS_RELIEF_COST)
     if not canPay then
-        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg, unpack(args or {}))
         return
     end
 
@@ -162,7 +162,7 @@ function TradingPost.buySanctionsRelief()
         faction:setValue("cw_sanctions_immune_until", Server().unpausedRuntime + SANCTIONS_RELIEF_DURATION)
     end
 
-    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Agreement reached. We won't forget this."%_t)
+    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Agreement reached. We won't forget this."%_T)
 end
 
 -- v4.0.0: Diplomatic Aid Package -- a third Humanitarian Contract, this one
@@ -217,9 +217,9 @@ function TradingPost.buyDiplomaticAid()
     local player = Player(callingPlayer)
     if not player then return end
 
-    local canPay, msg = player:canPay(DIPLOMATIC_AID_COST)
+    local canPay, msg, args = player:canPay(DIPLOMATIC_AID_COST)
     if not canPay then
-        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg, unpack(args or {}))
         return
     end
 
@@ -231,7 +231,16 @@ function TradingPost.buyDiplomaticAid()
     CosmicVaultEconomy.addFamineScore(factionIndex, -DIPLOMATIC_AID_FAMINE_REDUCTION)
     CosmicWarBridge.recordFamineReliefApplied(factionIndex, DIPLOMATIC_AID_FAMINE_REDUCTION)
 
-    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Your generosity will not be forgotten."%_t)
+    local aidFaction = Faction(factionIndex)
+    local article = {
+        title = "Diplomatic Aid Package Delivered to " .. (aidFaction and aidFaction.name or "Faction in Need"),
+        content = "An independent captain has funded a direct diplomatic aid package for " .. (aidFaction and aidFaction.name or "a faction") .. ", easing the pressure of an ongoing famine without a single supply run.",
+        category = "Humanitarian"
+    }
+    local cv_news = include("cosmicvaultnews")
+    cv_news.publishArticle(article)
+
+    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Your generosity will not be forgotten."%_T)
 end
 
 -- v4.0.0: Live Battlefield Salvage Markets. Sells the player's entire raw
@@ -266,7 +275,7 @@ function TradingPost.sellSalvageAtPremium()
         player:receive("Salvage Market Sale", total)
         player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Sold your entire raw materials hold for %1% Credits."%_T, createMonetaryString(total))
     else
-        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "You have no raw materials to sell."%_t)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "You have no raw materials to sell."%_T)
     end
 end
 
@@ -336,7 +345,7 @@ function TradingPost.processPurchase(amount)
         local status, currentBonds = player:invokeFunction("cosmicwar_warbonds.lua", "getBondAmount", factionIndex)
         currentBonds = currentBonds or 0
         if currentBonds + amount > 250000000 then
-            player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "We cannot issue you any more warbonds. You have reached the maximum investment cap (250,000,000 Cr)."%_t)
+            player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "We cannot issue you any more warbonds. You have reached the maximum investment cap (250,000,000 Cr)."%_T)
             return
         end
     end
@@ -345,13 +354,13 @@ function TradingPost.processPurchase(amount)
     local poolKey = "cw_warbond_pool_" .. tostring(factionIndex)
     local currentPool = server:getValue(poolKey) or 0
     if currentPool + amount > WARBOND_GLOBAL_POOL_CAP then
-        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "Our war chest cannot accept any more warbond investment right now -- too many captains have already bought in. Try again once some bonds have matured."%_t)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "Our war chest cannot accept any more warbond investment right now -- too many captains have already bought in. Try again once some bonds have matured."%_T)
         return
     end
 
-    local canPay, msg = player:canPay(amount)
+    local canPay, msg, args = player:canPay(amount)
     if not canPay then
-        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg)
+        player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, msg, unpack(args or {}))
         return
     end
 
@@ -369,7 +378,7 @@ function TradingPost.processPurchase(amount)
         player:invokeFunction("cosmicwar_warbonds.lua", "addBond", Entity().factionIndex, amount)
     end
 
-    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature.")
+    player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature."%_T)
 end
 
 function TradingPost.deferredAddBond(playerIndex, factionIndex, amount)

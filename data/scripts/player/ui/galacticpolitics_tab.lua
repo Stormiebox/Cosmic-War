@@ -6,9 +6,19 @@ include("utility")
 -- namespace GalacticPoliticsTab
 GalacticPoliticsTab = {}
 local self = GalacticPoliticsTab
-local politicsList
 
 local BOUNTY_TRACKER_SCRIPT = "data/scripts/player/background/cw_bounty_tracker.lua"
+
+-- v4.0.0: this mod's own nine custom traits, in the same order cosmicwarnews.lua's
+-- getFactionStanceLabel() already checks them in -- kept in sync deliberately, since
+-- both are "what is this faction's real assigned identity" lookups against the same
+-- registry, and this file's own previous vanilla-only check (aggressive/peaceful) was
+-- exactly the "one consumer got the fix, the sibling didn't" defect class this whole
+-- pass keeps finding.
+local CW_TRAIT_IDS = {
+    "cw_warmonger", "cw_pacifist", "cw_isolationist", "cw_opportunist",
+    "cw_imperialist", "cw_entrenched", "cw_vengeful", "cw_mercantile", "cw_xenophobic"
+}
 
 if onClient() then
     -- Pre-allocate helper functions to prevent memory churn during UI refreshes
@@ -32,7 +42,7 @@ if onClient() then
 
     local function concatLocalizedTraits(traits)
         local str = ""
-        for i, t in ipairs(traits) do
+        for i, t in ipairs(traits or {}) do
             str = str .. t%_t
             if i < #traits then str = str .. ", " end
         end
@@ -46,10 +56,19 @@ if onClient() then
         return string.format("%dm %02ds", mins, secs)
     end
 
+    -- v4.0.0: Status is a legibility-ordered escalation, not alphabetical --
+    -- clicking the Status header used to sort Active Conflict / Ceasefire / Cold War /
+    -- Total War (English alphabetical order, and it silently changed per language
+    -- since it sorted the untranslated string). This is what a player clicking that
+    -- header is actually asking for.
+    local STATUS_SEVERITY = { ["Ceasefire"] = 1, ["Cold War"] = 2, ["Active Conflict"] = 3, ["Total War"] = 4, ["Total Eradication"] = 5 }
+    local function statusSeverityRank(status)
+        return STATUS_SEVERITY[status] or 0
+    end
+
     function GalacticPoliticsTab.initialize()
         local playerWindow = PlayerWindow()
 
-        -- Use a native diplomatic icon for the tab
         self.tab = playerWindow:createTab("Galactic Politics"%_t, "data/textures/icons/cw_galacticpolitics.png",
         "Galactic Politics"%_t)
         self.tab.onSelectedFunction = "clientFetchData"
@@ -60,168 +79,164 @@ if onClient() then
         GalacticPoliticsTab.clientFetchData()
     end
 
+    -- v4.0.0: the tab is now a TabbedWindow hosting four sub-tabs (Conflicts, Dossier,
+    -- War Room, Legend) instead of one single table with a 195px legend block nailed
+    -- to the bottom of the same view. Each sub-tab builds its own header/content; all
+    -- four are built once, up front (matching vanilla's own TabbedWindow convention --
+    -- see factory.lua's Buy/Sell/Configure tabs), and updated in place via the same
+    -- refresh calls a data-arrival callback already needs to make regardless.
     function GalacticPoliticsTab.buildWindow(container)
-        -- Reserve a taller top strip (2 rows: title/license status, then filter controls)
-        -- so controls never have to fight the title for the same horizontal space.
-        -- The splitter's margin (3rd arg) is deliberately large: the sorting-header button
-        -- strip built below reaches 25px above the list's top edge (i.e. above hsplit.bottom's
-        -- own start), so anything less than that would let it collide with row 2's controls.
-        local hsplit = UIHorizontalSplitter(Rect(container.size), 5, 30, 0.14)
-        local margin = 10
-        local topWidth = hsplit.top.width
-        local topHeight = hsplit.top.height
+        local tabbedWindow = container:createTabbedWindow(Rect(container.size))
 
-        -- Row 1 gets a smaller share than row 2 so the filter row sits higher, closer to the title.
-        local row1Bottom = topHeight * 0.4
-        local row2Top = topHeight * 0.4 + 4
-        local row2Bottom = topHeight - 4
+        self.conflictsSubTab = tabbedWindow:createTab("Conflicts"%_t, "data/textures/icons/cw_galacticpolitics.png", "Active galactic conflicts"%_t)
+        self.dossierSubTab = tabbedWindow:createTab("Dossier"%_t, "data/textures/icons/magnifying_glass.png", "Select a conflict to see full faction detail"%_t)
+        self.warRoomSubTab = tabbedWindow:createTab("War Room"%_t, "data/textures/icons/money.png", "Your own stakes in the galaxy's wars"%_t)
+        -- War Room's own data (License/Warbonds/Intel) is fetched on demand, the
+        -- moment the player actually opens this sub-tab -- same dual-binding pattern
+        -- as the outer Galactic Politics tab itself, not fetched on every Conflicts
+        -- refresh for a sub-tab most sessions may never open.
+        self.warRoomSubTab.onSelectedFunction = "clientFetchWarRoom"
+        self.warRoomSubTab.onShowFunction = "clientFetchWarRoom"
+        self.legendSubTab = tabbedWindow:createTab("Legend"%_t, "data/textures/icons/help.png", "Legend & quick reference"%_t)
 
-        -- Row 1: title (left) + this player's own Bounty License status (middle), with a
-        -- small icon-only refresh button anchored in the actual top-right corner instead of
-        -- competing with the filter row below for horizontal space.
-        container:createLabel(Rect(margin, 2, margin + 320, row1Bottom), "Active Galactic Conflicts"%_t, 20)
+        GalacticPoliticsTab.buildConflictsTab(self.conflictsSubTab)
+        GalacticPoliticsTab.buildDossierTab(self.dossierSubTab)
+        GalacticPoliticsTab.buildWarRoomTab(self.warRoomSubTab)
+        GalacticPoliticsTab.buildLegendTab(self.legendSubTab)
+    end
 
-        self.licenseLabel = container:createLabel(Rect(topWidth * 0.42, 2, topWidth - margin - 40, row1Bottom), "", 15)
+    -- ========================================================================
+    -- Conflicts sub-tab
+    -- ========================================================================
+
+    function GalacticPoliticsTab.buildConflictsTab(container)
+        local UIKit = include("cosmicvaultuikit")
+
+        -- Two-row header (title/license, then filter controls), with clearance for
+        -- the sort-button strip handled once by the shared kit instead of by hand --
+        -- this exact arithmetic is what independently drifted into an overlap bug in
+        -- three different Cosmic Overhaul tabs before createHeaderLayout existed.
+        local layout = UIKit.createHeaderLayout(container, { rows = { { fraction = 0.4 }, { fraction = 0.6 } } })
+        local margin = layout.margin
+        local topWidth = layout.width
+
+        container:createLabel(Rect(layout.rows[1].lower + vec2(margin, 2), layout.rows[1].lower + vec2(margin + 320, layout.rows[1].height)), "Active Galactic Conflicts"%_t, 20)
+
+        self.licenseLabel = container:createLabel(Rect(layout.rows[1].lower + vec2(topWidth * 0.42, 2), layout.rows[1].lower + vec2(topWidth - margin - 40, layout.rows[1].height)), "", 15)
         self.licenseLabel:setTopLeftAligned()
 
-        local refreshButton = container:createButton(Rect(topWidth - margin - 32, 2, topWidth - margin, row1Bottom), "", "clientFetchData")
+        local refreshButton = container:createButton(Rect(layout.rows[1].lower + vec2(topWidth - margin - 32, 2), layout.rows[1].lower + vec2(topWidth - margin, layout.rows[1].height)), "", "clientFetchData")
         refreshButton.icon = "data/textures/icons/cw_refresh.png"
         refreshButton.tooltip = "Refresh Galactic Intelligence"%_t
 
-        -- Row 2: filter and numeric toggle, laid out left-to-right with fixed spacing
-        -- instead of width-relative right offsets, so nothing overlaps regardless of the
-        -- player window's actual size.
-        self.filterComboBox = container:createValueComboBox(Rect(margin, row2Top, margin + 230, row2Bottom), "onFilterChanged")
+        self.filterComboBox = container:createValueComboBox(Rect(layout.rows[2].lower + vec2(margin, 0), layout.rows[2].lower + vec2(margin + 230, layout.rows[2].height)), "onFilterChanged")
         self.filterComboBox:addEntry("All", "All"%_t)
         self.filterComboBox:addEntry("Active Conflicts", "Active Conflicts"%_t)
         self.filterComboBox:addEntry("Ceasefires Only", "Ceasefires Only"%_t)
         self.filterComboBox:addEntry("Active Bounties", "Active Bounties"%_t)
         self.filterComboBox.tooltip = "Filter Conflicts"%_t
 
-        self.numericCheck = container:createCheckBox(Rect(margin + 245, row2Top, margin + 465, row2Bottom), "Numeric Relations"%_t, "onNumericCheckChanged")
+        self.numericCheck = container:createCheckBox(Rect(layout.rows[2].lower + vec2(margin + 245, 0), layout.rows[2].lower + vec2(margin + 465, layout.rows[2].height)), "Numeric Relations"%_t, "onNumericCheckChanged")
         self.numericCheck.checked = false
         self.numericCheck.tooltip = "Toggle between numeric and descriptive relation values."%_t
 
-        -- Reserve enough height at the bottom of the UI for the Legend/Summary section --
-        -- both this bound and infoRect below must agree, or the text box ends up taller
-        -- than the space actually reserved for it and spills past the window's own edge.
-        local legendAreaHeight = 195
-        local listRect = Rect(margin, hsplit.bottom.lower.y, container.size.x - margin, container.size.y - legendAreaHeight)
-        politicsList = container:createListBoxEx(listRect)
-        politicsList.columns = 7
-        politicsList.rowHeight = 35
+        self.conflictsTable = UIKit.createSortableTable(GalacticPoliticsTab, container, layout.contentRect, {
+            { label = "Faction A"%_t, width = 2.0, sortValue = function(r) return r.factionA end,
+              cellText = function(r) return r.factionA end,
+              cellColor = function(r) return getRelationColor(Player():getRelations(r.factionAIndex) or 0) end },
+            { label = "Faction B"%_t, width = 2.0, sortValue = function(r) return r.factionB end,
+              cellText = function(r) return r.factionB end,
+              cellColor = function(r) return getRelationColor(Player():getRelations(r.factionBIndex) or 0) end },
+            { label = "War Score"%_t, width = 1.3, sortValue = function(r) return r.warScore or 0 end,
+              cellText = function(r)
+                  local ws = r.warScore or 0
+                  if ws == 0 then return "Even"%_t end
+                  local leader = ws > 0 and r.factionA or r.factionB
+                  return string.format("%s +%d"%_t, leader, math.abs(math.floor(ws)))
+              end,
+              cellColor = function(r) return ColorRGB(0.8, 0.8, 0.8) end },
+            { label = "Bounty"%_t, width = 1.2, sortValue = function(r) return math.max(r.bountyA or 0, r.bountyB or 0) end,
+              cellText = function(r)
+                  local m = math.max(r.bountyA or 0, r.bountyB or 0)
+                  return m > 0 and createMonetaryString(m) or "-"
+              end,
+              cellColor = function(r) return math.max(r.bountyA or 0, r.bountyB or 0) > 0 and ColorRGB(1.0, 0.85, 0.3) or ColorRGB(0.7, 0.7, 0.7) end },
+            { label = "War Heat"%_t, width = 1.2, sortValue = function(r) return r.heat end,
+              cellText = function(r) return tostring(r.heat) .. "%" end,
+              cellColor = function(r)
+                  if r.heat >= 80 then return ColorRGB(1.0, 0.2, 0.2)
+                  elseif r.heat >= 40 then return ColorRGB(1.0, 0.6, 0.2)
+                  elseif r.heat > 0 then return ColorRGB(1.0, 1.0, 0.2)
+                  else return ColorRGB(0.2, 1.0, 0.2) end
+              end },
+            { label = "Famine"%_t, width = 1.2, sortValue = function(r) return math.max(r.famineA or 0, r.famineB or 0) end,
+              cellText = function(r)
+                  local m = math.max(r.famineA or 0, r.famineB or 0)
+                  if m >= 100 then return "Critical"%_t elseif m >= 50 then return "Struggling"%_t else return "Normal"%_t end
+              end,
+              cellColor = function(r)
+                  local m = math.max(r.famineA or 0, r.famineB or 0)
+                  if m >= 100 then return ColorRGB(1.0, 0.2, 0.2) elseif m >= 50 then return ColorRGB(1.0, 1.0, 0.2) else return ColorRGB(0.2, 1.0, 0.2) end
+              end },
+            { label = "Status"%_t, width = 1.5, sortValue = function(r) return statusSeverityRank(r.status) end,
+              cellText = function(r) return r.status%_t end,
+              cellColor = function(r)
+                  if r.heat >= 80 then return ColorRGB(1.0, 0.2, 0.2)
+                  elseif r.heat >= 40 then return ColorRGB(1.0, 0.6, 0.2)
+                  elseif r.heat > 0 then return ColorRGB(1.0, 1.0, 0.2)
+                  else return ColorRGB(0.2, 1.0, 0.2) end
+              end },
+            { label = "Relations"%_t, width = 1.5, sortValue = function(r) return r.relation end,
+              cellText = function(r)
+                  if self.numericCheck and self.numericCheck.checked then return tostring(r.relation) end
+                  return getRelationDescription(r.relation)
+              end,
+              cellColor = function(r) return ColorRGB(0.8, 0.8, 0.8) end },
+        }, { sortStripRect = layout.sortStripRect, rowHeight = 30, defaultSortColumn = 5, defaultSortDirection = -1 })
 
-        -- Calculate column widths cleanly to account for the scrollbar
-        local width = listRect.width - 20
-        local colFractions = { 0.18, 0.18, 0.12, 0.12, 0.12, 0.14, 0.14 }
-        for i = 0, 6 do
-            politicsList:setColumnWidth(i, width * colFractions[i + 1])
-        end
-
-        self.selectedSorting = 4
-        self.sortingType = -1
-        self.sortingButtons = {}
-        local sortingLabels = self.getSortingLabels()
-        local currentX = margin
-        for i = 1, 7 do
-            local colWidth = width * colFractions[i]
-            local btnRect = Rect(currentX, listRect.lower.y - 25, currentX + colWidth - 2, listRect.lower.y)
-            local btn = container:createButton(btnRect, sortingLabels[i], "onSort" .. i)
-            btn.hasFrame = false
-            btn.textSize = 14
-            btn.tooltip = "Sort by "%_t .. sortingLabels[i]
-            table.insert(self.sortingButtons, btn)
-            currentX = currentX + colWidth
-        end
-        self.updateSortingIcons()
-
-        -- Bottom Information Section (Legend & Summary)
-        local infoRect = Rect(margin, container.size.y - legendAreaHeight + 10, container.size.x - margin, container.size.y - 10)
-        local infoFrame = container:createFrame(infoRect)
-        local infoSplit = UIVerticalSplitter(infoRect, 10, 10, 0.45)
-
-        local legendStr = "Legend:"%_t .. "\n" ..
-            " " .. "Bounty column:"%_t .. " " .. "Shows the higher of either side's active War Bounty reward. Hover a row for full details."%_t .. "\n" ..
-            " " .. "War Heat:"%_t .. " (" .. "Red"%_t .. ") " .. "Critical"%_t .. " | (" .. "Orange"%_t .. ") " .. "High"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Rising"%_t .. " | (" .. "Green"%_t .. ") " .. "Zero"%_t .. "\n" ..
-            " " .. "Relations:"%_t .. " (" .. "Green"%_t .. ") " .. "Friendly"%_t .. " | (" .. "Gray"%_t .. ") " .. "Neutral"%_t .. " | (" .. "Red"%_t .. ") " .. "Hostile"%_t .. "\n" ..
-            " " .. "Famine:"%_t .. " (" .. "Green"%_t .. ") " .. "Normal"%_t .. " | (" .. "Yellow"%_t .. ") " .. "Struggling"%_t .. " | (" .. "Red"%_t .. ") " .. "Critical"%_t .. "\n" ..
-            " " .. "War Score:"%_t .. " " .. "hover a row for who's currently winning (kills + territory), if either side is decisively ahead"%_t
-        local legendRectInset = Rect(infoSplit.left.lower + vec2(10, 10), infoSplit.left.upper - vec2(10, 10))
-        local legendLabel = container:createLabel(legendRectInset, legendStr, 15)
-        legendLabel.wordBreak = true
-        legendLabel:setTopLeftAligned()
-
-        local summaryStr = "Cosmic War Simulation:"%_t .. "\n" ..
-            "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."%_t .. "\n\n" ..
-            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders remain static in Avorion."%_t .. "\n\n" ..
-            "Tip: Use /cosmicwarbounties in chat for a quick text summary of your License and the bounty board."%_t
-        local summaryRectInset = Rect(infoSplit.right.lower + vec2(10, 10), infoSplit.right.upper - vec2(10, 10))
-        local summaryLabel = container:createLabel(summaryRectInset, summaryStr, 15)
-        summaryLabel.wordBreak = true
-        summaryLabel:setTopLeftAligned()
-    end
-
-    function GalacticPoliticsTab.getSortingLabels()
-        return {"Faction A"%_t, "Faction B"%_t, "Bounty"%_t, "War Heat"%_t, "Famine"%_t, "Status"%_t, "Relations"%_t}
+        self.conflictsTable:setSelectionChangedHandler(function(row)
+            if not row then return end
+            GalacticPoliticsTab.onConflictSelected(row)
+        end)
     end
 
     function GalacticPoliticsTab.clientFetchData()
         invokeServerFunction("serverFetchData")
     end
 
+    function GalacticPoliticsTab.clientFetchWarRoom()
+        invokeServerFunction("serverFetchWarRoom")
+    end
+
     function GalacticPoliticsTab.onNumericCheckChanged()
-        if self.lastData then
-            -- self.lastData is already the unwrapped conflicts array (see receiveData);
-            -- just re-render from cache instead of re-fetching from the server.
-            self.applyFiltersAndSort()
-        else
-            GalacticPoliticsTab.clientFetchData()
-        end
+        if self.conflictsTable then self.conflictsTable:setRows(self.conflictsTable.rowData) end
     end
 
     function GalacticPoliticsTab.onFilterChanged()
-        self.applyFiltersAndSort()
+        GalacticPoliticsTab.applyFilter()
     end
 
-    function GalacticPoliticsTab.onSort1() self.updateSorting(1) end
-    function GalacticPoliticsTab.onSort2() self.updateSorting(2) end
-    function GalacticPoliticsTab.onSort3() self.updateSorting(3) end
-    function GalacticPoliticsTab.onSort4() self.updateSorting(4) end
-    function GalacticPoliticsTab.onSort5() self.updateSorting(5) end
-    function GalacticPoliticsTab.onSort6() self.updateSorting(6) end
-    function GalacticPoliticsTab.onSort7() self.updateSorting(7) end
-
-    function GalacticPoliticsTab.updateSorting(newSorting)
-        if self.selectedSorting == newSorting then
-            self.sortingType = self.sortingType * -1
-        else
-            self.selectedSorting = newSorting
-            self.sortingType = 1
+    -- v4.0.0 fix: the filter used to test `conflict.heat` while the Status column
+    -- right next to it is derived from `relation` -- a row could visibly say
+    -- "Ceasefire" in its own Status cell and still get excluded by "Ceasefires Only",
+    -- because its heat happened to be above zero. Filtering on the same `status`
+    -- field the column actually shows removes the contradiction.
+    function GalacticPoliticsTab.applyFilter()
+        if not self.lastData then return end
+        local filter = self.filterComboBox.selectedValue
+        local filtered = {}
+        for _, conflict in ipairs(self.lastData) do
+            local match = true
+            if filter == "Active Conflicts" and conflict.status == "Ceasefire" then match = false end
+            if filter == "Ceasefires Only" and conflict.status ~= "Ceasefire" then match = false end
+            if filter == "Active Bounties" and (conflict.bountyA or 0) == 0 and (conflict.bountyB or 0) == 0 then match = false end
+            if match then table.insert(filtered, conflict) end
         end
-        self.updateSortingIcons()
-        self.applyFiltersAndSort()
-    end
-
-    function GalacticPoliticsTab.updateSortingIcons()
-        local sortingLabels = self.getSortingLabels()
-        for ndx, button in ipairs(self.sortingButtons) do
-            local label = sortingLabels[ndx]
-            if ndx == self.selectedSorting then
-                if self.sortingType < 0 then
-                    button.caption = label .. " ▼"
-                else
-                    button.caption = label .. " ▲"
-                end
-            else
-                button.caption = label
-            end
-            button.icon = ""
-        end
+        self.conflictsTable:setRows(filtered)
     end
 
     function GalacticPoliticsTab.updateLicenseStatus()
         if not self.licenseLabel then return end
-
         local license = self.myLicense
         if license then
             self.licenseLabel.caption = "Your License: "%_t .. license.giverName .. " vs "%_t .. license.targetName ..
@@ -234,139 +249,196 @@ if onClient() then
         end
     end
 
-    function GalacticPoliticsTab.applyFiltersAndSort()
-        if not self.lastData then return end
-
-        local filter = self.filterComboBox.selectedValue
-        self.displayedConflicts = {}
-
-        for _, conflict in ipairs(self.lastData) do
-            local match = true
-            -- selectedValue returns the raw addEntry() value, not the localized caption, so compare untranslated.
-            if filter == "Active Conflicts" and conflict.heat == 0 then match = false end
-            if filter == "Ceasefires Only" and conflict.heat > 0 then match = false end
-            if filter == "Active Bounties" and conflict.bountyA == 0 and conflict.bountyB == 0 then match = false end
-
-            if match then
-                table.insert(self.displayedConflicts, conflict)
-            end
-        end
-
-        table.sort(self.displayedConflicts, function(a, b)
-            local valA, valB
-            if self.selectedSorting == 1 then valA, valB = a.factionA, b.factionA
-            elseif self.selectedSorting == 2 then valA, valB = a.factionB, b.factionB
-            elseif self.selectedSorting == 3 then valA, valB = math.max(a.bountyA, a.bountyB), math.max(b.bountyA, b.bountyB)
-            elseif self.selectedSorting == 4 then valA, valB = a.heat, b.heat
-            elseif self.selectedSorting == 5 then valA, valB = math.max(a.famineA, a.famineB), math.max(b.famineA, b.famineB)
-            elseif self.selectedSorting == 6 then valA, valB = a.status, b.status
-            elseif self.selectedSorting == 7 then valA, valB = a.relation, b.relation
-            end
-
-            if valA == valB then return false end
-            if self.sortingType == 1 then
-                return valA < valB
-            else
-                return valA > valB
-            end
-        end)
-
-        self.populateUI()
-    end
-
     function GalacticPoliticsTab.receiveData(data)
-        if not politicsList then return end
         if type(data) ~= "table" then return end
         self.lastData = data.conflicts or {}
         self.myLicense = data.myLicense
         self.updateLicenseStatus()
-        self.applyFiltersAndSort()
+        GalacticPoliticsTab.applyFilter()
     end
 
-    function GalacticPoliticsTab.populateUI()
-        politicsList:clear()
-        local white = ColorRGB(1, 1, 1)
-        local gray = ColorRGB(0.8, 0.8, 0.8)
-        local gold = ColorRGB(1.0, 0.85, 0.3)
+    -- ========================================================================
+    -- Dossier sub-tab
+    -- ========================================================================
 
-        local player = Player()
-        for index, conflict in ipairs(self.displayedConflicts) do
-            politicsList:addRow(tostring(index))
-            local row = politicsList.rows - 1
+    function GalacticPoliticsTab.buildDossierTab(container)
+        local UIKit = include("cosmicvaultuikit")
+        local margin = 10
 
-            local heatColor = gray
-            if conflict.heat >= 80 then heatColor = ColorRGB(1.0, 0.2, 0.2)       -- Red
-            elseif conflict.heat >= 40 then heatColor = ColorRGB(1.0, 0.6, 0.2)   -- Orange
-            elseif conflict.heat > 0 then heatColor = ColorRGB(1.0, 1.0, 0.2)     -- Yellow
-            else heatColor = ColorRGB(0.2, 1.0, 0.2) end                          -- Green
+        self.dossierHint = container:createLabel(Rect(margin, margin, container.size.x - margin, margin + 24), "Select a conflict on the Conflicts tab to see full detail here."%_t, 15)
+        self.dossierHint:setTopLeftAligned()
 
-            local relA = player:getRelations(conflict.factionAIndex) or 0
-            local relB = player:getRelations(conflict.factionBIndex) or 0
+        local hsplit = UIVerticalSplitter(Rect(margin, margin + 30, container.size.x - margin, container.size.y - margin), 10, 10, 0.5)
+        self.dossierPanelA = UIKit.createDossierPanel(container, hsplit.left, { maxRows = 10 })
+        self.dossierPanelB = UIKit.createDossierPanel(container, hsplit.right, { maxRows = 10 })
+    end
 
-            local nameA = conflict.factionA or "Unknown Faction"%_t
-            local nameB = conflict.factionB or "Unknown Faction"%_t
+    -- v4.0.0: fetches the pair's expensive detail fields (home sector, defense
+    -- generator status, expansion momentum, corridor endpoint, real trait
+    -- description) only when a conflict row is actually selected -- the Conflicts
+    -- table's own refresh stays a lean per-conflict list, not a query that computes
+    -- every faction's full dossier on every tick.
+    function GalacticPoliticsTab.onConflictSelected(row)
+        self.selectedConflict = row
+        invokeServerFunction("serverFetchDossier", row.factionAIndex, row.factionBIndex)
+    end
 
-            local relationText = tostring(conflict.relation)
-            if self.numericCheck and not self.numericCheck.checked then
-                relationText = getRelationDescription(conflict.relation)
-            end
-
-            local maxFamine = math.max(conflict.famineA or 0, conflict.famineB or 0)
-            local famineText = "Normal"%_t
-            local famineColor = ColorRGB(0.2, 1.0, 0.2)
-            if maxFamine >= 100 then
-                famineText = "Critical"%_t
-                famineColor = ColorRGB(1.0, 0.2, 0.2)
-            elseif maxFamine >= 50 then
-                famineText = "Struggling"%_t
-                famineColor = ColorRGB(1.0, 1.0, 0.2)
-            end
-
-            local bountyMax = math.max(conflict.bountyA or 0, conflict.bountyB or 0)
-            local bountyText = "-"
-            local bountyColor = gray
-            if bountyMax > 0 then
-                bountyText = createMonetaryString(bountyMax)
-                bountyColor = gold
-            end
-
-            -- Cosmic War: Populates the row entries. Colors dynamically indicate player relations and overall war heat.
-            politicsList:setEntryNoCallback(0, row, nameA, false, false, getRelationColor(relA))
-            politicsList:setEntryNoCallback(1, row, nameB, false, false, getRelationColor(relB))
-            politicsList:setEntryNoCallback(2, row, bountyText, false, false, bountyColor)
-            politicsList:setEntryNoCallback(3, row, tostring(conflict.heat) .. "%", false, false, heatColor)
-            politicsList:setEntryNoCallback(4, row, famineText, false, false, famineColor)
-            politicsList:setEntryNoCallback(5, row, conflict.status%_t, false, false, heatColor)
-            politicsList:setEntryNoCallback(6, row, relationText, false, false, gray)
-
-            local tooltip = ""
-            if conflict.warScore and conflict.warScore ~= 0 then
-                local leaderName = conflict.warScore > 0 and nameA or nameB
-                local magnitude = math.abs(math.floor(conflict.warScore))
-                tooltip = tooltip .. "War Score: "%_t .. leaderName .. " leading (" .. tostring(magnitude) .. "/250 toward Decisive Victory)\n\n"
-            end
-            tooltip = tooltip .. "=== " .. nameA .. " ===\n"
-            tooltip = tooltip .. "Index: "%_t .. conflict.factionAIndex .. "\n"
-            tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsA) .. "\n"
-            tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relA) .. " (" .. math.floor(relA) .. ")\n"
-            if (conflict.famineA or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineA) .. "\n" end
-            if (conflict.intelA or 0) > 0 then tooltip = tooltip .. "Your Intel: "%_t .. math.floor(conflict.intelA) .. " (spend 50 via /cosmicwarintel)\n" end
-            if conflict.bountyA > 0 then tooltip = tooltip .. "Bounty License (Per Kill): ¢"%_t .. createMonetaryString(conflict.bountyA) .. " (Max 15 Kills)\n" end
-
-            tooltip = tooltip .. "\n=== " .. nameB .. " ===\n"
-            tooltip = tooltip .. "Index: "%_t .. conflict.factionBIndex .. "\n"
-            tooltip = tooltip .. "Traits: "%_t .. concatLocalizedTraits(conflict.traitsB) .. "\n"
-            tooltip = tooltip .. "Your Relation: "%_t .. getRelationDescription(relB) .. " (" .. math.floor(relB) .. ")\n"
-            if (conflict.famineB or 0) > 0 then tooltip = tooltip .. "Famine Score: "%_t .. math.floor(conflict.famineB) .. "\n" end
-            if (conflict.intelB or 0) > 0 then tooltip = tooltip .. "Your Intel: "%_t .. math.floor(conflict.intelB) .. " (spend 50 via /cosmicwarintel)\n" end
-            if conflict.bountyB > 0 then tooltip = tooltip .. "Bounty License (Per Kill): ¢"%_t .. createMonetaryString(conflict.bountyB) .. " (Max 15 Kills)\n" end
-
-            politicsList:setTooltip(row, tooltip)
+    local function populateDossierPanel(panel, data)
+        if not data then
+            panel:setData({ title = "Unknown"%_t, rows = {} })
+            return
         end
+
+        local rows = {}
+        -- Falls back to the same vanilla/Player-Faction/Player-Alliance labels
+        -- getFactionTraitsSafe() already computes when this faction has none of this
+        -- mod's own nine custom traits assigned (getPrimaryTraitInfo() only ever
+        -- covers those nine, by design).
+        local traitValue = data.traitName or concatLocalizedTraits(data.traits) or "Unknown"%_t
+        table.insert(rows, { label = "Trait"%_t, value = traitValue, tooltip = data.traitDesc })
+        if data.homeX and data.homeY then
+            table.insert(rows, { label = "Home Sector"%_t, value = string.format("(%d:%d)", data.homeX, data.homeY) })
+        end
+        table.insert(rows, { label = "War Heat"%_t, bar = (data.heat or 0), color = (data.heat or 0) >= 0.8 and ColorRGB(1.0, 0.2, 0.2) or ((data.heat or 0) >= 0.4 and ColorRGB(1.0, 0.6, 0.2) or ColorRGB(0.2, 1.0, 0.2)) })
+        local famineText, famineColor = "Normal"%_t, ColorRGB(0.2, 1.0, 0.2)
+        if (data.famine or 0) >= 100 then famineText, famineColor = "Critical"%_t, ColorRGB(1.0, 0.2, 0.2)
+        elseif (data.famine or 0) >= 50 then famineText, famineColor = "Struggling"%_t, ColorRGB(1.0, 1.0, 0.2) end
+        table.insert(rows, { label = "Famine"%_t, value = famineText, color = famineColor })
+        table.insert(rows, { label = "Your Relation"%_t, value = tostring(math.floor(data.relation or 0)) })
+        if (data.intel or 0) > 0 then
+            table.insert(rows, { label = "Your Intel"%_t, value = tostring(math.floor(data.intel)), tooltip = "Spend 50 via /cosmicwarintel"%_t })
+        end
+        if data.enemyName then
+            table.insert(rows, { label = "Registered Enemy"%_t, value = data.enemyName })
+        end
+        if data.bountyActive then
+            table.insert(rows, { label = "Bounty (Per Kill)"%_t, value = "¢" .. createMonetaryString(data.bountyReward or 0), color = ColorRGB(1.0, 0.85, 0.3) })
+        end
+        table.insert(rows, { label = "Defense Generator"%_t, value = data.hasGenerator and "Commissioned"%_t or "None"%_t, color = data.hasGenerator and ColorRGB(1.0, 0.6, 0.2) or ColorRGB(0.6, 0.6, 0.6) })
+        if data.underMomentum then
+            table.insert(rows, { label = "Expansion"%_t, value = "Momentum Active"%_t, color = ColorRGB(0.6, 1.0, 0.6), tooltip = "Recently won a siege -- expansion rolls are temporarily boosted."%_t })
+        end
+        if data.corridorEndpoint then
+            table.insert(rows, { label = "Subspace Corridor"%_t, value = "Endpoint Here"%_t, color = ColorRGB(0.6, 0.4, 1.0) })
+        end
+
+        panel:setData({ title = data.name or "Unknown"%_t, rows = rows })
+    end
+
+    function GalacticPoliticsTab.receiveDossier(dataA, dataB)
+        if self.dossierHint then
+            self.dossierHint.caption = self.selectedConflict and (self.selectedConflict.factionA .. " vs "%_t .. self.selectedConflict.factionB) or "Select a conflict on the Conflicts tab to see full detail here."%_t
+        end
+        populateDossierPanel(self.dossierPanelA, dataA)
+        populateDossierPanel(self.dossierPanelB, dataB)
+    end
+
+    -- ========================================================================
+    -- War Room sub-tab
+    -- ========================================================================
+
+    function GalacticPoliticsTab.buildWarRoomTab(container)
+        local UIKit = include("cosmicvaultuikit")
+        local margin = 10
+        local width = container.size.x
+        local height = container.size.y
+
+        container:createLabel(Rect(margin, margin, width - margin, margin + 26), "Your Stakes In The War"%_t, 20)
+
+        local hsplit = UIVerticalSplitter(Rect(margin, margin + 34, width - margin, height - margin), 10, 10, 0.5)
+        self.warRoomLicensePanel = UIKit.createDossierPanel(container, hsplit.left, { maxRows = 4, titleFontSize = 15 })
+        self.warRoomBondsPanel = UIKit.createDossierPanel(container, hsplit.right, { maxRows = 10, titleFontSize = 15 })
+    end
+
+    function GalacticPoliticsTab.receiveWarRoom(data)
+        data = data or {}
+
+        local licenseRows = {}
+        if data.license then
+            table.insert(licenseRows, { label = "Target"%_t, value = data.license.targetName })
+            table.insert(licenseRows, { label = "Given By"%_t, value = data.license.giverName })
+            table.insert(licenseRows, { label = "Progress"%_t, value = tostring(data.license.kills) .. "/" .. tostring(data.license.maxKills) .. " "%_t .. "kills"%_t })
+            table.insert(licenseRows, { label = "Time Left"%_t, value = formatTimeRemaining(data.license.timeRemaining) })
+        end
+        self.warRoomLicensePanel:setData({ title = "Bounty License"%_t, rows = licenseRows })
+
+        local bondRows = {}
+        for _, bond in ipairs(data.bonds or {}) do
+            table.insert(bondRows, {
+                label = bond.factionName,
+                value = createMonetaryString(bond.amount) .. " -> " .. createMonetaryString(bond.projectedPayout) .. " (" .. tostring(math.floor((bond.projectedMultiplier or 0) * 100)) .. "%)",
+                tooltip = "Projected payout if this war ended right now."%_t
+            })
+        end
+        for _, intel in ipairs(data.intel or {}) do
+            table.insert(bondRows, { label = "Intel vs "%_t .. intel.factionName, value = tostring(math.floor(intel.amount)) })
+        end
+        if data.isAlliance then
+            table.insert(bondRows, { label = "Alliance Pool"%_t, value = "Active"%_t, tooltip = "Intel is shared with your Alliance."%_t, color = ColorRGB(0.6, 1.0, 0.6) })
+        end
+        self.warRoomBondsPanel:setData({ title = "Warbonds & Intel"%_t, rows = bondRows })
+    end
+
+    -- ========================================================================
+    -- Legend sub-tab
+    -- ========================================================================
+
+    function GalacticPoliticsTab.buildLegendTab(container)
+        local margin = 16
+        local width = container.size.x
+
+        container:createLabel(Rect(margin, margin, width - margin, margin + 26), "Legend & Quick Reference"%_t, 20)
+
+        local y = margin + 40
+        local function swatchLine(color, text)
+            container:createRect(Rect(margin, y + 3, margin + 14, y + 14), color)
+            local lbl = container:createLabel(Rect(margin + 22, y, width - margin, y + 20), text, 14)
+            lbl:setTopLeftAligned()
+            y = y + 24
+        end
+
+        container:createLabel(Rect(margin, y, width - margin, y + 20), "War Heat"%_t, 16)
+        y = y + 26
+        swatchLine(ColorRGB(1.0, 0.2, 0.2), "Critical (80%+)"%_t)
+        swatchLine(ColorRGB(1.0, 0.6, 0.2), "High (40-79%)"%_t)
+        swatchLine(ColorRGB(1.0, 1.0, 0.2), "Rising (1-39%)"%_t)
+        swatchLine(ColorRGB(0.2, 1.0, 0.2), "Zero"%_t)
+
+        y = y + 14
+        container:createLabel(Rect(margin, y, width - margin, y + 20), "Your Relations"%_t, 16)
+        y = y + 26
+        swatchLine(ColorRGB(0.2, 1.0, 0.2), "Friendly"%_t)
+        swatchLine(ColorRGB(0.8, 0.8, 0.8), "Neutral"%_t)
+        swatchLine(ColorRGB(1.0, 0.2, 0.2), "Hostile"%_t)
+
+        y = y + 14
+        container:createLabel(Rect(margin, y, width - margin, y + 20), "Famine"%_t, 16)
+        y = y + 26
+        swatchLine(ColorRGB(0.2, 1.0, 0.2), "Normal"%_t)
+        swatchLine(ColorRGB(1.0, 1.0, 0.2), "Struggling (50+)"%_t)
+        swatchLine(ColorRGB(1.0, 0.2, 0.2), "Critical (100+)"%_t)
+
+        y = y + 14
+        local summaryStr = "Cosmic War Simulation:"%_t .. "\n" ..
+            "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."%_t .. "\n\n" ..
+            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders can change dynamically through sieges and expansion -- but do not move on the static galaxy map projection itself."%_t .. "\n\n" ..
+            "Tip: Use /cosmicwarbounties or /cosmicwarintel in chat for a quick text summary without opening this tab."%_t
+        local summaryLabel = container:createLabel(Rect(margin, y, width - margin, container.size.y - margin), summaryStr, 15)
+        summaryLabel.wordBreak = true
+        summaryLabel:setTopLeftAligned()
     end
 end
 
--- Cosmic War: Computes AI Faction Traits to display in the UI Tooltip. Consider surfacing cw_war_bias and cw_diplomatic_polarity here in the future.
+-- ============================================================================
+-- Server
+-- ============================================================================
+
+-- v4.0.0 fix: previously checked only the two vanilla traits (aggressive/peaceful),
+-- so most AI factions -- which carry one of this mod's own nine custom traits instead
+-- -- showed as "Unknown" in the one screen built to explain who they are. The correct
+-- derivation already existed in cosmicwarnews.lua's getFactionStanceLabel(); this
+-- mirrors it rather than duplicating a second, divergence-prone copy of the same
+-- registry walk.
 local function getFactionTraitsSafe(faction)
     local traits = {}
     if faction.isPlayer then
@@ -377,11 +449,43 @@ local function getFactionTraitsSafe(faction)
         return traits
     end
 
-    -- Send pure strings across the network boundary, the client will apply the local %_t translation!
-    if faction:getTrait("aggressive") > 0.5 then table.insert(traits, "Aggressive") end
-    if faction:getTrait("peaceful") > 0.5 then table.insert(traits, "Peaceful") end
+    local cvf = include("cosmicvaultfaction")
+    local registry = cvf.getCustomTraits() or {}
+    for _, traitId in pairs(CW_TRAIT_IDS) do
+        if (cvf.getTrait(faction.index, traitId) or 0) > 0 then
+            local info = registry[traitId]
+            if info and info.name then table.insert(traits, info.name) end
+        end
+    end
+
+    -- Fall back to the vanilla traits only if this faction was never assigned one of
+    -- this mod's own custom traits (e.g. seeded before cosmicwartraits.lua ran).
+    if #traits == 0 then
+        if faction:getTrait("aggressive") > 0.5 then table.insert(traits, "Aggressive") end
+        if faction:getTrait("peaceful") > 0.5 then table.insert(traits, "Peaceful") end
+    end
     if #traits == 0 then return {"Unknown"} end
     return traits
+end
+
+--- Returns {name, descriptions} for whichever of this mod's nine custom traits is
+-- currently assigned to the faction, or nil if none is. Descriptions are joined into
+-- one tooltip string; the display name is left untranslated (bare string) so the
+-- client applies %_t itself, matching every other faction-name/trait string this file
+-- already sends across the network boundary this way.
+local function getPrimaryTraitInfo(faction)
+    if not faction or faction.isPlayer or faction.isAlliance then return nil end
+    local cvf = include("cosmicvaultfaction")
+    local registry = cvf.getCustomTraits() or {}
+    for _, traitId in pairs(CW_TRAIT_IDS) do
+        if (cvf.getTrait(faction.index, traitId) or 0) > 0 then
+            local info = registry[traitId]
+            if info then
+                return info.name, table.concat(info.descriptions or {}, " ")
+            end
+        end
+    end
+    return nil, nil
 end
 
 -- Checks both the calling player's own faction and (if applicable) their alliance for an
@@ -481,9 +585,6 @@ function GalacticPoliticsTab.serverFetchData()
                         -- v4.0.0 War Score & Attrition: positive favors faction A.
                         local warScore = CosmicWarBridge.getWarScore and CosmicWarBridge.getWarScore(f.index, e.index) or 0
 
-                        -- v4.0.0: Intel was previously only visible via
-                        -- /cosmicwarintel -- surfaced here too since this tab is the
-                        -- natural home for it, right alongside War Score/Famine/Bounty.
                         local intelA = CosmicWarBridge.getIntel and CosmicWarBridge.getIntel(player, f.index) or 0
                         local intelB = CosmicWarBridge.getIntel and CosmicWarBridge.getIntel(player, e.index) or 0
 
@@ -513,17 +614,24 @@ function GalacticPoliticsTab.serverFetchData()
 
 
     if server:getValue("eclipse_fully_awake") then
+        -- v4.0.0 fix: this synthetic row previously omitted warScore/intelA/intelB
+        -- entirely, unlike every real conflict row -- harmless while every reader
+        -- nil-guarded those fields, but a shape mismatch waiting to break the next
+        -- feature added to the row renderer. Full shape now, matching every other row.
         table.insert(conflicts, 1, {
+            warScore = 0,
             factionA = "The Eclipse",
             factionAIndex = 0,
             traitsA = {"Genocidal", "Existential Threat"},
             bountyA = 0,
             famineA = 0,
+            intelA = 0,
             factionB = "Galactic Civilizations",
             factionBIndex = 0,
             traitsB = {},
             bountyB = 0,
             famineB = 0,
+            intelB = 0,
             heat = 100,
             relation = -100000,
             status = "Total Eradication"
@@ -533,3 +641,118 @@ function GalacticPoliticsTab.serverFetchData()
     invokeClientFunction(player, "receiveData", {conflicts = conflicts, myLicense = getMyLicense(player)})
 end
 callable(GalacticPoliticsTab, "serverFetchData")
+
+-- v4.0.0: the Dossier sub-tab's own fetch, split out from serverFetchData() so
+-- browsing the Conflicts list doesn't pay for these fields on every refresh -- only
+-- computed for the exact pair a player actually selects.
+function GalacticPoliticsTab.serverFetchDossier(factionAIndex, factionBIndex)
+    if not onServer() then return end
+    local player = Player(callingPlayer)
+    if not player then return end
+
+    include("cosmicwarbridge")
+    local server = Server()
+
+    local function buildDossier(idx)
+        if not idx or idx <= 0 then return nil end
+        local f = Faction(idx)
+        if not f then return nil end
+
+        local traitName, traitDesc = getPrimaryTraitInfo(f)
+        -- Fallback for Player Faction/Alliance rows and any AI faction with none of
+        -- this mod's own custom traits assigned -- see populateDossierPanel().
+        local traits = traitName and nil or getFactionTraitsSafe(f)
+        local hx, hy = f:getHomeSectorCoordinates()
+        local heat = CosmicWarBridge and CosmicWarBridge.getFactionWarHeat and (CosmicWarBridge.getFactionWarHeat(idx) or 0) or 0
+        local famine = server:getValue("cv_famine_" .. tostring(idx)) or 0
+        local intel = CosmicWarBridge and CosmicWarBridge.getIntel and (CosmicWarBridge.getIntel(player, idx) or 0) or 0
+        local enemyIdx = f:getValue("enemy_faction") or 0
+        local enemyFaction = enemyIdx > 0 and Faction(enemyIdx) or nil
+        local hasGenerator = f:getValue("cw_defense_generator_sector") and true or false
+        local momentumUntil = server:getValue("cw_expansion_momentum_" .. tostring(idx)) or 0
+        local underMomentum = momentumUntil > (server.unpausedRuntime or 0)
+        local corridorEndpoint = (hx and hy) and server:getValue("cw_corridor_at_" .. hx .. ":" .. hy) or nil
+        local now = server.unpausedRuntime or 0
+        local bountyActive = (f:getValue("cw_bounty_enemy") or 0) > 0 and (f:getValue("cw_bounty_expires") or 0) > now
+        local bountyReward = bountyActive and (f:getValue("cw_bounty_reward") or 0) or 0
+
+        return {
+            name = f.name,
+            index = idx,
+            traitName = traitName,
+            traitDesc = traitDesc,
+            traits = traits,
+            homeX = hx,
+            homeY = hy,
+            heat = heat,
+            famine = famine,
+            intel = intel,
+            relation = player:getRelations(idx) or 0,
+            enemyName = enemyFaction and enemyFaction.name or nil,
+            hasGenerator = hasGenerator,
+            underMomentum = underMomentum,
+            corridorEndpoint = corridorEndpoint and true or false,
+            bountyActive = bountyActive,
+            bountyReward = bountyReward,
+        }
+    end
+
+    invokeClientFunction(player, "receiveDossier", buildDossier(factionAIndex), buildDossier(factionBIndex))
+end
+callable(GalacticPoliticsTab, "serverFetchDossier")
+
+-- v4.0.0: the War Room sub-tab's fetch -- everything the player personally has
+-- riding on the war (License, Warbonds, Intel), previously only reachable through
+-- two chat commands and a station dialog.
+function GalacticPoliticsTab.serverFetchWarRoom()
+    if not onServer() then return end
+    local player = Player(callingPlayer)
+    if not player then return end
+
+    include("cosmicwarbridge")
+    local server = Server()
+
+    local license = getMyLicense(player)
+
+    local bonds = {}
+    if player:hasScript("cosmicwar_warbonds.lua") then
+        local status, rawBonds = player:invokeFunction("cosmicwar_warbonds.lua", "getActiveBonds")
+        if status == 0 and type(rawBonds) == "table" then
+            for _, b in pairs(rawBonds) do
+                local f = Faction(b.factionIndex)
+                table.insert(bonds, {
+                    factionName = f and f.name or ("Faction " .. tostring(b.factionIndex)),
+                    amount = b.amount or 0,
+                    projectedPayout = b.projectedPayout or 0,
+                    projectedMultiplier = b.projectedMultiplier or 0,
+                })
+            end
+        end
+    end
+
+    -- Intel: scoped to the same "factions this player is actively tracking" set
+    -- serverFetchData() already establishes (tracked, cw_enabled AI factions with a
+    -- registered enemy) rather than a full second enumeration of every AI faction
+    -- that ever existed -- a faction the player banked Intel against but who has
+    -- since resolved their war won't appear here, a deliberate, documented scope
+    -- boundary rather than a silent gap.
+    local intel = {}
+    local factionsStr = server:getValue("factions")
+    if type(factionsStr) == "string" and factionsStr ~= "" then
+        for id in string.gmatch(factionsStr, "([^,]+)") do
+            local idx = tonumber(id)
+            local f = idx and Faction(idx)
+            if f and f.isAIFaction and f:getValue("cw_enabled") then
+                local amt = CosmicWarBridge and CosmicWarBridge.getIntel and (CosmicWarBridge.getIntel(player, idx) or 0) or 0
+                if amt > 0 then
+                    table.insert(intel, { factionName = f.name, amount = amt })
+                end
+            end
+        end
+    end
+
+    local isAlliance = player.allianceIndex and player.allianceIndex > 0 or false
+
+    invokeClientFunction(player, "receiveWarRoom", { license = license, bonds = bonds, intel = intel, isAlliance = isAlliance })
+end
+callable(GalacticPoliticsTab, "serverFetchWarRoom")

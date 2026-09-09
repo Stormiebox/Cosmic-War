@@ -1,6 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 local CosmicWarBridge = include("cosmicwarbridge")
+include("cosmicwarconfig")
 include("randomext")
 
 -- namespace CosmicWarSubspaceCorridors
@@ -46,6 +47,17 @@ function CosmicWarSubspaceCorridors.update(timeStep)
     local server = Server()
     if not server then return end
 
+    -- v4.0.0: admin-configurable, per the R2 review decision -- default enabled so
+    -- the mechanic still ships as designed, with a hard cap on total corridors
+    -- either way (a corridor can never be removed once torn, so the cap is the only
+    -- brake available).
+    local cfg = CosmicWarConfig.get() or {}
+    if cfg.enableSubspaceCorridors == false then return end
+
+    local hardCap = cfg.subspaceCorridorHardCap or 5
+    local corridorCount = server:getValue("cw_subspace_corridor_count") or 0
+    if corridorCount >= hardCap then return end
+
     local factions = getActiveFactions()
     local seenPairs = {}
 
@@ -56,7 +68,11 @@ function CosmicWarSubspaceCorridors.update(timeStep)
             if not seenPairs[pairKey] then
                 seenPairs[pairKey] = true
 
-                if not server:getValue("cw_subspace_corridor_" .. pairKey) then
+                -- Re-check the cap on every pair, not just once before the loop --
+                -- a single update() pass can consider many pairs, and each successful
+                -- roll below raises corridorCount, so a later pair in this same tick
+                -- must not slip past the cap the earlier one just reached.
+                if corridorCount < hardCap and not server:getValue("cw_subspace_corridor_" .. pairKey) then
                     local heat = CosmicWarBridge.getFactionWarHeat(faction.index) or 0
                     if heat >= 1.0 and random():test(0.10) then
                         local enemyFaction = Faction(enemyIdx)
@@ -73,7 +89,9 @@ function CosmicWarSubspaceCorridors.update(timeStep)
                                 -- endpoint here?" in O(1) without scanning every faction pair.
                                 server:setValue("cw_corridor_at_" .. hx1 .. ":" .. hy1, hx2 .. ":" .. hy2)
                                 server:setValue("cw_corridor_at_" .. hx2 .. ":" .. hy2, hx1 .. ":" .. hy1)
-                                include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] A subspace corridor has torn open between (" .. hx1 .. ":" .. hy1 .. ") and (" .. hx2 .. ":" .. hy2 .. ").")
+                                corridorCount = corridorCount + 1
+                                server:setValue("cw_subspace_corridor_count", corridorCount)
+                                include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] A subspace corridor has torn open between (" .. hx1 .. ":" .. hy1 .. ") and (" .. hx2 .. ":" .. hy2 .. "). (" .. corridorCount .. "/" .. hardCap .. ")")
 
                                 local CosmicVaultNews = include("cosmicvaultnews")
                                 CosmicVaultNews.publishArticle({

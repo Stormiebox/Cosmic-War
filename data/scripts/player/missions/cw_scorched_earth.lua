@@ -140,6 +140,15 @@ mission.phases[1].triggers = {
                 -- Convoy delivery's -20, so one raid roughly offsets one relief run rather
                 -- than dwarfing it in either direction.
                 CosmicVaultEconomy.addFamineScore(enemyIndex, 20)
+
+                local enemyFaction = Faction(enemyIndex)
+                local article = {
+                    title = "Territory Stripped in " .. (enemyFaction and enemyFaction.name or "Contested") .. " Space",
+                    content = "An independent captain has strip-mined a contested sector belonging to " .. (enemyFaction and enemyFaction.name or "a local faction") .. ", hauling away the resources before patrols could respond. The loss deepens an already-strained supply situation.",
+                    category = "War Crime"
+                }
+                local cv_news = include("cosmicvaultnews")
+                cv_news.publishArticle(article)
             end
 
             sync()

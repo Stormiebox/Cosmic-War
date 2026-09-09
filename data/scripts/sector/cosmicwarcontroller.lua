@@ -6,6 +6,7 @@ include("goods")
 include("relations")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
+local CosmicWarBridge = include("cosmicwarbridge")
 
 -- namespace CosmicWarController
 CosmicWarController = {}
@@ -14,6 +15,7 @@ function CosmicWarController.initialize()
     if onServer() then
         CosmicWarController._tick = CosmicWarController._tick or 0
         CosmicWarController._lastEventAt = CosmicWarController._lastEventAt or 0
+        CosmicWarController._lastInsurgencyAt = CosmicWarController._lastInsurgencyAt or 0
     end
 end
 
@@ -174,6 +176,14 @@ local function applyWarProfiteeringShortages(factions, random)
 
         -- If at critical war heat (relations very low, bias high)
         if rel <= -80000 then
+            -- v4.0.0 War Weariness: a wearier faction's own stations get drained
+            -- harder -- up to double the usual amount at maximum weariness -- so "worse
+            -- station prices" scales with how badly this faction has actually been
+            -- losing, not just with the flat critical-War-Heat gate every faction here
+            -- already shares.
+            local weariness = CosmicWarBridge.getWarWeariness(f.index)
+            local wearinessDrainMult = 1.0 + (weariness / 100)
+
             local stations = {sector:getEntitiesByFaction(f.index)}
             for _, station in pairs(stations) do
                 -- Only tradingpost.lua exposes a TradingAPI namespace (decreaseGoods); equipmentdock.lua
@@ -192,7 +202,8 @@ local function applyWarProfiteeringShortages(factions, random)
                             -- callable() target on TradingPost, so this will report status ~= 0 until
                             -- tradingpost.lua exposes one; left safe-but-inert rather than guessing at
                             -- an internal TradingManager API to call instead.
-                            local status = station:invokeFunction("tradingpost.lua", "decreaseGoods", goodName, random:getInt(500, 2000))
+                            local drainAmount = math.floor(random:getInt(500, 2000) * wearinessDrainMult)
+                            local status = station:invokeFunction("tradingpost.lua", "decreaseGoods", goodName, drainAmount)
                             if status == 0 then
                                 didShortage = true
                             end
@@ -293,12 +304,26 @@ local function applyWarHazardSpawns(factions, random)
 
         -- If at critical war heat (relations very low)
         if rel <= -80000 then
-            -- 20% chance to spawn an aggressive strike fleet
-            if random:test(0.20) then
+            -- v4.0.0 Frontlines: a sector where these two factions' territories
+            -- actually border each other sees denser patrols -- roughly double the odds
+            -- and the fleet size, on top of the same critical-War-Heat gate every other
+            -- sector already rolls against.
+            local isFrontline = CosmicWarBridge.isFrontlineSector(x, y)
+            local spawnChance = isFrontline and 0.35 or 0.20
+            if random:test(spawnChance) then
                 local enemyFaction = Faction(enemy)
                 if enemyFaction then
                     local ShipGenerator = include("shipgenerator")
-                    local numShips = random:getInt(3, 7)
+                    local numShips = isFrontline and random:getInt(5, 10) or random:getInt(3, 7)
+
+                    -- v4.0.0 War Weariness: a faction that's been losing badly can't
+                    -- keep throwing full-size strike fleets together -- up to half the
+                    -- fleet size at maximum weariness, applied after the Frontlines bump
+                    -- above so a weary faction on a frontline still spawns something, just
+                    -- not at full strength.
+                    local weariness = CosmicWarBridge.getWarWeariness(enemyFaction.index)
+                    numShips = math.max(1, math.floor(numShips * (1.0 - (weariness / 100) * 0.5)))
+
                     for i = 1, numShips do
                         local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1500, 1500), 0, random:getInt(-1500, 1500)))
                         local ship = ShipGenerator.createMilitaryShip(enemyFaction, pos)
@@ -319,6 +344,54 @@ local function applyWarHazardSpawns(factions, random)
             end
         end
     end
+end
+
+-- v4.0.0 Occupation & Insurgency: a captured sector isn't fully settled for 6
+-- in-game hours (trooptransport.lua's captureStation marks it). While that window is
+-- open, the dispossessed faction has a rolling chance to stage a small raid against the
+-- new occupier -- independent of War Heat, since this is about a specific fresh capture,
+-- not the broader state of the war. Runs on its own 15-minute-minimum timing gate rather
+-- than sharing CosmicWarController._lastEventAt -- that timestamp only advances when the
+-- rest of updateServer() runs all the way through (at least two live warring factions
+-- present), which a freshly-occupied sector often won't have yet.
+local INSURGENCY_MIN_SPACING = 900
+
+local function applyInsurgency(now)
+    local sector = Sector()
+    local x, y = sector:getCoordinates()
+
+    local occupation = CosmicWarBridge.getOccupationData(x, y)
+    if not occupation then return end
+
+    if (CosmicWarController._lastInsurgencyAt or 0) + INSURGENCY_MIN_SPACING > now then return end
+
+    local random = Random(SectorSeed(x, y) + math.floor(now / 60))
+    if not random:test(0.25) then
+        CosmicWarController._lastInsurgencyAt = now
+        return
+    end
+    CosmicWarController._lastInsurgencyAt = now
+
+    local formerOwner = Faction(occupation.oldFactionIndex)
+    if not formerOwner then return end
+
+    local ShipGenerator = include("shipgenerator")
+    local numInsurgents = random:getInt(2, 4)
+    for i = 1, numInsurgents do
+        local pos = MatrixLookUpPosition(vec3(0, 0, 1), vec3(0, 1, 0), vec3(random:getInt(-1200, 1200), 0, random:getInt(-1200, 1200)))
+        local ship = ShipGenerator.createDefender(formerOwner, pos)
+        if ship then
+            ship.title = "Insurgent Raider"%_T
+            ShipAI(ship.index):setAggressive()
+        end
+    end
+
+    local cvn = include("cosmicvaultnews")
+    cvn.publishArticle({
+        title = "Insurgency Flares In Occupied Territory",
+        content = "Loyalist holdouts still answering to " .. tostring(formerOwner.name) .. " have staged a raid against the sector's new occupying garrison -- a reminder that the territory isn't fully settled yet.",
+        category = "War"
+    })
 end
 
 local function applyEclipseVanguardEvent(factions, random)
@@ -355,6 +428,10 @@ function CosmicWarController.updateServer(timeStep)
     if (CosmicWarController._lastEventAt or 0) + minSpacing > now then
         return
     end
+
+    -- Independent of the two-faction requirement below -- a freshly-occupied
+    -- sector often has only the new owner physically present.
+    applyInsurgency(now)
 
     local factions = getAliveWarFactionsInSector()
     if #factions < 2 then

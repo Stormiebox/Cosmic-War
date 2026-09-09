@@ -127,6 +127,15 @@ mission.phases[1].triggers = {
                 if not Galaxy():getControllingFaction(mission.data.custom.targetX, mission.data.custom.targetY) then
                     CosmicVaultTerritory.expandToSector(mission.data.custom.targetX, mission.data.custom.targetY, giverIndex, false)
                     Player():sendChatMessage(Faction(giverIndex).name, 0, "The settlement is founded. This sector is ours now."%_T)
+
+                    local giverFactionObj = Faction(giverIndex)
+                    local article = {
+                        title = (giverFactionObj and giverFactionObj.name or "A Faction") .. " Founds New Settlement",
+                        content = "Refugees fleeing famine have founded a new settlement in sector [" .. mission.data.custom.targetX .. ":" .. mission.data.custom.targetY .. "], expanding " .. (giverFactionObj and giverFactionObj.name or "a faction") .. "'s territory with independent backing.",
+                        category = "Galactic Expansion"
+                    }
+                    local cv_news = include("cosmicvaultnews")
+                    cv_news.publishArticle(article)
                 else
                     Player():sendChatMessage(Faction(giverIndex).name, 0, "Someone reached the sector first, but the supplies weren't wasted -- our people are still grateful."%_T)
                 end

@@ -8,8 +8,9 @@ include("stringutility")
 
 local CosmicWarBridge = include("cosmicwarbridge")
 local cvf = include("cosmicvaultfaction")
+local CosmicWarConfig = include("cosmicwarconfig")
 
-local INTEL_PREVIEW_COST = 50
+local INTEL_PREVIEW_COST = (CosmicWarConfig and CosmicWarConfig.get() or {}).intelPreviewCost or 50
 
 local function getKnownAIFactions()
     local server = Server()

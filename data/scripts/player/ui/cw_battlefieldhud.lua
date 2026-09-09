@@ -1,5 +1,16 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
+-- v4.0.0: these three were previously repeated as separate 600/40/95 literals in
+-- buildUI(), onResolutionChanged(), updateClient(), and both trigger*Success()
+-- functions -- five independent copies of the same three values, exactly the kind of
+-- duplication that has drifted silently elsewhere in this mod. One shared definition
+-- now. (Fixed pixel sizing itself matches vanilla's own convention -- see
+-- sectorshipoverview.lua's Sector Overview panel, a fixed vec2(350, 600) HUD window
+-- with no resolution-relative scaling either.)
+local HUD_WIDTH = 600
+local HUD_HEIGHT = 40
+local HUD_Y = 95
+
 local uiContainer = nil
 local blueRect = nil
 local redRect = nil
@@ -95,9 +106,8 @@ function triggerSiegeSuccess()
     flashTimer = 5.0
 
     if uiContainer then uiContainer:show() end
-    local width = 600
-    if blueRect then blueRect.rect = Rect(0, 0, 0, 40) end
-    if redRect then redRect.rect = Rect(0, 0, width, 40) end
+    if blueRect then blueRect.rect = Rect(0, 0, 0, HUD_HEIGHT) end
+    if redRect then redRect.rect = Rect(0, 0, HUD_WIDTH, HUD_HEIGHT) end
     if factionLabel then factionLabel.caption = "INVASION SUCCESSFUL - BORDER FLIPPED"%_t end
     if timeLabel then timeLabel.caption = "Sector Lost"%_t end
 end
@@ -113,9 +123,8 @@ function triggerDefenseSuccess()
     flashTimer = 5.0
 
     if uiContainer then uiContainer:show() end
-    local width = 600
-    if blueRect then blueRect.rect = Rect(0, 0, width, 40) end
-    if redRect then redRect.rect = Rect(width, 0, width, 40) end
+    if blueRect then blueRect.rect = Rect(0, 0, HUD_WIDTH, HUD_HEIGHT) end
+    if redRect then redRect.rect = Rect(HUD_WIDTH, 0, HUD_WIDTH, HUD_HEIGHT) end
     if factionLabel then factionLabel.caption = "DEFENSE SUCCESSFUL - INVADERS REPELLED"%_t end
     if timeLabel then timeLabel.caption = "Sector Secured"%_t end
 end
@@ -123,23 +132,21 @@ callable(nil, "triggerDefenseSuccess")
 
 function buildUI()
     local res = getResolution()
-    local width = 600
-    local height = 40
-    local x = (res.x / 2) - (width / 2)
-    local y = 95
+    local x = (res.x / 2) - (HUD_WIDTH / 2)
+    local y = HUD_Y
 
-    uiContainer = Hud():createContainer(Rect(x, y, x + width, y + height))
+    uiContainer = Hud():createContainer(Rect(x, y, x + HUD_WIDTH, y + HUD_HEIGHT))
 
-    uiContainer:createRect(Rect(0, 0, width, height), ColorRGB(0.1, 0.1, 0.1))
+    uiContainer:createRect(Rect(0, 0, HUD_WIDTH, HUD_HEIGHT), ColorRGB(0.1, 0.1, 0.1))
 
-    blueRect = uiContainer:createRect(Rect(0, 0, width / 2, height), ColorRGB(0.1, 0.4, 0.9))
-    redRect = uiContainer:createRect(Rect(width / 2, 0, width, height), ColorRGB(0.9, 0.1, 0.1))
+    blueRect = uiContainer:createRect(Rect(0, 0, HUD_WIDTH / 2, HUD_HEIGHT), ColorRGB(0.1, 0.4, 0.9))
+    redRect = uiContainer:createRect(Rect(HUD_WIDTH / 2, 0, HUD_WIDTH, HUD_HEIGHT), ColorRGB(0.9, 0.1, 0.1))
 
-    factionLabel = uiContainer:createLabel(vec2(width / 2, 5), "Defenders vs Invaders"%_t, 14)
+    factionLabel = uiContainer:createLabel(vec2(HUD_WIDTH / 2, 5), "Defenders vs Invaders"%_t, 14)
     factionLabel.centered = true
     factionLabel.color = ColorRGB(1, 1, 1)
 
-    timeLabel = uiContainer:createLabel(vec2(width / 2, 20), "Time Remaining: --:--"%_t, 12)
+    timeLabel = uiContainer:createLabel(vec2(HUD_WIDTH / 2, 20), "Time Remaining: --:--"%_t, 12)
     timeLabel.centered = true
     timeLabel.color = ColorRGB(1, 1, 1)
 
@@ -148,11 +155,8 @@ end
 
 function onResolutionChanged(res)
     if not uiContainer then return end
-    local width = 600
-    local height = 40
-    local x = (res.x / 2) - (width / 2)
-    local y = 95
-    uiContainer.rect = Rect(x, y, x + width, y + height)
+    local x = (res.x / 2) - (HUD_WIDTH / 2)
+    uiContainer.rect = Rect(x, HUD_Y, x + HUD_WIDTH, HUD_Y + HUD_HEIGHT)
 end
 
 function getUpdateInterval()
@@ -178,18 +182,22 @@ function updateClient(timeStep)
     if invaderPercent > 1 then invaderPercent = 1 end
     if invaderPercent < 0 then invaderPercent = 0 end
 
-    local width = 600
-    local splitX = width * (1.0 - invaderPercent)
+    local splitX = HUD_WIDTH * (1.0 - invaderPercent)
 
-    blueRect.rect = Rect(0, 0, splitX, 40)
-    redRect.rect = Rect(splitX, 0, width, 40)
+    blueRect.rect = Rect(0, 0, splitX, HUD_HEIGHT)
+    redRect.rect = Rect(splitX, 0, HUD_WIDTH, HUD_HEIGHT)
 
+    -- v4.0.0 fix: these two strings are rebuilt every tick with no translation marker
+    -- at all -- the changelog's own "fully localized" claim for this HUD was wrong.
+    -- %_t on the format string itself (same pattern already used two lines below for
+    -- the time label) keeps the %s/%d substitutions working while making both
+    -- translatable.
     local scoreText = ""
     if warScore and warScore ~= 0 then
         local leaderName = warScore > 0 and defenderName or invaderName
-        scoreText = string.format("  [War Score: %d %s]", math.abs(math.floor(warScore)), leaderName)
+        scoreText = string.format("  [War Score: %d %s]"%_t, math.abs(math.floor(warScore)), leaderName)
     end
-    factionLabel.caption = string.format("%s vs %s", defenderName, invaderName) .. scoreText
+    factionLabel.caption = string.format("%s vs %s"%_t, defenderName, invaderName) .. scoreText
 
     local m = math.floor(remaining / 60)
     local s = math.floor(remaining % 60)

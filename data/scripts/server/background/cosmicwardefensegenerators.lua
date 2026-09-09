@@ -1,6 +1,7 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 local CosmicWarBridge = include("cosmicwarbridge")
+include("cosmicwarconfig")
 include("randomext")
 
 -- namespace CosmicWarDefenseGenerators
@@ -42,15 +43,25 @@ end
 function CosmicWarDefenseGenerators.update(timeStep)
     if not onServer() then return end
 
+    local cfg = CosmicWarConfig.get() or {}
+    local commissionChance = cfg.defenseGeneratorCommissionChance or 0.15
+
     local factions = getActiveFactions()
     for _, faction in pairs(factions) do
         if not faction:getValue("cw_defense_generator_sector") then
             local heat = CosmicWarBridge.getFactionWarHeat(faction.index) or 0
-            if heat >= 0.35 and random():test(0.15) then
+            if heat >= 0.35 and random():test(commissionChance) then
                 local hx, hy = faction:getHomeSectorCoordinates()
                 if hx and hy then
                     faction:setValue("cw_defense_generator_sector", hx .. ":" .. hy)
                     include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Faction " .. tostring(faction.index) .. " commissioned a Planetary Defense Generator at (" .. hx .. ":" .. hy .. ").")
+
+                    local cv_news = include("cosmicvaultnews")
+                    cv_news.publishArticle({
+                        title = tostring(faction.name) .. " Commissions Planetary Defense Generator",
+                        content = "Facing mounting pressure, " .. tostring(faction.name) .. " has commissioned a Planetary Defense Generator to shield their home sector at (" .. hx .. ":" .. hy .. ") from siege.",
+                        category = "Military"
+                    })
                 end
             end
         end

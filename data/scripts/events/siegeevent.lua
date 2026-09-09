@@ -9,6 +9,42 @@ include("randomext")
 -- namespace SiegeEvent
 SiegeEvent = {}
 
+-- v4.0.0 Supply Lines: force projection falls off with distance from the
+-- invader's own home sector. Applied exactly once per siege (guarded by the Server-side
+-- marker below) rather than on every visit -- SiegeEvent.initialize() re-fires each time a
+-- player re-enters an already-contested sector via cw_siege_injector_persistent.lua's
+-- addScriptOnce, so without the guard a player could repeatedly leave and re-enter to keep
+-- extending the same siege's clock. The marker is keyed by zoneData.startTime, not just the
+-- sector, so a sector that hosts a second, unrelated siege later (the same territory changing
+-- hands again through this mod's own reconquest system) gets its own fresh guard rather than
+-- inheriting a stale "already scaled" flag from a siege that resolved long ago.
+local SUPPLY_LINE_REFERENCE_DISTANCE = 250 -- sectors; matches this mod's other galaxy-scale distance bands (cw_relief_convoy.lua's material tiers use the same 50-430 range)
+local SUPPLY_LINE_FAR_THRESHOLD = 150
+
+local function applySupplyLineScaling(x, y, zoneData)
+    local server = Server()
+    if not server then return false end
+
+    local markerKey = "cw_supplyline_scaled_" .. x .. ":" .. y .. ":" .. tostring(zoneData.startTime)
+    if server:getValue(markerKey) then return false end
+    server:setValue(markerKey, true)
+
+    local invadingFaction = Faction(zoneData.invader)
+    if not invadingFaction then return false end
+
+    local hx, hy = invadingFaction:getHomeSectorCoordinates()
+    if not hx or not hy then return false end
+
+    local distance = length(vec2(x - hx, y - hy))
+    local distanceFactor = math.min(1.0, distance / SUPPLY_LINE_REFERENCE_DISTANCE)
+
+    local originalDuration = math.max(1, (zoneData.endTime - zoneData.startTime) / 60)
+    local scaledDuration = originalDuration * (1.0 + distanceFactor * 0.5)
+    CosmicVaultTerritory.setContestedZone(x, y, zoneData.invader, zoneData.defender, scaledDuration)
+
+    return distance >= SUPPLY_LINE_FAR_THRESHOLD
+end
+
 function SiegeEvent.initialize()
     if onClient() then return end
 
@@ -22,7 +58,8 @@ function SiegeEvent.initialize()
 
     if zones[key] then
         -- Sector is contested! Spawn the invasion fleet.
-        SiegeEvent.startSiege(zones[key])
+        local isFarSupplyLine = applySupplyLineScaling(x, y, zones[key])
+        SiegeEvent.startSiege(zones[key], isFarSupplyLine)
 
         for _, player in pairs({sector:getPlayers()}) do
             player:addScriptOnce("data/scripts/player/ui/cw_battlefieldhud.lua")
@@ -30,7 +67,7 @@ function SiegeEvent.initialize()
     end
 end
 
-function SiegeEvent.startSiege(zoneData)
+function SiegeEvent.startSiege(zoneData, isFarSupplyLine)
     local sector = Sector()
     local targetStation = nil
 
@@ -112,6 +149,23 @@ function SiegeEvent.startSiege(zoneData)
         position = generator:getPositionInSector()
     end
 
+    -- v4.0.0 Supply Lines: an invasion launched from far beyond the invader's
+    -- own home sector has a genuine weak point -- a lightly-defended supply convoy whose
+    -- destruction collapses the whole siege outright, regardless of how many troop
+    -- transports are still standing. A nearby invasion has no such convoy; force
+    -- projection close to home doesn't need one.
+    if isFarSupplyLine then
+        local convoy = ShipGenerator.createFreighterShip(invadingFaction, generator:getPositionInSector(), 8000)
+        convoy.title = "Invasion Supply Convoy"%_T
+        convoy.name = "Invader"
+        ShipAI(convoy.index):setAggressive()
+        -- zoneData.startTime is passed through so the "cut" flag it sets on
+        -- destruction (cw_supply_convoy.lua) is scoped to this specific siege instance,
+        -- not just the bare sector -- same reasoning as the scaling marker above.
+        convoy:addScriptOnce("data/scripts/entity/cw_supply_convoy.lua", tostring(zoneData.startTime))
+        sector:broadcastChatMessage(targetStation, ChatMessageType.Warning, "This invasion is running on a long supply line -- find and destroy their supply convoy to collapse the whole siege!"%_T)
+    end
+
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
     local CosmicVaultScaling = include("cosmicvaultscaling")
     local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
@@ -165,12 +219,23 @@ function SiegeEvent.updateServer(timeStep)
                 end
             end
 
+            -- v4.0.0 Supply Lines: a destroyed supply convoy collapses the siege
+            -- immediately, the same as routing every troop transport. Keyed by
+            -- zone.startTime (see the scaling marker's own comment above) so a stale flag
+            -- from a past, already-resolved siege in this same sector can never falsely
+            -- match a brand new one.
+            local supplyLineCut = sector:getValue("cw_supplyline_cut_" .. tostring(zone.startTime))
+
             -- If no transports are left and time hasn't run out yet, the defenders won!
-            if not invadersPresent then
+            if not invadersPresent or supplyLineCut then
                 -- Remove the zone so it doesn't trigger resolveSiege in the background
                 CosmicVaultTerritory.removeContestedZone(x, y)
 
-                sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_t)
+                if supplyLineCut and invadersPresent then
+                    sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! Without their supply convoy, the invasion force has no choice but to withdraw."%_T)
+                else
+                    sector:broadcastChatMessage("Server", ChatMessageType.Information, "Defense successful! The invading forces have been routed."%_T)
+                end
 
                 -- Cosmic War/Chronicles: Wartime Propaganda Beacons
                 if random():test(0.05) then

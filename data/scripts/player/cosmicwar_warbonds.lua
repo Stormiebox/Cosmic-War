@@ -76,6 +76,31 @@ function CW_Warbonds.cashOutEarly(factionIndex)
     return payout
 end
 
+-- v4.0.0: read-only preview for the Galactic Politics tab's War Room sub-tab -- "what
+-- would this bond pay out if the war ended right now." Reuses checkWarbondStatus()'s
+-- exact famine-outcome formula (including the relief-during-hold correction) so the
+-- number shown is never just a plausible guess; it mutates nothing.
+function CW_Warbonds.getActiveBonds()
+    local server = Server()
+    local out = {}
+    for factionIndex, bond in pairs(activeBonds) do
+        local currentFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
+        local rawFamineDelta = currentFamine - (bond.initialFamine or 0)
+        local reliefDuringHold = CosmicWarBridge.getFamineReliefApplied(factionIndex) - (bond.initialReliefApplied or 0)
+        local famineDelta = rawFamineDelta + reliefDuringHold
+        local outcomeQuality = 1.0 - math.min(1.0, math.max(0, famineDelta) / 150)
+        local payoutMultiplier = outcomeQuality * 3.0
+
+        table.insert(out, {
+            factionIndex = factionIndex,
+            amount = bond.amount or 0,
+            projectedMultiplier = payoutMultiplier,
+            projectedPayout = math.floor((bond.amount or 0) * payoutMultiplier)
+        })
+    end
+    return out
+end
+
 function CW_Warbonds.checkWarbondStatus()
     local player = Player()
 
@@ -116,14 +141,14 @@ function CW_Warbonds.checkWarbondStatus()
                     local payoutMultiplier = outcomeQuality * 3.0
 
                     if payoutMultiplier <= 0.05 then
-                        player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into suffered catastrophic losses during the war. Your bonds are now worthless paper.")
+                        player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into suffered catastrophic losses during the war. Your bonds are now worthless paper."%_T)
                     else
                         local payout = math.floor(bond.amount * payoutMultiplier)
                         player:receive("Matured Warbonds Payout", payout)
                         player:sendChatMessage("Cosmic War Bank", 0, "Your Warbonds for %1% have matured following the war's end! Paid out %2% Credits (%3%% return, based on how costly the war was for them)."%_T, faction.name, createMonetaryString(payout), tostring(math.floor(payoutMultiplier * 100)))
                     end
                 else
-                    player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into has collapsed completely. Your bonds are now worthless paper.")
+                    player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into has collapsed completely. Your bonds are now worthless paper."%_T)
                 end
 
                 activeBonds[factionIndex] = nil

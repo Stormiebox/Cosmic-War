@@ -18,6 +18,7 @@ function initialize(...)
             galaxy:addScriptOnce("data/scripts/server/background/cosmicwarsiege_server.lua")
             galaxy:addScriptOnce("data/scripts/server/background/cosmicwardefensegenerators.lua")
             galaxy:addScriptOnce("data/scripts/server/background/cosmicwarsubspacecorridors.lua")
+            galaxy:addScriptOnce("data/scripts/server/background/cosmicwarweariness.lua")
         end
     end
 end
