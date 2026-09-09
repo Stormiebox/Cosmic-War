@@ -218,17 +218,13 @@ function getBulletin(station)
 end
 
 -- Added by Cosmic War v3.0.0: Massive reputation penalty on abandoning a War Contract
-local cw_mission_abandon_original = mission.abandon
-mission.abandon = function()
-    if onServer() then
-        local player = Player()
-        local giverIndex = mission.data.custom.giverIndex
-        if giverIndex and giverIndex > 0 then
-            CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
-            local giverFaction = Faction(giverIndex)
-            local giverName = giverFaction and giverFaction.name or "Unknown"%_T
-            player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
-        end
+mission.globalPhase.onAbandon = function()
+    local player = Player()
+    local giverIndex = mission.data.custom.giverIndex
+    if giverIndex and giverIndex > 0 then
+        CosmicVaultFaction.changeRelations(player.index, giverIndex, -25000)
+        local giverFaction = Faction(giverIndex)
+        local giverName = giverFaction and giverFaction.name or "Unknown"%_T
+        player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
     end
-    if cw_mission_abandon_original then cw_mission_abandon_original() end
 end

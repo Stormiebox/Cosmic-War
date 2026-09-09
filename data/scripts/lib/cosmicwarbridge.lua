@@ -417,9 +417,14 @@ function CosmicWarBridge.updateFrontlines()
     end
 
     server:setValue("cw_frontline_pairs", table.concat(pairKeys, ","))
-    -- Delimited on both ends so a substring search for ",x,y," can't false-positive
-    -- match a longer coordinate that merely contains the same digits.
-    server:setValue("cw_frontline_sectors", "," .. table.concat(combinedParts, ",") .. ",")
+    -- v4.0.0 fix: each entry is "x,y", so joining entries with "," too let a query's
+    -- ";"-free boundary land ON a real coordinate's digits at the seam between two
+    -- adjacent entries (e.g. entries "1,2" and "3,4" joined as "1,2,3,4" spuriously
+    -- matches a query for (2,3), a sector that was never actually recorded). ";" never
+    -- appears inside a coordinate, so it's a safe entry separator distinct from the ","
+    -- used *within* one coordinate -- isFrontlineSector() below searches for
+    -- ";x,y;" against this same delimiter scheme.
+    server:setValue("cw_frontline_sectors", ";" .. table.concat(combinedParts, ";") .. ";")
 end
 
 --- Returns the {x,y} sector list for one warring pair (pairKey = "min:max" faction
@@ -459,7 +464,7 @@ function CosmicWarBridge.isFrontlineSector(x, y)
     local sectorsStr = server:getValue("cw_frontline_sectors")
     if type(sectorsStr) ~= "string" or sectorsStr == "" then return false end
 
-    return string.find(sectorsStr, "," .. x .. "," .. y .. ",", 1, true) ~= nil
+    return string.find(sectorsStr, ";" .. x .. "," .. y .. ";", 1, true) ~= nil
 end
 
 --- v4.0.0 Occupation & Insurgency: reads back the marker

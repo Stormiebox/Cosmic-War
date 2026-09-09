@@ -10,7 +10,7 @@ local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
--- v4.0.0 Final Pass: the enemy has been running the same playbook the
+-- v4.0.0: the enemy has been running the same playbook the
 -- Intelligence Network gives the player. Destroying their forward listening post
 -- blinds their next organic expansion roll (cosmicwarexpansion.lua's
 -- getExpansionBlindMultiplier) for a real period -- Intel becomes a contested
@@ -116,7 +116,10 @@ mission.phases[1].triggers = {
                         server:setValue("cw_expansion_blinded_until_" .. tostring(enemyIndex), (server.unpausedRuntime or 0) + BLIND_DURATION)
                     end
                     CosmicWarBridge.grantIntel(Player(), enemyIndex, 15)
-                    Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 0, "Their listening post is gone. They're blind to their own expansion options for a while -- and we picked up 15 Intel from the wreckage."%_T)
+                    local giverFaction = Faction(mission.data.custom.giverIndex)
+                    if giverFaction then
+                        Player():sendChatMessage(giverFaction.name, 0, "Their listening post is gone. They're blind to their own expansion options for a while -- and we picked up 15 Intel from the wreckage."%_T)
+                    end
                 end
             end
 
@@ -187,8 +190,13 @@ function getBulletin(station)
     }
 end
 
-local cw_mission_abandon_original = mission.abandon
-mission.abandon = function()
+-- Framework note: onAbandon() (structuredmission.lua) dispatches to
+-- mission.currentPhase.onAbandon / mission.globalPhase.onAbandon, never to a
+-- "mission.abandon" field -- that field was dead weight the framework never
+-- read, so the relations penalty below never fired. globalPhase is used
+-- since the penalty applies regardless of which phase is active.
+local cw_mission_abandon_original = mission.globalPhase.onAbandon
+mission.globalPhase.onAbandon = function()
     if onServer() then
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex

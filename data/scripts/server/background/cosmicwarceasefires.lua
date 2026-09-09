@@ -172,7 +172,11 @@ function CosmicWarCeasefires.update(timeStep)
                             -- actually crossed this threshold softens the outcome -- a
                             -- negotiated peace costs the loser less than a war that simply
                             -- ran its course. One-shot: the flag is consumed here.
-                            local armisticeKey = "cw_armistice_" .. pairKey
+                            -- Must match the underscore-delimited key format cw_armistice_escort.lua
+                            -- (and CosmicWarBridge's own warScorePairKey) actually writes -- pairKey
+                            -- above is colon-delimited and only used for this function's own
+                            -- processedPairs dedup, never for a persisted server value key.
+                            local armisticeKey = "cw_armistice_" .. tostring(left) .. "_" .. tostring(right)
                             local famineConcession = 15
                             if server:getValue(armisticeKey) then
                                 famineConcession = 5

@@ -9,7 +9,7 @@ include("structuredmission")
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
--- v4.0.0 Final Pass: Decisive Push (already shipped) lets a player decide WHO wins
+-- v4.0.0: Decisive Push (already shipped) lets a player decide WHO wins
 -- a war that's nearly over. Nothing lets them shape HOW it ends -- this is the
 -- first contract where the outcome is a negotiated settlement rather than a body
 -- count. Only offered once a war's War Score has reached 200-249 (close to, but
@@ -209,8 +209,13 @@ function getBulletin(station)
     }
 end
 
-local cw_mission_abandon_original = mission.abandon
-mission.abandon = function()
+-- Framework note: onAbandon() (structuredmission.lua) dispatches to
+-- mission.currentPhase.onAbandon / mission.globalPhase.onAbandon, never to a
+-- "mission.abandon" field -- that field was dead weight the framework never
+-- read, so the relations penalty below never fired. globalPhase is used
+-- since the penalty applies regardless of which phase is active.
+local cw_mission_abandon_original = mission.globalPhase.onAbandon
+mission.globalPhase.onAbandon = function()
     if onServer() then
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex

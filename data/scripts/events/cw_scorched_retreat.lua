@@ -7,7 +7,7 @@ local CosmicWarBridge = include("cosmicwarbridge")
 local CosmicVaultEconomy = include("cosmicvaulteconomy")
 
 -- namespace CW_ScorchedRetreatEvent
--- v4.0.0 Final Pass: fires only against a faction that's losing badly on War
+-- v4.0.0: fires only against a faction that's losing badly on War
 -- Score (|score| >= 100, from the loser's perspective) -- narrated as already
 -- having happened by the time the player arrives, rather than something the
 -- player resolves. A losing faction demolished its own station here rather

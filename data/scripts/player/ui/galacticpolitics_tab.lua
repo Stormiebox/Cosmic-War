@@ -294,8 +294,9 @@ if onClient() then
         -- getFactionTraitsSafe() already computes when this faction has none of this
         -- mod's own nine custom traits assigned (getPrimaryTraitInfo() only ever
         -- covers those nine, by design).
-        local traitValue = data.traitName or concatLocalizedTraits(data.traits) or "Unknown"%_t
-        table.insert(rows, { label = "Trait"%_t, value = traitValue, tooltip = data.traitDesc })
+        local traitValue = (data.traitName and data.traitName%_t) or concatLocalizedTraits(data.traits) or "Unknown"%_t
+        local traitTooltip = data.traitDesc and data.traitDesc%_t or nil
+        table.insert(rows, { label = "Trait"%_t, value = traitValue, tooltip = traitTooltip })
         if data.homeX and data.homeY then
             table.insert(rows, { label = "Home Sector"%_t, value = string.format("(%d:%d)", data.homeX, data.homeY) })
         end
@@ -559,7 +560,7 @@ function GalacticPoliticsTab.serverFetchData()
 
                     -- Cosmic War: Translates raw relational values into descriptive diplomatic states.
                         local rel = f:getRelations(e.index) or 0
-                        local status = "Hostile"
+                        local status
                         if rel <= -80000 then status = "Total War"
                         elseif rel <= -45000 then status = "Active Conflict"
                         elseif rel < 0 then status = "Cold War"
@@ -585,23 +586,25 @@ function GalacticPoliticsTab.serverFetchData()
                         -- v4.0.0 War Score & Attrition: positive favors faction A.
                         local warScore = CosmicWarBridge.getWarScore and CosmicWarBridge.getWarScore(f.index, e.index) or 0
 
-                        local intelA = CosmicWarBridge.getIntel and CosmicWarBridge.getIntel(player, f.index) or 0
-                        local intelB = CosmicWarBridge.getIntel and CosmicWarBridge.getIntel(player, e.index) or 0
-
+                        -- Note: this row deliberately does NOT carry traits/Intel fields.
+                        -- The Conflicts table's own eight columns never read them (verified
+                        -- against every cellText/sortValue/cellColor below), and the Dossier
+                        -- and War Room sub-tabs already fetch that same data themselves, on
+                        -- demand, only for the pair a player actually selects/opens -- see
+                        -- serverFetchDossier() and serverFetchWarRoom() below. Computing
+                        -- getFactionTraitsSafe() and CosmicWarBridge.getIntel() twice per
+                        -- pair here as well would just be paid-for-and-thrown-away work on
+                        -- every refresh.
                         table.insert(conflicts, {
                             warScore = warScore,
                             factionA = string.gsub(fName, "%s*/%*.-%*/%s*", ""),
                             factionAIndex = f.index,
-                            traitsA = getFactionTraitsSafe(f),
                             bountyA = bountyA,
                             famineA = famineA,
-                            intelA = intelA,
                             factionB = string.gsub(eName, "%s*/%*.-%*/%s*", ""),
                             factionBIndex = e.index,
-                            traitsB = getFactionTraitsSafe(e),
                             bountyB = bountyB,
                             famineB = famineB,
-                            intelB = intelB,
                             heat = math.floor(heat * 100),
                             relation = rel,
                             status = status
@@ -614,24 +617,22 @@ function GalacticPoliticsTab.serverFetchData()
 
 
     if server:getValue("eclipse_fully_awake") then
-        -- v4.0.0 fix: this synthetic row previously omitted warScore/intelA/intelB
-        -- entirely, unlike every real conflict row -- harmless while every reader
-        -- nil-guarded those fields, but a shape mismatch waiting to break the next
-        -- feature added to the row renderer. Full shape now, matching every other row.
+        -- v4.0.0 fix: this synthetic row now carries the exact same field set as every
+        -- real conflict row above (warScore included) -- it previously omitted warScore
+        -- entirely, a shape mismatch that was harmless only because every reader happened
+        -- to nil-guard the field. traitsA/traitsB/intelA/intelB are gone from real rows
+        -- too now (see the comment above the real row's own table.insert), so this row
+        -- matches by simply not having them either.
         table.insert(conflicts, 1, {
             warScore = 0,
             factionA = "The Eclipse",
             factionAIndex = 0,
-            traitsA = {"Genocidal", "Existential Threat"},
             bountyA = 0,
             famineA = 0,
-            intelA = 0,
             factionB = "Galactic Civilizations",
             factionBIndex = 0,
-            traitsB = {},
             bountyB = 0,
             famineB = 0,
-            intelB = 0,
             heat = 100,
             relation = -100000,
             status = "Total Eradication"

@@ -10,7 +10,7 @@ local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
--- v4.0.0 Final Pass: the first War Contract gated ON Intel rather than granting
+-- v4.0.0: the first War Contract gated ON Intel rather than granting
 -- it -- Force Recon/Sensor Deployment/Black Box Retrieval/Deniable Raid/Counter-
 -- Intelligence Sweep all pay Intel out; nothing before this spent it on
 -- anything, which is what turns a ledger into a progression track instead of a
@@ -49,6 +49,14 @@ function initialize(factionIndex)
         local player = Player()
         if not player then terminate() return end
 
+        local x, y = Sector():getCoordinates()
+        local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
+        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, insideBarrier)
+        if not targetX or not targetY then terminate() return end
+
+        -- Spent only after every other termination check above has passed --
+        -- this Intel cost is not refunded, so it must not be burned on a dead
+        -- end that never actually grants the mission.
         if not CosmicWarBridge.spendIntel(player, enemyIndex, INTEL_COST) then
             player:sendChatMessage(giverFaction.name, 1, string.format("This op needs %d Intel against %s before we can move -- you don't have enough banked yet."%_T, INTEL_COST, enemyFaction.name))
             terminate()
@@ -59,10 +67,6 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
-        local x, y = Sector():getCoordinates()
-        local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
-        local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, insideBarrier)
-        if not targetX or not targetY then terminate() return end
         mission.data.location = { x = targetX, y = targetY }
 
         mission.data.description = {
@@ -185,8 +189,13 @@ function getBulletin(station)
     }
 end
 
-local cw_mission_abandon_original = mission.abandon
-mission.abandon = function()
+-- Framework note: onAbandon() (structuredmission.lua) dispatches to
+-- mission.currentPhase.onAbandon / mission.globalPhase.onAbandon, never to a
+-- "mission.abandon" field -- that field was dead weight the framework never
+-- read, so the relations penalty below never fired. globalPhase is used
+-- since the penalty applies regardless of which phase is active.
+local cw_mission_abandon_original = mission.globalPhase.onAbandon
+mission.globalPhase.onAbandon = function()
     if onServer() then
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex

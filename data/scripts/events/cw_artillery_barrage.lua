@@ -6,7 +6,7 @@ local SectorGenerator = include("SectorGenerator")
 include("randomext")
 
 -- namespace CW_ArtilleryBarrageEvent
--- v4.0.0 Final Pass: a stationary long-range platform, distinct from Orbital
+-- v4.0.0: a stationary long-range platform, distinct from Orbital
 -- Bombardment's mobile bombers. While it lives, it periodically re-applies the
 -- Shield Jammer debuff (cw_shieldjammer.lua, the same one Fleet Clash/Siege
 -- Event already use) to every present player ship -- shield regeneration stays

@@ -7,7 +7,7 @@ include("randomext")
 include("relations")
 
 -- namespace CW_BorderCheckpointEvent
--- v4.0.0 Final Pass: the first non-combat resolution path in this mod's dynamic
+-- v4.0.0: the first non-combat resolution path in this mod's dynamic
 -- events -- every existing one only ever resolves through a fight. A customs
 -- picket demands a toll; paying it or simply leaving it alone both work, fighting
 -- it works too, and none of the three is the "wrong" answer.

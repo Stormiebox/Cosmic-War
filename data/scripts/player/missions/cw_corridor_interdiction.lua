@@ -9,7 +9,7 @@ include("structuredmission")
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 
--- v4.0.0 Final Pass: Subspace Corridors (cosmicwarsubspacecorridors.lua) were a
+-- v4.0.0: Subspace Corridors (cosmicwarsubspacecorridors.lua) were a
 -- permanent galaxy change with no gameplay actually attached to them once torn --
 -- this gives the mechanic a reason to exist beyond travel convenience. Only
 -- offered against a faction whose OWN home sector is a real corridor endpoint
@@ -193,8 +193,13 @@ function getBulletin(station)
     }
 end
 
-local cw_mission_abandon_original = mission.abandon
-mission.abandon = function()
+-- Framework note: onAbandon() (structuredmission.lua) dispatches to
+-- mission.currentPhase.onAbandon / mission.globalPhase.onAbandon, never to a
+-- "mission.abandon" field -- that field was dead weight the framework never
+-- read, so the relations penalty below never fired. globalPhase is used
+-- since the penalty applies regardless of which phase is active.
+local cw_mission_abandon_original = mission.globalPhase.onAbandon
+mission.globalPhase.onAbandon = function()
     if onServer() then
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex

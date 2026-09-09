@@ -8,7 +8,7 @@ include("randomext")
 include("relations")
 
 -- namespace CW_PrisonerTransportEvent
--- v4.0.0 Final Pass: ties Extract POW's fiction into the ambient world -- a
+-- v4.0.0: ties Extract POW's fiction into the ambient world -- a
 -- lightly escorted POW convoy, out in the open rather than behind a heavily
 -- guarded facility. Destroy the escorts and let the transport survive to credit
 -- a War Score kill and pay out directly (rather than routing through Military

@@ -8,7 +8,7 @@ include("randomext")
 include("relations")
 
 -- namespace CW_FieldHospitalConvoyEvent
--- v4.0.0 Final Pass: same shape as cw_refugeeconvoy.lua, framed as a marked
+-- v4.0.0: same shape as cw_refugeeconvoy.lua, framed as a marked
 -- medical convoy instead of civilian refugees. Defending it (surviving the
 -- hunters) reduces the owner faction's Famine directly; destroying the convoy
 -- itself -- whether by the hunters or the player -- is treated as a war crime,

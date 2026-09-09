@@ -425,13 +425,17 @@ function CosmicWarController.updateServer(timeStep)
     local now = Server().unpausedRuntime
     local minSpacing = cfg.sectorPressureMinSpacing or 600
 
+    -- Independent of the two-faction requirement below AND of the
+    -- _lastEventAt cooldown that guards it -- that timestamp only advances when the
+    -- rest of this function runs all the way through (at least two live warring
+    -- factions present), which a freshly-occupied sector often won't have yet.
+    -- Insurgency uses its own separate INSURGENCY_MIN_SPACING gate instead, so it must
+    -- run before either check below, not after.
+    applyInsurgency(now)
+
     if (CosmicWarController._lastEventAt or 0) + minSpacing > now then
         return
     end
-
-    -- Independent of the two-faction requirement below -- a freshly-occupied
-    -- sector often has only the new owner physically present.
-    applyInsurgency(now)
 
     local factions = getAliveWarFactionsInSector()
     if #factions < 2 then

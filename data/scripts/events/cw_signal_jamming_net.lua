@@ -8,7 +8,7 @@ include("randomext")
 include("relations")
 
 -- namespace CW_SignalJammingNetEvent
--- v4.0.0 Final Pass: a genuine "fight your way out" state this mod otherwise
+-- v4.0.0: a genuine "fight your way out" state this mod otherwise
 -- lacks. A net of jammer drones periodically blocks hyperspace charge-up for
 -- every present player, the same Entity:blockHyperspace(time) API and
 -- continuous-reapplication pattern vanilla's own entity/blocker.lua uses --

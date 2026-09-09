@@ -6,7 +6,7 @@ local CosmicWarBridge = include("cosmicwarbridge")
 include("randomext")
 
 -- namespace CW_RunnerInterceptEvent
--- v4.0.0 Final Pass: an AI blockade runner tries to slip supplies through
+-- v4.0.0: an AI blockade runner tries to slip supplies through
 -- contested space while an enemy interceptor squadron hunts it down. The
 -- player can escort it (fight off the interceptors) or intercept it themselves
 -- (finish the job) -- either choice credits a different side's War Score, made

@@ -5,7 +5,7 @@ local ShipGenerator = include("shipgenerator")
 include("randomext")
 
 -- namespace CW_CoalitionMusterEvent
--- v4.0.0 Final Pass: Coalition Ceasefires (cosmicwarceasefires.lua) change a
+-- v4.0.0: Coalition Ceasefires (cosmicwarceasefires.lua) change a
 -- number and publish a news article -- nothing a player standing in the galaxy
 -- actually SEES. This fires only when the sector's controlling faction is
 -- currently one half of an active `cw_coalition_dampened_<pairKey>` pair (the

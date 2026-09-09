@@ -6,7 +6,7 @@ local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
 -- namespace CW_DefectionOfferEvent
--- v4.0.0 Final Pass: fires against a faction currently losing badly on War
+-- v4.0.0: fires against a faction currently losing badly on War
 -- Score (|score| >= 100 from its own perspective) -- one of its warships wants
 -- out and is offering to stand down for a price. Makes War Score personally
 -- consequential rather than only a background number. The interaction itself

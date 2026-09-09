@@ -29,7 +29,7 @@ local events = {
     { min = 120, max = 180, script = "data/scripts/events/cw_capital_ship_duel.lua", timer = 0, schedule = 0 },
     { min = 90,  max = 150, script = "data/scripts/events/cw_distress_beacon_trap.lua", timer = 0, schedule = 0 },
     { min = 130, max = 190, script = "data/scripts/events/cw_orbital_bombardment.lua", timer = 0, schedule = 0 },
-    -- v4.0.0 Final Pass: ten new events.
+    -- v4.0.0: ten new events.
     { min = 80,  max = 140, script = "data/scripts/events/cw_border_checkpoint.lua", timer = 0, schedule = 0 },
     { min = 120, max = 180, script = "data/scripts/events/cw_field_hospital_convoy.lua", timer = 0, schedule = 0 },
     { min = 110, max = 170, script = "data/scripts/events/cw_artillery_barrage.lua", timer = 0, schedule = 0 },
@@ -85,28 +85,28 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
 
         if isFob then
             player:setValue("cw_distress_fob_list", table.concat(newEntries, ";") .. (#newEntries > 0 and ";" or ""))
-            
+
             -- Spawn FOB
             include("galaxy")
             local SectorGenerator = include("SectorGenerator")
             local generator = SectorGenerator(x, y)
             local ShipGenerator = include("shipgenerator")
             local faction = Galaxy():getPirateFaction(Balancing_GetPirateLevel(x, y))
-            
+
             for i = 1, 3 do
                 local ship = ShipGenerator.createDefender(faction, generator:getPositionInSector())
                 ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
             end
-            
+
             local station = generator:createShipyard(faction)
             if station then
                 station.title = "Forward Operating Base"%_T
                 station:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
             end
-            
+
             -- Add hazard (Thunderstorm)
             Sector():addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
-            
+
             player:sendChatMessage("System", ChatMessageType.Warning, "Warning! Hostiles have established a Forward Operating Base in this sector!"%_T)
         end
     end
@@ -115,7 +115,7 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
     local pendingAmbushIndex = player:getValue("cw_pending_ambush")
     if pendingAmbushIndex and type(pendingAmbushIndex) == "number" then
         player:setValue("cw_pending_ambush", nil)
-        
+
         local bestEnemy = Faction(pendingAmbushIndex)
         if bestEnemy then
             local random = Random(Seed(Server().unpausedRuntime))

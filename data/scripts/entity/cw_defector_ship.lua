@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("relations")
 
 -- namespace CW_DefectorShip
--- v4.0.0 Final Pass: the interaction-owning half of Defection Offer
+-- v4.0.0: the interaction-owning half of Defection Offer
 -- (cw_defection_offer.lua). Same lesson as cw_checkpoint_picket.lua --
 -- ScriptUI():registerInteraction() only works from a script attached to the
 -- ship itself, in that script's own initialize().

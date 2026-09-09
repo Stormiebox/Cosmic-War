@@ -2,7 +2,7 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 include("relations")
 
 -- namespace CW_CheckpointPicket
--- v4.0.0 Final Pass: the interaction-owning half of Border Checkpoint
+-- v4.0.0: the interaction-owning half of Border Checkpoint
 -- (cw_border_checkpoint.lua). ScriptUI():registerInteraction() must be called from
 -- a script attached to the entity itself, in that script's own initialize() -- the
 -- sector event that spawns this ship has no entity-level UI context of its own to

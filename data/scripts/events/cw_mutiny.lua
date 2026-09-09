@@ -7,7 +7,7 @@ include("randomext")
 include("relations")
 
 -- namespace CW_MutinyEvent
--- v4.0.0 Final Pass: only fires against a faction with a serious Famine score --
+-- v4.0.0: only fires against a faction with a serious Famine score --
 -- one of its own warships turns on the fleet it was sailing with. Avorion's AI
 -- doesn't support one ship attacking a same-faction ally directly, so the
 -- mutineer's factionIndex is reassigned to the local pirate faction the instant

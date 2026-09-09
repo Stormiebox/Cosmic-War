@@ -45,12 +45,15 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
-        CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
-
         local x, y = Sector():getCoordinates()
         local insideBarrier = MissionUT.checkSectorInsideBarrier(x, y)
         local targetX, targetY = MissionUT.getSector(x, y, 2, 10, false, false, false, false, insideBarrier)
         if not targetX or not targetY then terminate() return end
+
+        -- Applied only after every other termination check above has passed --
+        -- this is an irreversible "act of war" cost with no matching mission
+        -- granted if getSector() had failed, so it must not fire on a dead end.
+        CosmicVaultFaction.changeRelations(Player().index, enemyIndex, -200000)
 
         mission.data.location = { x = targetX, y = targetY }
 
@@ -176,8 +179,13 @@ function getBulletin(station)
     }
 end
 
-local cw_mission_abandon_original = mission.abandon
-mission.abandon = function()
+-- Framework note: onAbandon() (structuredmission.lua) dispatches to
+-- mission.currentPhase.onAbandon / mission.globalPhase.onAbandon, never to a
+-- "mission.abandon" field -- that field was dead weight the framework never
+-- read, so the relations penalty below never fired. globalPhase is used
+-- since the penalty applies regardless of which phase is active.
+local cw_mission_abandon_original = mission.globalPhase.onAbandon
+mission.globalPhase.onAbandon = function()
     if onServer() then
         local player = Player()
         local giverIndex = mission.data.custom.giverIndex

@@ -44,7 +44,6 @@ function initialize(factionIndex)
         mission.data.giver = { factionIndex = fIndex }
 
         local x, y = Sector():getCoordinates()
-        mission.data.custom.giverCoords = { x = x, y = y }
         mission.data.custom.targetX = targetX
         mission.data.custom.targetY = targetY
         mission.data.location = { x = targetX, y = targetY }
