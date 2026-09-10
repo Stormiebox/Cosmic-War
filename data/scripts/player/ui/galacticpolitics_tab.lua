@@ -67,6 +67,13 @@ if onClient() then
     end
 
     function GalacticPoliticsTab.initialize()
+        -- v4.0.0: onPostRenderHud is an event callback, not an auto-invoked lifecycle
+        -- method -- it never fires without this registration. Confirmed against vanilla's
+        -- own structuredmission.lua (Player():registerCallback("onPostRenderHud", ...) in
+        -- its own initialize()) and matches Cosmic Vault's Cosmic Codex / Cosmic Overhaul's
+        -- Bulletin Board and Resource Display tabs, all of which register the same way.
+        Player():registerCallback("onPostRenderHud", "onPostRenderHud")
+
         local playerWindow = PlayerWindow()
 
         self.tab = playerWindow:createTab("Galactic Politics"%_t, "data/textures/icons/cw_galacticpolitics.png",
@@ -422,11 +429,35 @@ if onClient() then
         y = y + 14
         local summaryStr = "Cosmic War Simulation:"%_t .. "\n" ..
             "Conflict escalates dynamically based on 'War Heat', triggering massive fleet clashes, bounties, and economic sanctions."%_t .. "\n\n" ..
-            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders can change dynamically through sieges and expansion -- but do not move on the static galaxy map projection itself."%_t .. "\n\n" ..
-            "Tip: Use /cosmicwarbounties or /cosmicwarintel in chat for a quick text summary without opening this tab."%_t
+            "Note: While politics and skirmishes are highly dynamic, faction station ownership and map borders can change dynamically through sieges and expansion -- but do not move on the static galaxy map projection itself instantly, it takes time."%_t .. "\n\n" ..
+            "Tip: Use /cosmicwar main command in chat to bring up a help menu with available Cosmic War commands and information regarding said commands."%_t
         local summaryLabel = container:createLabel(Rect(margin, y, width - margin, container.size.y - margin), summaryStr, 15)
         summaryLabel.wordBreak = true
         summaryLabel:setTopLeftAligned()
+    end
+
+    -- v4.0.0: Galactic Politics hotkey -- same CCM keybind + onPostRenderHud pattern
+    -- Cosmic Vault's Cosmic Codex and Cosmic Overhaul's Bulletin Board/Resource Display
+    -- tabs already use (cosmicvaultconfig.lua/cosmicoverhaulconfig.lua's own "UI &
+    -- Keybinds" pages). Unbound by default -- see cosmicwarconfig.lua's own "UI &
+    -- Keybinds" page, which declares no default for this key, exactly like every other
+    -- keybind option in the suite.
+    function GalacticPoliticsTab.onPostRenderHud(state)
+        local ccm = include("ccm")
+        if ccm then
+            local cwcfg = ccm.bind("Cosmic_War")
+            if cwcfg.isKeyComboDown("hotkeyGalacticPolitics") then
+                local pw = PlayerWindow()
+                if pw and self.tab then
+                    pw:show()
+                    if pw.selectTab then
+                        pw:selectTab(self.tab)
+                    elseif pw.activateTab then
+                        pw:activateTab(self.tab)
+                    end
+                end
+            end
+        end
     end
 end
 

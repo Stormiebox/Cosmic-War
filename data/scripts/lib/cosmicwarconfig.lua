@@ -11,6 +11,12 @@ if ccm then
     ccm.register("Cosmic_War", {
         pages = {
             {
+                title = "UI & Keybinds",
+                options = {
+                    { key = "hotkeyGalacticPolitics", type = "keybind", title = "Open Galactic Politics", description = "Hotkey to quickly open the Galactic Politics tab." },
+                },
+            },
+            {
                 title = "War & Skirmish Configurations",
                 options = {
                     { key = "sectorPressureInterval", type = "number", title = "Sector Pressure Interval (s)", description = "Time between war skirmish spawn checks.", default = 180, min = 30, max = 1800 },

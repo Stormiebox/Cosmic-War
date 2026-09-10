@@ -4,9 +4,13 @@ include("relations")
 -- namespace CW_CheckpointPicket
 -- v4.0.0: the interaction-owning half of Border Checkpoint
 -- (cw_border_checkpoint.lua). ScriptUI():registerInteraction() must be called from
--- a script attached to the entity itself, in that script's own initialize() -- the
+-- a script attached to the entity itself, in that script's own initUI() -- the
 -- sector event that spawns this ship has no entity-level UI context of its own to
--- register an interaction from.
+-- register an interaction from. initUI() is its own engine-invoked lifecycle callback,
+-- distinct from initialize() -- ScriptUI() is not yet bound during initialize() and
+-- crashes with "attempt to call global 'ScriptUI' (a nil value)" if called there;
+-- every vanilla entity script that registers an interaction (civilship.lua,
+-- crewtransport.lua, bulletinboard.lua, etc.) does so from initUI(), never initialize().
 CW_CheckpointPicket = {}
 
 local TOLL_COST = 75000
@@ -14,8 +18,11 @@ local TOLL_COST = 75000
 function CW_CheckpointPicket.initialize(factionIndex)
     if onServer() then
         CW_CheckpointPicket.factionIndex = factionIndex
-        ScriptUI():registerInteraction("Pay the Toll (75,000 Cr)"%_t, "payToll")
     end
+end
+
+function CW_CheckpointPicket.initUI()
+    ScriptUI():registerInteraction("Pay the Toll (75,000 Cr)"%_t, "payToll")
 end
 
 function CW_CheckpointPicket.payToll()

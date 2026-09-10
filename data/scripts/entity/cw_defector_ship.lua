@@ -5,15 +5,22 @@ include("relations")
 -- v4.0.0: the interaction-owning half of Defection Offer
 -- (cw_defection_offer.lua). Same lesson as cw_checkpoint_picket.lua --
 -- ScriptUI():registerInteraction() only works from a script attached to the
--- ship itself, in that script's own initialize().
+-- ship itself, in that script's own initUI() -- a separate, engine-invoked
+-- lifecycle callback from initialize(). ScriptUI() is not yet bound during
+-- initialize() and crashes with "attempt to call global 'ScriptUI' (a nil
+-- value)" if called there (confirmed live in cw_checkpoint_picket.lua's own
+-- serverlog crash, same v4.0.0 pattern copied into this file).
 CW_DefectorShip = {}
 
 function CW_DefectorShip.initialize(factionIndex, cost)
     if onServer() then
         CW_DefectorShip.factionIndex = factionIndex
         CW_DefectorShip.cost = cost or 200000
-        ScriptUI():registerInteraction("Accept Defection"%_t, "acceptDefection")
     end
+end
+
+function CW_DefectorShip.initUI()
+    ScriptUI():registerInteraction("Accept Defection"%_t, "acceptDefection")
 end
 
 function CW_DefectorShip.acceptDefection()
