@@ -83,7 +83,7 @@ function initialize(factionIndex)
 
         mission.data.description = {
             { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },
-            { text = "Deploy deep-space sensor buoys in 3 enemy sectors to monitor their fleet movements."%_T },
+            { text = "Deploy deep-space sensor buoys in 3 enemy sectors to monitor their fleet movements. Buoys deployed: ${deployedCount}/3"%_T, arguments = { deployedCount = 0 } },
             { text = "Head to sector (${location.x}:${location.y})"%_T, arguments = { location = mission.data.location }, bulletPoint = true, fulfilled = false },
             { text = "Deploy the buoy at the exact center (0, 0, 0). (Fly within 500m)"%_T, bulletPoint = true, fulfilled = false, visible = false }
         }
@@ -127,6 +127,15 @@ end
 
 mission.phases[1].triggers = {
     {
+        -- This one trigger has to fire three separate times, once per buoy -- but
+        -- structuredmission.lua's updatePhaseTriggers() sets trigger.triggered = true after ANY
+        -- successful callback and then permanently skips re-evaluating a trigger unless
+        -- repeating is explicitly set (`if trigger.repeating or not trigger.triggered then`).
+        -- Without this, buoy #1 fired fine, then the trigger simply stopped being checked at
+        -- all -- buoy #2 and #3 could never complete no matter how close the player got. The
+        -- per-sector "deployed_x_y" key below already guards against re-firing for a sector
+        -- that's already done, so repeating here is safe.
+        repeating = true,
         condition = function()
             if onClient() then return false end
             if not atTargetLocation() then return false end
@@ -161,6 +170,7 @@ mission.phases[1].triggers = {
             end
             
             mission.data.custom.deployedCount = mission.data.custom.deployedCount + 1
+            mission.data.description[2].arguments.deployedCount = mission.data.custom.deployedCount
             if mission.data.custom.deployedCount >= 3 then
                 mission.data.description[4].fulfilled = true
                 sync()

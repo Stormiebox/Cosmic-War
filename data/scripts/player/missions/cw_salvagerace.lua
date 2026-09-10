@@ -9,6 +9,7 @@ local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
+local PlanGenerator = include("plangenerator")
 
 -- v4.0.0: race a defended battlefield's wreckage before it's cleared away.
 -- Reward scales with the giver/enemy pair's current War Score margin (lopsided.margin =
@@ -124,6 +125,35 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
         local resources = { player:getResources() }
         mission.data.custom.baselineAmount = resources[matType + 1] or 0
 
+        -- Live progress readout: swap the static bullet for a running counter now that there's
+        -- actual progress to show.
+        mission.data.description[3].text = "Salvaging ${material}: ${progress}/${amount}"%_T
+        mission.data.description[3].arguments = {
+            material = mission.data.custom.materialName,
+            progress = 0,
+            amount = mission.data.custom.materialAmount
+        }
+
+        sync()
+    end
+end
+
+-- Live progress readout: see cw_scorched_earth.lua's own updateServer for why this hook is
+-- guaranteed server-only and how often it polls. Only syncs when the displayed number changes.
+mission.phases[1].updateServer = function(timeStep)
+    if not mission.data.custom.spawned or mission.data.description[3].fulfilled then return end
+
+    local player = Player()
+    local matType = mission.data.custom.materialType
+    local requiredAmount = mission.data.custom.materialAmount
+    local baselineAmount = mission.data.custom.baselineAmount or 0
+
+    local resources = { player:getResources() }
+    local current = resources[matType + 1] or 0
+    local progress = math.max(0, math.min(requiredAmount, current - baselineAmount))
+
+    if progress ~= mission.data.description[3].arguments.progress then
+        mission.data.description[3].arguments.progress = progress
         sync()
     end
 end
@@ -173,10 +203,31 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    local requiredMaterial = Material(mission.data.custom.materialType)
 
+    -- Two compounding reasons the field was never actually salvageable for the required
+    -- material. First: SectorGenerator:createWreckage()'s own vanilla implementation calls its
+    -- sibling createUnstrippedWreckage() through the class table instead of `self`
+    -- (`SectorGenerator:createUnstrippedWreckage(...)` inside SectorGenerator.lua, not
+    -- `self:...`), which is harmless for the pieces it creates directly, but createWreckage()'s
+    -- own remaining post-processing runs with the correct self and rolls a real chance --
+    -- `1 - chanceForUnstrippedWreckage`, ~90% at default settings -- to strip each piece down to
+    -- bare Hull blocks with zero harvestable material, via ShipUtility.stripWreckage(). Fine for
+    -- ambient battlefield debris; fatal for a "salvage X material from this field" mechanic, since
+    -- on average only half of one out of the five spawned pieces would even keep its resources.
+    -- Second: even an unstripped piece is no help if it isn't made of the right material --
+    -- createWreckage() builds its plan via PlanGenerator.makeShipPlan/makeFreighterPlan with no
+    -- material argument, which falls back to PlanGenerator.selectMaterial(faction) -- the
+    -- SPAWNING FACTION's own default tier, unrelated to this contract's pre-chosen matType.
+    -- Fixed by building each wreck's plan directly from the required material and spawning via
+    -- createUnstrippedWreckage() -- the same function createWreckage() calls internally, minus
+    -- its strip roll -- called on our own generator instance so its `self` is correct throughout.
     for i = 1, 5 do
         local position = generator:getPositionInSector()
-        generator:createWreckage(enemyFaction, nil, 10, position)
+        local plan = random():test(0.5)
+            and PlanGenerator.makeShipPlan(enemyFaction, nil, nil, requiredMaterial)
+            or PlanGenerator.makeFreighterPlan(enemyFaction, nil, nil, requiredMaterial)
+        generator:createUnstrippedWreckage(enemyFaction, plan, 10, position)
     end
 
     -- Rival scavengers and a defensive patrol -- you're not the only one after this field.

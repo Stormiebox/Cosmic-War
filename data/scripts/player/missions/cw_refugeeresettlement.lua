@@ -71,7 +71,7 @@ function initialize(factionIndex)
         mission.data.description = {
             { text = "You accepted a Refugee Resettlement contract from ${giver}. They want to give their people fleeing famine a real fresh start."%_T, arguments = { giver = giverFaction.name } },
             { text = "Gather ${amount} ${material} and deliver it to sector (${x}:${y}) -- the site of a planned new settlement."%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = targetX, y = targetY } },
-            { text = "Deliver ${amount} ${material} to (${x}:${y})"%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = targetX, y = targetY }, bulletPoint = true, fulfilled = false }
+            { text = "Deliver ${material} to (${x}:${y}): ${progress}/${amount}"%_T, arguments = { amount = materialAmount, material = requiredMaterial.name, x = targetX, y = targetY, progress = 0 }, bulletPoint = true, fulfilled = false }
         }
 
         local baseReward = math.floor(60000 + famineScore * 900)
@@ -92,6 +92,29 @@ mission.globalPhase.noPlayerEventsTargetSector = true
 
 mission.phases[1] = {}
 mission.phases[1].showUpdateOnEnd = true
+
+-- Live progress readout: this mission has no travel-then-act structure and no baseline
+-- snapshot -- the player can gather the material from anywhere, even before accepting, and the
+-- completion trigger below checks raw current stock (plus location). The live counter shows
+-- that same raw current stock, staying consistent with what actually completes the contract.
+-- See cw_scorched_earth.lua's own updateServer for why this hook is guaranteed server-only and
+-- how often it polls.
+mission.phases[1].updateServer = function(timeStep)
+    if mission.data.description[3].fulfilled then return end
+
+    local player = Player()
+    local matType = mission.data.custom.materialType
+    local requiredAmount = mission.data.custom.materialAmount
+
+    local resources = { player:getResources() }
+    local current = resources[matType + 1] or 0
+    local progress = math.max(0, math.min(requiredAmount, current))
+
+    if progress ~= mission.data.description[3].arguments.progress then
+        mission.data.description[3].arguments.progress = progress
+        sync()
+    end
+end
 
 mission.phases[1].triggers = {
     {

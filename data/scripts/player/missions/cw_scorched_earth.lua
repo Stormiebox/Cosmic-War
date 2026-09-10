@@ -11,6 +11,8 @@ local ShipGenerator = include("shipgenerator")
 local SectorGenerator = include("SectorGenerator")
 local CosmicWarBridge = include("cosmicwarbridge")
 
+local PATROL_DELAY = 45 -- seconds of mining time before patrols arrive, matching the mission's own "strip-mine ... before their patrols arrive" briefing
+
 -- v4.0.0: the first War Contract that pushes a faction's Famine Score UP as
 -- a direct combat-side action, mirroring Relief Convoy's pull down. Strip-mine ore from the
 -- enemy's own contested territory and keep it -- unlike Resource Heist, nothing is handed
@@ -109,6 +111,7 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     if not mission.data.custom.spawned then
         spawnEvent(x, y)
         mission.data.custom.spawned = true
+        mission.data.custom.spawnTime = Server().unpausedRuntime
 
         -- Unlike the delivery contracts (Resource Heist, Relief Convoy, etc.), this mission
         -- never pays the mined material away -- the player keeps it, that's the point. So the
@@ -121,6 +124,40 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
         local resources = { player:getResources() }
         mission.data.custom.baselineAmount = resources[matType + 1] or 0
 
+        -- Live progress readout: swap the "head to sector" bullet for a running counter now
+        -- that there's actual progress to show, matching the mission's own "strip-mine ore"
+        -- framing rather than a generic delivery-quest checklist.
+        mission.data.description[3].text = "Mining ${material}: ${progress}/${amount}"%_T
+        mission.data.description[3].arguments = {
+            material = mission.data.custom.materialName,
+            progress = 0,
+            amount = mission.data.custom.materialAmount
+        }
+
+        sync()
+    end
+end
+
+-- Live progress readout: mission.phases[N].updateServer is a real structuredmission.lua
+-- lifecycle hook (dispatched from the framework's own updateServer(), which the engine already
+-- guarantees only ever fires server-side -- see ExamplePhase.updateServer in the vanilla
+-- framework's own template) polled on the phase's updateInterval (1 second by default, unset
+-- here). Only syncs when the displayed number actually changes, so idle time between mining
+-- runs doesn't spam a sync every second.
+mission.phases[1].updateServer = function(timeStep)
+    if not mission.data.custom.spawned or mission.data.description[3].fulfilled then return end
+
+    local player = Player()
+    local matType = mission.data.custom.materialType
+    local requiredAmount = mission.data.custom.materialAmount
+    local baselineAmount = mission.data.custom.baselineAmount or 0
+
+    local resources = { player:getResources() }
+    local current = resources[matType + 1] or 0
+    local progress = math.max(0, math.min(requiredAmount, current - baselineAmount))
+
+    if progress ~= mission.data.description[3].arguments.progress then
+        mission.data.description[3].arguments.progress = progress
         sync()
     end
 end
@@ -168,6 +205,30 @@ mission.phases[1].triggers = {
             reward()
             accomplish()
         end
+    },
+    {
+        -- The briefing promises the player a window to mine before patrols show up ("strip-mine
+        -- ... before their patrols arrive"), but the defenders were being spawned immediately
+        -- alongside the asteroid field in spawnEvent() -- there was never actually a window.
+        -- Delayed here to match what the mission already tells the player.
+        condition = function()
+            if onClient() then return false end
+            if not mission.data.custom.spawned or mission.data.custom.patrolsSpawned then return false end
+            if (Server().unpausedRuntime - (mission.data.custom.spawnTime or 0)) < PATROL_DELAY then return false end
+
+            -- spawnPatrols() spawns into Sector() implicitly (ShipGenerator.createDefender reads
+            -- the CURRENT sector for turret/volume balancing) -- only fire once the player is
+            -- actually back in the target sector to receive it, so a player who left before the
+            -- delay elapsed doesn't get hostile ships spawned into whatever sector they're in
+            -- instead. They'll simply get their patrols the moment they return.
+            local x, y = Sector():getCoordinates()
+            local targetCoords = mission.data.location
+            return x == targetCoords.x and y == targetCoords.y
+        end,
+        callback = function()
+            mission.data.custom.patrolsSpawned = true
+            spawnPatrols(mission.data.location.x, mission.data.location.y)
+        end
     }
 }
 
@@ -175,9 +236,32 @@ function spawnEvent(x, y)
     if onClient() then return end
 
     local generator = SectorGenerator(x, y)
-    local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
     generator:createAsteroidField(0.2)
+
+    -- createAsteroidField()'s resource-bearing asteroids each roll their material through
+    -- AsteroidFieldGenerator:getAsteroidType() -- a weighted-random pick across every material
+    -- plausible at this location (Balancing_GetMaterialProbability), never specifically this
+    -- contract's own pre-chosen matType. A player could mine out every resource asteroid the
+    -- ambient field spawned and still never find enough of -- or any of -- the one material this
+    -- mission actually requires. Spawn a dedicated cluster of guaranteed-material asteroids on
+    -- top of the ambient field, via the same AsteroidFieldGenerator:createSmallAsteroid() call
+    -- vanilla's own field generation uses internally, so the requirement is always achievable
+    -- regardless of what the ambient field happened to roll.
+    local AsteroidFieldGenerator = include("asteroidfieldgenerator")
+    local fieldGen = AsteroidFieldGenerator(x, y)
+    local requiredMaterial = Material(mission.data.custom.materialType)
+    for i = 1, 20 do
+        local position = generator:getPositionInSector()
+        fieldGen:createSmallAsteroid(position, 25.0, true, requiredMaterial)
+    end
+end
+
+function spawnPatrols(x, y)
+    if onClient() then return end
+
+    local generator = SectorGenerator(x, y)
+    local enemyFaction = Faction(mission.data.custom.enemyIndex)
 
     for i = 1, 3 do
         local position = generator:getPositionInSector()

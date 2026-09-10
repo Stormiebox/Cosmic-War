@@ -65,14 +65,29 @@ function initialize(factionIndex)
             return
         end
 
+        local enemyFaction = Faction(enemyIndex)
+        if not enemyFaction then terminate() return end
+
+        -- Searching around the PLAYER's own current position (wherever they happened to accept
+        -- the bulletin) rather than the enemy faction's own territory meant the search radius
+        -- (2-20) very often never reached anywhere the enemy actually controls -- the enemy's
+        -- territory has no reason to be anywhere near the giver faction's own space. That made
+        -- findEnemySectorWithStations() return nil far more often than not, hitting the
+        -- terminate() below immediately on accept. Search around the enemy's own home sector
+        -- instead, the same fix pattern already used by cw_armistice_escort.lua and
+        -- cw_corridor_interdiction.lua for this exact "find a sector relative to a specific
+        -- faction" problem.
+        local hx, hy = enemyFaction:getHomeSectorCoordinates()
+        if not hx or not hy then terminate() return end
+
         mission.data.custom.giverIndex = fIndex
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
 
         local x, y = Sector():getCoordinates()
-        
+
         -- Find an enemy sector with a station
-        local targetX, targetY = findEnemySectorWithStations(x, y, enemyIndex)
+        local targetX, targetY = findEnemySectorWithStations(hx, hy, enemyIndex)
         if not targetX or not targetY then terminate() return end
 
         mission.data.location = { x = targetX, y = targetY }
@@ -84,9 +99,9 @@ function initialize(factionIndex)
 
         local heat = CosmicWarBridge.getFactionWarHeat(fIndex) or 0
         mission.data.custom.heat = heat
-        
-        local enemyFaction = Faction(enemyIndex)
-        local enemyName = enemyFaction and enemyFaction.name or "hostiles"%_T
+
+        -- enemyFaction was already resolved (and confirmed non-nil) above.
+        local enemyName = enemyFaction.name
 
         mission.data.description = {
             { text = "You accepted a war contract from ${giver}."%_T, arguments = { giver = giverFaction.name } },

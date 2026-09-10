@@ -108,11 +108,36 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
         mission.data.custom.spawned = true
         
         table.insert(mission.data.description, {
-            text = "Return to sector (${x}:${y}) with ${amount} ${material}"%_T,
-            arguments = { x = mission.data.custom.giverCoords.x, y = mission.data.custom.giverCoords.y, amount = mission.data.custom.materialAmount, material = mission.data.custom.materialName },
+            text = "Return to sector (${x}:${y}) with ${material}: ${progress}/${amount}"%_T,
+            arguments = { x = mission.data.custom.giverCoords.x, y = mission.data.custom.giverCoords.y, amount = mission.data.custom.materialAmount, material = mission.data.custom.materialName, progress = 0 },
             bulletPoint = true,
             fulfilled = false
         })
+        sync()
+    end
+end
+
+-- Live progress readout: the "return with cargo" bullet only exists once mission.data.custom.spawned
+-- is true (inserted above), so gate on that the same way the completion trigger below does. No
+-- baseline snapshot needed -- the completion trigger checks raw current stock (plus location), so
+-- the counter shows that same raw current stock to stay consistent with what actually completes
+-- the contract. See cw_scorched_earth.lua's own updateServer for why this hook is guaranteed
+-- server-only and how often it polls.
+mission.phases[1].updateServer = function(timeStep)
+    if not mission.data.custom.spawned then return end
+    local returnBullet = mission.data.description[4]
+    if not returnBullet or returnBullet.fulfilled then return end
+
+    local player = Player()
+    local matType = mission.data.custom.materialType
+    local requiredAmount = mission.data.custom.materialAmount
+
+    local resources = { player:getResources() }
+    local current = resources[matType + 1] or 0
+    local progress = math.max(0, math.min(requiredAmount, current))
+
+    if progress ~= returnBullet.arguments.progress then
+        returnBullet.arguments.progress = progress
         sync()
     end
 end
