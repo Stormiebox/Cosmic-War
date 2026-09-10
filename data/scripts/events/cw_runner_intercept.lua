@@ -54,12 +54,16 @@ function CW_RunnerInterceptEvent.spawn()
         runner:addBaseMultiplier(StatsBonuses.ShieldDurability, 4.0)
         runner.shieldDurability = runner.shieldMaxDurability
     end
+    -- Without this, a player who leaves before the chase resolves leaves the runner --
+    -- and this event's own updateServer polling -- running forever.
+    runner:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     CW_RunnerInterceptEvent.runnerId = runner.id
 
     for i = 1, random():getInt(2, 3) do
         local ship = ShipGenerator.createMilitaryShip(interceptorFaction, generator:getPositionInSector())
         ship.title = "Interceptor"%_T
         ShipAI(ship.index):setAggressive()
+        ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
         table.insert(CW_RunnerInterceptEvent.interceptorIds, ship.id)
     end
 

@@ -50,6 +50,10 @@ function CW_ArtilleryBarrageEvent.spawn()
     local generator = SectorGenerator(x, y)
     local platform = ShipGenerator.createDefender(attackerFaction, generator:getPositionInSector())
     platform.title = "Artillery Platform"%_T
+    -- Without this, a player who spots the platform and jumps away without destroying it
+    -- leaves it (and this event's own updateServer polling) running forever -- the same
+    -- cleanup every other sector event in this mod attaches to its spawned ships.
+    platform:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     if platform:hasComponent(ComponentType.Durability) then
         Durability(platform.index).maxDurabilityFactor = Durability(platform.index).maxDurabilityFactor * 3.0
         platform.durability = platform.maxDurability

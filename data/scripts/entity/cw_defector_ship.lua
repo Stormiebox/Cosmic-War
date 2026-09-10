@@ -39,7 +39,7 @@ function CW_DefectorShip.acceptDefection()
     local oldFactionIndex = CW_DefectorShip.factionIndex
     local oldFaction = Faction(oldFactionIndex)
 
-    player:pay("Defection Payment"%_t, CW_DefectorShip.cost)
+    player:pay("Defection Payment"%_T, CW_DefectorShip.cost)
 
     -- v4.0.0: this pays to make the ship stand down and leave, not to add it to
     -- the player's own fleet -- there's no confirmed, verified way in this

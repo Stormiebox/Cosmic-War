@@ -180,7 +180,7 @@ function MilitaryOutpost.buyMarqueRepair()
         return
     end
 
-    player:pay("Letter of Marque Repairs"%_t, cost)
+    player:pay("Letter of Marque Repairs"%_T, cost)
     craft.durability = craft.maxDurability
 
     player:sendChatMessage(entity.name, 0, "All patched up. Fly true, captain."%_T)

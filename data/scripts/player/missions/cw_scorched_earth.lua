@@ -109,6 +109,18 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     if not mission.data.custom.spawned then
         spawnEvent(x, y)
         mission.data.custom.spawned = true
+
+        -- Unlike the delivery contracts (Resource Heist, Relief Convoy, etc.), this mission
+        -- never pays the mined material away -- the player keeps it, that's the point. So the
+        -- completion check can't just look at total current stock, or anyone already carrying
+        -- this much of the target material (Iron/Titanium are common cargo) completes the
+        -- contract the instant they arrive, without mining anything. Snapshot what they're
+        -- carrying on arrival and require that much *more* on top of it.
+        local player = Player()
+        local matType = mission.data.custom.materialType
+        local resources = { player:getResources() }
+        mission.data.custom.baselineAmount = resources[matType + 1] or 0
+
         sync()
     end
 end
@@ -122,6 +134,7 @@ mission.phases[1].triggers = {
             local player = Player()
             local matType = mission.data.custom.materialType
             local requiredAmount = mission.data.custom.materialAmount
+            local baselineAmount = mission.data.custom.baselineAmount or 0
 
             local resources = { player:getResources() }
             local current = resources[matType + 1] or 0
@@ -129,7 +142,7 @@ mission.phases[1].triggers = {
             local x, y = Sector():getCoordinates()
             local targetCoords = mission.data.location
 
-            return x == targetCoords.x and y == targetCoords.y and current >= requiredAmount
+            return x == targetCoords.x and y == targetCoords.y and (current - baselineAmount) >= requiredAmount
         end,
         callback = function()
             mission.data.description[3].fulfilled = true

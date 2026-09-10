@@ -155,7 +155,7 @@ function TradingPost.buySanctionsRelief()
         return
     end
 
-    player:pay("Sanctions Relief Brokerage"%_t, SANCTIONS_RELIEF_COST)
+    player:pay("Sanctions Relief Brokerage"%_T, SANCTIONS_RELIEF_COST)
 
     local faction = Faction(Entity().factionIndex)
     if faction then
@@ -223,7 +223,7 @@ function TradingPost.buyDiplomaticAid()
         return
     end
 
-    player:pay("Diplomatic Aid Package"%_t, DIPLOMATIC_AID_COST)
+    player:pay("Diplomatic Aid Package"%_T, DIPLOMATIC_AID_COST)
 
     local factionIndex = Entity().factionIndex
     local CosmicVaultEconomy = include("cosmicvaulteconomy")
@@ -364,7 +364,7 @@ function TradingPost.processPurchase(amount)
         return
     end
 
-    player:pay("Warbond Purchase"%_t, amount)
+    player:pay("Warbond Purchase"%_T, amount)
     server:setValue(poolKey, currentPool + amount)
 
     if not player:hasScript("cosmicwar_warbonds.lua") then

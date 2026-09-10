@@ -62,6 +62,9 @@ function CW_MutinyEvent.spawn()
         local ship = ShipGenerator.createDefender(faction, generator:getPositionInSector())
         ship.title = "Loyalist Escort"%_T
         ShipAI(ship.index):setAggressive()
+        -- Without this, a player who leaves before the mutiny resolves leaves the loyalists
+        -- (and this event's own updateServer polling) running forever.
+        ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
         table.insert(CW_MutinyEvent.loyalistIds, ship.id)
     end
 
@@ -69,6 +72,7 @@ function CW_MutinyEvent.spawn()
     mutineer.title = "Mutineer"%_T
     mutineer.factionIndex = pirateFaction.index
     ShipAI(mutineer.index):setAggressive()
+    mutineer:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     CW_MutinyEvent.mutineerId = mutineer.id
 
     sector:broadcastChatMessage(faction.name, ChatMessageType.Warning,

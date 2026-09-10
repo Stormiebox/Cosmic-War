@@ -49,12 +49,16 @@ function CW_PrisonerTransportEvent.spawn()
     local generator = SectorGenerator(x, y)
     local transport = ShipGenerator.createFreighterShip(captorFaction, generator:getPositionInSector())
     transport.title = "Prisoner Transport"%_T
+    -- Without this, a player who leaves before the transport is resolved (freed or
+    -- destroyed) leaves it -- and this event's own updateServer polling -- running forever.
+    transport:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     CW_PrisonerTransportEvent.transportId = transport.id
 
     for i = 1, random():getInt(2, 3) do
         local escort = ShipGenerator.createDefender(captorFaction, generator:getPositionInSector())
         escort.title = "Transport Escort"%_T
         ShipAI(escort.index):setAggressive()
+        escort:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
         table.insert(CW_PrisonerTransportEvent.escortIds, escort.id)
     end
 

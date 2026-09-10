@@ -48,6 +48,9 @@ function CW_SignalJammingNetEvent.spawn()
         local drone = ShipGenerator.createDefender(faction, generator:getPositionInSector())
         drone.title = "Jammer Drone"%_T
         ShipAI(drone.index):setAggressive()
+        -- Without this, a player who leaves before the net is cleared leaves the drones --
+        -- and this event's own updateServer polling -- running forever.
+        drone:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
         table.insert(CW_SignalJammingNetEvent.droneIds, drone.id)
     end
 

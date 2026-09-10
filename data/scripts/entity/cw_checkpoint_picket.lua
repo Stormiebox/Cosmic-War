@@ -37,7 +37,7 @@ function CW_CheckpointPicket.payToll()
         return
     end
 
-    player:pay("Border Toll"%_t, TOLL_COST)
+    player:pay("Border Toll"%_T, TOLL_COST)
 
     local faction = Faction(CW_CheckpointPicket.factionIndex)
     if faction then

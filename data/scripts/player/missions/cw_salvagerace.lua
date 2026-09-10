@@ -114,6 +114,16 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
         spawnEvent(x, y)
         mission.data.custom.spawned = true
         mission.data.custom.spawnTime = Server().unpausedRuntime
+
+        -- Same fix as Scorched Earth: this mission never pays the salvaged material away, so
+        -- checking total current stock let anyone already carrying enough of the target
+        -- material complete the contract the instant they arrived. Snapshot on arrival and
+        -- require that much more salvaged on top of it.
+        local player = Player()
+        local matType = mission.data.custom.materialType
+        local resources = { player:getResources() }
+        mission.data.custom.baselineAmount = resources[matType + 1] or 0
+
         sync()
     end
 end
@@ -139,6 +149,7 @@ mission.phases[1].triggers = {
             local player = Player()
             local matType = mission.data.custom.materialType
             local requiredAmount = mission.data.custom.materialAmount
+            local baselineAmount = mission.data.custom.baselineAmount or 0
 
             local resources = { player:getResources() }
             local current = resources[matType + 1] or 0
@@ -146,7 +157,7 @@ mission.phases[1].triggers = {
             local x, y = Sector():getCoordinates()
             local targetCoords = mission.data.location
 
-            return x == targetCoords.x and y == targetCoords.y and current >= requiredAmount
+            return x == targetCoords.x and y == targetCoords.y and (current - baselineAmount) >= requiredAmount
         end,
         callback = function()
             mission.data.description[3].fulfilled = true
