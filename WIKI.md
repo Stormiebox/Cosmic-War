@@ -1,6 +1,12 @@
 # ⚙️ Cosmic War - Technical Wiki
 
+![Version](https://img.shields.io/badge/version-4.0.0-6f42c1?style=flat-square)
+![Avorion](https://img.shields.io/badge/Avorion-2.5.13-2f81f7?style=flat-square)
+
 Full technical reference for **Cosmic War**, the faction-conflict simulation module in the **Cosmic** mod series. Current release: **v4.0.0**.
+
+> [!TIP]
+> If you just want a friendly tour of what the mod does, read [`PLAYER_GUIDE.md`](https://github.com/Stormiebox/Cosmic-War/wiki/Players-Guide-A-Living-Conflict) instead. See [`README.md`](https://github.com/Stormiebox/Cosmic-War) for installation.
 
 ---
 
@@ -800,5 +806,13 @@ Lore, stat blocks, and dynamic feature explanations are integrated into the in-g
 - **Weaponized Subspace Tears:** at critical War Heat (relations at or below -80000), warring factions may detonate experimental subspace weapons, opening a localized Rift hazard.
 - **Subspace Containment:** when a rift tears in a warzone, factions issue the *Subspace Containment* War Contract to secure emerged Ancient Tech platforms and close the anomaly.
 - **Alliance PvP repercussions:** reputation shifts from PvP and civilian-convoy destruction propagate to the player's active Alliance, so switching to a personal ship no longer shields the alliance from the consequences.
+
+---
+
+<div align="center">
+
+[⬆ Back to top](https://github.com/Stormiebox/Cosmic-War/wiki/Features-and-Enhancements) · [🌌 README](https://github.com/Stormiebox/Cosmic-War) · [📘 Player Guide](https://github.com/Stormiebox/Cosmic-War/wiki/Players-Guide-A-Living-Conflict)
+
+</div>
 
 </details>

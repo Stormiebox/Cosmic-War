@@ -1,6 +1,12 @@
 # ⚔️ 🌌 Cosmic War - Player Guide
 
+![Version](https://img.shields.io/badge/version-4.0.0-6f42c1?style=flat-square)
+![Avorion](https://img.shields.io/badge/Avorion-2.5.13-2f81f7?style=flat-square)
+
 Welcome to **Cosmic War**! This guide covers War Heat, faction traits, mercenary contracts, invasions, and everything else you'll run into while the galaxy tears itself apart. Current release: **v4.0.0**.
+
+> [!TIP]
+> For exact numbers and mechanic-by-mechanic detail, see [`WIKI.md`](https://github.com/Stormiebox/Cosmic-War/wiki/Features-and-Enhancements). See [`README.md`](https://github.com/Stormiebox/Cosmic-War) for installation.
 
 ---
 
@@ -371,3 +377,11 @@ Cosmic War is built to run alongside the rest of the Cosmic suite, and several f
 - **Alliance consequences:** starting a diplomatic incident or destroying civilian convoys damages relations for your whole Player Alliance, not just you personally - there's no ducking the fallout by switching to a personal ship.
 
 </details>
+
+---
+
+<div align="center">
+
+[⬆ Back to top](https://github.com/Stormiebox/Cosmic-War/wiki/Players-Guide-A-Living-Conflict) · [🌌 README](https://github.com/Stormiebox/Cosmic-War) · [⚙️ Wiki](https://github.com/Stormiebox/Cosmic-War/wiki/Features-and-Enhancements)
+
+</div>

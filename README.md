@@ -2,7 +2,16 @@
 
 *A complete overhaul to diplomacy, fleet battles, and faction tension in Avorion.*
 
+![Version](https://img.shields.io/badge/version-4.0.0-6f42c1?style=flat-square)
+![Avorion](https://img.shields.io/badge/Avorion-2.5.13-2f81f7?style=flat-square)
+![License](https://img.shields.io/badge/license-GPLv3-informational?style=flat-square)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey?style=flat-square)
+![Requires](https://img.shields.io/badge/requires-Core%204-success?style=flat-square)
+
 **Current release: v4.0.0** - a complete overhaul: four new systems and a full numbers-and-balance pass.
+
+> [!TIP]
+> New here? [`PLAYER_GUIDE.md`](https://github.com/Stormiebox/Cosmic-War/wiki/Players-Guide-A-Living-Conflict) is a friendly gameplay tour. [`WIKI.md`](https://github.com/Stormiebox/Cosmic-War/wiki/Features-and-Enhancements) has the full technical reference with exact numbers.
 
 ---
 
@@ -81,7 +90,23 @@ Players aren't bystanders. Fund rebellions through the Galactic Politics UI, ans
 
 ## 📚 Documentation & Diagnostics
 
-- **In-Game Lore:** deep lore, stat blocks, and dynamic features live in the in-game **Cosmic Codex** - no need to tab out to learn the mod.
-- **Offline Guides:** the included `WIKI.md` (technical reference) and `PLAYER_GUIDE.md` (gameplay-focused) cover the full mechanics, scaling equations, and background systems.
-- **Diagnostics:** server operators can run `/cosmicwarstatus` in chat for a live health and activity readout of the background simulation.
-- **Bounty Board:** any player can run `/cosmicwarbounties` in chat to check their active Bounty License and the top of the galaxy-wide bounty board without opening the UI.
+| Document | For | Covers |
+|---|---|---|
+| [`PLAYER_GUIDE.md`](https://github.com/Stormiebox/Cosmic-War/wiki/Players-Guide-A-Living-Conflict) | Players | A friendly, gameplay-focused walkthrough of every feature. |
+| [`WIKI.md`](https://github.com/Stormiebox/Cosmic-War/wiki/Features-and-Enhancements) | Anyone who wants the exact numbers | Full mechanics, scaling equations, and background systems. |
+| **Cosmic Codex** *(in-game)* | Players | Deep lore, stat blocks, and dynamic features, without tabbing out. |
+
+**Chat commands:**
+
+| Command | Who | Does |
+|---|---|---|
+| `/cosmicwarstatus` | Server operators | Live health and activity readout of the background simulation. |
+| `/cosmicwarbounties` | Any player | Check your active Bounty License and the top of the galaxy-wide bounty board without opening the UI. |
+
+---
+
+<div align="center">
+
+**🌌 Cosmic War** — part of the [Cosmic Series](https://github.com/Stormiebox) · built by **Stormbox**
+
+</div>
