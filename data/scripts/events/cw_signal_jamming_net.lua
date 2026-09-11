@@ -80,9 +80,19 @@ function CW_SignalJammingNetEvent.updateServer(timeStep)
     end
 
     for _, player in pairs({sector:getPlayers()}) do
-        local ship = player.craftIndex and sector:getEntity(player.craftIndex)
-        if ship and ship:hasComponent(ComponentType.HyperspaceEngine) then
-            ship:blockHyperspace(2.5)
+        -- The drones' own combat AI already respects faction relations (ShipAI:setAggressive()
+        -- won't fire on a player the controlling faction is at peace or allied with), but this
+        -- jamming loop had no such check at all -- it applied to every player physically present
+        -- in the sector, regardless of standing. That let this event spawn in a sector controlled
+        -- by an ALLIED faction and trap the player indefinitely with no hostiles to fight and no
+        -- escape but destroying the ally's own defensive drones (souring that relationship for
+        -- nothing). Only jam players actually at war with the controlling faction, matching the
+        -- "fight your way out of hostile territory" framing this event is meant to be.
+        if player:getRelationStatus(CW_SignalJammingNetEvent.factionIndex) == RelationStatus.War then
+            local ship = player.craftIndex and sector:getEntity(player.craftIndex)
+            if ship and ship:hasComponent(ComponentType.HyperspaceEngine) then
+                ship:blockHyperspace(2.5)
+            end
         end
     end
 end

@@ -88,11 +88,16 @@ function CW_ArtilleryBarrageEvent.updateServer(timeStep)
     -- Re-apply the jammer to every present player ship every 8s -- the jammer's
     -- own 10s duration means this keeps regeneration suppressed continuously for
     -- as long as the platform survives, without needing to touch the jammer
-    -- script itself.
+    -- script itself. The platform belongs to attackerFaction, so it's their weapon --
+    -- only players actually at war with them should eat the debuff. Without this check,
+    -- a player allied with the attacker (or simply at peace with them) got their own
+    -- side's shields suppressed by a platform that isn't targeting them at all.
     for _, player in pairs({sector:getPlayers()}) do
-        local ship = player.craftIndex and sector:getEntity(player.craftIndex)
-        if ship and ship:hasComponent(ComponentType.Shield) then
-            ship:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
+        if player:getRelationStatus(CW_ArtilleryBarrageEvent.attackerFactionIndex) == RelationStatus.War then
+            local ship = player.craftIndex and sector:getEntity(player.craftIndex)
+            if ship and ship:hasComponent(ComponentType.Shield) then
+                ship:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
+            end
         end
     end
 end

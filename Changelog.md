@@ -7,6 +7,13 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## Never remove, overwrite or write above this
 
+## [v4.0.3]
+
+### 🪲 Confirmed Defects Fixed
+
+- [Bugfix] **Signal Jamming Net Could Trap A Player Indefinitely In An Allied Faction's Own Territory, With No Hostiles Present (`cw_signal_jamming_net.lua`):** This event's `spawn()` only checks that the sector's controller is a `cw_enabled` AI faction — it never checks that faction's relationship to the player, so it could roll in a sector controlled by a faction the player is Allied, at Ceasefire, or simply at peace with. Once it did, `updateServer()`'s `ship:blockHyperspace(2.5)` re-applied to *every* player physically present in the sector every 2 seconds, with no relation check at all — unlike the drones' own combat AI, which already correctly declines to fire on a non-hostile player via normal faction relations. The result: a player could be blocked from jumping out of a friendly ally's sector, with nothing hostile to fight, and no way out short of destroying that ally's own defensive drones (which would have damaged the relationship further, for a debuff that shouldn't have applied to them in the first place) — exactly the reported "flew 200km away and still jammed, no hostiles, can't leave" symptom (sector-wide hyperspace jams aren't distance-based, and Avorion sectors have no sublight route out — only a jump crosses the boundary). Fixed by only jamming players whose `Player:getRelationStatus()` against the controlling faction is `RelationStatus.War`, matching the event's own "fight your way out of hostile territory" framing.
+- [Bugfix] **Artillery Barrage Could Shield-Jam Players Allied With The Attacking Faction, Not Just Its Enemies (`cw_artillery_barrage.lua`):** Same missing-relation-check shape as the Signal Jamming Net fix above, caught by the same sibling sweep. The platform belongs to `attackerFactionIndex` and its shield-suppression re-application loop (`updateServer()`, every 8 seconds) applied to every player present in the sector regardless of their standing with that faction — an ally of the attacker (or simply anyone not at war with them) had their own shields suppressed by a platform that was never targeting them. Fixed the same way: only re-apply the jammer to players whose `Player:getRelationStatus()` against `attackerFactionIndex` is `RelationStatus.War`.
+
 ## [v4.0.2]
 
 ### 🪲 Confirmed Defects Fixed
