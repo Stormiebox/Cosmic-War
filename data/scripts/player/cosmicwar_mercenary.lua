@@ -70,7 +70,11 @@ function CW_Mercenary.onShipDestroyed(destroyedId, destroyerId)
         local relation = enlistedFaction:getRelations(destroyedFactionId)
         if relation <= -80000 then -- At war
             -- Determine if the target was a civilian ship
-            local isCivilian = destroyedEntity:getValue("is_civilian") or destroyedEntity:getValue("is_freighter")
+            -- "is_civil" (not "is_civilian") is vanilla's real custom-value key --
+            -- confirmed against shipgenerator.lua/passingships.lua, which set it on every
+            -- civilian ship type (traders, freighters, miners, passing traffic), not just
+            -- freighters. The old key never matched anything a vanilla ship actually sets.
+            local isCivilian = destroyedEntity:getValue("is_civil") or destroyedEntity:getValue("is_freighter")
             local title = destroyedEntity.title or ""
             if title:match("Miner") or title:match("Freighter") or title:match("Trader") or title:match("Transport") then
                 isCivilian = true

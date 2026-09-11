@@ -73,7 +73,7 @@ Injects and maintains faction-level war metadata and Custom Traits for AI factio
 - **Warmonger / Pacifist / Isolationist / Opportunist:** core stances that shape War Heat buildup and ceasefire likelihood.
 - **Imperialist:** frequently claims empty sectors and builds new outposts.
 - **Entrenched:** fortifies existing territory with defensive stations.
-- **Mercantile:** pays 3x the standard rate for mercenary contracts (bounties and War Contracts alike).
+- **Mercantile:** pays 50% extra (1.5x) for mercenary contracts (bounties and War Contracts alike).
 - **Vengeful:** refuses to negotiate ceasefires once a war begins.
 - **Xenophobic:** relations decay with every known faction, guaranteeing eventual unprovoked wars.
 

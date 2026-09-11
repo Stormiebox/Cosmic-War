@@ -44,10 +44,15 @@ function TradingPost.requestCashOutDialog()
 end
 
 function TradingPost.showCashOutDialog(hasBond)
+    -- interactShowDialog, not showDialog: this fires after a client->server->client
+    -- round trip, and showDialog only displays if the player is still in the native
+    -- "interaction state" with this entity at that point, which isn't guaranteed to
+    -- still hold. interactShowDialog forces it instead -- the same choice vanilla's
+    -- antismuggle.lua makes for every one of its own server-round-trip dialogs.
     if hasBond then
-        ScriptUI():showDialog(TradingPost.makeCashOutDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeCashOutDialog())
     else
-        ScriptUI():showDialog(TradingPost.makeNoBondDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeNoBondDialog())
     end
 end
 
@@ -120,9 +125,9 @@ end
 
 function TradingPost.showSanctionsReliefDialog(eligible)
     if eligible then
-        ScriptUI():showDialog(TradingPost.makeSanctionsReliefDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeSanctionsReliefDialog())
     else
-        ScriptUI():showDialog(TradingPost.makeNoSanctionsDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeNoSanctionsDialog())
     end
 end
 
@@ -188,9 +193,9 @@ end
 
 function TradingPost.showDiplomaticAidDialog(eligible)
     if eligible then
-        ScriptUI():showDialog(TradingPost.makeDiplomaticAidDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeDiplomaticAidDialog())
     else
-        ScriptUI():showDialog(TradingPost.makeNoDiplomaticAidDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeNoDiplomaticAidDialog())
     end
 end
 
@@ -290,14 +295,27 @@ function TradingPost.requestWarbondDialog()
     local CosmicWarBridge = include("cosmicwarbridge")
     local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
     local showBuy = heat >= 0.25
-    invokeClientFunction(Player(callingPlayer), "showWarbondDialog", showBuy)
+
+    -- War Heat ramps up gradually (relations depth, war bias, famine -- see
+    -- computeWarHeatForFaction()) rather than jumping to a fixed value the instant a war
+    -- starts, so a faction can have a real, registered enemy_faction -- genuinely at war,
+    -- by any player-visible measure -- while its heat still sits well under 0.25 (a bare
+    -- rivalry-threshold crossing with no famine and no mutual targeting lands around
+    -- 0.11-0.15). Reporting that as "an era of peace" is factually wrong for that faction
+    -- and reads as the interaction having done nothing. Check the actual war state
+    -- separately so the message matches what's really happening.
+    local faction = Faction(entity.factionIndex)
+    local atWar = faction and (faction:getValue("enemy_faction") or 0) > 0
+    invokeClientFunction(Player(callingPlayer), "showWarbondDialog", showBuy, atWar)
 end
 
-function TradingPost.showWarbondDialog(showBuy)
+function TradingPost.showWarbondDialog(showBuy, atWar)
     if showBuy then
-        ScriptUI():showDialog(TradingPost.makeBuyDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeBuyDialog())
+    elseif atWar then
+        ScriptUI():interactShowDialog(TradingPost.makeWarNotSevereDialog())
     else
-        ScriptUI():showDialog(TradingPost.makeNoWarDialog())
+        ScriptUI():interactShowDialog(TradingPost.makeNoWarDialog())
     end
 end
 
@@ -315,6 +333,13 @@ end
 function TradingPost.makeNoWarDialog()
     local dialog = {}
     dialog.text = "We are currently experiencing an era of peace. We are not issuing any military warbonds at this time."%_t
+    dialog.answers = {{answer = "Understood."%_t}}
+    return dialog
+end
+
+function TradingPost.makeWarNotSevereDialog()
+    local dialog = {}
+    dialog.text = "We're at war, but the conflict hasn't strained our economy enough yet to justify issuing Warbonds. Check back if the fighting escalates."%_t
     dialog.answers = {{answer = "Understood."%_t}}
     return dialog
 end

@@ -17,36 +17,46 @@ function MilitaryOutpost.initUI()
 end
 
 function MilitaryOutpost.onEnlistInteraction()
-    local entity = Entity()
-    local player = Player()
-    
-    if player:hasScript("cosmicwar_mercenary.lua") then
-        local enlistedFaction = player:getValue("cw_mercenary_faction")
-        if enlistedFaction == entity.factionIndex then
-            ScriptUI():showDialog(MilitaryOutpost.makeAlreadyEnlistedDialog())
-        else
-            ScriptUI():showDialog(MilitaryOutpost.makeCannotEnlistDialog())
-        end
-        return
-    end
-
-    -- Heat must be evaluated server-side; Server() is not available in UI context.
+    -- Enlistment status and War Heat both require server-only checks -- Player():getValue()
+    -- is documented "Inherited from Faction [Server]" in the Player stub, and crashes if
+    -- called from this client-side interaction handler; Server() likewise isn't available
+    -- in UI context. Both checks now happen in requestEnlistDialog() instead.
     invokeServerFunction("requestEnlistDialog")
 end
 
 function MilitaryOutpost.requestEnlistDialog()
     if onClient() then invokeServerFunction("requestEnlistDialog") return end
+    local player = Player(callingPlayer)
+    if not player then return end
     local entity = Entity()
+
+    if player:hasScript("cosmicwar_mercenary.lua") then
+        local enlistedFaction = player:getValue("cw_mercenary_faction")
+        invokeClientFunction(player, "showEnlistDialog", true, enlistedFaction == entity.factionIndex)
+        return
+    end
+
     local CosmicWarBridge = include("cosmicwarbridge")
     local heat = CosmicWarBridge.getFactionWarHeat(entity.factionIndex) or 0
-    invokeClientFunction(Player(callingPlayer), "showEnlistDialog", heat >= 0.25)
+    invokeClientFunction(player, "showEnlistDialog", false, heat >= 0.25)
 end
 
-function MilitaryOutpost.showEnlistDialog(atWar)
-    if atWar then
-        ScriptUI():showDialog(MilitaryOutpost.makeEnlistDialog())
+-- interactShowDialog, not showDialog: this fires after a client->server->client round
+-- trip, and showDialog only displays if the player is still in the native "interaction
+-- state" with this entity at that point, which isn't guaranteed to still hold.
+function MilitaryOutpost.showEnlistDialog(alreadyEnlisted, secondaryFlag)
+    if alreadyEnlisted then
+        if secondaryFlag then
+            ScriptUI():interactShowDialog(MilitaryOutpost.makeAlreadyEnlistedDialog())
+        else
+            ScriptUI():interactShowDialog(MilitaryOutpost.makeCannotEnlistDialog())
+        end
     else
-        ScriptUI():showDialog(MilitaryOutpost.makeNotAtWarDialog())
+        if secondaryFlag then
+            ScriptUI():interactShowDialog(MilitaryOutpost.makeEnlistDialog())
+        else
+            ScriptUI():interactShowDialog(MilitaryOutpost.makeNotAtWarDialog())
+        end
     end
 end
 
@@ -131,9 +141,9 @@ end
 
 function MilitaryOutpost.showMarqueRepairDialog(eligible)
     if eligible then
-        ScriptUI():showDialog(MilitaryOutpost.makeMarqueRepairDialog())
+        ScriptUI():interactShowDialog(MilitaryOutpost.makeMarqueRepairDialog())
     else
-        ScriptUI():showDialog(MilitaryOutpost.makeNoMarqueDialog())
+        ScriptUI():interactShowDialog(MilitaryOutpost.makeNoMarqueDialog())
     end
 end
 
