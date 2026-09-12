@@ -168,6 +168,7 @@ function SiegeEvent.startSiege(zoneData, isFarSupplyLine)
 
     -- Dynamic Scaling: Spawn Siege Dreadnoughts to escort the transports
     local CosmicVaultScaling = include("cosmicvaultscaling")
+    local CosmicWarDreadnought = include("cosmicwardreadnought")
     local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(zoneData.invader)
     local baseVol = Balancing_GetSectorShipVolume(x, y)
 
@@ -181,10 +182,11 @@ function SiegeEvent.startSiege(zoneData, isFarSupplyLine)
         dreadnought.name = "Invader"
         ShipAI(dreadnought.index):setAggressive()
 
-        if dreadnought:hasComponent(ComponentType.Shield) then
-            dreadnought:addBaseMultiplier(StatsBonuses.ShieldDurability, 4.0)
-            dreadnought.shieldDurability = dreadnought.shieldMaxDurability
-        end
+        -- Only the durability/firepower half of the shared dreadnought package applies
+        -- here: this event's hull volume comes from CosmicVaultScaling, which sizes the
+        -- invading force against the defender's actual strength, and overriding that
+        -- with a flat band would throw away the adaptive scaling on purpose.
+        CosmicWarDreadnought.harden(dreadnought, x, y)
     end
 
     -- Inject Eclipse Weather

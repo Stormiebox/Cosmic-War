@@ -126,20 +126,69 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
             local distance = 3000
             local center = dir * distance
 
+            include("galaxy")
             local ShipGenerator = include("shipgenerator")
-            for i = 1, random:getInt(2, 4) do
+            local ShipUtility = include("shiputility")
+            local hx, hy = Sector():getCoordinates()
+
+            -- Everything below is anchored to the sector's own balancing curves, so an
+            -- elite stays proportionate to whatever region it ambushes the player in.
+            local sectorVolume = Balancing_GetSectorShipVolume(hx, hy)
+            local sectorTurrets = Balancing_GetEnemySectorTurrets(hx, hy)
+            local sectorShipHP = Balancing_GetSectorShipHP(hx, hy)
+
+            for i = 1, random:getInt(3, 6) do
                 local pos = center + vec3(random:getFloat(-200, 200), random:getFloat(-200, 200), random:getFloat(-200, 200))
                 local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
-                local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix) -- Elite headhunter, scaled below
 
-                -- Custom Cosmic War Scaling for Elite Bounty Hunters. addBaseMultiplier is the
-                -- proven DPS lever (see Avorion_Modding_Codex.md's "Unproven stat levers" entry) --
-                -- 1.5 here is additive on top of the base 1.0, giving the intended 2.5x total.
-                ship:addBaseMultiplier(StatsBonuses.FireRate, 1.5)
+                -- The hull is the foundation of the whole buff. Left to itself,
+                -- createMilitaryShip() sizes the ship by Balancing_GetShipVolumeDeviation(),
+                -- which is 1 + 10*f^4 on a random f -- a quartic that lands near the low end
+                -- almost every roll, so an "elite" was usually just an average-sized warship.
+                -- An explicit oversized volume gives more hull blocks (base HP), more shield
+                -- generator blocks for the shield multipliers below to act on, and more
+                -- surface to actually mount guns.
+                local ship = ShipGenerator.createMilitaryShip(bestEnemy, matrix, sectorVolume * random:getFloat(3.5, 5.0))
+
+                -- A second pass picks a different random armed template from the faction's
+                -- inventory, so an elite fields a mixed loadout instead of one weapon type a
+                -- player can hard-counter. addTurretsToCraft caps each call at 10 turrets and
+                -- places them by line of sight, so this adds guns rather than replacing them.
+                ship:addBaseMultiplier(StatsBonuses.ArmedTurrets, 1.0)
+                ShipUtility.addArmedTurretsToCraft(ship, sectorTurrets)
+
+                -- addBaseMultiplier is additive on top of the implicit base 1.0, so a factor
+                -- of 3.0 is a 4.0x total -- not 3.0x. There is no Damage member in the
+                -- StatsBonuses enum for ships or turrets, so FireRate is the only native DPS
+                -- lever (see Avorion_Modding_Codex.md's "no per-damage-type stat" entry).
+                ship:addBaseMultiplier(StatsBonuses.FireRate, 3.0)
+
+                -- Shields were previously untouched entirely. The absolute bias is the part
+                -- that matters for reliability: a multiplier on a plan that rolled zero shield
+                -- generator blocks is still zero, which is a real outcome in low-material
+                -- regions, so the flat term guarantees a shield pool regardless of what the
+                -- plan generated.
+                ship:addAbsoluteBias(StatsBonuses.ShieldDurability, sectorShipHP * 1.5)
+                ship:addBaseMultiplier(StatsBonuses.ShieldDurability, 3.0)
+                ship:addBaseMultiplier(StatsBonuses.ShieldRecharge, 2.0)
+
+                -- A bigger hull is naturally more sluggish, and an elite the player can simply
+                -- outrun is back to being a nuisance. This offsets the volume increase rather
+                -- than making them genuinely fast.
+                ship:addBaseMultiplier(StatsBonuses.Velocity, 0.5)
+                ship:addBaseMultiplier(StatsBonuses.Acceleration, 1.0)
+
                 if ship:hasComponent(ComponentType.Durability) then
-                    Durability(ship.index).maxDurabilityFactor = Durability(ship.index).maxDurabilityFactor * 2.5
-                    ship.durability = ship.maxDurability
+                    Durability(ship.index).maxDurabilityFactor = Durability(ship.index).maxDurabilityFactor * 5.0
                 end
+
+                -- Crew is recalculated after the extra turrets are mounted, otherwise the new
+                -- guns sit undermanned and fire slower than the stats above suggest. The two
+                -- refills top the ship up to the maxima the buffs just raised -- createMilitaryShip
+                -- already did this once, but that was before any of the above applied.
+                ship.crew = ship.idealCrew
+                ship.durability = ship.maxDurability
+                ship.shieldDurability = ship.shieldMaxDurability
 
                 ship.title = "Elite Headhunter"%_T
                 ship:addScriptOnce("ai/patrol.lua")

@@ -288,6 +288,59 @@ function CosmicWarBridge.recordWarScoreTerritory(loserFactionIndex, winnerFactio
     server:setValue(key, (server:getValue(key) or 0) + delta)
 end
 
+--- Applies the Cosmic War consequences of one deferred territory flip once.
+-- A prepared receipt is deliberately not retried after a restart because the
+-- score write may already have happened; an administrator can resolve that
+-- ambiguous gap without doubling a war score.
+function CosmicWarBridge.recordMaterializedTerritory(operationId, loserFactionIndex, winnerFactionIndex)
+    if not onServer() then return nil, "server_only" end
+    if type(operationId) ~= "string" or operationId == "" then return nil, "invalid_operation" end
+    if not loserFactionIndex or not winnerFactionIndex or loserFactionIndex == winnerFactionIndex then
+        return true, nil
+    end
+
+    local server = Server()
+    if not server then return nil, "server_missing" end
+
+    local receiptKey = "cw_materialization_receipt_" .. operationId
+    local receiptState = server:getValue(receiptKey)
+    if receiptState == "completed" then return true, nil end
+    if receiptState == "prepared" then return nil, "repair_required" end
+
+    server:setValue(receiptKey, "prepared")
+    server:setValue("cw_expansion_momentum_" .. tostring(winnerFactionIndex), server.unpausedRuntime + 86400)
+    CosmicWarBridge.recordWarScoreTerritory(loserFactionIndex, winnerFactionIndex)
+    server:setValue(receiptKey, "completed")
+    return true, nil
+end
+
+--- Resolves the ambiguous crash window left by recordMaterializedTerritory().
+-- Retrying explicitly accepts the risk of applying War Score twice; marking complete
+-- accepts that the score may not have been applied. Both choices are administrator-only
+-- through Ascendancy's audited queue repair command.
+function CosmicWarBridge.resolveMaterializedTerritoryRepair(operationId, action)
+    if not onServer() then return nil, "server_only" end
+    if type(operationId) ~= "string" or operationId == "" then return nil, "invalid_operation" end
+    if action ~= "retry" and action ~= "mark-complete" and action ~= "abandon" then
+        return nil, "invalid_action"
+    end
+    local server = Server()
+    if not server then return nil, "server_missing" end
+    local receiptKey = "cw_materialization_receipt_" .. operationId
+    local state = server:getValue(receiptKey)
+    if state ~= "prepared" and state ~= "completed" and state ~= "abandoned" then
+        return true, nil
+    end
+    if action == "retry" then
+        server:setValue(receiptKey, nil)
+    elseif action == "mark-complete" then
+        server:setValue(receiptKey, "completed")
+    else
+        server:setValue(receiptKey, "abandoned")
+    end
+    return true, nil
+end
+
 --- Returns the combined War Score from factionA's perspective: positive means A is
 -- winning. 1 point per net kill, 25 per net station capture -- a single territory swing
 -- outweighs a long kill streak, matching how much more a captured station actually

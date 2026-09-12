@@ -4,8 +4,21 @@ include("utility")
 local cvf = include("cosmicvaultfaction")
 local CosmicWarBridge = include("cosmicwarbridge")
 
--- Server-side script attached to players who own Warbonds
-local activeBonds = {} -- { [factionIndex] = { amount = X } }
+-- Server-side script attached to players who own Warbonds.
+--
+-- Keyed by the faction index as a STRING, not a number. secure()/restore() round-trips
+-- this table through the engine's serializer, and no vanilla script pairs a sparse
+-- numeric key with a table value in secured data: the ones storing tables key them by
+-- string (shipappearances.lua's data.visibleShips[name], scrapyard.lua's
+-- dockedWreckages[id.string]) or by contiguous array (factory.lua's currentProductions),
+-- while the one using a sparse numeric key stores a bare scalar (scrapyard.lua's
+-- licenses[factionIndex] = time). Every public function here still takes and returns a
+-- numeric faction index; the string key is internal to this table.
+local activeBonds = {} -- { ["<factionIndex>"] = { amount = X, ... } }
+
+local function bondKey(factionIndex)
+    return tostring(factionIndex)
+end
 
 -- namespace CW_Warbonds
 CW_Warbonds = CW_Warbonds or {}
@@ -27,14 +40,22 @@ function CW_Warbonds.secure()
 end
 
 function CW_Warbonds.restore(data)
-    activeBonds = data.activeBonds or {}
+    -- Re-key on the way in, so a portfolio saved under the old numeric keys carries over
+    -- instead of being abandoned.
+    activeBonds = {}
+    for key, bond in pairs(data.activeBonds or {}) do
+        if type(bond) == "table" then
+            activeBonds[bondKey(key)] = bond
+        end
+    end
 end
 
 function CW_Warbonds.addBond(factionIndex, amount)
-    if not activeBonds[factionIndex] then
+    local key = bondKey(factionIndex)
+    if not activeBonds[key] then
         local server = Server()
         local initialFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
-        activeBonds[factionIndex] = {
+        activeBonds[key] = {
             amount = 0,
             initialFamine = initialFamine,
             -- v4.0.0: also snapshot how much Humanitarian-Contract famine
@@ -44,12 +65,13 @@ function CW_Warbonds.addBond(factionIndex, amount)
             timestamp = server.unpausedRuntime
         }
     end
-    activeBonds[factionIndex].amount = activeBonds[factionIndex].amount + amount
+    activeBonds[key].amount = (tonumber(activeBonds[key].amount) or 0) + amount
 end
 
 function CW_Warbonds.getBondAmount(factionIndex)
-    if activeBonds[factionIndex] then
-        return activeBonds[factionIndex].amount
+    local bond = activeBonds[bondKey(factionIndex)]
+    if bond then
+        return tonumber(bond.amount) or 0
     end
     return 0
 end
@@ -62,16 +84,23 @@ end
 -- gives players actual agency instead of a one-way lock-in.
 -- @return payout (number) or nil, errorMessage if there's no active bond for factionIndex
 function CW_Warbonds.cashOutEarly(factionIndex)
-    local bond = activeBonds[factionIndex]
+    local key = bondKey(factionIndex)
+    local bond = activeBonds[key]
     if not bond then return nil, "No active Warbond with that faction." end
+
+    local bondAmount = tonumber(bond.amount)
+    if not bondAmount then
+        activeBonds[key] = nil
+        return nil, "That Warbond certificate is unreadable and has been written off."
+    end
 
     local server = Server()
     local poolKey = "cw_warbond_pool_" .. tostring(factionIndex)
     local pool = server:getValue(poolKey) or 0
-    server:setValue(poolKey, math.max(0, pool - (bond.amount or 0)))
+    server:setValue(poolKey, math.max(0, pool - bondAmount))
 
-    local payout = math.floor((bond.amount or 0) * 0.40)
-    activeBonds[factionIndex] = nil
+    local payout = math.floor(bondAmount * 0.40)
+    activeBonds[key] = nil
 
     return payout
 end
@@ -83,7 +112,8 @@ end
 function CW_Warbonds.getActiveBonds()
     local server = Server()
     local out = {}
-    for factionIndex, bond in pairs(activeBonds) do
+    for key, bond in pairs(activeBonds) do
+        local factionIndex = tonumber(key)
         local currentFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
         local rawFamineDelta = currentFamine - (bond.initialFamine or 0)
         local reliefDuringHold = CosmicWarBridge.getFamineReliefApplied(factionIndex) - (bond.initialReliefApplied or 0)
@@ -93,9 +123,9 @@ function CW_Warbonds.getActiveBonds()
 
         table.insert(out, {
             factionIndex = factionIndex,
-            amount = bond.amount or 0,
+            amount = tonumber(bond.amount) or 0,
             projectedMultiplier = payoutMultiplier,
-            projectedPayout = math.floor((bond.amount or 0) * payoutMultiplier)
+            projectedPayout = math.floor((tonumber(bond.amount) or 0) * payoutMultiplier)
         })
     end
     return out
@@ -103,38 +133,49 @@ end
 
 function CW_Warbonds.checkWarbondStatus()
     local player = Player()
-
     local server = Server()
     local now = server.unpausedRuntime
 
-        for factionIndex, bond in pairs(activeBonds) do
+    for key, bond in pairs(activeBonds) do
+        local factionIndex = tonumber(key)
+        -- Read the face value once, up front. Every other read of this field in the file
+        -- already treats it as possibly missing; the payout below was the only one that
+        -- didn't, and a missing value there threw before the cleanup at the end of the
+        -- branch could run -- so a single unreadable bond re-threw on every update
+        -- interval for as long as it sat in the portfolio.
+        local bondAmount = tonumber(bond.amount)
+
+        if not bondAmount then
+            -- Nothing can be paid on a certificate with no face value, and nothing can
+            -- recover it either, so clear it rather than leave it to fail again.
+            activeBonds[key] = nil
+            include("cosmicvaultdebug").warn("Cosmic War",
+                "Warbond for faction %s had no readable amount; written off. Surviving fields: initialFamine=%s timestamp=%s initialReliefApplied=%s",
+                tostring(key), tostring(bond.initialFamine), tostring(bond.timestamp), tostring(bond.initialReliefApplied))
+            player:sendChatMessage("Cosmic War Bank", 1, "One of your Warbond certificates is unreadable and has been written off our books. No payout was possible on it."%_T)
+        else
             local heat = CosmicWarBridge.getFactionWarHeat(factionIndex) or 0
 
             -- If war heat is back to 0, the war state has ended. Bond must be held for 2 hours (7200s)
             if heat <= 0 and (now - (bond.timestamp or 0)) >= 7200 then
-                -- v4.0.0: the global investment pool tracks currently-outstanding bonds
-                -- across all players -- maturing one (win or lose) always frees its room
-                -- back up, whether or not the faction itself still exists.
+                -- The global investment pool tracks currently-outstanding bonds across all
+                -- players -- maturing one (win or lose) always frees its room back up,
+                -- whether or not the faction itself still exists.
                 local poolKey = "cw_warbond_pool_" .. tostring(factionIndex)
                 local pool = server:getValue(poolKey) or 0
-                server:setValue(poolKey, math.max(0, pool - (bond.amount or 0)))
+                server:setValue(poolKey, math.max(0, pool - bondAmount))
 
                 local faction = Faction(factionIndex)
                 if faction then
-                    -- v4.0.0: the return used to be a hard binary -- any famine increase
-                    -- at all meant total loss, otherwise a flat 300%. Now it scales
-                    -- smoothly with how costly the war actually was: 0% at a catastrophic
-                    -- +150 famine swing (the faction was effectively broken), up to the
-                    -- full 300% originally promised if famine held steady or improved.
+                    -- The return scales with how costly the war actually was: 0% at a
+                    -- catastrophic +150 famine swing (the faction was effectively broken),
+                    -- up to the full 300% if famine held steady or improved.
                     local currentFamine = server:getValue("cv_famine_" .. tostring(factionIndex)) or 0
                     local rawFamineDelta = currentFamine - (bond.initialFamine or 0)
 
-                    -- v4.0.0: a player could otherwise buy a bond, then fly
-                    -- that same faction's own Humanitarian Contracts (Relief Convoy, etc.)
-                    -- to manufacture a "the war went well" reading regardless of the war's
-                    -- actual outcome. Add back whatever relief was applied during the hold,
-                    -- so the payout tracks the war itself, not humanitarian action taken by
-                    -- the very player holding the bond.
+                    -- Relief the bondholder delivered themselves is added back, so the
+                    -- payout tracks the war rather than the Humanitarian Contracts the
+                    -- player flew for that same faction while holding the bond.
                     local reliefDuringHold = CosmicWarBridge.getFamineReliefApplied(factionIndex) - (bond.initialReliefApplied or 0)
                     local famineDelta = rawFamineDelta + reliefDuringHold
                     local outcomeQuality = 1.0 - math.min(1.0, math.max(0, famineDelta) / 150)
@@ -143,7 +184,7 @@ function CW_Warbonds.checkWarbondStatus()
                     if payoutMultiplier <= 0.05 then
                         player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into suffered catastrophic losses during the war. Your bonds are now worthless paper."%_T)
                     else
-                        local payout = math.floor(bond.amount * payoutMultiplier)
+                        local payout = math.floor(bondAmount * payoutMultiplier)
                         player:receive("Matured Warbonds Payout", payout)
                         player:sendChatMessage("Cosmic War Bank", 0, "Your Warbonds for %1% have matured following the war's end! Paid out %2% Credits (%3%% return, based on how costly the war was for them)."%_T, faction.name, createMonetaryString(payout), tostring(math.floor(payoutMultiplier * 100)))
                     end
@@ -151,7 +192,8 @@ function CW_Warbonds.checkWarbondStatus()
                     player:sendChatMessage("Cosmic War Bank", 1, "The faction you invested Warbonds into has collapsed completely. Your bonds are now worthless paper."%_T)
                 end
 
-                activeBonds[factionIndex] = nil
+                activeBonds[key] = nil
             end
         end
+    end
 end

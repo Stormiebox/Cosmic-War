@@ -56,6 +56,13 @@ function CW_StrandedFlagshipEvent.spawn()
     ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
     ship:addScriptOnce("data/scripts/entity/ai/dreadnoughtboss.lua")
 
+    -- Dreadnought-grade underneath: the crippling below is the event's premise, but it
+    -- was being applied to an otherwise stock hull, so 15% of not-very-much left a 25x
+    -- ship that folded instantly. harden() runs first and tops the ship up to its new
+    -- maxima, then the same 15%/no-shields cripple applies on top of the real numbers.
+    local CosmicWarDreadnought = include("cosmicwardreadnought")
+    CosmicWarDreadnought.harden(ship, x, y)
+
     -- Cripple the ship
     ship.durability = ship.durability * 0.15
     if ship.shieldMaxDurability and ship.shieldMaxDurability > 0 then

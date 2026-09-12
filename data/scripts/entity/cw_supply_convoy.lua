@@ -11,6 +11,16 @@ local zoneStartTime = nil
 
 function CW_SupplyConvoy.initialize(startTimeStr)
     zoneStartTime = startTimeStr
+
+    if onServer() then
+        -- The win condition is this convoy being destroyed, so it hangs off onDestroyed.
+        -- onDelete() would be wrong: the engine fires that whenever the object goes away
+        -- for any reason, a routine sector save/unload included, which would cut the
+        -- supply line without a shot being fired. initialize() runs again on every
+        -- reload (just without the argument, which is what restore() is for), so the
+        -- registration survives an unload cycle.
+        Entity():registerCallback("onDestroyed", "onDestroyed")
+    end
 end
 
 -- addScriptOnce's init argument isn't re-supplied after a sector unload/reload
@@ -24,7 +34,7 @@ function CW_SupplyConvoy.restore(data)
     zoneStartTime = data.zoneStartTime
 end
 
-function CW_SupplyConvoy.onDelete()
+function CW_SupplyConvoy.onDestroyed()
     if not onServer() then return end
     local sector = Sector()
     if not sector then return end

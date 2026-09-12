@@ -43,26 +43,20 @@ function CW_CapitalShipDuelEvent.spawn()
         return
     end
 
-    -- v4.0.0: these carried a "Dreadnought" title with no size or toughness premium
-    -- over a default military ship. 8x volume + the same 5x shield multiplier
-    -- siegeevent.lua's own Siege Dreadnoughts use makes the title match the ship.
-    local volume = Balancing_GetSectorShipVolume(x, y) * Balancing_GetShipVolumeDeviation() * 8.0
+    -- Both duellists are built from the shared dreadnought package in
+    -- lib/cosmicwardreadnought.lua, so this tier stays consistent across every event
+    -- that fields one. Each rolls its own volume, so the two are visibly not clones.
+    local CosmicWarDreadnought = include("cosmicwardreadnought")
 
-    local dreadA = ShipGenerator.createMilitaryShip(facA, SectorGenerator(x,y):getPositionInSector(), volume)
+    local dreadA = ShipGenerator.createMilitaryShip(facA, SectorGenerator(x,y):getPositionInSector(), CosmicWarDreadnought.getVolume(x, y))
     dreadA.title = facA.name .. " Dreadnought"
     ShipAI(dreadA.index):setAggressive()
-    if dreadA:hasComponent(ComponentType.Shield) then
-        dreadA:addBaseMultiplier(StatsBonuses.ShieldDurability, 4.0)
-        dreadA.shieldDurability = dreadA.shieldMaxDurability
-    end
+    CosmicWarDreadnought.harden(dreadA, x, y)
 
-    local dreadB = ShipGenerator.createMilitaryShip(facB, SectorGenerator(x,y):getPositionInSector(), volume)
+    local dreadB = ShipGenerator.createMilitaryShip(facB, SectorGenerator(x,y):getPositionInSector(), CosmicWarDreadnought.getVolume(x, y))
     dreadB.title = facB.name .. " Dreadnought"
     ShipAI(dreadB.index):setAggressive()
-    if dreadB:hasComponent(ComponentType.Shield) then
-        dreadB:addBaseMultiplier(StatsBonuses.ShieldDurability, 4.0)
-        dreadB.shieldDurability = dreadB.shieldMaxDurability
-    end
+    CosmicWarDreadnought.harden(dreadB, x, y)
 
     Sector():broadcastChatMessage("Scanner", 0, "Massive hyperspace signatures detected. Two capital ships are engaging!"%_T)
     terminate()

@@ -1,11 +1,9 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
 
--- v4.0.0: cached at initialize() rather than re-read from a live Entity()/Faction()
--- inside onDelete() -- Avorion_Modding_Codex.md's onRemove()-vs-onDelete() entry warns
--- that late-lifecycle Entity()/Faction() reads aren't reliably safe, and vanilla's own
--- jumprangeboost.lua caches its entity id for the same reason rather than trusting a
--- fresh lookup that deep into teardown.
+-- Cached at initialize() rather than re-read from a live Entity()/Faction() during
+-- teardown: late-lifecycle reads of those globals aren't reliably safe, and vanilla's
+-- jumprangeboost.lua caches its entity id for the same reason.
 local generatorId = nil
 local myFactionIndex = nil
 local homeSectorX, homeSectorY = nil, nil
@@ -41,6 +39,13 @@ function initialize()
         end
 
         sector:registerCallback("onEntityCreated", "onEntityCreated")
+
+        -- onDestroyed is the callback that means this station was actually blown up.
+        -- onDelete() is not: the engine also fires it when the object is deleted for
+        -- any other reason, including the sector being saved and dropped from memory,
+        -- at which point Sector() is already gone. Vanilla registers self-destruction
+        -- the same way (worldboss.lua, asteroidshieldboss.lua).
+        Entity():registerCallback("onDestroyed", "onDestroyed")
     end
 end
 
@@ -53,15 +58,13 @@ function onEntityCreated(id)
     end
 end
 
--- v4.0.0: was onRemove(), which fires whenever the script is detached from the
--- object -- not only when the object itself is destroyed. onDelete() is the hook that
--- actually means the generator is gone for good (Avorion_Modding_Codex.md's
--- onRemove()-vs-onDelete() entry). This also closes the respawn loop: every real
--- destruction path now clears the commissioning faction's flag here, not only Shield
--- Breaker's own explicit clear on mission completion.
-function onDelete()
+-- Fires only on genuine destruction, while the sector is still loaded -- so Sector(),
+-- the broadcast and the news publish below are all safe here.
+function onDestroyed()
     if onServer() then
         local sector = Sector()
+        if not sector then return end
+
         local stations = {sector:getEntitiesByType(EntityType.Station)}
 
         -- Redundancy Check: Do not drop shields if another generator is active in the sector!
@@ -82,7 +85,8 @@ function onDelete()
         end
         sector:broadcastChatMessage("Server", ChatMessageType.Warning, "WARNING: Planetary Shield Generator Destroyed! All stations are now vulnerable!"%_T)
 
-        local ownerFaction = myFactionIndex and myFactionIndex > 0 and Faction(myFactionIndex)
+        local ownerFaction = myFactionIndex and myFactionIndex > 0 and Faction(myFactionIndex) or nil
+
         local cv_news = include("cosmicvaultnews")
         cv_news.publishArticle({
             title = "Planetary Defense Generator Destroyed",
@@ -91,13 +95,11 @@ function onDelete()
         })
 
         -- Clear the commissioning faction's flag so cosmicwardefensegenerators.lua can
-        -- roll it a new one in the future -- generically, for ANY destruction path, not
-        -- only Shield Breaker's own mission completion. Both clears are idempotent, so
-        -- this is safe to run whichever one fires first.
-        if myFactionIndex and myFactionIndex > 0 and homeSectorX and homeSectorY then
-            local faction = Faction(myFactionIndex)
-            if faction and faction:getValue("cw_defense_generator_sector") == (homeSectorX .. ":" .. homeSectorY) then
-                faction:setValue("cw_defense_generator_sector", nil)
+        -- roll it a new one in the future. Shield Breaker clears the same flag on mission
+        -- completion; both clears are idempotent, so whichever fires first is fine.
+        if ownerFaction and homeSectorX and homeSectorY then
+            if ownerFaction:getValue("cw_defense_generator_sector") == (homeSectorX .. ":" .. homeSectorY) then
+                ownerFaction:setValue("cw_defense_generator_sector", nil)
             end
         end
     end

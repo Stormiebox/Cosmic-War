@@ -54,19 +54,17 @@ function CW_StationsiegeEvent.spawn()
         return
     end
 
-    -- v4.0.0: these carried the "Siege Dreadnought" title with no size or toughness
-    -- premium over a default military ship. 8x volume + the same 5x shield multiplier
-    -- siegeevent.lua's own Siege Dreadnoughts use (a distinct, lower tier than Stranded
-    -- Flagship's 25x-volume true endgame dreadnought) makes the title match the ship.
-    local volume = Balancing_GetSectorShipVolume(x, y) * Balancing_GetShipVolumeDeviation() * 8.0
-    for i=1, 8 do
-        local siegeShip = ShipGenerator.createMilitaryShip(attackerFaction, SectorGenerator(x,y):getPositionInSector(), volume)
+    -- The shared dreadnought package in lib/cosmicwardreadnought.lua, so a Siege
+    -- Dreadnought here matches the one the capital ship duel and siegeevent.lua field.
+    -- Volume is rolled per ship rather than once for the whole wave, so the besieging
+    -- force reads as a fleet of individuals instead of identical hulls. Four of them at
+    -- this size is a heavier wave than the previous eight were, at half the block count.
+    local CosmicWarDreadnought = include("cosmicwardreadnought")
+    for i=1, 4 do
+        local siegeShip = ShipGenerator.createMilitaryShip(attackerFaction, SectorGenerator(x,y):getPositionInSector(), CosmicWarDreadnought.getVolume(x, y))
         siegeShip.title = "Siege Dreadnought"
         ShipAI(siegeShip.index):setAggressive()
-        if siegeShip:hasComponent(ComponentType.Shield) then
-            siegeShip:addBaseMultiplier(StatsBonuses.ShieldDurability, 4.0)
-            siegeShip.shieldDurability = siegeShip.shieldMaxDurability
-        end
+        CosmicWarDreadnought.harden(siegeShip, x, y)
     end
     terminate()
 end

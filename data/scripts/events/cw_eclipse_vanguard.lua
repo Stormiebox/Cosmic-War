@@ -30,7 +30,13 @@ function CW_EclipseVanguardEvent.spawn()
     -- Emulate a boss-level faction
     local eclipseFaction = Galaxy():getPirateFaction(0)
 
-    local dreadnought = ShipGenerator.createMilitaryShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector())
+    -- Sized from the shared dreadnought band. The offense multipliers below are
+    -- deliberately calibrated to sit a step under Decapitation Strike's superboss and are
+    -- left exactly as they are -- the gap this fixes is that no volume was ever passed at
+    -- all, so a ship announced as a MASSIVE ANOMALY spawned at stock military size and
+    -- carried its whole reputation on multipliers alone.
+    local CosmicWarDreadnought = include("cosmicwardreadnought")
+    local dreadnought = ShipGenerator.createMilitaryShip(eclipseFaction, SectorGenerator(x,y):getPositionInSector(), CosmicWarDreadnought.getVolume(x, y))
     dreadnought.title = "The Eclipse Vanguard"
     dreadnought:addScriptOnce("data/scripts/entity/ai/patrol.lua")
     -- v4.0.0: the original 50x/50x offense multipliers below predate this
@@ -41,10 +47,12 @@ function CW_EclipseVanguardEvent.spawn()
     -- multiplier, so it stays a step below the superboss on every axis instead of above it.
     dreadnought:addBaseMultiplier(StatsBonuses.FireRate, 5.0) -- 6x total
 
-    if dreadnought:hasComponent(ComponentType.Shield) then
-        dreadnought:addBaseMultiplier(StatsBonuses.ShieldDurability, 3.0) -- 4x total
-        dreadnought.shieldDurability = dreadnought.shieldMaxDurability
-    end
+    -- The flat bias is the reliable half: a multiplier on a plan that rolled no shield
+    -- generator blocks is still zero, so the hasComponent() gate alone could leave this
+    -- boss with no shield phase at all.
+    dreadnought:addAbsoluteBias(StatsBonuses.ShieldDurability, Balancing_GetSectorShipHP(x, y) * 3.0)
+    dreadnought:addBaseMultiplier(StatsBonuses.ShieldDurability, 3.0) -- 4x total
+    dreadnought.shieldDurability = dreadnought.shieldMaxDurability
 
     -- v4.0.0: this boss-tier anomaly had 50x shields and 50x fire rate but zero hull
     -- scaling -- once the shield broke, it died like a stock military ship. 4x hull

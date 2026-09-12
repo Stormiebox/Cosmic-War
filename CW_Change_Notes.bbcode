@@ -1,3 +1,30 @@
+[i]Version 4.0.5.[/i]
+[hr][/hr]
+[h1]v4.0.5 ⚔️BALANCE UPDATE!⚔️[/h1]
+[i]Elite Headhunters and Dreadnoughts now fight like their names promise. Plus three server-side fixes.[/i]
+
+[b]⚖️ BALANCE[/b]
+[list]
+[*]⚔️ Elite Headhunters are finally elite. They were being built at ordinary warship size, so every bonus they had was sitting on a small hull - which is why they died like anything else. They now arrive three to five times the size of a standard warship for the region, with real shields (they had none at all before), much more hull to chew through, faster guns, and a mixed weapon loadout you cannot hard-counter. Ambushes now send 3-6 of them instead of 2-4.
+[*]⚔️ Dreadnoughts hit like dreadnoughts now. Every one in the mod only ever got a shield bonus - no extra hull, no extra firepower at all. Break the shield and you were shooting a stock warship. They are now far bigger, far tougher, shoot considerably harder, and carry mixed weapons. They are still slow, and that is the point: outmanoeuvre one, do not expect to out-tank it.
+[*]⚔️ Station Siege now sends 4 Dreadnoughts instead of 8. Four at the new size is a heavier attack than eight were at the old one, and it is kinder to server performance.
+[*]⚔️ The Eclipse Vanguard announced itself as a massive anomaly and then turned up the size of a normal warship. It is now built at proper capital-ship scale. Its damage and toughness are unchanged on purpose, so it still sits below Decapitation Strike.
+[*]⚔️ The Stranded Flagship is still an adrift wreck sitting at 15% health with its shields down - that is the whole event and it has not changed. What changed is the ship underneath: there was no real toughness there, so the wreck folded the moment you touched it. It is now a genuine capital ship, so finishing it off is an actual fight.
+[/list]
+
+[b]🪲 BUGFIXES[/b]
+[list]
+[*]🐛 Planetary Defense Generators threw a server error every time their home sector saved and unloaded. The error was the lesser half of it: without it, every one of those routine saves would have announced the generator as destroyed, stripped the shields off every station in the sector, and freed the faction to commission a second generator somewhere else while the first one was still standing. Fixed.
+[*]🐛 A siege's supply convoy could count as destroyed when its sector simply unloaded, collapsing the whole siege without a shot being fired at it. Fixed.
+[*]🐛 Warbonds could lose their recorded value when you saved and reloaded, showing up in the War Room as 0 Cr. Worse, the bond then threw a server error every 10 minutes from then on, and blocked every other Warbond you held from ever maturing. Fixed - bonds are now stored in a form that survives a reload, and existing bonds are carried over. A bond that has already lost its value cannot be recovered and is written off with a message rather than jamming the rest of your portfolio.
+[/list]
+
+[b]🔗 TERRITORY RELIABILITY[/b]
+[list]
+[*]🗺️ Cosmic Vault now handles delayed territory flips for the whole suite. A sector unload or repeated callback can no longer process the same flip, War Score, or war momentum twice.
+[/list]
+
+
 [i]Version 4.0.4.[/i]
 [hr][/hr]
 [h1]v4.0.4 🐛BUGFIX UPDATE!🐛[/h1]
