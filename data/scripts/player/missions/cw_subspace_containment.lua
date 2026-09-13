@@ -7,6 +7,7 @@ include("structuredmission")
 local MissionUT = include("missionutility")
 local RiftObjects = include("dlc/rift/lib/riftobjects")
 local CosmicWarBridge = include("cosmicwarbridge")
+local CosmicVaultRift = include("cosmicvaultrift")
 
 mission._Debug = 0
 mission._Name = "War Contract: Subspace Containment"
@@ -91,14 +92,37 @@ mission.phases[1] = {
         -- must only ever happen on the server, and only once per mission.
         if onClient() then return end
         if mission.data.custom.spawned then return end
-        mission.data.custom.spawned = true
 
         local sector = Sector()
-        -- Add rift hazards
-        sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
         local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(0,0,0)))
+        if not platform then
+            print("[Cosmic War] Containment target materialization failed; entry may be retried.")
+            return
+        end
+        mission.data.custom.spawned = true
         platform:setValue("cw_mission_target", true)
         mission.data.custom.targetId = platform.id.string
+
+        local condition, errorCode = CosmicVaultRift.StartRiftHazard({
+            sourceId = "cw-containment:" .. platform.id.string,
+            x = x,
+            y = y,
+            duration = -1,
+            conflictPolicy = "replace"
+        })
+        if condition then
+            mission.data.custom.riftConditionId = condition.conditionId
+            local hazardScript = "data/scripts/sector/cw_rift_hazard.lua"
+            if sector:hasScript(hazardScript) then
+                sector:invokeFunction(hazardScript, "reconcile", "target_bound",
+                    platform.id.string, condition.conditionId)
+            else
+                sector:addScriptOnce(hazardScript, "target_bound",
+                    platform.id.string, condition.conditionId)
+            end
+        else
+            print("[Cosmic War] Containment Rift registration failed: " .. tostring(errorCode))
+        end
 
         local giverFaction = Faction(mission.data.custom.giverIndex)
         if giverFaction then
@@ -112,6 +136,10 @@ mission.phases[1] = {
     onEntityDestroyed = function(id, lastDamageInflictor)
         if onClient() then return end
         if mission.data.custom.targetId and id.string == mission.data.custom.targetId then
+            if mission.data.custom.riftConditionId then
+                CosmicVaultRift.EndRiftHazard(mission.data.custom.riftConditionId,
+                    "containment_target_destroyed")
+            end
             finishAndReward()
         end
     end
@@ -166,6 +194,10 @@ function getBulletin(station)
 end
 
 mission.globalPhase.onAbandon = function()
+    if onServer() and mission.data.custom.riftConditionId then
+        CosmicVaultRift.EndRiftHazard(mission.data.custom.riftConditionId,
+            "containment_abandoned")
+    end
     local player = Player()
     local giverIndex = mission.data.custom.giverIndex
     if giverIndex and giverIndex > 0 then

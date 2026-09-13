@@ -24,6 +24,30 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   a deferred territory flip now use a durable operation receipt. A repeated callback cannot count
   the same flip twice, and an interrupted result is exposed through Vault's repair bridge rather
   than guessed complete or replayed.
+- [Refactor] **War Rift Hazards Use Vault's Canonical Lifecycle (`sector/cosmicwarcontroller.lua`,
+  `sector/cw_rift_hazard.lua`):** Weaponized random tears now register a persistent, source-owned
+  Rift condition before publishing Galactic News. The local script has explicit persistent and
+  target-bound modes, correlates itself with the accepted condition ID, migrates old direct
+  attachments, and no longer owns duplicate thunder or warning presentation.
+- [Bugfix] **Random Tears No Longer Disappear For Lack Of A Mission Target:** The old hazard script
+  searched for `cw_mission_target` on every tick and terminated immediately when none existed.
+  Random tears never create that sentinel, so their promised shield drain ended as soon as the
+  script ran. Persistent mode now requires no target and survives sector reloads while its canonical
+  condition remains active.
+- [Bugfix] **Subspace Containment Now Binds The Hazard To Its Actual Target
+  (`player/missions/cw_subspace_containment.lua`):** The mission previously spawned and marked its
+  Ancient Protection Platform but never attached the Rift damage script that was written to find
+  it. The platform UUID now owns the condition and target-bound mechanics; destroying the target or
+  abandoning the mission ends that exact condition. A failed platform spawn remains retryable
+  rather than setting the one-shot spawn flag first.
+- [Reliability] **Eclipse Siege Fog And FOB Warnings Have Bounded Owners
+  (`events/siegeevent.lua`, `player/cw_eventscheduler.lua`):** Eclipse siege fog is keyed to the
+  siege start time, saved with the event, ended on event removal, and carries a short expiry
+  failsafe. Temporary forward operating bases request a 30-minute presentation-only Rift condition
+  without replacing an existing mechanical hazard.
+- [Fix] **Touched Script Lookups Use Full VFS Paths:** Siege transports, Planetary Defense
+  Generators, Battlefield HUD calls, and Trading Post goods updates now resolve the exact attached
+  script identity instead of relying on short filenames.
 - [Bugfix] **A Warbond Lost Its Face Value Across A Save/Load, Then Crashed The Player Update Tick Every 10 Minutes Forever (`player/cosmicwar_warbonds.lua`):** Reproduced deliberately: one 10,000,000 Cr bond purchased, save reloaded, and the War Room then listed it as `0 -> 0 (300%)` -- the bond row and its faction key both survived, the recorded amount did not. The server log showed the consequence, `attempt to perform arithmetic on field 'amount' (a nil value)` in `checkWarbondStatus()`, thrown from `CW_Warbonds.updateServer` and thrown again ~20 minutes later, two firings of the script's own 600-second `getUpdateInterval()`. Of the six places this file read `bond.amount`, five already guarded it; the maturity payout was the only raw read and is the one that threw. The repeat is the more damaging half: the throw happens before `activeBonds[...] = nil` at the end of that branch, so the bond is never cleared, the next interval re-enters the identical branch, and one unreadable bond becomes an unbounded crash loop that also blocks every *other* bond in the portfolio from maturing, since `pairs()` never reaches them. Two further consequences were silent rather than fatal: the guarded pool adjustment subtracted `0`, so that bond's room in the global `cw_warbond_pool_<faction>` cap stayed occupied permanently, and the War Room preview showed it at 0 Cr.
   - **Cause (evidence-backed, not yet conclusively proven):** the table is keyed by faction index as a *number* and its values are *tables*, and that pairing has no precedent anywhere in vanilla's own `secure()`/`restore()` data. Vanilla persists table values only under string keys (`shipappearances.lua`'s `data.visibleShips[name]`, `scrapyard.lua`'s `dockedWreckages[id.string]`) or a contiguous array (`factory.lua`'s `currentProductions`); the one vanilla case that does use a sparse numeric key stores a bare scalar (`scrapyard.lua`'s `licenses[factionIndex] = time`). Three competing explanations were tested and ruled out rather than assumed: a legacy saved-data shape (`git log` confirms every historical `addBond()` back to the file's introduction wrote `amount = 0` before adding), a serializer depth limit (`factory.lua` round-trips three levels of nesting; its `type(v) == "number"` branch is a format migration, not evidence of flattening), and a player-script-versus-entity-script serializer difference (`shipappearances.lua` is a player script and nests fine).
   - **Fix:** `activeBonds` is now keyed by `tostring(factionIndex)`, with `restore()` re-keying any portfolio saved under the old numeric keys so existing bonds carry over rather than being abandoned. Every public function still takes and returns a numeric faction index -- the string key is internal. Independently of the cause, the payout path was made defensive: the face value is read once into `bondAmount` via `tonumber()` (which also recovers a value that round-tripped to a numeric string), and a bond with no usable amount is cleared immediately with a message to the player instead of being left to throw again. A malformed bond also now logs its surviving fields through Cosmic Vault's debug logger, so a recurrence reports what actually came back from the save instead of only that something was missing. `checkWarbondStatus()` was reindented while it was open -- its loop sat at 8 spaces inside the function body with the closing `end` at column 0.

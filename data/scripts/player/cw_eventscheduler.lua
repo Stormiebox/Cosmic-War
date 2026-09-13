@@ -3,6 +3,7 @@ include("cosmicwarconfig")
 include("randomext")
 include("stringutility")
 local CosmicWarBridge = include("cosmicwarbridge")
+local CosmicVaultRift = include("cosmicvaultrift")
 
 -- namespace CW_EventScheduler
 CW_EventScheduler = {}
@@ -104,8 +105,16 @@ function CW_EventScheduler.onSectorEntered(playerIndex, x, y)
                 station:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
             end
 
-            -- Add hazard (Thunderstorm)
-            Sector():addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
+            -- Canonical presentation-only Rift instability for the temporary FOB.
+            -- A pre-existing Rift condition already supplies presentation, so this
+            -- source does not replace a mechanically owned hazard.
+            CosmicVaultRift.StartRiftHazard({
+                sourceId = "cw-fob:" .. tostring(x) .. ":" .. tostring(y),
+                x = x,
+                y = y,
+                duration = 1800,
+                conflictPolicy = "reject"
+            })
 
             player:sendChatMessage("System", ChatMessageType.Warning, "Warning! Hostiles have established a Forward Operating Base in this sector!"%_T)
         end

@@ -2,12 +2,14 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 
 local ShipGenerator = include("shipgenerator")
 local CosmicVaultTerritory = include("cosmicvaultterritory")
+local CosmicVaultWeather = include("cosmicvaultweather")
 local SectorGenerator = include("SectorGenerator")
 
 include("randomext")
 
 -- namespace SiegeEvent
 SiegeEvent = {}
+local siegeWeatherConditionId
 
 -- v4.0.0 Supply Lines: force projection falls off with distance from the
 -- invader's own home sector. Applied exactly once per siege (guarded by the Server-side
@@ -107,7 +109,7 @@ function SiegeEvent.startSiege(zoneData, isFarSupplyLine)
         for _, ent in pairs(shipsAndStations) do
             if ent.factionIndex ~= zoneData.invader and ent.factionIndex > 0 then
                 -- Exclude Planetary Defense Generators from Electronic Warfare
-                if not ent:hasScript("cw_planetary_defense.lua") then
+                if not ent:hasScript("data/scripts/entity/cw_planetary_defense.lua") then
                     ent:addScriptOnce("data/scripts/entity/debuffs/cw_shieldjammer.lua")
                 end
             end
@@ -191,10 +193,24 @@ function SiegeEvent.startSiege(zoneData, isFarSupplyLine)
 
     -- Inject Eclipse Weather
     if invadingFaction.name == "The Eclipse" or invadingFaction:getValue("is_eclipse") then
-        if sector:hasScript("sector/cv_weather_controller.lua") then
-            sector:removeScript("sector/cv_weather_controller.lua")
+        local condition, errorCode = CosmicVaultWeather.StartWeather({
+            sourceId = "cw-eclipse-siege:" .. tostring(x) .. ":" .. tostring(y)
+                .. ":" .. tostring(zoneData.startTime),
+            weatherType = "DarkMatterFog",
+            x = x,
+            y = y,
+            -- The explicit end call below is authoritative. This deadline is a
+            -- failsafe so a persistence outage during onRemove cannot strand fog forever.
+            duration = math.max(60, (zoneData.endTime or Server().unpausedRuntime + 3600)
+                - Server().unpausedRuntime + 300),
+            conflictPolicy = "replace"
+        })
+        if condition then
+            siegeWeatherConditionId = condition.conditionId
+        else
+            include("cosmicvaultdebug").info("Cosmic War",
+                "[Cosmic War] Eclipse siege weather registration failed: " .. tostring(errorCode))
         end
-        sector:addScriptOnce("data/scripts/sector/cv_weather_controller.lua", "DarkMatterFog", -1)
     end
 end
 
@@ -215,7 +231,8 @@ function SiegeEvent.updateServer(timeStep)
             local invadersPresent = false
             local ships = {sector:getEntitiesByType(EntityType.Ship)}
             for _, ship in pairs(ships) do
-                if ship.factionIndex == zone.invader and ship:hasScript("trooptransport.lua") then
+                if ship.factionIndex == zone.invader
+                        and ship:hasScript("data/scripts/entity/ai/trooptransport.lua") then
                     invadersPresent = true
                     break
                 end
@@ -250,7 +267,7 @@ function SiegeEvent.updateServer(timeStep)
                 end
 
                 for _, player in pairs({sector:getPlayers()}) do
-                    player:invokeFunction("cw_battlefieldhud.lua", "triggerDefenseSuccess")
+                    player:invokeFunction("data/scripts/player/ui/cw_battlefieldhud.lua", "triggerDefenseSuccess")
                 end
 
                 -- Terminate the event script as the siege is over
@@ -264,7 +281,7 @@ function SiegeEvent.updateServer(timeStep)
                     if station.factionIndex == zone.defender then
                         defenderStations = defenderStations + 1
                     end
-                    if station:hasScript("cw_planetary_defense.lua") then
+                    if station:hasScript("data/scripts/entity/cw_planetary_defense.lua") then
                         planetaryShields = planetaryShields + 1
                     end
                 end
@@ -290,7 +307,7 @@ function SiegeEvent.updateServer(timeStep)
                     -- Flip the Battlefield HUD to its "invasion successful" state for every
                     -- player present, mirroring triggerDefenseSuccess() on the win branch.
                     for _, player in pairs({sector:getPlayers()}) do
-                        player:invokeFunction("cw_battlefieldhud.lua", "triggerSiegeSuccess")
+                        player:invokeFunction("data/scripts/player/ui/cw_battlefieldhud.lua", "triggerSiegeSuccess")
                     end
 
                     -- Cosmic War/Chronicles: Wartime Propaganda Beacons
@@ -314,10 +331,24 @@ function SiegeEvent.updateServer(timeStep)
 end
 
 function SiegeEvent.onRemove()
-    -- Always clear Eclipse weather when the event ends, regardless of outcome
-    local sector = Sector()
-    if sector and sector:hasScript("sector/cv_weather_controller.lua") then
-        sector:removeScript("sector/cv_weather_controller.lua")
+    -- End only the condition owned by this siege instance.
+    if onServer() and siegeWeatherConditionId then
+        local ended, errorCode = CosmicVaultWeather.EndWeather(siegeWeatherConditionId,
+            "siege_ended")
+        if not ended then
+            include("cosmicvaultdebug").info("Cosmic War",
+                "[Cosmic War] Eclipse siege weather cleanup failed: " .. tostring(errorCode))
+        end
+    end
+end
+
+function SiegeEvent.secure()
+    return {siegeWeatherConditionId = siegeWeatherConditionId}
+end
+
+function SiegeEvent.restore(data)
+    if type(data) == "table" and type(data.siegeWeatherConditionId) == "string" then
+        siegeWeatherConditionId = data.siegeWeatherConditionId
     end
 end
 

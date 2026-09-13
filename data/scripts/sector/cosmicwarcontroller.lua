@@ -7,6 +7,7 @@ include("relations")
 include("cosmicwarconfig")
 include("cosmicvaultdebug")
 local CosmicWarBridge = include("cosmicwarbridge")
+local CosmicVaultRift = include("cosmicvaultrift")
 
 -- namespace CosmicWarController
 CosmicWarController = {}
@@ -188,7 +189,7 @@ local function applyWarProfiteeringShortages(factions, random)
             for _, station in pairs(stations) do
                 -- Only tradingpost.lua exposes a TradingAPI namespace (decreaseGoods); equipmentdock.lua
                 -- uses a different ShopAPI and militaryoutpost.lua has no trading manager at all.
-                if station.isStation and station:hasScript("tradingpost.lua") then
+                if station.isStation and station:hasScript("data/scripts/entity/merchants/tradingpost.lua") then
                     -- Artificially drain military goods
                     local goodsToDrain = {"Ammunition", "Medical Supplies", "Steel", "Weapon Components", "Energy Tube"}
                     for _, goodName in pairs(goodsToDrain) do
@@ -203,7 +204,7 @@ local function applyWarProfiteeringShortages(factions, random)
                             -- tradingpost.lua exposes one; left safe-but-inert rather than guessing at
                             -- an internal TradingManager API to call instead.
                             local drainAmount = math.floor(random:getInt(500, 2000) * wearinessDrainMult)
-                            local status = station:invokeFunction("tradingpost.lua", "decreaseGoods", goodName, drainAmount)
+                            local status = station:invokeFunction("data/scripts/entity/merchants/tradingpost.lua", "decreaseGoods", goodName, drainAmount)
                             if status == 0 then
                                 didShortage = true
                             end
@@ -275,18 +276,31 @@ local function applyWeaponizedSubspaceTear(factions, random)
             end
 
             if random:test(0.1) then
-                local cvn = include("cosmicvaultnews")
-                local article = {
-                    title = "Weaponized Subspace Tear",
-                    category = "War Crime",
-                    content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
-                }
-                cvn.publishArticle(article)
-
-                -- Add visual Rift thunder
-                sector:addScriptOnce("dlc/rift/sector/riftbackgroundthunder.lua")
-                -- Add localized shield drain specific to Cosmic War (without relying on Ascendancy)
-                sector:addScriptOnce("sector/cw_rift_hazard.lua")
+                local condition, errorCode = CosmicVaultRift.StartRiftHazard({
+                    sourceId = "cw-random-tear:" .. tostring(x) .. ":" .. tostring(y),
+                    x = x,
+                    y = y,
+                    duration = -1,
+                    conflictPolicy = "replace"
+                })
+                if condition then
+                    local hazardScript = "data/scripts/sector/cw_rift_hazard.lua"
+                    if sector:hasScript(hazardScript) then
+                        sector:invokeFunction(hazardScript, "reconcile",
+                            "persistent", nil, condition.conditionId)
+                    else
+                        sector:addScriptOnce(hazardScript,
+                            "persistent", nil, condition.conditionId)
+                    end
+                    local cvn = include("cosmicvaultnews")
+                    cvn.publishArticle({
+                        title = "Weaponized Subspace Tear",
+                        category = "War Crime",
+                        content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
+                    })
+                else
+                    cwlog("Weaponized subspace tear registration failed: " .. tostring(errorCode))
+                end
                 break -- Only tear the rift once per sector update
             end
         end
