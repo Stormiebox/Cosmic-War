@@ -80,8 +80,14 @@ function CW_StrandedFlagshipEvent.spawn()
         content = "A massive flagship belonging to " .. flagshipFaction.name .. " has suffered critical engine failure and is stranded in sector [" .. x .. ":" .. y .. "]. Rival factions and opportunistic mercenaries are already moving in to capitalize on the vulnerability.",
         category = "Conflict"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").Publish({
+        article = article,
+        eventId = "stranded-flagship:" .. tostring(ship.id.string),
+        threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+        eventType = "war.flagship.stranded",
+        location = {x = x, y = y, radius = 0},
+        provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "spawn_verified", flagshipId = tostring(ship.id.string), factionIndex = flagshipFaction.index}
+    })
 end
 
 function CW_StrandedFlagshipEvent.spawnRepairFleet()

@@ -56,11 +56,17 @@ function CosmicWarDefenseGenerators.update(timeStep)
                     faction:setValue("cw_defense_generator_sector", hx .. ":" .. hy)
                     include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] Faction " .. tostring(faction.index) .. " commissioned a Planetary Defense Generator at (" .. hx .. ":" .. hy .. ").")
 
-                    local cv_news = include("cosmicvaultnews")
-                    cv_news.publishArticle({
-                        title = tostring(faction.name) .. " Commissions Planetary Defense Generator",
-                        content = "Facing mounting pressure, " .. tostring(faction.name) .. " has commissioned a Planetary Defense Generator to shield their home sector at (" .. hx .. ":" .. hy .. ") from siege.",
-                        category = "Military"
+                    include("cw_news").Publish({
+                        eventId = "defense-generator:" .. tostring(faction.index) .. ":" .. tostring(hx) .. ":" .. tostring(hy),
+                        threadId = "home-defense:" .. tostring(faction.index),
+                        eventType = "war.defense_generator.commissioned",
+                        location = {x = hx, y = hy, radius = 0},
+                        provenance = {recordType = "cw_defense_generator_sector", sourceRevision = 1, sourceState = "commissioned", factionIndex = faction.index},
+                        article = {
+                            title = tostring(faction.name) .. " Commissions Planetary Defense Generator",
+                            content = "Facing mounting pressure, " .. tostring(faction.name) .. " has commissioned a Planetary Defense Generator to shield their home sector at (" .. hx .. ":" .. hy .. ") from siege.",
+                            category = "Military"
+                        }
                     })
                 end
             end

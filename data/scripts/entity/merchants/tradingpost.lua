@@ -242,8 +242,17 @@ function TradingPost.buyDiplomaticAid()
         content = "An independent captain has funded a direct diplomatic aid package for " .. (aidFaction and aidFaction.name or "a faction") .. ", easing the pressure of an ongoing famine without a single supply run.",
         category = "Humanitarian"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    local x, y = Sector():getCoordinates()
+    include("cw_news").Publish({
+        article = article,
+        eventId = "diplomatic-aid:" .. tostring(player.index) .. ":" .. tostring(factionIndex) .. ":" .. tostring(math.floor(Server().unpausedRuntime)),
+        threadId = "famine:" .. tostring(factionIndex),
+        eventType = "war.humanitarian.diplomatic_aid",
+        topic = "humanitarian",
+        severity = "info",
+        location = {x = x, y = y, radius = 0},
+        provenance = {recordType = "cw_famine_relief", sourceRevision = DIPLOMATIC_AID_FAMINE_REDUCTION, sourceState = "applied", playerIndex = player.index, factionIndex = factionIndex}
+    })
 
     player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Your generosity will not be forgotten."%_T)
 end

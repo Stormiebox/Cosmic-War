@@ -213,12 +213,7 @@ function finishAndReward()
         content = "A massive blow to enemy morale! An independent strike force has successfully tracked down and eliminated a heavily guarded " .. (faction and faction.name or "unknown") .. " flagship in sector [" .. x .. ":" .. y .. "].",
         category = "War"
     }
-    local cvn = include("cosmicvaultnews")
-    if cvn and cvn.publishArticle then
-        cvn.publishArticle(article)
-    else
-        Server():sendCallback("onCCNewsPublishArticle", article)
-    end
+    include("cw_news").PublishMission(article, "decapitation_strike", mission.data, {x = x, y = y, radius = 0})
 
     local giverFaction = Faction(mission.data.custom.giverIndex)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)

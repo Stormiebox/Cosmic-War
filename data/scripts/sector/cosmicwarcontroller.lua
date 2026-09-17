@@ -222,8 +222,16 @@ local function applyWarProfiteeringShortages(factions, random)
             category = "Trade Crisis",
             content = "The escalating conflict in sector (" .. x .. ":" .. y .. ") has drained local stations of vital military and medical supplies. Profiteers and smugglers are rushing to exploit the 300% margins."
         }
-        local cvn = include("cosmicvaultnews")
-        cvn.publishArticle(article)
+        include("cw_news").Publish({
+            article = article,
+            eventId = "shortage:" .. tostring(x) .. ":" .. tostring(y) .. ":" .. tostring(math.floor(Server().unpausedRuntime / 60)),
+            threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+            eventType = "war.economy.shortage",
+            topic = "economy",
+            location = {x = x, y = y, radius = 0},
+            sourceRevision = math.floor(Server().unpausedRuntime),
+            sourceState = "verified"
+        })
     end
 end
 
@@ -241,18 +249,17 @@ local function applyWeaponizedSubspaceTear(factions, random)
 
             if Server():getValue("eclipse_fully_awake") and random:test(0.1) then
                 local EclipseGenerator = include("eclipsegenerator")
-                local cvn = include("cosmicvaultnews")
                 local article = {
                     title = "Sanitization Protocol",
                     category = "Eclipse Invasion",
                     content = "The immense chaos and subspace tearing in sector (" .. x .. ":" .. y .. ") has drawn the attention of the Eclipse. A multiversal sanitization fleet has warped in, forcing all warring factions into a desperate ceasefire!"
                 }
-                cvn.publishArticle(article)
-
+                local spawned = 0
                 local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000)))
                 local harbinger = EclipseGenerator.createShip(pos, "obelisk", 2.0, 30)
                 if harbinger then
                     harbinger:addScriptOnce("ai/patrol.lua")
+                    spawned = spawned + 1
                 end
 
                 for i = 1, 4 do
@@ -260,7 +267,20 @@ local function applyWeaponizedSubspaceTear(factions, random)
                     local defender = EclipseGenerator.createJuggernaut(mPos)
                     if defender then
                         defender:addScriptOnce("ai/patrol.lua")
+                        spawned = spawned + 1
                     end
+                end
+
+                if spawned > 0 then
+                    include("cw_news").Publish({
+                        article = article,
+                        eventId = "sanitization:" .. tostring(x) .. ":" .. tostring(y) .. ":" .. tostring(math.floor(Server().unpausedRuntime)),
+                        threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+                        eventType = "war.eclipse.sanitization_started",
+                        severity = "critical",
+                        location = {x = x, y = y, radius = 0},
+                        provenance = {recordType = "cw_sector_event", sourceRevision = math.floor(Server().unpausedRuntime), sourceState = "spawn_verified", spawned = spawned}
+                    })
                 end
 
                 -- Ceasefire
@@ -292,11 +312,18 @@ local function applyWeaponizedSubspaceTear(factions, random)
                         sector:addScriptOnce(hazardScript,
                             "persistent", nil, condition.conditionId)
                     end
-                    local cvn = include("cosmicvaultnews")
-                    cvn.publishArticle({
-                        title = "Weaponized Subspace Tear",
-                        category = "War Crime",
-                        content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
+                    include("cw_news").Publish({
+                        eventId = "subspace-tear:" .. tostring(condition.conditionId),
+                        threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+                        eventType = "war.rift.weaponized_tear",
+                        severity = "critical",
+                        location = {x = x, y = y, radius = 0},
+                        provenance = {recordType = "cv_weather_v2", conditionId = tostring(condition.conditionId), sourceRevision = condition.revision or 1, sourceState = tostring(condition.state)},
+                        article = {
+                            title = "Weaponized Subspace Tear",
+                            category = "War Crime",
+                            content = "In a desperate bid for victory in sector (" .. x .. ":" .. y .. "), experimental subspace charges were detonated. The fabric of space has torn, unleashing Rift hazards and Ancient constructs! War Contracts have been issued to contain the anomaly."
+                        }
                     })
                 else
                     cwlog("Weaponized subspace tear registration failed: " .. tostring(errorCode))
@@ -338,21 +365,30 @@ local function applyWarHazardSpawns(factions, random)
                     local weariness = CosmicWarBridge.getWarWeariness(enemyFaction.index)
                     numShips = math.max(1, math.floor(numShips * (1.0 - (weariness / 100) * 0.5)))
 
+                    local spawned = 0
                     for i = 1, numShips do
                         local pos = MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(random:getInt(-1500, 1500), 0, random:getInt(-1500, 1500)))
                         local ship = ShipGenerator.createMilitaryShip(enemyFaction, pos)
                         if ship then
                             ship:addScriptOnce("ai/patrol.lua")
+                            spawned = spawned + 1
                         end
                     end
 
-                    local cvn = include("cosmicvaultnews")
-                    local article = {
-                        title = "Frontline Siege",
-                        category = "War Heat Escalation",
-                        content = string.format("The intense hostility in sector (%d:%d) has triggered a massive offensive by the %s! A heavy strike fleet has dropped out of hyperspace and is assaulting all targets in sight.", x, y, enemyFaction.name)
-                    }
-                    cvn.publishArticle(article)
+                    if spawned > 0 then
+                        include("cw_news").Publish({
+                            eventId = "frontline-siege:" .. tostring(enemyFaction.index) .. ":" .. tostring(x) .. ":" .. tostring(y) .. ":" .. tostring(math.floor(Server().unpausedRuntime)),
+                            threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+                            eventType = "war.siege.started",
+                            location = {x = x, y = y, radius = 0},
+                            provenance = {recordType = "cw_sector_event", sourceRevision = math.floor(Server().unpausedRuntime), sourceState = "spawn_verified", spawned = spawned, factionIndex = enemyFaction.index},
+                            article = {
+                                title = "Frontline Siege",
+                                category = "War Heat Escalation",
+                                content = string.format("The intense hostility in sector (%d:%d) has triggered a massive offensive by the %s! A heavy strike fleet has dropped out of hyperspace and is assaulting all targets in sight.", x, y, enemyFaction.name)
+                            }
+                        })
+                    end
                     break -- Only spawn once per update
                 end
             end
@@ -391,21 +427,31 @@ local function applyInsurgency(now)
 
     local ShipGenerator = include("shipgenerator")
     local numInsurgents = random:getInt(2, 4)
+    local spawned = 0
     for i = 1, numInsurgents do
         local pos = MatrixLookUpPosition(vec3(0, 0, 1), vec3(0, 1, 0), vec3(random:getInt(-1200, 1200), 0, random:getInt(-1200, 1200)))
         local ship = ShipGenerator.createDefender(formerOwner, pos)
         if ship then
             ship.title = "Insurgent Raider"%_T
             ShipAI(ship.index):setAggressive()
+            spawned = spawned + 1
         end
     end
 
-    local cvn = include("cosmicvaultnews")
-    cvn.publishArticle({
-        title = "Insurgency Flares In Occupied Territory",
-        content = "Loyalist holdouts still answering to " .. tostring(formerOwner.name) .. " have staged a raid against the sector's new occupying garrison -- a reminder that the territory isn't fully settled yet.",
-        category = "War"
-    })
+    if spawned > 0 then
+        include("cw_news").Publish({
+            eventId = "insurgency:" .. tostring(occupation.oldFactionIndex) .. ":" .. tostring(x) .. ":" .. tostring(y) .. ":" .. tostring(math.floor(now)),
+            threadId = "occupation:" .. tostring(x) .. ":" .. tostring(y),
+            eventType = "war.insurgency.started",
+            location = {x = x, y = y, radius = 0},
+            provenance = {recordType = "cw_occupation", sourceRevision = math.floor(now), sourceState = "spawn_verified", spawned = spawned, formerFaction = occupation.oldFactionIndex},
+            article = {
+                title = "Insurgency Flares In Occupied Territory",
+                content = "Loyalist holdouts still answering to " .. tostring(formerOwner.name) .. " have staged a raid against the sector's new occupying garrison -- a reminder that the territory isn't fully settled yet.",
+                category = "War"
+            }
+        })
+    end
 end
 
 local function applyEclipseVanguardEvent(factions, random)

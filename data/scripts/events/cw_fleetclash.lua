@@ -91,11 +91,17 @@ function CW_FleetClashEvent.spawn()
     end
 
     -- Spawn the invading fleet
+    local spawned = 0
+    local firstShipId
     for i = 1, numAttackers do
         local volume = Balancing_GetSectorShipVolume(x, y) * volumeMult
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, generator:getPositionInSector(), volume)
-        ShipAI(ship.index):setAggressive()
-        ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
+        if ship then
+            ShipAI(ship.index):setAggressive()
+            ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
+            spawned = spawned + 1
+            firstShipId = firstShipId or ship.id.string
+        end
     end
 
     if usedJammer then
@@ -111,8 +117,16 @@ function CW_FleetClashEvent.spawn()
         content = "A colossal hostile fleet signature has been detected dropping out of hyperspace in sector [" .. x .. ":" .. y .. "]. The " .. faction.name .. " military has declared a sector-wide state of emergency as they engage the invading " .. enemyFaction.name .. " forces.",
         category = "Conflict"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    if spawned > 0 then
+        include("cw_news").Publish({
+            article = article,
+            eventId = "fleet-clash:" .. tostring(firstShipId),
+            threadId = "conflict:" .. tostring(math.min(faction.index, enemyFaction.index)) .. ":" .. tostring(math.max(faction.index, enemyFaction.index)),
+            eventType = "war.battle.started",
+            location = {x = x, y = y, radius = 0},
+            provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "spawn_verified", spawned = spawned, leadEntityId = tostring(firstShipId)}
+        })
+    end
 end
 
 

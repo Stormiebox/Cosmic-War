@@ -223,8 +223,7 @@ function finishAndReward()
         content = "Rumors are swirling after a high-ranking military officer successfully defected from " .. (faction and faction.name or "unknown") .. " under heavy escort in sector [" .. x .. ":" .. y .. "].",
         category = "War"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").PublishMission(article, "high_value_defection", mission.data, {x = x, y = y, radius = 0})
 
     reward()
     accomplish()

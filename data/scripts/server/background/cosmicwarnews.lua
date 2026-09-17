@@ -155,8 +155,15 @@ function CosmicWarNews.onSeedNews()
             content = string.format("Diplomatic relations between the %s [%s] and the %s [%s] have severely deteriorated. Intelligence suggests active military deployments across sector borders.", factionA, aStance, factionB, bStance)
         }
 
-        local cvn = include("cosmicvaultnews")
-        cvn.publishArticle(article)
+        local pairId = tostring(math.min(pick.a.index, pick.b.index)) .. ":" .. tostring(math.max(pick.a.index, pick.b.index))
+        include("cw_news").Upsert({
+            article = article,
+            eventId = "active-conflict:" .. pairId,
+            threadId = "conflict:" .. pairId,
+            eventType = "war.conflict.active",
+            sourceRevision = math.abs(math.floor(pick.rel)),
+            sourceState = "active"
+        })
     end
 end
 

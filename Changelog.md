@@ -52,6 +52,20 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
   - **Cause (evidence-backed, not yet conclusively proven):** the table is keyed by faction index as a *number* and its values are *tables*, and that pairing has no precedent anywhere in vanilla's own `secure()`/`restore()` data. Vanilla persists table values only under string keys (`shipappearances.lua`'s `data.visibleShips[name]`, `scrapyard.lua`'s `dockedWreckages[id.string]`) or a contiguous array (`factory.lua`'s `currentProductions`); the one vanilla case that does use a sparse numeric key stores a bare scalar (`scrapyard.lua`'s `licenses[factionIndex] = time`). Three competing explanations were tested and ruled out rather than assumed: a legacy saved-data shape (`git log` confirms every historical `addBond()` back to the file's introduction wrote `amount = 0` before adding), a serializer depth limit (`factory.lua` round-trips three levels of nesting; its `type(v) == "number"` branch is a format migration, not evidence of flattening), and a player-script-versus-entity-script serializer difference (`shipappearances.lua` is a player script and nests fine).
   - **Fix:** `activeBonds` is now keyed by `tostring(factionIndex)`, with `restore()` re-keying any portfolio saved under the old numeric keys so existing bonds carry over rather than being abandoned. Every public function still takes and returns a numeric faction index -- the string key is internal. Independently of the cause, the payout path was made defensive: the face value is read once into `bondAmount` via `tonumber()` (which also recovers a value that round-tripped to a numeric string), and a bond with no usable amount is cleared immediately with a message to the player instead of being left to throw again. A malformed bond also now logs its surviving fields through Cosmic Vault's debug logger, so a recurrence reports what actually came back from the save instead of only that something was missing. `checkWarbondStatus()` was reindented while it was open -- its loop sat at 8 spaces inside the function body with the closing `end` at column 0.
 
+### 📰 Galactic News Integration
+
+- [Refactor] **War Reports Use Vault News v2 (`lib/cw_news.lua`):** Battle, mission, bounty,
+  casualty, ceasefire, defense, siege, corridor, convoy, sabotage, and humanitarian publishers now
+  submit validated records through one War-owned adapter. Stable operation and mission identities
+  make retries update or resolve one thread instead of adding duplicate articles.
+- [Reliability] **News Follows Owning Evidence:** The 32 migrated publisher paths report only after
+  their War state, encounter result, or mission outcome is verified. Failed and unloaded encounters
+  are not announced as victories, and the former direct legacy callback fallback is removed.
+- [Compatibility] **Gameplay Ownership Is Unchanged:** Cosmic War remains the sole writer of War
+  state and uses Vault only for shared news storage. Chronicles reads those articles through the
+  public feed; War does not depend on a Chronicle script path. Existing v4.0.5 mechanics and balance
+  changes are otherwise unchanged.
+
 ### ⚖️ Numbers & Balance
 
 - [Balance] **Elite Headhunters Were Average-Sized Warships Wearing An Elite Title (`player/cw_eventscheduler.lua`):** The Bounty Hunter Ambush called `ShipGenerator.createMilitaryShip(faction, matrix)` with no `volume` argument, so hull size fell through to `Balancing_GetSectorShipVolume() * Balancing_GetShipVolumeDeviation()`. That deviation is `1.0 + 10.0 * f^4` on a random `f` -- a quartic whose low end dominates nearly every roll -- so an "Elite Headhunter" was, in practice, an ordinary military hull with multipliers bolted on, which is why the community read them as trash mobs regardless of the numbers attached. Volume is now passed explicitly at 3.5-5.0x the sector average, still anchored to `Balancing_GetSectorShipVolume` so they stay proportionate to the region they ambush in. Downstream of that: more hull blocks (base HP), more shield generator blocks for the shield modifiers to act on, and more surface to mount guns. Fleet size raised from 2-4 to 3-6.

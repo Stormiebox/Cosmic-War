@@ -87,11 +87,18 @@ function onDestroyed()
 
         local ownerFaction = myFactionIndex and myFactionIndex > 0 and Faction(myFactionIndex) or nil
 
-        local cv_news = include("cosmicvaultnews")
-        cv_news.publishArticle({
-            title = "Planetary Defense Generator Destroyed",
-            content = "The Planetary Defense Generator shielding " .. (ownerFaction and ownerFaction.name or "a faction") .. "'s home sector has been destroyed. Every station there now stands defenseless.",
-            category = "Military"
+        include("cw_news").Publish({
+            eventId = "defense-generator-destroyed:" .. tostring(generatorId),
+            threadId = "home-defense:" .. tostring(myFactionIndex or 0),
+            eventType = "war.defense_generator.destroyed",
+            severity = "critical",
+            location = type(homeSectorX) == "number" and type(homeSectorY) == "number" and {x = homeSectorX, y = homeSectorY, radius = 0} or nil,
+            provenance = {recordType = "entity_destroyed", sourceRevision = 1, sourceState = "verified", entityId = tostring(generatorId), factionIndex = myFactionIndex or 0},
+            article = {
+                title = "Planetary Defense Generator Destroyed",
+                content = "The Planetary Defense Generator shielding " .. (ownerFaction and ownerFaction.name or "a faction") .. "'s home sector has been destroyed. Every station there now stands defenseless.",
+                category = "Military"
+            }
         })
 
         -- Clear the commissioning faction's flag so cosmicwardefensegenerators.lua can

@@ -226,8 +226,7 @@ function finishAndReward()
         content = "A classified black ops fleet moving through sector [" .. x .. ":" .. y .. "] has been completely wiped out by independent contractors.",
         category = "War"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").PublishMission(article, "interception", mission.data, {x = x, y = y, radius = 0})
 
     reward()
     accomplish()
@@ -278,4 +277,3 @@ mission.globalPhase.onAbandon = function()
         player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
     end
 end
-

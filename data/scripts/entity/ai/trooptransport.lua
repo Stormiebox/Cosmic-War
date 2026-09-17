@@ -161,14 +161,21 @@ function TroopTransport.captureStation(station, newFactionIndex)
         isHomeSector = homeX == x and homeY == y
     end
 
-    local CosmicVaultNews = include("cosmicvaultnews")
-    CosmicVaultNews.publishArticle({
-        title = isHomeSector and ("Home Sector Falls: " .. oldFactionName .. " Loses Their Capital") or "Territory Conquered",
-        content = isHomeSector
-            and ("In a devastating blow, " .. oldFactionName .. "'s home sector " .. sectorName .. " has fallen to " .. factionName .. " via ground assault. The galaxy borders have officially shifted.")
-            or ("The sector " .. sectorName .. " has been successfully annexed by " .. factionName .. " via ground assault. The galaxy borders have officially shifted."),
-        category = "War",
-        breaking = isHomeSector
+    include("cw_news").Publish({
+        eventId = "ground-capture:" .. tostring(station.id.string) .. ":" .. tostring(newFactionIndex),
+        threadId = "occupation:" .. tostring(x) .. ":" .. tostring(y),
+        eventType = "war.territory.captured",
+        severity = isHomeSector and "critical" or "warning",
+        location = {x = x, y = y, radius = 0},
+        provenance = {recordType = "station_faction_transfer", sourceRevision = 1, sourceState = "verified", stationId = tostring(station.id.string), oldFaction = oldFactionIndex, newFaction = newFactionIndex},
+        article = {
+            title = isHomeSector and ("Home Sector Falls: " .. oldFactionName .. " Loses Their Capital") or "Territory Conquered",
+            content = isHomeSector
+                and ("In a devastating blow, " .. oldFactionName .. "'s home sector " .. sectorName .. " has fallen to " .. factionName .. " via ground assault. The galaxy borders have officially shifted.")
+                or ("The sector " .. sectorName .. " has been successfully annexed by " .. factionName .. " via ground assault. The galaxy borders have officially shifted."),
+            category = "War",
+            breaking = isHomeSector
+        }
     })
 end
 

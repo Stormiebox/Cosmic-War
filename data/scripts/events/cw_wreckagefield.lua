@@ -31,11 +31,12 @@ function CW_WreckagefieldEvent.initialize()
     local generator = SectorGenerator(x, y)
     local numWrecks = random:getInt(4, 9)
 
+    local wrecksCreated = 0
     for i = 1, numWrecks do
         local matrix = MatrixLookUpPosition(-vec3(random:getFloat(-1, 1), random:getFloat(-1, 1), random:getFloat(-1, 1)), vec3(random:getFloat(-1, 1), random:getFloat(-1, 1), random:getFloat(-1, 1)), vec3(random:getFloat(-2000, 2000), random:getFloat(-2000, 2000), random:getFloat(-2000, 2000)))
 
         -- Spawn broken ships
-        generator:createWreckage(faction, nil, 10, matrix)
+        if generator:createWreckage(faction, nil, 10, matrix) then wrecksCreated = wrecksCreated + 1 end
     end
 
     -- If Cosmic Vault News is installed, broadcast news
@@ -44,8 +45,18 @@ function CW_WreckagefieldEvent.initialize()
             category = "War Casualties",
             content = "Scouts returning from sector (" .. x .. ":" .. y .. ") report finding a dense cluster of capital ship wreckages. Scavengers are already flocking to the area to pick the bones clean."
         }
-    local cvn = include("cosmicvaultnews")
-    cvn.publishArticle(article)
+    if wrecksCreated > 0 then
+        include("cw_news").Publish({
+            article = article,
+            eventId = "wreckage-field:" .. tostring(faction.index) .. ":" .. tostring(x) .. ":" .. tostring(y) .. ":" .. tostring(math.floor(Server().unpausedRuntime)),
+            threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+            eventType = "war.aftermath.wreckage_field",
+            topic = "discovery",
+            severity = "info",
+            location = {x = x, y = y, radius = 0},
+            provenance = {recordType = "cw_event", sourceRevision = math.floor(Server().unpausedRuntime), sourceState = "materialized", wrecksCreated = wrecksCreated, factionIndex = faction.index}
+        })
+    end
 
     terminate()
 end

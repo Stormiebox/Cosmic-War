@@ -75,15 +75,19 @@ local function applyCoalitionCeasefires(server, factionIndices)
     end
 
     if #pulled > 0 then
-        local cv_news = include("cosmicvaultnews")
-        if cv_news and cv_news.publishArticle then
-            cv_news.publishArticle({
+        include("cw_news").Publish({
+            eventId = "coalition-ceasefire:" .. tostring(math.floor(server.unpausedRuntime)),
+            threadId = "coalition-ceasefire",
+            eventType = "war.ceasefire.coalition",
+            severity = "critical",
+            provenance = {recordType = "cw_coalition_ceasefire", sourceRevision = math.floor(server.unpausedRuntime), sourceState = "applied", pairCount = #pulled},
+            article = {
                 title = "Coalition Ceasefire Declared",
                 content = "With the Eclipse's advance threatening the entire galaxy, warring factions across known space have agreed to stand down, at least for now: " .. table.concat(pulled, "; ") .. ". Old grudges will have to wait.",
                 category = "Politics",
                 breaking = true
-            })
-        end
+            }
+        })
         cwlog("Coalition Ceasefire pulled %i war pairs into a temporary truce.", #pulled)
     end
 end
@@ -188,15 +192,19 @@ function CosmicWarCeasefires.update(timeStep)
 
                             CosmicWarBridge.resetWarScore(a.index, b.index)
 
-                            local cv_news = include("cosmicvaultnews")
-                            if cv_news and cv_news.publishArticle then
-                                cv_news.publishArticle({
+                            include("cw_news").Publish({
+                                eventId = "decisive-victory:" .. pairKey .. ":" .. tostring(math.floor(server.unpausedRuntime)),
+                                threadId = "conflict:" .. pairKey,
+                                eventType = "war.ceasefire.decisive_victory",
+                                severity = "critical",
+                                provenance = {recordType = "cw_war_score", sourceRevision = math.floor(math.abs(score)), sourceState = "resolved", factionA = a.index, factionB = b.index},
+                                article = {
                                     title = "Decisive Victory: " .. tostring(winner.name) .. " Prevails Over " .. tostring(loser.name),
                                     content = "After a long and costly conflict, " .. tostring(winner.name) .. " has decisively broken " .. tostring(loser.name) .. "'s ability to continue the war. A peace has been forced, though " .. tostring(loser.name) .. " will feel the economic cost for some time.",
                                     category = "Politics",
                                     breaking = true
-                                })
-                            end
+                                }
+                            })
 
                             eased = eased + 1
 
@@ -241,14 +249,18 @@ function CosmicWarCeasefires.update(timeStep)
                                     b:setValue("cw_target_faction", 0)
                                 end
 
-                                local cv_news = include("cosmicvaultnews")
-                                if cv_news and cv_news.publishArticle then
-                                    cv_news.publishArticle({
+                                include("cw_news").Publish({
+                                    eventId = "ceasefire:" .. pairKey .. ":" .. tostring(math.floor(server.unpausedRuntime)),
+                                    threadId = "conflict:" .. pairKey,
+                                    eventType = "war.ceasefire.reached",
+                                    severity = "advisory",
+                                    provenance = {recordType = "cw_relations", sourceRevision = math.floor(math.abs(rel)), sourceState = "resolved", factionA = a.index, factionB = b.index},
+                                    article = {
                                         title = "Ceasefire Reached Between " .. tostring(a.name) .. " and " .. tostring(b.name),
                                         content = "After a prolonged period of hostility, diplomatic channels between " .. tostring(a.name) .. " and " .. tostring(b.name) .. " have thawed enough for both sides to formally stand down. Border patrols report a marked decrease in skirmishes, though analysts caution the peace remains fragile.",
                                         category = "Politics"
-                                    })
-                                end
+                                    }
+                                })
 
                                 eased = eased + 1
                             end

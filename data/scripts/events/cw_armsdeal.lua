@@ -85,8 +85,14 @@ function CW_ArmsDealEvent.spawn()
         content = "Military forces belonging to the " .. militaryFaction.name .. " have reportedly intercepted an illegal weapons transfer orchestrated by the " .. smugglerFaction.name .. " in sector [" .. x .. ":" .. y .. "]. Heavy fighting is ongoing.",
         category = "Conflict"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").Publish({
+        article = article,
+        eventId = "arms-deal:" .. tostring(buyer.id.string) .. ":" .. tostring(seller.id.string),
+        threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+        eventType = "war.arms_deal.intercepted",
+        location = {x = x, y = y, radius = 0},
+        provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "spawn_verified", buyerId = tostring(buyer.id.string), sellerId = tostring(seller.id.string)}
+    })
 end
 
 

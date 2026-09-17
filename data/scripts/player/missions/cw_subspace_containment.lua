@@ -154,8 +154,7 @@ function finishAndReward()
         content = "An Ancient Protection Platform, pulled into normal space by an experimental hyperspace weapon in sector [" .. x .. ":" .. y .. "], has been destroyed by independent contractors.",
         category = "War"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").PublishMission(article, "subspace_containment", mission.data, {x = x, y = y, radius = 0})
 
     reward()
     accomplish()

@@ -147,17 +147,21 @@ mission.phases[1].triggers = {
                 -- Settle the sector for real, if it's still unclaimed -- another faction
                 -- (or the giver's own organic roll) may have already reached it first.
                 if not Galaxy():getControllingFaction(mission.data.custom.targetX, mission.data.custom.targetY) then
-                    CosmicVaultTerritory.expandToSector(mission.data.custom.targetX, mission.data.custom.targetY, giverIndex, false)
-                    Player():sendChatMessage(Faction(giverIndex).name, 0, "The settlement is founded. This sector is ours now."%_T)
+                    local queued = CosmicVaultTerritory.expandToSector(
+                        mission.data.custom.targetX, mission.data.custom.targetY, giverIndex, false)
+                    if queued then
+                        Player():sendChatMessage(Faction(giverIndex).name, 0, "The settlement expedition is underway. This sector will be ours soon."%_T)
 
-                    local giverFactionObj = Faction(giverIndex)
-                    local article = {
-                        title = (giverFactionObj and giverFactionObj.name or "A Faction") .. " Founds New Settlement",
-                        content = "Refugees fleeing famine have founded a new settlement in sector [" .. mission.data.custom.targetX .. ":" .. mission.data.custom.targetY .. "], expanding " .. (giverFactionObj and giverFactionObj.name or "a faction") .. "'s territory with independent backing.",
-                        category = "Galactic Expansion"
-                    }
-                    local cv_news = include("cosmicvaultnews")
-                    cv_news.publishArticle(article)
+                        local giverFactionObj = Faction(giverIndex)
+                        local article = {
+                            title = (giverFactionObj and giverFactionObj.name or "A Faction") .. " Launches Settlement Expedition",
+                            content = "Refugees fleeing famine have launched a settlement expedition toward sector [" .. mission.data.custom.targetX .. ":" .. mission.data.custom.targetY .. "], backed by " .. (giverFactionObj and giverFactionObj.name or "a faction") .. ".",
+                            category = "Galactic Expansion"
+                        }
+                        include("cw_news").PublishMission(article, "refugee_resettlement", mission.data,
+                            {x = mission.data.custom.targetX, y = mission.data.custom.targetY, radius = 0},
+                            {topic = "humanitarian", severity = "info", sourceState = "queued"})
+                    end
                 else
                     Player():sendChatMessage(Faction(giverIndex).name, 0, "Someone reached the sector first, but the supplies weren't wasted -- our people are still grateful."%_T)
                 end

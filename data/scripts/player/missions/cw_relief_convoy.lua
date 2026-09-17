@@ -153,8 +153,9 @@ mission.phases[1].triggers = {
                     content = "An independent relief convoy has delivered a shipment of raw materials to " .. (giverFaction and giverFaction.name or "a faction") .. ", easing the strain of an ongoing famine.",
                     category = "Humanitarian"
                 }
-                local cv_news = include("cosmicvaultnews")
-                cv_news.publishArticle(article)
+                include("cw_news").PublishMission(article, "relief_convoy", mission.data,
+                    {x = mission.data.location.x, y = mission.data.location.y, radius = 0},
+                    {topic = "humanitarian", severity = "info"})
             end
 
             mission.data.description[3].fulfilled = true

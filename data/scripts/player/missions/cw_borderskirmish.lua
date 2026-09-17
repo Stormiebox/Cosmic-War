@@ -133,8 +133,7 @@ mission.phases[1].triggers = {
                 content = "A violent border patrol clash in sector [" .. x .. ":" .. y .. "] has been decisively ended by independent mercenaries fighting on behalf of " .. (faction and faction.name or "an unknown faction") .. ".",
                 category = "War"
             }
-            local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+            include("cw_news").PublishMission(article, "border_skirmish", mission.data, {x = x, y = y, radius = 0})
             
             reward()
             accomplish()
@@ -200,4 +199,3 @@ mission.globalPhase.onAbandon = function()
         player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
     end
 end
-

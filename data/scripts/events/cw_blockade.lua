@@ -46,12 +46,16 @@ function CW_BlockadeEvent.initialize()
     local distance = 15000 -- spawn near the edge where jump gates usually are
     local center = dir * distance
 
+    local spawned = 0
+    local firstShipId
     for i = 1, random:getInt(3, 5) do
         local pos = center + vec3(random:getFloat(-500, 500), random:getFloat(-500, 500), random:getFloat(-500, 500))
         local matrix = MatrixLookUpPosition(-dir, vec3(0, 1, 0), pos)
         local ship = ShipGenerator.createMilitaryShip(attacker, matrix) -- volume defaults to the sector's standard military ship size
         if ship then
             ship:addScriptOnce("ai/patrol.lua")
+            spawned = spawned + 1
+            firstShipId = firstShipId or ship.id.string
         end
     end
 
@@ -61,8 +65,16 @@ function CW_BlockadeEvent.initialize()
             category = "War Update",
             content = attacker.name .. " forces have established a blockade on the outskirts of sector (" .. x .. ":" .. y .. "). All neutral merchants and civilian vessels are advised to steer clear or risk being fired upon."
         }
-    local cvn = include("cosmicvaultnews")
-    cvn.publishArticle(article)
+    if spawned > 0 then
+        include("cw_news").Publish({
+            article = article,
+            eventId = "blockade:" .. tostring(firstShipId),
+            threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+            eventType = "war.blockade.started",
+            location = {x = x, y = y, radius = 0},
+            provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "spawn_verified", spawned = spawned, leadEntityId = tostring(firstShipId)}
+        })
+    end
 
     terminate()
 end

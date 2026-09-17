@@ -76,8 +76,14 @@ function CW_DiplomaticSabotageEvent.spawn()
         content = "An assassination attempt is currently underway! A diplomatic convoy belonging to " .. envoyFaction.name .. " is under heavy assault by " .. pirateFaction.name .. " forces in sector [" .. x .. ":" .. y .. "].",
         category = "Conflict"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").Publish({
+        article = article,
+        eventId = "diplomatic-sabotage:" .. tostring(envoy.id.string),
+        threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+        eventType = "war.diplomatic_sabotage.started",
+        location = {x = x, y = y, radius = 0},
+        provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "spawn_verified", envoyId = tostring(envoy.id.string), factionIndex = envoyFaction.index}
+    })
 end
 
 function CW_DiplomaticSabotageEvent.checkSurvival()

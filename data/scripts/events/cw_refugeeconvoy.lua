@@ -61,19 +61,22 @@ function CW_RefugeeConvoyEvent.spawn()
     local numTransports = random():getInt(2, 4)
     for i = 1, numTransports do
         local ship = ShipGenerator.createFreighterShip(victimFaction, generator:getPositionInSector())
-        ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
+        if ship then
+            ship:addScriptOnce("data/scripts/entity/deleteonplayersleft.lua")
 
-        if ship:hasComponent(ComponentType.Shield) then
-            ship:addBaseMultiplier(StatsBonuses.ShieldDurability, 9.0)
-            ship.shieldDurability = ship.shieldMaxDurability
-        end
-        if ship:hasComponent(ComponentType.Durability) then
-            Durability(ship.index).maxDurabilityFactor = Durability(ship.index).maxDurabilityFactor * 10
-            ship.durability = ship.maxDurability
-        end
+            if ship:hasComponent(ComponentType.Shield) then
+                ship:addBaseMultiplier(StatsBonuses.ShieldDurability, 9.0)
+                ship.shieldDurability = ship.shieldMaxDurability
+            end
+            if ship:hasComponent(ComponentType.Durability) then
+                Durability(ship.index).maxDurabilityFactor = Durability(ship.index).maxDurabilityFactor * 10
+                ship.durability = ship.maxDurability
+            end
 
-        table.insert(CW_RefugeeConvoyEvent.transports, ship.id)
+            table.insert(CW_RefugeeConvoyEvent.transports, ship.id)
+        end
     end
+    if #CW_RefugeeConvoyEvent.transports == 0 then terminate() return end
 
     sector:broadcastChatMessage(victimFaction.name, ChatMessageType.Warning,
         "Mayday, mayday! This is a civilian refugee convoy! We are being tracked by a hunter fleet! Anyone in the sector, please help us until our hyperdrives are charged!"%_T)
@@ -86,8 +89,15 @@ function CW_RefugeeConvoyEvent.spawn()
         content = "Tragic reports are coming in from sector [" .. x .. ":" .. y .. "]. A civilian refugee convoy belonging to " .. victimFaction.name .. " is being ruthlessly pursued and fired upon by hostile military forces.",
         category = "Conflict"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").Publish({
+        article = article,
+        eventId = "refugee-convoy:" .. tostring(CW_RefugeeConvoyEvent.transports[1]),
+        threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+        eventType = "war.humanitarian.refugee_convoy_started",
+        topic = "humanitarian",
+        location = {x = x, y = y, radius = 0},
+        provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "spawn_verified", transportCount = #CW_RefugeeConvoyEvent.transports, factionIndex = victimFaction.index}
+    })
 end
 
 function CW_RefugeeConvoyEvent.spawnHunters()

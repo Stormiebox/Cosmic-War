@@ -93,11 +93,18 @@ function CosmicWarSubspaceCorridors.update(timeStep)
                                 server:setValue("cw_subspace_corridor_count", corridorCount)
                                 include("cosmicvaultdebug").info("Cosmic War", "[Cosmic War] A subspace corridor has torn open between (" .. hx1 .. ":" .. hy1 .. ") and (" .. hx2 .. ":" .. hy2 .. "). (" .. corridorCount .. "/" .. hardCap .. ")")
 
-                                local CosmicVaultNews = include("cosmicvaultnews")
-                                CosmicVaultNews.publishArticle({
-                                    title = "Subspace Corridor Torn Open By War",
-                                    content = "The sheer intensity of the conflict between " .. faction.name .. " and " .. enemyFaction.name .. " has torn a genuine subspace corridor between their home sectors -- a permanent, if dangerous, shortcut left behind by the war.",
-                                    category = "War"
+                                include("cw_news").Publish({
+                                    eventId = "subspace-corridor:" .. pairKey,
+                                    threadId = "conflict:" .. pairKey,
+                                    eventType = "war.subspace_corridor.created",
+                                    severity = "critical",
+                                    location = {x = hx1, y = hy1, radius = 0},
+                                    provenance = {recordType = "cw_subspace_corridor", sourceRevision = corridorCount, sourceState = "created", factionA = faction.index, factionB = enemyFaction.index},
+                                    article = {
+                                        title = "Subspace Corridor Torn Open By War",
+                                        content = "The sheer intensity of the conflict between " .. faction.name .. " and " .. enemyFaction.name .. " has torn a genuine subspace corridor between their home sectors -- a permanent, if dangerous, shortcut left behind by the war.",
+                                        category = "War"
+                                    }
                                 })
                             end
                         end

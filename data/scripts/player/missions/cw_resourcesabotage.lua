@@ -133,8 +133,7 @@ mission.phases[1].triggers = {
                 content = "Mining operations in sector [" .. x .. ":" .. y .. "] have ground to a halt following a devastating attack on " .. (faction and faction.name or "unknown") .. " resource gatherers.",
                 category = "War"
             }
-            local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+            include("cw_news").PublishMission(article, "resource_sabotage", mission.data, {x = x, y = y, radius = 0})
             
             reward()
             accomplish()
@@ -202,4 +201,3 @@ mission.globalPhase.onAbandon = function()
         player:sendChatMessage(giverName, 1, "You abandoned a critical war contract! Our trust in you is broken."%_T)
     end
 end
-

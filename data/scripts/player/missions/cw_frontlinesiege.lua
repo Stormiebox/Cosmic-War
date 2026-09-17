@@ -263,8 +263,7 @@ function finishAndReward()
         content = "A brutal siege has been broken! Defending " .. (giverFaction and giverFaction.name or "unknown") .. " forces, bolstered by independent commanders, successfully routed the invading fleet.",
         category = "War"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").PublishMission(article, "frontline_siege", mission.data, {x = x, y = y, radius = 0})
 
     reward()
     accomplish()

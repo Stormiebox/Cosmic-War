@@ -197,8 +197,9 @@ mission.phases[1].triggers = {
                     content = "An independent captain has strip-mined a contested sector belonging to " .. (enemyFaction and enemyFaction.name or "a local faction") .. ", hauling away the resources before patrols could respond. The loss deepens an already-strained supply situation.",
                     category = "War Crime"
                 }
-                local cv_news = include("cosmicvaultnews")
-                cv_news.publishArticle(article)
+                include("cw_news").PublishMission(article, "scorched_earth", mission.data,
+                    {x = mission.data.location.x, y = mission.data.location.y, radius = 0},
+                    {severity = "critical"})
             end
 
             sync()

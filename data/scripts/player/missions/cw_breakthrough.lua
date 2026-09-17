@@ -236,8 +236,7 @@ function finishAndReward(survivors)
         content = "A vital supply convoy belonging to " .. (giverFaction and giverFaction.name or "an unknown faction") .. " successfully broke through enemy lines in sector [" .. x .. ":" .. y .. "] with the help of hired escorts.",
         category = "War"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").PublishMission(article, "breakthrough", mission.data, {x = x, y = y, radius = 0})
 
     reward()
     accomplish()

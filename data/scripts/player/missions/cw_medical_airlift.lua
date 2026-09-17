@@ -148,8 +148,9 @@ mission.phases[1].triggers = {
                     content = "An independent captain has completed an emergency medical airlift to " .. (giverFaction and giverFaction.name or "a faction") .. ", pulling them back from the brink of a severe famine.",
                     category = "Humanitarian"
                 }
-                local cv_news = include("cosmicvaultnews")
-                cv_news.publishArticle(article)
+                include("cw_news").PublishMission(article, "medical_airlift", mission.data,
+                    {x = mission.data.location.x, y = mission.data.location.y, radius = 0},
+                    {topic = "humanitarian", severity = "info"})
             end
 
             mission.data.description[3].fulfilled = true

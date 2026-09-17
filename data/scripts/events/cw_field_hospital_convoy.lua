@@ -107,11 +107,19 @@ function CW_FieldHospitalConvoyEvent.onConvoyDestroyed(destroyedId, destroyerId)
             end
         end
 
-        local cv_news = include("cosmicvaultnews")
-        cv_news.publishArticle({
-            title = "Marked Field Hospital Convoy Destroyed",
-            content = "A convoy flying " .. victimFaction.name .. "'s field hospital markings has been destroyed in open space. Whatever the circumstances, this is being condemned across the galaxy as a war crime.",
-            category = "War Crime"
+        local x, y = Sector():getCoordinates()
+        include("cw_news").Publish({
+            eventId = "field-hospital-destroyed:" .. tostring(destroyedId),
+            threadId = "sector:" .. tostring(x) .. ":" .. tostring(y),
+            eventType = "war.humanitarian.convoy_destroyed",
+            severity = "critical",
+            location = {x = x, y = y, radius = 0},
+            provenance = {recordType = "cw_event", sourceRevision = 1, sourceState = "destroyed", entityId = tostring(destroyedId), factionIndex = victimFaction.index},
+            article = {
+                title = "Marked Field Hospital Convoy Destroyed",
+                content = "A convoy flying " .. victimFaction.name .. "'s field hospital markings has been destroyed in open space. Whatever the circumstances, this is being condemned across the galaxy as a war crime.",
+                category = "War Crime"
+            }
         })
     end
 

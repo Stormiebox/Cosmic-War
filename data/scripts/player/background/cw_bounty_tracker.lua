@@ -8,6 +8,7 @@ local maxKills = 15
 local timeLimit = 45 * 60 -- 45 minutes
 local timeRemaining = timeLimit
 local lastNotificationTime = timeLimit
+local newsEventId
 
 function sendBountyMessage(msgType, text, ...)
     local f = Faction()
@@ -30,6 +31,8 @@ function initialize(giver, target, firstReward)
     targetIndex = target or 0
 
     if onServer() then
+        newsEventId = newsEventId or table.concat({"bounty", tostring(giverIndex), tostring(targetIndex),
+            tostring(Faction() and Faction().index or 0), tostring(math.floor(Server().unpausedRuntime))}, ":")
         sendBountyMessage(0, "War Bounty License Activated! You have 45 minutes to destroy up to 15 military targets of the enemy faction."%_T)
 
         -- addScriptOnce is deferred, so the caller can't invokeFunction("registerKill")
@@ -94,14 +97,18 @@ function registerKill(reward)
             -- completed License, not per kill).
             local targetFaction = Faction(targetIndex)
             local targetName = targetFaction and targetFaction.name or "an enemy faction"%_T
-            local cv_news = include("cosmicvaultnews")
-            if cv_news and cv_news.publishArticle then
-                cv_news.publishArticle({
+            include("cw_news").Publish({
+                eventId = newsEventId,
+                threadId = newsEventId,
+                eventType = "war.bounty.completed",
+                severity = "info",
+                provenance = {recordType = "cw_bounty_license", sourceRevision = kills, sourceState = "completed", giverFaction = giverIndex, targetFaction = targetIndex},
+                article = {
                     title = "Bounty Collected: " .. tostring(f.name) .. " Claims the Reward",
                     content = tostring(f.name) .. " has successfully fulfilled a War Bounty License against " .. tostring(targetName) .. ", destroying " .. tostring(maxKills) .. " confirmed military targets to claim the full reward. The contract is now closed.",
                     category = "Bounty Board"
-                })
-            end
+                }
+            })
 
             terminate()
         end
@@ -115,7 +122,8 @@ function secure()
         kills = kills,
         maxKills = maxKills,
         timeRemaining = timeRemaining,
-        lastNotificationTime = lastNotificationTime
+        lastNotificationTime = lastNotificationTime,
+        newsEventId = newsEventId
     }
 end
 
@@ -126,4 +134,5 @@ function restore(data)
     maxKills = data.maxKills or 15
     timeRemaining = data.timeRemaining or (45 * 60)
     lastNotificationTime = data.lastNotificationTime or timeRemaining
+    newsEventId = data.newsEventId
 end

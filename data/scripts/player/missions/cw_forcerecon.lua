@@ -102,8 +102,7 @@ function finishAndReward()
         content = "Military intelligence confirms the total destruction of a fortified " .. (faction and faction.name or "unknown") .. " reconnaissance outpost in sector [" .. x .. ":" .. y .. "] following a surgical strike.",
         category = "War"
     }
-    local cv_news = include("cosmicvaultnews")
-    cv_news.publishArticle(article)
+    include("cw_news").PublishMission(article, "force_recon", mission.data, {x = x, y = y, radius = 0})
 
     -- v4.0.0 Intelligence Network: recon work banks Intel against the scouted faction.
     CosmicWarBridge.grantIntel(Player(), mission.data.custom.enemyIndex, 25)
