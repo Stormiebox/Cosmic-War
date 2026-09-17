@@ -7,6 +7,7 @@ package.path = package.path .. ";data/scripts/?.lua"
 local generatorId = nil
 local myFactionIndex = nil
 local homeSectorX, homeSectorY = nil, nil
+local DEFENSE_GENERATOR_SCRIPT = "data/scripts/entity/cw_planetary_defense.lua"
 
 -- v4.0.0: only ever grant invincibility to a station that wasn't already invincible,
 -- and mark exactly which stations THIS generator protected. Fixes a station that was
@@ -26,6 +27,7 @@ function initialize()
         generatorId = Entity().id
         myFactionIndex = Entity().factionIndex
         homeSectorX, homeSectorY = Sector():getCoordinates()
+        Entity():setValue("cw_defense_generator_pending", nil)
 
         -- Ensure the generator itself is always vulnerable to prevent mutual-invincibility exploits
         Entity().invincible = false
@@ -33,7 +35,7 @@ function initialize()
         -- Hook into all stations to give them invincibility
         local sector = Sector()
         for _, entity in pairs({sector:getEntitiesByType(EntityType.Station)}) do
-            if entity.id ~= generatorId and not entity:hasScript("cw_planetary_defense.lua") then
+            if entity.id ~= generatorId and not entity:hasScript(DEFENSE_GENERATOR_SCRIPT) then
                 protectStation(entity)
             end
         end
@@ -52,7 +54,7 @@ end
 function onEntityCreated(id)
     local entity = Entity(id)
     if entity and entity.type == EntityType.Station and entity.id ~= generatorId then
-        if not entity:hasScript("cw_planetary_defense.lua") then
+        if not entity:hasScript(DEFENSE_GENERATOR_SCRIPT) then
             protectStation(entity)
         end
     end
@@ -69,7 +71,7 @@ function onDestroyed()
 
         -- Redundancy Check: Do not drop shields if another generator is active in the sector!
         for _, entity in pairs(stations) do
-            if entity.id ~= generatorId and entity:hasScript("cw_planetary_defense.lua") then
+            if entity.id ~= generatorId and entity:hasScript(DEFENSE_GENERATOR_SCRIPT) then
                 return
             end
         end

@@ -2,6 +2,9 @@ package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
 local CosmicVaultFaction = include("cosmicvaultfaction")
 local CosmicWarBridge = include("cosmicwarbridge")
+local DEFENSE_GENERATOR_SCRIPT = "data/scripts/entity/cw_planetary_defense.lua"
+local DEFENSE_INJECTOR_SCRIPT = "data/scripts/player/cw_siege_injector_persistent.lua"
+local MATERIALIZATION_RETRY_SECONDS = 3
 
 include("randomext")
 include("structuredmission")
@@ -21,6 +24,81 @@ mission.data.title = mission._Name
 mission.data.icon = "data/textures/icons/ResourceSteal.png"
 mission.data.autoTrackMission = true
 
+local function parseFlaggedSector(value)
+    if type(value) ~= "string" then return nil, nil end
+
+    local sx, sy = string.match(value, "^(-?%d+):(-?%d+)$")
+    return tonumber(sx), tonumber(sy)
+end
+
+local function targetSectorKey()
+    local target = mission.data.location
+    if not target then return nil end
+    return tostring(target.x) .. ":" .. tostring(target.y)
+end
+
+local function targetCommissionStillActive()
+    local enemyIndex = mission.data.custom.enemyIndex
+    local enemyFaction = enemyIndex and enemyIndex > 0 and Faction(enemyIndex) or nil
+    return enemyFaction
+        and enemyFaction:getValue("cw_defense_generator_sector") == targetSectorKey()
+end
+
+local function findTargetGenerator()
+    if not atTargetLocation() then return nil end
+
+    local enemyIndex = mission.data.custom.enemyIndex
+    for _, station in pairs({Sector():getEntitiesByType(EntityType.Station)}) do
+        if station.factionIndex == enemyIndex and station:hasScript(DEFENSE_GENERATOR_SCRIPT) then
+            return station
+        end
+    end
+end
+
+local function ensureTargetGenerator()
+    local generator = findTargetGenerator()
+    if generator then
+        mission.data.custom.generatorConfirmed = true
+        mission.data.custom.materializationError = nil
+        return true
+    end
+
+    if not targetCommissionStillActive() then
+        mission.data.custom.materializationError = "commission_missing"
+        return false
+    end
+
+    local player = Player()
+    player:addScriptOnce(DEFENSE_INJECTOR_SCRIPT)
+
+    local target = mission.data.location
+    local status, materialized, errorText = player:invokeFunction(
+        DEFENSE_INJECTOR_SCRIPT,
+        "materializeDefenseGenerator",
+        target.x,
+        target.y,
+        mission.data.custom.enemyIndex
+    )
+
+    if status ~= 0 then
+        mission.data.custom.materializationError = "injector_unavailable"
+        return false
+    end
+
+    generator = findTargetGenerator()
+    if generator then
+        mission.data.custom.generatorConfirmed = true
+        mission.data.custom.materializationError = nil
+        return true
+    end
+
+    -- A successful materialization request may still be waiting for the
+    -- deferred entity script attachment. The next bounded retry verifies it.
+    mission.data.custom.materializationError = materialized and "generator_initializing"
+        or (errorText or "materialization_failed")
+    return false
+end
+
 local cw_init = initialize
 function initialize(factionIndex)
     if onServer() and not _restoring then
@@ -38,17 +116,22 @@ function initialize(factionIndex)
         local enemyFaction = enemyIndex > 0 and Faction(enemyIndex) or nil
         if not enemyFaction then terminate() return end
 
-        local flaggedSector = enemyFaction:getValue("cw_defense_generator_sector")
-        if not flaggedSector then terminate() return end
-
-        local sx, sy = string.match(flaggedSector, "(-?%d+):(-?%d+)")
-        local targetX, targetY = tonumber(sx), tonumber(sy)
+        local targetX, targetY = parseFlaggedSector(enemyFaction:getValue("cw_defense_generator_sector"))
         if not targetX or not targetY then terminate() return end
+
+        local homeX, homeY = enemyFaction:getHomeSectorCoordinates()
+        if targetX ~= homeX or targetY ~= homeY then terminate() return end
 
         mission.data.custom.giverIndex = fIndex
         mission.data.giver = { factionIndex = fIndex }
         mission.data.custom.enemyIndex = enemyIndex
+        mission.data.custom.generatorConfirmed = false
+        mission.data.custom.materializationRetry = 0
         mission.data.location = { x = targetX, y = targetY }
+
+        -- The persistent injector is normally attached at login. Ensure it is
+        -- present for saves where this contract was accepted before that pass.
+        Player():addScriptOnce(DEFENSE_INJECTOR_SCRIPT)
 
         local x, y = Sector():getCoordinates()
 
@@ -84,6 +167,54 @@ mission.globalPhase.noPlayerEventsTargetSector = true
 mission.phases[1] = {}
 mission.phases[1].showUpdateOnEnd = true
 
+mission.phases[1].onTargetLocationEntered = function()
+    if onServer() then
+        mission.data.custom.materializationRetry = 0
+        if not ensureTargetGenerator()
+                and targetCommissionStillActive()
+                and not mission.data.custom.materializationNoticeSent then
+            mission.data.custom.materializationNoticeSent = true
+            Player():sendChatMessage(
+                "Mission Control"%_T,
+                0,
+                "Defense Generator telemetry acquired. Hold position while local sensors resolve the station."%_T
+            )
+        end
+        sync()
+    end
+end
+
+mission.phases[1].updateTargetLocationServer = function(timeStep)
+    if findTargetGenerator() then
+        if not mission.data.custom.generatorConfirmed then
+            mission.data.custom.generatorConfirmed = true
+            mission.data.custom.materializationError = nil
+            sync()
+        end
+        return
+    end
+
+    if not targetCommissionStillActive() then
+        if mission.data.custom.generatorConfirmed then return end
+
+        local giverFaction = Faction(mission.data.custom.giverIndex)
+        Player():sendChatMessage(
+            giverFaction and giverFaction.name or "Mission Control"%_T,
+            1,
+            "The Defense Generator commission is no longer active. This contract cannot be verified and has been withdrawn."%_T
+        )
+        fail()
+        return
+    end
+
+    mission.data.custom.materializationRetry =
+        (mission.data.custom.materializationRetry or 0) + timeStep
+    if mission.data.custom.materializationRetry >= MATERIALIZATION_RETRY_SECONDS then
+        mission.data.custom.materializationRetry = 0
+        ensureTargetGenerator()
+    end
+end
+
 mission.phases[1].triggers = {
     {
         condition = function()
@@ -93,16 +224,17 @@ mission.phases[1].triggers = {
             local x, y = Sector():getCoordinates()
             if x ~= targetCoords.x or y ~= targetCoords.y then return false end
 
-            -- The generator is destroyed once no station in this sector carries the
-            -- script anymore. It materializes the moment any player (this one included)
-            -- first enters the sector (cw_siege_injector_persistent.lua), so by the time
-            -- this condition can even be checked here, it is guaranteed to already exist.
-            for _, station in pairs({ Sector():getEntitiesByType(EntityType.Station) }) do
-                if station:hasScript("cw_planetary_defense.lua") then
-                    return false
-                end
+            if findTargetGenerator() then
+                mission.data.custom.generatorConfirmed = true
+                return false
             end
-            return true
+
+            -- Absence only proves destruction after this mission has observed the
+            -- real generator script and its owning faction has cleared the exact
+            -- commissioning flag. Arrival before a deferred/failed spawn can never
+            -- satisfy both conditions.
+            return mission.data.custom.generatorConfirmed == true
+                and not targetCommissionStillActive()
         end,
         callback = function()
             mission.data.description[3].fulfilled = true
@@ -136,7 +268,11 @@ function getBulletin(station)
     local enemyIndex = giverFaction:getValue("enemy_faction") or 0
     local enemyFaction = enemyIndex > 0 and Faction(enemyIndex) or nil
     if not enemyFaction then return end
-    if not enemyFaction:getValue("cw_defense_generator_sector") then return end
+    local targetX, targetY = parseFlaggedSector(enemyFaction:getValue("cw_defense_generator_sector"))
+    if not targetX or not targetY then return end
+
+    local homeX, homeY = enemyFaction:getHomeSectorCoordinates()
+    if targetX ~= homeX or targetY ~= homeY then return end
 
     local baseReward = math.floor(175000 + heat * 225000)
     local mult = (giverFaction:getValue("cosmic_trait_cw_mercantile") == 1) and 1.5 or 1
@@ -149,12 +285,17 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Shield Breaker"%_t,
-        description = "The enemy has fortified one of their sectors behind a Planetary Defense Generator, shielding every other station there from attack. Break it, and the whole sector opens up.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
+        description = "${enemy} has fortified its home sector at (${x}:${y}) behind a Planetary Defense Generator, shielding every other station there from attack. Break it, and the whole sector opens up.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
         difficulty = "Hard"%_t,
         reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_shieldbreaker.lua",
         icon = "data/textures/icons/ResourceSteal.png",
-        formatArguments = { reward = createMonetaryString(rewardCredits) },
+        formatArguments = {
+            enemy = enemyFaction.name,
+            x = targetX,
+            y = targetY,
+            reward = createMonetaryString(rewardCredits)
+        },
         arguments = { { giver = station.factionIndex, reward = rewardStruct } },
         msg = "Break their shield. Dismissed."%_T,
         onAccept = [[
