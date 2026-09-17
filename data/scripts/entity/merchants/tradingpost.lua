@@ -36,8 +36,8 @@ function TradingPost.requestCashOutDialog()
 
     local factionIndex = Entity().factionIndex
     local hasBond = false
-    if player:hasScript("cosmicwar_warbonds.lua") then
-        local status, amount = player:invokeFunction("cosmicwar_warbonds.lua", "getBondAmount", factionIndex)
+    if player:hasScript("data/scripts/player/cosmicwar_warbonds.lua") then
+        local status, amount = player:invokeFunction("data/scripts/player/cosmicwar_warbonds.lua", "getBondAmount", factionIndex)
         hasBond = status == 0 and amount and amount > 0
     end
     invokeClientFunction(player, "showCashOutDialog", hasBond)
@@ -77,10 +77,10 @@ function TradingPost.cashOutWarbonds()
     if onClient() then invokeServerFunction("cashOutWarbonds") return end
     local player = Player(callingPlayer)
     if not player then return end
-    if not player:hasScript("cosmicwar_warbonds.lua") then return end
+    if not player:hasScript("data/scripts/player/cosmicwar_warbonds.lua") then return end
 
     local factionIndex = Entity().factionIndex
-    local status, payout, err = player:invokeFunction("cosmicwar_warbonds.lua", "cashOutEarly", factionIndex)
+    local status, payout, err = player:invokeFunction("data/scripts/player/cosmicwar_warbonds.lua", "cashOutEarly", factionIndex)
     if status == 0 and payout then
         player:receive("Early Warbond Cash-Out", payout)
         player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Bond cashed out. %1% Credits transferred immediately."%_T, createMonetaryString(payout))
@@ -375,8 +375,8 @@ function TradingPost.processPurchase(amount)
 
     local factionIndex = Entity().factionIndex
 
-    if player:hasScript("cosmicwar_warbonds.lua") then
-        local status, currentBonds = player:invokeFunction("cosmicwar_warbonds.lua", "getBondAmount", factionIndex)
+    if player:hasScript("data/scripts/player/cosmicwar_warbonds.lua") then
+        local status, currentBonds = player:invokeFunction("data/scripts/player/cosmicwar_warbonds.lua", "getBondAmount", factionIndex)
         currentBonds = currentBonds or 0
         if currentBonds + amount > 250000000 then
             player:sendChatMessage(Entity().translatedTitle or Entity().name, 1, "We cannot issue you any more warbonds. You have reached the maximum investment cap (250,000,000 Cr)."%_T)
@@ -401,7 +401,7 @@ function TradingPost.processPurchase(amount)
     player:pay("Warbond Purchase"%_T, amount)
     server:setValue(poolKey, currentPool + amount)
 
-    if not player:hasScript("cosmicwar_warbonds.lua") then
+    if not player:hasScript("data/scripts/player/cosmicwar_warbonds.lua") then
         -- addScriptOnce is deferred (like removeScript), so the script is not actually attached
         -- yet this tick. Calling invokeFunction("addBond", ...) immediately below would silently
         -- miss it on a player's very first Warbond purchase, dropping the payment with no bond
@@ -409,7 +409,7 @@ function TradingPost.processPurchase(amount)
         player:addScriptOnce("data/scripts/player/cosmicwar_warbonds.lua")
         deferredCallback(0.1, "deferredAddBond", player.index, Entity().factionIndex, amount)
     else
-        player:invokeFunction("cosmicwar_warbonds.lua", "addBond", Entity().factionIndex, amount)
+        player:invokeFunction("data/scripts/player/cosmicwar_warbonds.lua", "addBond", Entity().factionIndex, amount)
     end
 
     player:sendChatMessage(Entity().translatedTitle or Entity().name, 0, "Thank you for your investment. Support our frontlines to ensure your bonds mature."%_T)
@@ -418,7 +418,7 @@ end
 function TradingPost.deferredAddBond(playerIndex, factionIndex, amount)
     local player = Player(playerIndex)
     if not player then return end
-    player:invokeFunction("cosmicwar_warbonds.lua", "addBond", factionIndex, amount)
+    player:invokeFunction("data/scripts/player/cosmicwar_warbonds.lua", "addBond", factionIndex, amount)
 end
 callable(TradingPost, "buyStandardBond")
 callable(TradingPost, "buyPremiumBond")

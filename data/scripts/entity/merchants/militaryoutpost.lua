@@ -30,7 +30,7 @@ function MilitaryOutpost.requestEnlistDialog()
     if not player then return end
     local entity = Entity()
 
-    if player:hasScript("cosmicwar_mercenary.lua") then
+    if player:hasScript("data/scripts/player/cosmicwar_mercenary.lua") then
         local enlistedFaction = player:getValue("cw_mercenary_faction")
         invokeClientFunction(player, "showEnlistDialog", true, enlistedFaction == entity.factionIndex)
         return
@@ -97,7 +97,7 @@ function MilitaryOutpost.enlistPlayer()
     local player = Player(callingPlayer)
     local entity = Entity()
 
-    if player:hasScript("cosmicwar_mercenary.lua") then return end
+    if player:hasScript("data/scripts/player/cosmicwar_mercenary.lua") then return end
 
     player:addScriptOnce("data/scripts/player/cosmicwar_mercenary.lua")
     player:setValue("cw_mercenary_faction", entity.factionIndex)
@@ -135,7 +135,7 @@ function MilitaryOutpost.requestMarqueRepair()
     if not player or not entity then return end
 
     local enlistedFaction = player:getValue("cw_mercenary_faction")
-    local eligible = player:hasScript("cosmicwar_mercenary.lua") and enlistedFaction == entity.factionIndex
+    local eligible = player:hasScript("data/scripts/player/cosmicwar_mercenary.lua") and enlistedFaction == entity.factionIndex
     invokeClientFunction(player, "showMarqueRepairDialog", eligible)
 end
 
@@ -172,7 +172,7 @@ function MilitaryOutpost.buyMarqueRepair()
     if not player or not entity then return end
 
     local enlistedFaction = player:getValue("cw_mercenary_faction")
-    if not (player:hasScript("cosmicwar_mercenary.lua") and enlistedFaction == entity.factionIndex) then return end
+    if not (player:hasScript("data/scripts/player/cosmicwar_mercenary.lua") and enlistedFaction == entity.factionIndex) then return end
 
     local craft = player.craft
     if not craft or not valid(craft) then return end

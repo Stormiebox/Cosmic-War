@@ -112,29 +112,30 @@ mission.phases[1].showUpdateOnEnd = true
 
 mission.phases[1].onTargetLocationEntered = function(x, y)
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
-        mission.data.custom.spawnTime = Server().unpausedRuntime
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+            mission.data.custom.spawnTime = Server().unpausedRuntime
 
-        -- Same fix as Scorched Earth: this mission never pays the salvaged material away, so
-        -- checking total current stock let anyone already carrying enough of the target
-        -- material complete the contract the instant they arrived. Snapshot on arrival and
-        -- require that much more salvaged on top of it.
-        local player = Player()
-        local matType = mission.data.custom.materialType
-        local resources = { player:getResources() }
-        mission.data.custom.baselineAmount = resources[matType + 1] or 0
+            -- Same fix as Scorched Earth: this mission never pays the salvaged material away, so
+            -- checking total current stock let anyone already carrying enough of the target
+            -- material complete the contract the instant they arrived. Snapshot on arrival and
+            -- require that much more salvaged on top of it.
+            local player = Player()
+            local matType = mission.data.custom.materialType
+            local resources = { player:getResources() }
+            mission.data.custom.baselineAmount = resources[matType + 1] or 0
 
-        -- Live progress readout: swap the static bullet for a running counter now that there's
-        -- actual progress to show.
-        mission.data.description[3].text = "Salvaging ${material}: ${progress}/${amount}"%_T
-        mission.data.description[3].arguments = {
-            material = mission.data.custom.materialName,
-            progress = 0,
-            amount = mission.data.custom.materialAmount
-        }
+            -- Live progress readout: swap the static bullet for a running counter now that there's
+            -- actual progress to show.
+            mission.data.description[3].text = "Salvaging ${material}: ${progress}/${amount}"%_T
+            mission.data.description[3].arguments = {
+                material = mission.data.custom.materialName,
+                progress = 0,
+                amount = mission.data.custom.materialAmount
+            }
 
-        sync()
+            sync()
+        end
     end
 end
 
@@ -203,6 +204,7 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
     local requiredMaterial = Material(mission.data.custom.materialType)
 
     -- Two compounding reasons the field was never actually salvageable for the required
@@ -243,6 +245,7 @@ function spawnEvent(x, y)
         local ship = ShipGenerator.createDefender(enemyFaction, position)
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

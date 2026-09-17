@@ -122,8 +122,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[5].visible = true
 
     if not mission.data.custom.spawned then
-        spawnReconTarget(x, y)
-        mission.data.custom.spawned = true
+        if spawnReconTarget(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -211,6 +212,7 @@ function spawnReconTarget(x, y)
         local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 -- Added by Cosmic War for Avorion 2.0 Compatibility

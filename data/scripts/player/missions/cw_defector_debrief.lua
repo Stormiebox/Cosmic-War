@@ -108,8 +108,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnGuardDetail(x, y)
-        mission.data.custom.spawned = true
+        if spawnGuardDetail(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -149,6 +150,7 @@ function spawnGuardDetail(x, y)
         ship.title = "Defector Guard Detail"%_T
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

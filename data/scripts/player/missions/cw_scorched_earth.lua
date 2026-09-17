@@ -109,32 +109,33 @@ mission.phases[1].showUpdateOnEnd = true
 
 mission.phases[1].onTargetLocationEntered = function(x, y)
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
-        mission.data.custom.spawnTime = Server().unpausedRuntime
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+            mission.data.custom.spawnTime = Server().unpausedRuntime
 
-        -- Unlike the delivery contracts (Resource Heist, Relief Convoy, etc.), this mission
-        -- never pays the mined material away -- the player keeps it, that's the point. So the
-        -- completion check can't just look at total current stock, or anyone already carrying
-        -- this much of the target material (Iron/Titanium are common cargo) completes the
-        -- contract the instant they arrive, without mining anything. Snapshot what they're
-        -- carrying on arrival and require that much *more* on top of it.
-        local player = Player()
-        local matType = mission.data.custom.materialType
-        local resources = { player:getResources() }
-        mission.data.custom.baselineAmount = resources[matType + 1] or 0
+            -- Unlike the delivery contracts (Resource Heist, Relief Convoy, etc.), this mission
+            -- never pays the mined material away -- the player keeps it, that's the point. So the
+            -- completion check can't just look at total current stock, or anyone already carrying
+            -- this much of the target material (Iron/Titanium are common cargo) completes the
+            -- contract the instant they arrive, without mining anything. Snapshot what they're
+            -- carrying on arrival and require that much *more* on top of it.
+            local player = Player()
+            local matType = mission.data.custom.materialType
+            local resources = { player:getResources() }
+            mission.data.custom.baselineAmount = resources[matType + 1] or 0
 
-        -- Live progress readout: swap the "head to sector" bullet for a running counter now
-        -- that there's actual progress to show, matching the mission's own "strip-mine ore"
-        -- framing rather than a generic delivery-quest checklist.
-        mission.data.description[3].text = "Mining ${material}: ${progress}/${amount}"%_T
-        mission.data.description[3].arguments = {
-            material = mission.data.custom.materialName,
-            progress = 0,
-            amount = mission.data.custom.materialAmount
-        }
+            -- Live progress readout: swap the "head to sector" bullet for a running counter now
+            -- that there's actual progress to show, matching the mission's own "strip-mine ore"
+            -- framing rather than a generic delivery-quest checklist.
+            mission.data.description[3].text = "Mining ${material}: ${progress}/${amount}"%_T
+            mission.data.description[3].arguments = {
+                material = mission.data.custom.materialName,
+                progress = 0,
+                amount = mission.data.custom.materialAmount
+            }
 
-        sync()
+            sync()
+        end
     end
 end
 
@@ -256,6 +257,7 @@ function spawnEvent(x, y)
         local position = generator:getPositionInSector()
         fieldGen:createSmallAsteroid(position, 25.0, true, requiredMaterial)
     end
+    return true
 end
 
 function spawnPatrols(x, y)

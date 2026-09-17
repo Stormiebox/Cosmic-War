@@ -747,8 +747,8 @@ function GalacticPoliticsTab.serverFetchWarRoom()
     local license = getMyLicense(player)
 
     local bonds = {}
-    if player:hasScript("cosmicwar_warbonds.lua") then
-        local status, rawBonds = player:invokeFunction("cosmicwar_warbonds.lua", "getActiveBonds")
+    if player:hasScript("data/scripts/player/cosmicwar_warbonds.lua") then
+        local status, rawBonds = player:invokeFunction("data/scripts/player/cosmicwar_warbonds.lua", "getActiveBonds")
         if status == 0 and type(rawBonds) == "table" then
             for _, b in pairs(rawBonds) do
                 local f = Faction(b.factionIndex)

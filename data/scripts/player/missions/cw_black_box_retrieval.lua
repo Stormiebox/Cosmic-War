@@ -89,8 +89,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     mission.data.description[4].visible = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
     sync()
 end
@@ -138,6 +139,7 @@ function spawnEvent(x, y)
 
     -- Wreckage
     local giverFaction = Faction(mission.data.custom.giverIndex)
+    if not enemyFaction or not giverFaction then return end
     local wreckage = generator:createWreckage(giverFaction, nil, 0)
     wreckage:setValue("cw_black_box_target", true)
 
@@ -151,6 +153,7 @@ function spawnEvent(x, y)
         local ai = ShipAI(ship.index)
         ai:setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

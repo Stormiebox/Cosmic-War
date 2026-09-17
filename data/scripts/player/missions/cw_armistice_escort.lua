@@ -94,9 +94,10 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnSpoilers()
-        mission.data.custom.spawned = true
-        table.insert(mission.data.description, { text = "Hold while negotiations open: 1:30"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        if spawnSpoilers() then
+            mission.data.custom.spawned = true
+            table.insert(mission.data.description, { text = "Hold while negotiations open: 1:30"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        end
     end
     sync()
 end
@@ -164,6 +165,7 @@ function spawnSpoilers()
         ship.title = "War Hawk Spoiler"%_T
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

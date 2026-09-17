@@ -87,9 +87,10 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
-        table.insert(mission.data.description, { text = "Enemies Remaining: 5/5"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+            table.insert(mission.data.description, { text = "Enemies Remaining: 5/5"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        end
     end
     sync()
 end
@@ -130,6 +131,7 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
     local position = generator:getPositionInSector()
 
     -- Heavy Leader
@@ -151,6 +153,7 @@ function spawnEvent(x, y)
         local ai = ShipAI(ship.index)
         ai:setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

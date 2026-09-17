@@ -94,9 +94,10 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnTarget(x, y)
-        mission.data.custom.spawned = true
-        sync()
+        if spawnTarget(x, y) then
+            mission.data.custom.spawned = true
+            sync()
+        end
     end
 end
 
@@ -169,6 +170,7 @@ function spawnTarget(x, y)
     if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     local target = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
     target.title = "Prize Vessel"%_T
@@ -180,6 +182,7 @@ function spawnTarget(x, y)
         local guard = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(guard.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

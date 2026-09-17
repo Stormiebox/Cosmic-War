@@ -89,8 +89,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnListeningPost(x, y)
-        mission.data.custom.spawned = true
+        if spawnListeningPost(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -150,6 +151,7 @@ function spawnListeningPost(x, y)
         local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

@@ -104,16 +104,17 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
-        
-        table.insert(mission.data.description, {
-            text = "Return to sector (${x}:${y}) with ${material}: ${progress}/${amount}"%_T,
-            arguments = { x = mission.data.custom.giverCoords.x, y = mission.data.custom.giverCoords.y, amount = mission.data.custom.materialAmount, material = mission.data.custom.materialName, progress = 0 },
-            bulletPoint = true,
-            fulfilled = false
-        })
-        sync()
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+
+            table.insert(mission.data.description, {
+                text = "Return to sector (${x}:${y}) with ${material}: ${progress}/${amount}"%_T,
+                arguments = { x = mission.data.custom.giverCoords.x, y = mission.data.custom.giverCoords.y, amount = mission.data.custom.materialAmount, material = mission.data.custom.materialName, progress = 0 },
+                bulletPoint = true,
+                fulfilled = false
+            })
+            sync()
+        end
     end
 end
 
@@ -182,7 +183,8 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    
+    if not enemyFaction then return end
+
     -- Spawn resource asteroid field
     generator:createAsteroidField(0.15)
     
@@ -208,6 +210,7 @@ function spawnEvent(x, y)
         local ship = ShipGenerator.createDefender(enemyFaction, position)
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

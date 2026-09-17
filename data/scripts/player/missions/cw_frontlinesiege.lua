@@ -106,8 +106,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnSiegeTarget(x, y)
-        mission.data.custom.spawned = true
+        if spawnSiegeTarget(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -229,6 +230,7 @@ function spawnSiegeTarget(x, y)
         local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector())
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function spawnReinforcements()

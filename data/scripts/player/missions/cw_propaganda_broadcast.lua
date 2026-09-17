@@ -91,8 +91,9 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -168,6 +169,7 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local giverFaction = Faction(mission.data.custom.giverIndex)
+    if not giverFaction then return end
 
     local broadcaster = ShipGenerator.createFreighterShip(giverFaction, generator:getPositionInSector())
     broadcaster.title = "Propaganda Broadcaster"%_T
@@ -176,6 +178,7 @@ function spawnEvent(x, y)
 
     mission.data.custom.broadcastTimer = 180 -- 3 minutes
 
+    return true
 end
 
 function getBulletin(station)

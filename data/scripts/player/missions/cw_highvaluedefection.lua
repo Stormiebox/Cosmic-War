@@ -106,11 +106,12 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnDefector(x, y)
-        mission.data.custom.spawned = true
-        mission.data.custom.jumpTimer = 0
-        -- First wave spawns very quickly
-        mission.data.custom.waveTimer = 35
+        if spawnDefector(x, y) then
+            mission.data.custom.spawned = true
+            mission.data.custom.jumpTimer = 0
+            -- First wave spawns very quickly
+            mission.data.custom.waveTimer = 35
+        end
     end
 end
 
@@ -194,6 +195,7 @@ function spawnDefector(x, y)
 
     ship:setValue("cw_defector", true)
     ship:setTitle("Defecting Officer"%_T, {})
+    return true
 end
 
 function spawnHunters()

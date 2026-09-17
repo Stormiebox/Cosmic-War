@@ -92,8 +92,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnFleet(x, y)
-        mission.data.custom.spawned = true
+        if spawnFleet(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -128,6 +129,7 @@ function spawnFleet(x, y)
     if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
     local numDefenders = math.floor(4 + ((mission.data.custom.heat or 0) * 5))
 
     for i = 1, numDefenders do
@@ -135,6 +137,7 @@ function spawnFleet(x, y)
         ship:setValue("cw_decisive_target", true)
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

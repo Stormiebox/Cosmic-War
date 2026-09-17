@@ -101,8 +101,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnMiningOp(x, y)
-        mission.data.custom.spawned = true
+        if spawnMiningOp(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -154,6 +155,7 @@ function spawnMiningOp(x, y)
         local ship = ShipGenerator.createMiningShip(enemyFaction, generator:getPositionInSector())
         ship:setValue("cw_sabotage_target", true)
     end
+    return true
 end
 
 -- Added by Cosmic War for Avorion 2.0 Compatibility

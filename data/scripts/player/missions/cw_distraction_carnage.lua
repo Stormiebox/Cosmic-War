@@ -90,9 +90,10 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
-        table.insert(mission.data.description, { text = "Survive the ambush: 5:00"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+            table.insert(mission.data.description, { text = "Survive the ambush: 5:00"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        end
     end
     sync()
 end
@@ -138,7 +139,7 @@ mission.phases[1].triggers = {
 function spawnEvent(x, y)
     if onClient() then return end
     -- Initial spawn
-    spawnReinforcements()
+    return spawnReinforcements()
 end
 
 function spawnReinforcements()
@@ -147,21 +148,23 @@ function spawnReinforcements()
     local x, y = Sector():getCoordinates()
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     for i=1, 3 do
         local position = generator:getPositionInSector()
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, position)
         ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
         ship.title = "Response Fleet"%_T
-        
+
         local ai = ShipAI(ship.index)
         ai:setAggressive()
     end
-    
+
     local player = Player()
     if player then
         player:sendChatMessage(enemyFaction.name, 1, "Hostile vessel detected in our space! All units, intercept!"%_T)
     end
+    return true
 end
 
 function getBulletin(station)

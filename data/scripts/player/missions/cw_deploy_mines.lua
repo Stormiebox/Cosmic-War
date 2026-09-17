@@ -88,8 +88,9 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -145,6 +146,7 @@ function spawnEvent(x, y)
             end
         end
     end
+    return true
 end
 
 function getBulletin(station)

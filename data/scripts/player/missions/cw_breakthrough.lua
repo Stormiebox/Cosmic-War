@@ -107,11 +107,12 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnConvoy(x, y)
-        mission.data.custom.spawned = true
-        mission.data.custom.jumpTimer = 0
-        -- Pre-load wave timer so first wave arrives 15s after entering
-        mission.data.custom.waveTimer = 30
+        if spawnConvoy(x, y) then
+            mission.data.custom.spawned = true
+            mission.data.custom.jumpTimer = 0
+            -- Pre-load wave timer so first wave arrives 15s after entering
+            mission.data.custom.waveTimer = 30
+        end
     end
 end
 
@@ -187,6 +188,7 @@ function spawnConvoy(x, y)
         ship:setValue("cw_convoy", true)
         ship:addScriptOnce("ai/patrol.lua")
     end
+    return true
 end
 
 function spawnInterceptors()

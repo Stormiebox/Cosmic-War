@@ -98,8 +98,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnBlockade(x, y)
-        mission.data.custom.spawned = true
+        if spawnBlockade(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -148,6 +149,7 @@ function spawnBlockade(x, y)
         ship:setValue("cw_famine_blockade_target", true)
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

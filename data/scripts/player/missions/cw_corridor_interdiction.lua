@@ -86,9 +86,10 @@ mission.phases[1].showUpdateOnEnd = true
 mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     if not mission.data.custom.spawned then
-        spawnWave()
-        mission.data.custom.spawned = true
-        table.insert(mission.data.description, { text = "Hold the endpoint: 4:00"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        if spawnWave() then
+            mission.data.custom.spawned = true
+            table.insert(mission.data.description, { text = "Hold the endpoint: 4:00"%_T, bulletPoint = true, fulfilled = false, visible = true })
+        end
     end
     sync()
 end
@@ -152,6 +153,7 @@ function spawnWave()
     if player then
         player:sendChatMessage(enemyFaction.name, 1, "More of our forces are coming through the corridor -- hold them back!"%_T)
     end
+    return true
 end
 
 function getBulletin(station)

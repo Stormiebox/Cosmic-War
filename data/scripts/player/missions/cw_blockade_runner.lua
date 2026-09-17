@@ -89,8 +89,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[3].fulfilled = true
     mission.data.description[4].visible = true
     if not mission.data.custom.spawned then
-        spawnEvent(x, y)
-        mission.data.custom.spawned = true
+        if spawnEvent(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
     sync()
 end
@@ -135,6 +136,7 @@ function spawnEvent(x, y)
 
     -- Station
     local giverFaction = Faction(mission.data.custom.giverIndex)
+    if not enemyFaction or not giverFaction then return end
     local station = generator:createStation(giverFaction, nil)
     station.title = "Covert Listening Post"%_T
     station.invincible = true
@@ -150,6 +152,7 @@ function spawnEvent(x, y)
         local ai = ShipAI(ship.index)
         ai:setAggressive()
     end
+    return true
 end
 
 function getBulletin(station)

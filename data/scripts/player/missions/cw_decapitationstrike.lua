@@ -106,8 +106,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     mission.data.description[4].visible = true
 
     if not mission.data.custom.spawned then
-        spawnFlagship(x, y)
-        mission.data.custom.spawned = true
+        if spawnFlagship(x, y) then
+            mission.data.custom.spawned = true
+        end
     end
 end
 
@@ -152,6 +153,7 @@ function spawnFlagship(x, y)
     if onClient() then return end
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     -- Create the Flagship (Massive Super Boss)
     local pos = generator:getPositionInSector()
@@ -203,6 +205,7 @@ function spawnFlagship(x, y)
         local ship = ShipGenerator.createDefender(enemyFaction, generator:getPositionInSector(1500))
         ShipAI(ship.index):setAggressive()
     end
+    return true
 end
 
 function finishAndReward()

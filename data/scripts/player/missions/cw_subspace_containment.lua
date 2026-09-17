@@ -8,6 +8,7 @@ local MissionUT = include("missionutility")
 local RiftObjects = include("dlc/rift/lib/riftobjects")
 local CosmicWarBridge = include("cosmicwarbridge")
 local CosmicVaultRift = include("cosmicvaultrift")
+local CosmicVaultDebug = include("cosmicvaultdebug")
 
 mission._Debug = 0
 mission._Name = "War Contract: Subspace Containment"
@@ -76,6 +77,33 @@ end
 mission.globalPhase.noBossEncountersTargetSector = true
 mission.globalPhase.noPlayerEventsTargetSector = true
 
+-- Registers the containment rift hazard against an already-spawned platform.
+-- Kept separate from platform spawning so a failed registration can be retried
+-- on a later onTargetLocationEntered without spawning a second platform.
+local function tryStartRiftHazard(sector, x, y, targetId)
+    local condition, errorCode = CosmicVaultRift.StartRiftHazard({
+        sourceId = "cw-containment:" .. targetId,
+        x = x,
+        y = y,
+        duration = -1,
+        conflictPolicy = "replace"
+    })
+    if condition then
+        mission.data.custom.riftConditionId = condition.conditionId
+        mission.data.custom.riftHazardActive = true
+        local hazardScript = "data/scripts/sector/cw_rift_hazard.lua"
+        if sector:hasScript(hazardScript) then
+            sector:invokeFunction(hazardScript, "reconcile", "target_bound",
+                targetId, condition.conditionId)
+        else
+            sector:addScriptOnce(hazardScript, "target_bound",
+                targetId, condition.conditionId)
+        end
+    else
+        CosmicVaultDebug.error("War", "Containment Rift registration failed for target %s: %s", targetId, tostring(errorCode))
+    end
+end
+
 -- mission.phases[1] must be defined unconditionally at module scope (matching every
 -- sibling mission file): structuredmission.lua reads mission.phases[1] on BOTH client
 -- and server, and again on every restore(). Defining it only inside the server/"not
@@ -91,10 +119,20 @@ mission.phases[1] = {
         -- onTargetLocationEntered fires on both client and server; entity creation
         -- must only ever happen on the server, and only once per mission.
         if onClient() then return end
-        if mission.data.custom.spawned then return end
 
         local sector = Sector()
-        local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), vec3(0,0,0)))
+
+        if mission.data.custom.spawned then
+            -- Platform already exists. If the rift hazard never registered
+            -- successfully, retry just that call without spawning another platform.
+            if not mission.data.custom.riftHazardActive and mission.data.custom.targetId then
+                tryStartRiftHazard(sector, x, y, mission.data.custom.targetId)
+            end
+            return
+        end
+
+        local spawnPos = vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000))
+        local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), spawnPos))
         if not platform then
             print("[Cosmic War] Containment target materialization failed; entry may be retried.")
             return
@@ -103,26 +141,7 @@ mission.phases[1] = {
         platform:setValue("cw_mission_target", true)
         mission.data.custom.targetId = platform.id.string
 
-        local condition, errorCode = CosmicVaultRift.StartRiftHazard({
-            sourceId = "cw-containment:" .. platform.id.string,
-            x = x,
-            y = y,
-            duration = -1,
-            conflictPolicy = "replace"
-        })
-        if condition then
-            mission.data.custom.riftConditionId = condition.conditionId
-            local hazardScript = "data/scripts/sector/cw_rift_hazard.lua"
-            if sector:hasScript(hazardScript) then
-                sector:invokeFunction(hazardScript, "reconcile", "target_bound",
-                    platform.id.string, condition.conditionId)
-            else
-                sector:addScriptOnce(hazardScript, "target_bound",
-                    platform.id.string, condition.conditionId)
-            end
-        else
-            print("[Cosmic War] Containment Rift registration failed: " .. tostring(errorCode))
-        end
+        tryStartRiftHazard(sector, x, y, platform.id.string)
 
         local giverFaction = Faction(mission.data.custom.giverIndex)
         if giverFaction then
