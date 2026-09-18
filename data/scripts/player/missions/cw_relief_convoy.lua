@@ -1,6 +1,5 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
-local CosmicVaultFaction = include("cosmicvaultfaction")
 local CosmicVaultEconomy = include("cosmicvaulteconomy")
 local CosmicWarBridge = include("cosmicwarbridge")
 

@@ -1,6 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
-include("callable")
+include("data/scripts/lib/callable")
 include("utility")
 
 -- namespace GalacticPoliticsTab

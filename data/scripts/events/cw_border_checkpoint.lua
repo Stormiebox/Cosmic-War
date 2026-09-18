@@ -58,7 +58,7 @@ function CW_BorderCheckpointEvent.onPicketDestroyed(destroyedId, destroyerId)
             CosmicWarBridge.recordWarScoreKill(CW_BorderCheckpointEvent.factionIndex)
         end
         for _, player in pairs({sector:getPlayers()}) do
-            changeRelations(player, faction, -8000, RelationChangeType.General)
+            changeRelations(player, faction, -8000, RelationChangeType.CraftDestroyed)
         end
     end
     terminate()

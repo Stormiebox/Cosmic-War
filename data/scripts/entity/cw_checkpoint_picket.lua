@@ -41,7 +41,7 @@ function CW_CheckpointPicket.payToll()
 
     local faction = Faction(CW_CheckpointPicket.factionIndex)
     if faction then
-        changeRelations(player, faction, 4000, RelationChangeType.General)
+        changeRelations(player, faction, 4000, RelationChangeType.ServiceUsage)
         player:sendChatMessage(faction.name, 0, "Toll received. Safe travels."%_T)
     end
 

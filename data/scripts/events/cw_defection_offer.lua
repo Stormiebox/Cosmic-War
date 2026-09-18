@@ -30,10 +30,14 @@ function CW_DefectionOfferEvent.initialize()
     local enemyIndex = faction:getValue("enemy_faction") or 0
     if enemyIndex <= 0 then terminate() return end
 
+    -- getWarScore(factionA, factionB) already returns the score from factionA's own
+    -- perspective (it does its own internal lo/hi normalization and flips for the caller) --
+    -- re-deriving lo/hi here and flipping a second time double-negates whenever
+    -- faction.index isn't the numerically lower of the pair, silently checking the
+    -- ENEMY's perspective instead of this faction's for roughly half of all faction
+    -- pairs. Use the returned value directly.
     local score = CosmicWarBridge.getWarScore(faction.index, enemyIndex) or 0
-    local lo = math.min(faction.index, enemyIndex)
-    local scoreFromThisFactionPerspective = (faction.index == lo) and score or -score
-    if scoreFromThisFactionPerspective > -100 then
+    if score > -100 then
         terminate()
         return
     end

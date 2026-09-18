@@ -10,7 +10,13 @@ local CosmicWarBridge = include("cosmicwarbridge")
 local cvf = include("cosmicvaultfaction")
 local CosmicWarConfig = include("cosmicwarconfig")
 
-local INTEL_PREVIEW_COST = (CosmicWarConfig and CosmicWarConfig.get() or {}).intelPreviewCost or 50
+-- Read fresh inside execute() rather than cached here at module load: CosmicWarConfig.get()
+-- is a live read against the current CCM setting, and hoisting it to a load-time local would
+-- freeze the preview cost at whatever it was when this file was first loaded, ignoring any
+-- later admin change to the "Intel Preview Cost" slider until a server restart.
+local function getIntelPreviewCost()
+    return (CosmicWarConfig and CosmicWarConfig.get() or {}).intelPreviewCost or 50
+end
 
 local function getKnownAIFactions()
     local server = Server()
@@ -59,13 +65,14 @@ function execute(sender, commandName, ...)
 
     local args = { ... }
     local query = table.concat(args, " ")
+    local intelPreviewCost = getIntelPreviewCost()
 
     if query == "" then
         local lines = listMyIntel(player)
         if #lines == 0 then
             return 0, "[Intel] No Intel banked yet. Complete Force Recon, Sensor Deployment, or Black Box Retrieval War Contracts to gather some.", ""
         end
-        table.insert(lines, 1, string.format("[Intel] Your banked Intel (spend %d against a faction with '/cosmicwarintel <faction name>'):", INTEL_PREVIEW_COST))
+        table.insert(lines, 1, string.format("[Intel] Your banked Intel (spend %d against a faction with '/cosmicwarintel <faction name>'):", intelPreviewCost))
         return 0, table.concat(lines, "\n"), ""
     end
 
@@ -75,16 +82,16 @@ function execute(sender, commandName, ...)
     end
 
     local points = CosmicWarBridge.getIntel(player, faction.index)
-    if points < INTEL_PREVIEW_COST then
-        return 0, string.format("[Intel] You have %d/%d Intel against %s -- not enough for a preview yet.", points, INTEL_PREVIEW_COST, faction.name), ""
+    if points < intelPreviewCost then
+        return 0, string.format("[Intel] You have %d/%d Intel against %s -- not enough for a preview yet.", points, intelPreviewCost, faction.name), ""
     end
 
     if (cvf.getTrait(faction.index, "cw_imperialist") or 0) <= 0 then
         -- Spend it anyway -- the player asked for a read on this faction, and a
         -- non-Imperialist faction genuinely doesn't have a discernible expansion
         -- pattern to leak. Confirms the intel gathering wasn't wasted effort.
-        CosmicWarBridge.spendIntel(player, faction.index, INTEL_PREVIEW_COST)
-        return 0, string.format("[Intel] Spent %d Intel: %s shows no active expansionist pattern -- nothing concrete to report.", INTEL_PREVIEW_COST, faction.name), ""
+        CosmicWarBridge.spendIntel(player, faction.index, intelPreviewCost)
+        return 0, string.format("[Intel] Spent %d Intel: %s shows no active expansionist pattern -- nothing concrete to report.", intelPreviewCost, faction.name), ""
     end
 
     -- Deterministic seed so every player asking about the same faction in the same
@@ -93,12 +100,12 @@ function execute(sender, commandName, ...)
     local seed = Server().seed + faction.index * 101 + math.floor(Server().unpausedRuntime / 900)
     local tx, ty = CosmicWarBridge.findExpansionCandidate(faction, 15, seed)
 
-    CosmicWarBridge.spendIntel(player, faction.index, INTEL_PREVIEW_COST)
+    CosmicWarBridge.spendIntel(player, faction.index, intelPreviewCost)
 
     if tx and ty then
-        return 0, string.format("[Intel] Spent %d Intel: scouting reports place %s's next expansion push toward sector (%d:%d).", INTEL_PREVIEW_COST, faction.name, tx, ty), ""
+        return 0, string.format("[Intel] Spent %d Intel: scouting reports place %s's next expansion push toward sector (%d:%d).", intelPreviewCost, faction.name, tx, ty), ""
     else
-        return 0, string.format("[Intel] Spent %d Intel: %s is currently boxed in on every scouted heading -- no clear expansion target.", INTEL_PREVIEW_COST, faction.name), ""
+        return 0, string.format("[Intel] Spent %d Intel: %s is currently boxed in on every scouted heading -- no clear expansion target.", intelPreviewCost, faction.name), ""
     end
 end
 

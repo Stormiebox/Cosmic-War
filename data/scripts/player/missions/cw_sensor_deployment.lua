@@ -119,8 +119,9 @@ mission.phases[1].onTargetLocationEntered = function(x, y)
     local custom = mission.data.custom
     local key = "spawned_" .. tostring(x) .. "_" .. tostring(y)
     if not custom[key] then
-        spawnEvent(x, y)
-        custom[key] = true
+        if spawnEvent(x, y) then
+            custom[key] = true
+        end
     end
     sync()
 end
@@ -196,21 +197,25 @@ function spawnEvent(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
-    
+    if not enemyFaction then return end
+
     -- Spawn Navigation Beacon at 0,0,0
     local beacon = generator:createBeacon(Matrix(), nil, "Deploy Sensor Buoy Here"%_T)
+    if not beacon then return end
     beacon:setValue("cw_buoy_target", true)
-    
+
     -- Spawn some defenders near the center
     for i=1, 3 do
         local position = MatrixLookUpPosition(-vec3(0,1,0), vec3(1,0,0), vec3(random():getInt(-2000, 2000), random():getInt(-2000, 2000), random():getInt(-2000, 2000)))
         local ship = ShipGenerator.createMilitaryShip(enemyFaction, position)
         ship:addScriptOnce("data/scripts/entity/ai/patrol.lua")
         ship.title = "Sector Patrol"%_T
-        
+
         local ai = ShipAI(ship.index)
         ai:setAggressive()
     end
+
+    return true
 end
 
 function getBulletin(station)

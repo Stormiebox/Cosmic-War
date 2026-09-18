@@ -131,7 +131,7 @@ mission.phases[1] = {
             return
         end
 
-        local spawnPos = vec3(random:getInt(-1000, 1000), 0, random:getInt(-1000, 1000))
+        local spawnPos = vec3(random():getInt(-1000, 1000), 0, random():getInt(-1000, 1000))
         local platform = RiftObjects.createProtectionPlatform(MatrixLookUpPosition(vec3(0,0,1), vec3(0,1,0), spawnPos))
         if not platform then
             print("[Cosmic War] Containment target materialization failed; entry may be retried.")

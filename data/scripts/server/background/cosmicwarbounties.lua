@@ -73,7 +73,11 @@ function CosmicWarBounties.update(timeStep)
                         if hx and hy then
                             dist = math.sqrt(hx * hx + hy * hy)
                         end
-                        -- Scale from 1.0 (edge) up to 25.0+ (core)
+                        -- distFactor ranges 1 (edge, dist >= 500) up to ~25 (dist near 0, deep
+                        -- core); scale is 1 + distFactor^2 * 0.1, so it climbs from 1.1 at the
+                        -- edge to roughly 63 at the deepest core -- squaring distFactor before
+                        -- scaling it down is what makes core bounties this much richer than a
+                        -- linear falloff would.
                         local distFactor = math.max(1, (500 - dist) / 20)
                         local scale = 1.0 + (distFactor * distFactor * 0.1)
                         local bounty = math.floor(random:getInt(3000, 8500) * scale)

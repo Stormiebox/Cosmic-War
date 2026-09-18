@@ -95,7 +95,7 @@ function CW_DiplomaticSabotageEvent.checkSurvival()
                 "Thank you! With those extremists gone, we can proceed to the peace summit. We owe you our lives."%_T)
 
             for _, player in pairs({Sector():getPlayers()}) do
-                changeRelations(player, faction, 15000, RelationChangeType.General)
+                changeRelations(player, faction, 15000, RelationChangeType.CombatSupport)
             end
         end
         Sector():deleteEntityJumped(envoy)

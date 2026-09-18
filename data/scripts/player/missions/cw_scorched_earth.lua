@@ -265,6 +265,7 @@ function spawnPatrols(x, y)
 
     local generator = SectorGenerator(x, y)
     local enemyFaction = Faction(mission.data.custom.enemyIndex)
+    if not enemyFaction then return end
 
     for i = 1, 3 do
         local position = generator:getPositionInSector()

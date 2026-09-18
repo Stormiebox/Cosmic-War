@@ -31,13 +31,15 @@ function CW_ScorchedRetreatEvent.initialize()
     local enemyIndex = faction:getValue("enemy_faction") or 0
     if enemyIndex <= 0 then terminate() return end
 
+    -- getWarScore(factionA, factionB) already returns the score from factionA's own
+    -- perspective (it does its own internal lo/hi normalization and flips for the caller) --
+    -- re-deriving lo/hi here and flipping a second time double-negates whenever
+    -- faction.index isn't the numerically lower of the pair, silently checking the
+    -- ENEMY's perspective instead of this faction's for roughly half of all faction
+    -- pairs (see cw_defection_offer.lua, which hits this same API the correct way).
+    -- Use the returned value directly.
     local score = CosmicWarBridge.getWarScore(faction.index, enemyIndex) or 0
-    local lo = math.min(faction.index, enemyIndex)
-    -- getWarScore() is signed from factionA's perspective (positive favors A) --
-    -- normalize so "this specific faction is losing" reads correctly regardless
-    -- of which side of the pair it happens to be.
-    local scoreFromThisFactionPerspective = (faction.index == lo) and score or -score
-    if scoreFromThisFactionPerspective > -100 then
+    if score > -100 then
         terminate()
         return
     end

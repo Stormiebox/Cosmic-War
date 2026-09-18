@@ -129,7 +129,7 @@ function CW_RefugeeConvoyEvent.escapeTransports()
                 "Thank you! Our drives are charged and we are jumping to safety. We won't forget this!"%_T)
 
             for _, player in pairs({Sector():getPlayers()}) do
-                changeRelations(player, faction, survived * 2500, RelationChangeType.General)
+                changeRelations(player, faction, survived * 2500, RelationChangeType.CombatSupport)
 
                 -- v4.0.0: the original "Hero of the People" design promised a +10% trade-price
                 -- buff, but no per-player trade-price hook exists anywhere in Avorion's exposed

@@ -103,7 +103,7 @@ function CW_FieldHospitalConvoyEvent.onConvoyDestroyed(destroyedId, destroyerId)
         local destroyer = sector:getEntity(destroyerId)
         if destroyer and destroyer.playerOrAllianceOwned then
             for _, player in pairs({sector:getPlayers()}) do
-                changeRelations(player, victimFaction, -30000, RelationChangeType.General)
+                changeRelations(player, victimFaction, -30000, RelationChangeType.CraftDestroyed)
             end
         end
 
@@ -142,7 +142,7 @@ function CW_FieldHospitalConvoyEvent.escapeTransports()
             CosmicWarBridge.recordFamineReliefApplied(CW_FieldHospitalConvoyEvent.victimId, 25)
 
             for _, player in pairs({Sector():getPlayers()}) do
-                changeRelations(player, faction, 6000, RelationChangeType.General)
+                changeRelations(player, faction, 6000, RelationChangeType.CombatSupport)
             end
         end
     end

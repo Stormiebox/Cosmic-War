@@ -1,6 +1,5 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 package.path = package.path .. ";data/scripts/?.lua"
-local CosmicVaultFaction = include("cosmicvaultfaction")
 local CosmicVaultEconomy = include("cosmicvaulteconomy")
 local CosmicVaultTerritory = include("cosmicvaultterritory")
 local CosmicWarBridge = include("cosmicwarbridge")
@@ -150,7 +149,10 @@ mission.phases[1].triggers = {
                     local queued = CosmicVaultTerritory.expandToSector(
                         mission.data.custom.targetX, mission.data.custom.targetY, giverIndex, false)
                     if queued then
-                        Player():sendChatMessage(Faction(giverIndex).name, 0, "The settlement expedition is underway. This sector will be ours soon."%_T)
+                        local giverFaction = Faction(giverIndex)
+                        if giverFaction then
+                            Player():sendChatMessage(giverFaction.name, 0, "The settlement expedition is underway. This sector will be ours soon."%_T)
+                        end
 
                         local giverFactionObj = Faction(giverIndex)
                         local article = {
@@ -163,7 +165,10 @@ mission.phases[1].triggers = {
                             {topic = "humanitarian", severity = "info", sourceState = "queued"})
                     end
                 else
-                    Player():sendChatMessage(Faction(giverIndex).name, 0, "Someone reached the sector first, but the supplies weren't wasted -- our people are still grateful."%_T)
+                    local giverFaction = Faction(giverIndex)
+                    if giverFaction then
+                        Player():sendChatMessage(giverFaction.name, 0, "Someone reached the sector first, but the supplies weren't wasted -- our people are still grateful."%_T)
+                    end
                 end
             end
 

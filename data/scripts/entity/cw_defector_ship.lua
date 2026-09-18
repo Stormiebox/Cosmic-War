@@ -59,7 +59,7 @@ function CW_DefectorShip.acceptDefection()
             -- in significance to losing a station than to losing one ship.
             CosmicWarBridge.recordWarScoreTerritory(oldFactionIndex, enemyIndex)
         end
-        changeRelations(player, oldFaction, -15000, RelationChangeType.General)
+        changeRelations(player, oldFaction, -15000, RelationChangeType.GeneralIllegal)
     end
 
     player:sendChatMessage("Defector"%_T, 0, "Deal's done. I'm out -- and my former commanders are going to have questions."%_T)

@@ -112,7 +112,10 @@ mission.phases[1].triggers = {
         end,
         callback = function()
             mission.data.custom.resolved = true
-            Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 1, "You destroyed the target instead of disabling it. A wreck is worthless to us. Contract failed."%_T)
+            local giverFaction = Faction(mission.data.custom.giverIndex)
+            if giverFaction then
+                Player():sendChatMessage(giverFaction.name, 1, "You destroyed the target instead of disabling it. A wreck is worthless to us. Contract failed."%_T)
+            end
             fail()
         end
     },
@@ -140,7 +143,10 @@ mission.phases[1].triggers = {
                 -- The prize crew makes emergency repairs to keep her spaceworthy.
                 target.durability = target.maxDurability * 0.5
                 target:addScriptOnce("data/scripts/entity/ai/patrol.lua")
-                Sector():broadcastChatMessage(Faction(giverIndex).name, 0, "Prize crew aboard. The vessel is ours."%_T)
+                local giverFactionForBroadcast = giverIndex and Faction(giverIndex)
+                if giverFactionForBroadcast then
+                    Sector():broadcastChatMessage(giverFactionForBroadcast.name, 0, "Prize crew aboard. The vessel is ours."%_T)
+                end
             end
 
             if giverIndex and enemyIndex then
@@ -206,7 +212,7 @@ function getBulletin(station)
 
     return {
         brief = "War Contract: Prize Crew"%_t,
-        description = "One of the enemy's escort ships would make a fine addition to our fleet. Disable it, don't destroy it -- our prize crew will handle the rest.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction.",
+        description = "One of the enemy's escort ships would make a fine addition to our fleet. Disable it, don't destroy it -- our prize crew will handle the rest.\n\nWARNING: Accepting this contract is an act of war. You will immediately become hostile to the target faction."%_t,
         difficulty = "Hard"%_t,
         reward = "¢${reward}"%_t,
         script = "data/scripts/player/missions/cw_prizecrew.lua",

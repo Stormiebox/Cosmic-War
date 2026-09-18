@@ -1,7 +1,6 @@
 package.path = package.path .. ";data/scripts/lib/?.lua"
 
 include ("utility")
-local ShipUtility = include("shiputility")
 
 -- namespace DreadnoughtBoss
 DreadnoughtBoss = {}

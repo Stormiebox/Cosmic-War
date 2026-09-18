@@ -64,16 +64,14 @@ function CW_FleetClashEvent.spawn()
     end
 
     local generator = SectorGenerator(x, y)
-    local numAttackers = math.floor(4 + (heat * 5))
-    local volumeMult = 1.0
 
     local CosmicVaultScaling = include("cosmicvaultscaling")
     local defenderStats = CosmicVaultScaling.calculateSectorDefenderStrength(enemyId)
     local baseVol = Balancing_GetSectorShipVolume(x, y)
 
     local spawnParams = CosmicVaultScaling.calculateInvaderSpawnParams(defenderStats, baseVol, 1.0)
-    numAttackers = spawnParams.count
-    volumeMult = spawnParams.volumeMultiplier
+    local numAttackers = spawnParams.count
+    local volumeMult = spawnParams.volumeMultiplier
 
     local random = Random(Seed(x .. y))
     local usedJammer = false

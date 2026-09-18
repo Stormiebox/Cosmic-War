@@ -4,7 +4,6 @@ local CosmicVaultFaction = include("cosmicvaultfaction")
 
 include("randomext")
 include("structuredmission")
-include("relations")
 
 local MissionUT = include("missionutility")
 local ShipGenerator = include("shipgenerator")

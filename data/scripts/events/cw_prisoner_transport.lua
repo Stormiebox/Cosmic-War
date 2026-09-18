@@ -95,7 +95,7 @@ function CW_PrisonerTransportEvent.updateServer(timeStep)
             player:receive("Prisoners Freed"%_T, 180000)
             local enemyFaction = Faction(CW_PrisonerTransportEvent.enemyFactionIndex)
             if enemyFaction then
-                changeRelations(player, enemyFaction, 10000, RelationChangeType.General)
+                changeRelations(player, enemyFaction, 10000, RelationChangeType.CombatSupport)
             end
         end
 

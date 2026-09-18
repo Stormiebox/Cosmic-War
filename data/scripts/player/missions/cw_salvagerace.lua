@@ -168,7 +168,10 @@ mission.phases[1].triggers = {
             return (Server().unpausedRuntime - (mission.data.custom.spawnTime or 0)) > WRECKAGE_TIMEOUT
         end,
         callback = function()
-            Player():sendChatMessage(Faction(mission.data.custom.giverIndex).name, 1, "The wreckage field was picked clean before you got there. Contract failed."%_T)
+            local giverFaction = Faction(mission.data.custom.giverIndex)
+            if giverFaction then
+                Player():sendChatMessage(giverFaction.name, 1, "The wreckage field was picked clean before you got there. Contract failed."%_T)
+            end
             fail()
         end
     },

@@ -71,6 +71,21 @@ end
 
 function SiegeEvent.startSiege(zoneData, isFarSupplyLine)
     local sector = Sector()
+
+    -- Same re-entry problem applySupplyLineScaling() above guards against, applied to
+    -- the actual fleet spawn: addScriptOnce() reruns initialize() every time the sector
+    -- reloads (see the Codex's "Clean up your own dynamically-attached sector/event
+    -- scripts" entry), and zones[key] stays truthy for the whole siege -- so without this
+    -- marker, a player leaving and re-entering an ongoing siege would spawn a second wave
+    -- of transports/dreadnoughts on top of the first instead of just resuming the event.
+    local server = Server()
+    if server then
+        local sx, sy = sector:getCoordinates()
+        local startedKey = "cw_siegestarted_" .. sx .. ":" .. sy .. ":" .. tostring(zoneData.startTime)
+        if server:getValue(startedKey) then return end
+        server:setValue(startedKey, true)
+    end
+
     local targetStation = nil
 
     -- Find a valid target station owned by the defender

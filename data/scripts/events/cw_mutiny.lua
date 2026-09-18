@@ -123,7 +123,7 @@ function CW_MutinyEvent.updateServer(timeStep)
         local pirateFaction = Faction(mutineer.factionIndex)
         for _, player in pairs({sector:getPlayers()}) do
             if pirateFaction then
-                changeRelations(player, pirateFaction, 8000, RelationChangeType.General)
+                changeRelations(player, pirateFaction, 8000, RelationChangeType.CombatSupport)
             end
         end
         sector:broadcastChatMessage("Mutineer"%_T, ChatMessageType.Information,
